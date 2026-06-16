@@ -6,6 +6,7 @@ export const LOGO_URL = logoAsset.url;
 
 export const PRICE_MONTHLY = "£24.99";
 export const TRIAL_DAYS = 14;
+export const CONTACT_EMAIL = "domenico@copybymonk.com";
 
 export const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/3cI00i1Ct5oO4pg3gC7AI0C";
 
