@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated")({
-  component: AuthenticatedLayout;
+  component: AuthenticatedLayout,
 });
 
 function AuthenticatedLayout() {
