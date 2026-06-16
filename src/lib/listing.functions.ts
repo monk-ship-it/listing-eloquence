@@ -110,8 +110,8 @@ export const generateListing = createServerFn({ method: "POST" })
       user_id: userId,
       voice,
       property_title: data.address || data.propertyType || "Untitled property",
-      inputs: data as unknown as Record<string, unknown>,
-      output: parsed as unknown as Record<string, unknown>,
+      inputs: JSON.parse(JSON.stringify(data)),
+      output: JSON.parse(JSON.stringify(parsed)),
     });
 
     return parsed;
