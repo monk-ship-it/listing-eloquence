@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { VOICES } from "@/lib/voices";
 import { EXAMPLE_INPUT } from "@/lib/listing-types";
-import { APP_NAME, PRICE_MONTHLY, TRIAL_DAYS } from "@/lib/config";
+import { APP_NAME, PRICE_MONTHLY, TRIAL_DAYS, CONTACT_EMAIL } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import { Check, Sparkles, PenLine, Share2 } from "lucide-react";
 
