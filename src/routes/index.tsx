@@ -192,6 +192,7 @@ function Landing() {
       <footer className="border-t border-border/60 py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 text-sm text-muted-foreground sm:flex-row">
           <Logo showText />
+          <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-foreground">{CONTACT_EMAIL}</a>
           <p>© {new Date().getFullYear()} {APP_NAME}. Crafted for UK estate agents.</p>
         </div>
       </footer>
