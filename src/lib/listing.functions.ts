@@ -39,6 +39,8 @@ ${details}
 
 REQUIREMENTS:
 - Write only from the facts provided; never invent figures, names or features that are not given.
+- Read every detail precisely and do not transfer an adjective from one thing to another. A descriptor attached to a specific feature applies ONLY to that feature — e.g. "Victorian fireplace" means the fireplace is Victorian, NOT that the property is Victorian. Never describe the property's style, era or type unless the property type itself explicitly states it.
+- Do not generalise, upgrade or embellish facts: keep each described attribute scoped exactly to the item it was given for.
 - Use British English and spelling throughout.
 - Where Material Information is provided (tenure, price, council tax band, EPC, parking, utilities) weave the key facts in naturally.
 - The full listing should be portal-ready (Rightmove / OnTheMarket style): an opening hook, then well-organised paragraphs covering the property, accommodation, outside space and location.

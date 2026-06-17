@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -31,6 +31,7 @@ function GeneratorPage() {
   const generate = useServerFn(generateListing);
   const subFn = useServerFn(getMySubscription);
   const subQuery = useQuery({ queryKey: ["subscription"], queryFn: () => subFn() });
+  const queryClient = useQueryClient();
 
   const [input, setInput] = useState<ListingInput>(EMPTY_INPUT);
   const [output, setOutput] = useState<ListingOutput | null>(null);
@@ -53,6 +54,7 @@ function GeneratorPage() {
     try {
       const result = await generate({ data: input });
       setOutput(result);
+      queryClient.invalidateQueries({ queryKey: ["generations"] });
       toast.success("Listing generated.");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Generation failed.";

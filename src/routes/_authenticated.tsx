@@ -1,9 +1,12 @@
 import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { amIAdmin } from "@/lib/admin.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -14,6 +17,9 @@ function AuthenticatedLayout() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const adminFn = useServerFn(amIAdmin);
+  const adminQuery = useQuery({ queryKey: ["am-i-admin"], queryFn: () => adminFn(), enabled: !!user });
+  const isAdmin = adminQuery.data ?? false;
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -44,9 +50,17 @@ function AuthenticatedLayout() {
             <Button asChild variant={pathname === "/app" ? "secondary" : "ghost"} size="sm">
               <Link to="/app">Generator</Link>
             </Button>
+            <Button asChild variant={pathname === "/history" ? "secondary" : "ghost"} size="sm">
+              <Link to="/history">History</Link>
+            </Button>
             <Button asChild variant={pathname === "/account" ? "secondary" : "ghost"} size="sm">
               <Link to="/account">Account</Link>
             </Button>
+            {isAdmin && (
+              <Button asChild variant={pathname === "/admin" ? "secondary" : "ghost"} size="sm">
+                <Link to="/admin">Admin</Link>
+              </Button>
+            )}
             <Button variant="ghost" size="sm" onClick={signOut}>
               Sign out
             </Button>
