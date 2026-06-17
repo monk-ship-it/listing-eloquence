@@ -2,11 +2,19 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { isCompedEmail } from "./config";
 
-async function assertAdmin(context: {
-  supabase: ReturnType<typeof import("@supabase/supabase-js").createClient>;
+interface AdminContext {
+  supabase: {
+    from: (table: string) => {
+      select: (cols: string) => {
+        eq: (col: string, val: string) => { maybeSingle: () => Promise<{ data: unknown }> };
+      };
+    };
+  };
   userId: string;
   claims: Record<string, unknown>;
-}): Promise<void> {
+}
+
+async function assertAdmin(context: AdminContext): Promise<void> {
   const claimEmail = typeof context.claims?.email === "string" ? (context.claims.email as string) : null;
   let email = claimEmail;
   if (!email) {
