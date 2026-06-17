@@ -50,9 +50,17 @@ function AuthenticatedLayout() {
             <Button asChild variant={pathname === "/app" ? "secondary" : "ghost"} size="sm">
               <Link to="/app">Generator</Link>
             </Button>
+            <Button asChild variant={pathname === "/history" ? "secondary" : "ghost"} size="sm">
+              <Link to="/history">History</Link>
+            </Button>
             <Button asChild variant={pathname === "/account" ? "secondary" : "ghost"} size="sm">
               <Link to="/account">Account</Link>
             </Button>
+            {isAdmin && (
+              <Button asChild variant={pathname === "/admin" ? "secondary" : "ghost"} size="sm">
+                <Link to="/admin">Admin</Link>
+              </Button>
+            )}
             <Button variant="ghost" size="sm" onClick={signOut}>
               Sign out
             </Button>
