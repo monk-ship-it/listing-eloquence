@@ -54,6 +54,7 @@ function GeneratorPage() {
     try {
       const result = await generate({ data: input });
       setOutput(result);
+      queryClient.invalidateQueries({ queryKey: ["generations"] });
       toast.success("Listing generated.");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Generation failed.";
