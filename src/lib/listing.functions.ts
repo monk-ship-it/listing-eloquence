@@ -75,14 +75,16 @@ export const generateListing = createServerFn({ method: "POST" })
     // Subscription gate (server-side enforcement)
     const { data: sub } = await supabase
       .from("subscribers")
-      .select("status, email")
+      .select("status, email, current_period_end")
       .eq("user_id", userId)
       .maybeSingle();
 
     const { isCompedEmail } = await import("./config");
+    const { hasActiveAccess } = await import("./subscription.functions");
     const status = sub?.status ?? "none";
     const hasAccess =
-      isCompedEmail(sub?.email) || status === "trialing" || status === "active";
+      isCompedEmail(sub?.email) ||
+      hasActiveAccess(status, sub?.current_period_end ?? null);
     if (!hasAccess) {
       throw new Error("SUBSCRIPTION_REQUIRED");
     }
