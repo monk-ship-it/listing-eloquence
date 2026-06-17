@@ -35,6 +35,17 @@ export interface ModelSetting {
   updatedAt: string | null;
 }
 
+export const amIAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<boolean> => {
+    try {
+      await assertAdmin(context as unknown as AdminContext);
+      return true;
+    } catch {
+      return false;
+    }
+  });
+
 export const getClaudeModelSetting = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<ModelSetting> => {
