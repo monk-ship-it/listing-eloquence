@@ -31,6 +31,7 @@ function GeneratorPage() {
   const generate = useServerFn(generateListing);
   const subFn = useServerFn(getMySubscription);
   const subQuery = useQuery({ queryKey: ["subscription"], queryFn: () => subFn() });
+  const queryClient = useQueryClient();
 
   const [input, setInput] = useState<ListingInput>(EMPTY_INPUT);
   const [output, setOutput] = useState<ListingOutput | null>(null);
