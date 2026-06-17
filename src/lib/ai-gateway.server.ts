@@ -9,7 +9,7 @@ interface ChatMessage {
  */
 export async function callLovableAiJson(
   messages: ChatMessage[],
-  model = "claude-sonnet-4-20250514",
+  model = "claude-sonnet-4-5-20250929",
 ): Promise<string> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error("Missing ANTHROPIC_API_KEY");
