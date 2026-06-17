@@ -38,7 +38,7 @@ export interface ModelSetting {
 export const getClaudeModelSetting = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<ModelSetting> => {
-    await assertAdmin(context as never);
+    await assertAdmin(context as unknown as AdminContext);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data } = await supabaseAdmin
       .from("app_settings")
@@ -61,7 +61,7 @@ export const saveClaudeModelSetting = createServerFn({ method: "POST" })
     return { model };
   })
   .handler(async ({ data, context }): Promise<ModelSetting> => {
-    await assertAdmin(context as never);
+    await assertAdmin(context as unknown as AdminContext);
 
     // Safe validation: make a tiny live request before saving.
     const { validateClaudeModel } = await import("./ai-gateway.server");
