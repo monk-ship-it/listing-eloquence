@@ -25,9 +25,27 @@ function toInfo(row: {
     cancelAtPeriodEnd: row?.cancel_at_period_end ?? false,
     trialEnd: row?.trial_end ?? null,
     currentPeriodEnd: row?.current_period_end ?? null,
-    hasAccess: comped || status === "trialing" || status === "active",
+    hasAccess: comped || hasActiveAccess(status, row?.current_period_end ?? null),
     email: row?.email ?? null,
   };
+}
+
+/**
+ * Determines whether a subscription grants access.
+ * - `active` / `trialing` always grant access.
+ * - `past_due` / `unpaid` keep access during a grace window: until the paid
+ *   period (current_period_end) has actually elapsed.
+ */
+export function hasActiveAccess(
+  status: string,
+  currentPeriodEnd: string | null,
+): boolean {
+  if (status === "active" || status === "trialing") return true;
+  if (status === "past_due" || status === "unpaid") {
+    if (!currentPeriodEnd) return false;
+    return new Date(currentPeriodEnd).getTime() > Date.now();
+  }
+  return false;
 }
 
 export const getMySubscription = createServerFn({ method: "GET" })
