@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { isCompedEmail } from "./config";
 
 export interface SubscriptionInfo {
   status: string;
@@ -18,12 +19,13 @@ function toInfo(row: {
   email: string | null;
 } | null): SubscriptionInfo {
   const status = row?.status ?? "none";
+  const comped = isCompedEmail(row?.email);
   return {
-    status,
+    status: comped ? "active" : status,
     cancelAtPeriodEnd: row?.cancel_at_period_end ?? false,
     trialEnd: row?.trial_end ?? null,
     currentPeriodEnd: row?.current_period_end ?? null,
-    hasAccess: status === "trialing" || status === "active",
+    hasAccess: comped || status === "trialing" || status === "active",
     email: row?.email ?? null,
   };
 }
