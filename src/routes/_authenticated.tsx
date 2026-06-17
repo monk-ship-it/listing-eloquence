@@ -17,6 +17,9 @@ function AuthenticatedLayout() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const adminFn = useServerFn(amIAdmin);
+  const adminQuery = useQuery({ queryKey: ["am-i-admin"], queryFn: () => adminFn(), enabled: !!user });
+  const isAdmin = adminQuery.data ?? false;
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
