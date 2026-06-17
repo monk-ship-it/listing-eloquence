@@ -86,7 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Quill writes polished UK property listings in four distinct brand voices, plus social captions with hashtags. 14-day free trial.",
       },
       { name: "author", content: "Quill" },
-      { property: "og:title", content: "Quill — AI Property Listing Generator" },
+      { property: "og:title", content: "Quill — AI Property Listing Generator for UK Estate Agents" },
       {
         property: "og:description",
         content:
@@ -94,6 +94,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Quill — AI Property Listing Generator for UK Estate Agents" },
+      { name: "description", content: "Estate Agent Ally generates compelling UK property listings with customizable tones." },
+      { property: "og:description", content: "Estate Agent Ally generates compelling UK property listings with customizable tones." },
+      { name: "twitter:description", content: "Estate Agent Ally generates compelling UK property listings with customizable tones." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781657004257-ChatGPT_Image_Nov_18,_2025,_08_18_14_PM.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781657004257-ChatGPT_Image_Nov_18,_2025,_08_18_14_PM.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
