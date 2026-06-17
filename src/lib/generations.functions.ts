@@ -27,8 +27,8 @@ export const listMyGenerations = createServerFn({ method: "GET" })
       voice: row.voice,
       propertyTitle: row.property_title,
       createdAt: row.created_at,
-      inputs: row.inputs as ListingInput,
-      output: row.output as ListingOutput,
+      inputs: row.inputs as unknown as ListingInput,
+      output: row.output as unknown as ListingOutput,
     }));
   });
 
