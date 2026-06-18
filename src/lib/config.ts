@@ -53,7 +53,7 @@ export const PLANS: Plan[] = [
       "Priority generation",
       "Voice dictation on every field",
     ],
-    stripeLink: "",
+    stripeLink: "https://buy.stripe.com/3cI7sK6WN5oOaNEg3o7AI0D",
     popular: true,
   },
   {
