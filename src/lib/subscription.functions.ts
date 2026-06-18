@@ -83,10 +83,53 @@ export const getMySubscription = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data } = await supabase
       .from("subscribers")
-      .select("status, cancel_at_period_end, trial_end, current_period_end, email")
+      .select("status, plan, cancel_at_period_end, trial_end, current_period_end, email")
       .eq("user_id", userId)
       .maybeSingle();
     return toInfo(data);
+  });
+
+/**
+ * Computes the user's listing usage for the current calendar month.
+ * Comped accounts are unlimited. Limits come from the plan in PLANS.
+ */
+export async function computeUsage(
+  supabase: { from: (t: string) => any },
+  userId: string,
+  plan: PlanId,
+  comped: boolean,
+): Promise<UsageInfo> {
+  const planMeta = getPlan(plan);
+  const { count } = await supabase
+    .from("generations")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .gte("created_at", startOfMonthIso());
+
+  const used = count ?? 0;
+  const limit = planMeta.monthlyListings;
+  return {
+    plan: planMeta.id,
+    planName: planMeta.name,
+    limit,
+    used,
+    remaining: comped ? Infinity === Infinity ? -1 : -1 : Math.max(0, limit - used),
+    unlimited: comped,
+    resetsOn: startOfNextMonthIso(),
+  };
+}
+
+export const getMyUsage = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<UsageInfo> => {
+    const { supabase, userId } = context;
+    const { data } = await supabase
+      .from("subscribers")
+      .select("plan, email")
+      .eq("user_id", userId)
+      .maybeSingle();
+    const comped = isCompedEmail(data?.email);
+    return computeUsage(supabase, userId, getPlan(data?.plan).id, comped);
   });
 
 export const cancelMySubscription = createServerFn({ method: "POST" })
