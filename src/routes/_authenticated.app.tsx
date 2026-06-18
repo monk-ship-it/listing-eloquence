@@ -206,10 +206,10 @@ function GeneratorPage() {
                 <Input value={input.leaseYears} onChange={(e) => set("leaseYears", e.target.value)} placeholder="If leasehold" />
               </Field>
             </div>
-            <Field label="Key features">
+            <Field label="Key features" onDictate={appendTo("keyFeatures")}>
               <Textarea value={input.keyFeatures} onChange={(e) => set("keyFeatures", e.target.value)} placeholder="Open-plan kitchen, log burner, south-facing garden…" rows={2} />
             </Field>
-            <Field label="Room dimensions">
+            <Field label="Room dimensions" onDictate={appendTo("dimensions")}>
               <Textarea value={input.dimensions} onChange={(e) => set("dimensions", e.target.value)} placeholder="Living room 5.2m x 4.1m…" rows={2} />
             </Field>
             <div className="grid grid-cols-2 gap-3">
