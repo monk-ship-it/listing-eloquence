@@ -173,7 +173,7 @@ function Landing() {
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium uppercase tracking-wide text-primary">
             Most popular
           </span>
-          <p className="font-display text-4xl font-semibold">
+          <p className="mt-4 font-display text-5xl font-semibold">
             {PRICE_MONTHLY}
             <span className="text-base font-normal text-muted-foreground">/month</span>
           </p>
