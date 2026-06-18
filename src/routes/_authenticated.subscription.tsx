@@ -78,20 +78,23 @@ const STATUS_META: Record<
 function SubscriptionPage() {
   const { user } = useAuth();
   const subFn = useServerFn(getMySubscription);
+  const usageFn = useServerFn(getMyUsage);
   const { data: sub, isLoading } = useQuery({
     queryKey: ["subscription"],
     queryFn: () => subFn(),
   });
+  const { data: usage } = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
 
   const status = sub?.status ?? "none";
   const rawStatus = sub?.rawStatus ?? "none";
   const hasAccess = sub?.hasAccess ?? false;
   const meta = STATUS_META[status] ?? STATUS_META.none;
   const remaining = daysLeft(sub?.currentPeriodEnd ?? null);
+  const currentPlan = getPlan(sub?.plan);
 
-  function startCheckout() {
+  function startCheckout(planId: typeof PLANS[number]["id"] = currentPlan.id) {
     if (!user) return;
-    window.location.href = buildCheckoutUrl(user.id, user.email ?? "");
+    window.location.href = buildCheckoutUrl(user.id, user.email ?? "", planId);
   }
 
   return (
