@@ -165,7 +165,7 @@ function GeneratorPage() {
             </p>
             <div className="flex items-center gap-1.5">
               <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-              <Select value={lang} onValueChange={(v) => setLang(v)}>
+              <Select value={lang} onValueChange={(v) => setLang(v as typeof lang)}>
                 <SelectTrigger className="h-7 w-[10rem] text-xs">
                   <SelectValue placeholder="Language" />
                 </SelectTrigger>
