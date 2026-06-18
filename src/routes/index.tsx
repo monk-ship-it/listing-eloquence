@@ -809,7 +809,7 @@ function FinalCta({ ctaTo }: { ctaTo: string }) {
               Your next listing does not need to start with a blank page.
             </h2>
             <p className="mt-5 text-lg text-muted-foreground">
-              Speak the notes. Choose the voice. Let Quill shape the copy.
+              Speak, type or paste the notes. Choose the voice. Generate the listing pack.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <Button asChild size="lg" className="shadow-[0_14px_44px_-16px] shadow-primary/70">
