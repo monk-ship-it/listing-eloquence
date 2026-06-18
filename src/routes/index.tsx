@@ -90,7 +90,11 @@ function Landing() {
         </p>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {VOICES.map((v) => (
-            <Card key={v.id} className="border-border/70 bg-card/70 p-6">
+            <Card
+              key={v.id}
+              className="group relative overflow-hidden border-border/70 bg-card/70 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_20px_40px_-20px] hover:shadow-primary/30"
+            >
+              <span className="absolute inset-y-0 left-0 w-1 origin-top scale-y-0 bg-gradient-to-b from-primary to-gold transition-transform duration-300 group-hover:scale-y-100" />
               <h3 className="font-display text-xl font-semibold">{v.name}</h3>
               <p className="mt-1 text-xs uppercase tracking-wide text-primary">{v.tagline}</p>
               <p className="mt-3 text-sm text-muted-foreground">{v.description}</p>
