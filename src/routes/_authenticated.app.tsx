@@ -9,6 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import { VOICES, type VoiceId } from "@/lib/voices";
 import { EMPTY_INPUT, EXAMPLE_INPUT, type ListingInput, type ListingOutput } from "@/lib/listing-types";
@@ -16,7 +23,8 @@ import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME } from "@/lib/config";
 import { DictateButton } from "@/components/DictateButton";
-import { Copy, Sparkles, RefreshCw, Lock, Mic } from "lucide-react";
+import { useDictationSettings } from "@/hooks/useDictationSettings";
+import { Copy, Sparkles, RefreshCw, Lock, Mic, Globe } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app")({
   head: () => ({ meta: [{ title: `Generator — ${APP_NAME}` }] }),
