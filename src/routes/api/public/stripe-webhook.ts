@@ -35,6 +35,11 @@ function planFromSubscription(sub: any): string {
   return "starter";
 }
 
+/** Extract the Stripe price id from a subscription object. */
+function priceFromSubscription(sub: any): string | null {
+  return sub?.items?.data?.[0]?.price?.id ?? null;
+}
+
 export const Route = createFileRoute("/api/public/stripe-webhook")({
   server: {
     handlers: {
