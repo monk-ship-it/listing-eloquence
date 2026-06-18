@@ -168,7 +168,20 @@ function SubscriptionPage() {
               {!sub?.isComped && (
                 <Row
                   label="Plan"
-                  value={`${PRICE_MONTHLY} / month`}
+                  value={`${currentPlan.name} — ${currentPlan.price} / month`}
+                />
+              )}
+              {!sub?.isComped && usage && (
+                <Row
+                  label="Listings this month"
+                  value={
+                    <span className="text-sm">
+                      {usage.used} of {usage.limit} used
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        (renews {fmtDate(usage.resetsOn)})
+                      </span>
+                    </span>
+                  }
                 />
               )}
               {status === "trialing" && (
