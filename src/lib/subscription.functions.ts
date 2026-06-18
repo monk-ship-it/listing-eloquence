@@ -4,10 +4,12 @@ import { isCompedEmail } from "./config";
 
 export interface SubscriptionInfo {
   status: string;
+  rawStatus: string;
   cancelAtPeriodEnd: boolean;
   trialEnd: string | null;
   currentPeriodEnd: string | null;
   hasAccess: boolean;
+  isComped: boolean;
   email: string | null;
 }
 
