@@ -134,7 +134,20 @@ function HistoryItem({
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => copy(`${item.output.headline}\n\n${item.output.listing}`)}
+              title="Copy all formats"
+              onClick={() => {
+                const social = (item.output.social ?? [])
+                  .map((p) => {
+                    const tags = (p.hashtags ?? []).map((t) => `#${t.replace(/^#/, "")}`).join(" ");
+                    return `${p.platform}:\n${p.caption}${tags ? `\n${tags}` : ""}`;
+                  })
+                  .join("\n\n");
+                copy(
+                  `${item.output.headline}\n\n${item.output.listing}` +
+                    (item.output.summary ? `\n\nTeaser: ${item.output.summary}` : "") +
+                    (social ? `\n\n--- Social pack ---\n${social}` : ""),
+                );
+              }}
             >
               <Copy className="h-4 w-4" />
             </Button>
@@ -144,8 +157,45 @@ function HistoryItem({
               <p key={i}>{p}</p>
             ))}
           </div>
+
           {item.output.summary && (
-            <p className="mt-4 rounded-lg bg-muted/50 p-3 text-sm">{item.output.summary}</p>
+            <div className="mt-4">
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Teaser summary</h3>
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copy(item.output.summary)}>
+                  <Copy className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+              <p className="mt-1 rounded-lg bg-muted/50 p-3 text-sm">{item.output.summary}</p>
+            </div>
+          )}
+
+          {item.output.social && item.output.social.length > 0 && (
+            <div className="mt-5">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Social pack</h3>
+              <div className="mt-2 space-y-3">
+                {item.output.social.map((post, i) => {
+                  const tags = (post.hashtags ?? []).map((t) => `#${t.replace(/^#/, "")}`).join(" ");
+                  return (
+                    <div key={i} className="rounded-lg border border-border/60 p-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <Badge variant="secondary">{post.platform}</Badge>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => copy(`${post.caption}${tags ? `\n\n${tags}` : ""}`)}
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                      <p className="mt-2 text-sm">{post.caption}</p>
+                      {tags && <p className="mt-2 text-xs text-primary">{tags}</p>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           )}
         </div>
       )}
