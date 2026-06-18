@@ -125,6 +125,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               .from("subscribers")
               .update({
                 status,
+                plan: planFromSubscription(sub),
                 trial_end: toIso(sub.trial_end),
                 current_period_end: toIso(sub.current_period_end),
                 cancel_at_period_end: !!sub.cancel_at_period_end,
