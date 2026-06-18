@@ -85,6 +85,20 @@ function SubscriptionPage() {
   });
   const { data: usage } = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
 
+  const portalFn = useServerFn(createBillingPortalUrl);
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  async function openBillingPortal() {
+    setPortalLoading(true);
+    try {
+      const { url } = await portalFn({ data: { returnUrl: window.location.href } });
+      window.location.href = url;
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not open billing portal.");
+      setPortalLoading(false);
+    }
+  }
+
   const status = sub?.status ?? "none";
   const rawStatus = sub?.rawStatus ?? "none";
   const hasAccess = sub?.hasAccess ?? false;
