@@ -193,3 +193,28 @@ export const resumeMySubscription = createServerFn({ method: "POST" })
 
     return toInfo(saved);
   });
+
+/**
+ * Creates a Stripe Billing Portal session for the signed-in user and returns
+ * the URL. The user manages/cancels there; the Stripe webhook syncs the result
+ * back into the app on `customer.subscription.updated`/`deleted`.
+ */
+export const createBillingPortalUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { returnUrl: string }) => data)
+  .handler(async ({ context, data }): Promise<{ url: string }> => {
+    const { supabase, userId } = context;
+    const { data: row } = await supabase
+      .from("subscribers")
+      .select("stripe_customer_id")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (!row?.stripe_customer_id) {
+      throw new Error("No billing account found. Subscribe first to manage billing.");
+    }
+
+    const { createBillingPortalSession } = await import("./stripe.server");
+    const session = await createBillingPortalSession(row.stripe_customer_id, data.returnUrl);
+    return { url: session.url as string };
+  });
