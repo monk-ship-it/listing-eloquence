@@ -240,7 +240,7 @@ function GeneratorPage() {
             </div>
           </div>
 
-          <Button className="mt-6 w-full" size="lg" onClick={run} disabled={busy || !hasAccess}>
+          <Button className="mt-6 w-full" size="lg" onClick={run} disabled={busy || !hasAccess || outOfListings}>
             {busy ? (
               <>
                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Generating…
