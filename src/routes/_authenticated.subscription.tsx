@@ -88,7 +88,18 @@ function SubscriptionPage() {
   const { data: usage } = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
 
   const portalFn = useServerFn(createBillingPortalUrl);
+  const checkoutFn = useServerFn(createCheckoutSession);
   const [portalLoading, setPortalLoading] = useState(false);
+  const [checkoutBusy, setCheckoutBusy] = useState<string | null>(null);
+
+  // Calm message if the user came back from a cancelled checkout.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("checkout") === "cancelled") {
+      toast("Checkout cancelled. No payment was taken.");
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
 
   async function openBillingPortal() {
     setPortalLoading(true);
@@ -108,10 +119,23 @@ function SubscriptionPage() {
   const remaining = daysLeft(sub?.currentPeriodEnd ?? null);
   const currentPlan = getPlan(sub?.plan);
 
-  function startCheckout(planId: typeof PLANS[number]["id"] = currentPlan.id) {
-    if (!user) return;
-    window.location.href = buildCheckoutUrl(user.id, user.email ?? "", planId);
+  async function startCheckout(planId: typeof PLANS[number]["id"] = currentPlan.id) {
+    if (!user) {
+      toast.error("Please log in to continue to checkout.");
+      return;
+    }
+    setCheckoutBusy(planId);
+    try {
+      const { url } = await checkoutFn({
+        data: { plan: planId, origin: window.location.origin },
+      });
+      window.location.href = url;
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not start checkout. Please try again.");
+      setCheckoutBusy(null);
+    }
   }
+
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-10">
