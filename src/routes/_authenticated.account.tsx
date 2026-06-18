@@ -47,12 +47,59 @@ function AccountPage() {
   const cancelFn = useServerFn(cancelMySubscription);
   const resumeFn = useServerFn(resumeMySubscription);
   const [busy, setBusy] = useState(false);
+  const verifyFn = useServerFn(verifyCheckoutSession);
+  // null = not in a post-checkout flow; "activating" | "active" | "pending"
+  const [activation, setActivation] = useState<null | "activating" | "active" | "pending">(null);
+  const pollStarted = useRef(false);
 
   const { data: sub, isLoading } = useQuery({ queryKey: ["subscription"], queryFn: () => subFn() });
+
+  // Post-checkout return: verify the session server-side and poll the DB until
+  // the webhook activates the subscription. Access is driven by the DB, never
+  // by the redirect URL alone.
+  useEffect(() => {
+    if (pollStarted.current) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("checkout") !== "success") return;
+    pollStarted.current = true;
+
+    const sessionId = params.get("session_id");
+    window.history.replaceState({}, "", window.location.pathname);
+    setActivation("activating");
+
+    let cancelled = false;
+    (async () => {
+      for (let attempt = 0; attempt < 10 && !cancelled; attempt++) {
+        try {
+          if (sessionId) {
+            const res = await verifyFn({ data: { sessionId } });
+            await qc.invalidateQueries({ queryKey: ["subscription"] });
+            if (res.activated) {
+              if (!cancelled) setActivation("active");
+              toast.success("Subscription activated. Your account is ready.");
+              return;
+            }
+          } else {
+            await qc.invalidateQueries({ queryKey: ["subscription"] });
+          }
+        } catch (err) {
+          console.error("Activation poll error:", err);
+        }
+        await new Promise((r) => setTimeout(r, 2000));
+      }
+      if (!cancelled) setActivation("pending");
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const status = sub?.status ?? "none";
   const hasAccess = sub?.hasAccess ?? false;
   const inactive = !hasAccess;
+
 
   async function cancel() {
     setBusy(true);
