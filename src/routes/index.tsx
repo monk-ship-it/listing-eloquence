@@ -172,19 +172,30 @@ function HeroMockup() {
   return (
     <div className="glass-strong glow-primary mx-auto w-full max-w-md rounded-3xl p-4 sm:p-5">
       <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="grid h-7 w-7 place-items-center rounded-lg bg-primary/15 text-primary">
-            <Mic className="h-3.5 w-3.5" />
-          </span>
-          <span className="text-sm font-medium">Voice capture</span>
-        </div>
-        <span className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" /> Listening…
+        <span className="text-sm font-medium">Add property details</span>
+        <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-muted-foreground">
+          Speak · type · paste
         </span>
       </div>
 
-      {/* Mic + waveform */}
-      <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-background/50 p-4">
+      {/* Input method switcher — voice prominent, typing & pasting clearly available */}
+      <div className="grid grid-cols-3 gap-2">
+        <div className="flex flex-col items-center gap-1.5 rounded-xl border border-primary/40 bg-primary/10 p-2.5 text-primary">
+          <Mic className="h-4 w-4" />
+          <span className="text-[0.7rem] font-semibold">Dictate</span>
+        </div>
+        <div className="flex flex-col items-center gap-1.5 rounded-xl border border-white/10 bg-background/50 p-2.5 text-foreground/80">
+          <Pencil className="h-4 w-4" />
+          <span className="text-[0.7rem] font-medium">Type</span>
+        </div>
+        <div className="flex flex-col items-center gap-1.5 rounded-xl border border-white/10 bg-background/50 p-2.5 text-foreground/80">
+          <ClipboardPaste className="h-4 w-4" />
+          <span className="text-[0.7rem] font-medium">Paste</span>
+        </div>
+      </div>
+
+      {/* Mic + waveform (active voice capture) */}
+      <div className="mt-3 flex items-center gap-3 rounded-2xl border border-primary/25 bg-primary/[0.06] p-4">
         <span className="mic-pulse grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_0_8px] shadow-primary/15">
           <Mic className="h-5 w-5" />
         </span>
@@ -197,26 +208,27 @@ function HeroMockup() {
             />
           ))}
         </div>
+        <span className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" /> Listening…
+        </span>
       </div>
 
-      {/* Spoken note */}
+      {/* Typed text field */}
       <div className="mt-3 rounded-2xl border border-white/10 bg-background/50 p-4">
-        <p className="text-xs font-medium text-muted-foreground">Spoken note</p>
+        <p className="text-xs font-medium text-muted-foreground">Property summary (type or edit)</p>
         <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-          "Five-bedroom detached home, walled garden, period features, gravel driveway…"
+          Five-bedroom detached home, walled garden, period features, gravel driveway
+          <span className="ml-0.5 inline-block h-4 w-px animate-pulse bg-primary align-middle" />
         </p>
       </div>
 
-      {/* Transcribing */}
-      <div className="mt-3 flex items-center gap-2 px-1 text-xs text-muted-foreground">
-        <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" /> Transcribing…
-      </div>
-
-      {/* Structured field */}
-      <div className="mt-3 rounded-2xl border border-primary/25 bg-primary/[0.06] p-4">
-        <p className="text-xs font-medium text-primary">Property details</p>
-        <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-          Five-bedroom detached home with a walled garden, period features and a gravel driveway.
+      {/* Paste area */}
+      <div className="mt-3 rounded-2xl border border-dashed border-white/15 bg-background/40 p-4">
+        <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+          <ClipboardPaste className="h-3.5 w-3.5" /> Paste existing notes, valuation or brochure text
+        </div>
+        <p className="mt-1.5 text-sm leading-relaxed text-foreground/80">
+          "Guide £750k. Sought-after lane, south-facing rear garden, recently re-roofed…"
         </p>
       </div>
 
@@ -233,6 +245,7 @@ function HeroMockup() {
     </div>
   );
 }
+
 
 const WAVE_HEIGHTS = [40, 70, 95, 60, 85, 50, 75, 100, 55, 80, 45, 90, 60, 70, 40];
 
