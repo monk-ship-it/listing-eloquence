@@ -150,6 +150,9 @@ function GeneratorPage() {
         {/* Input */}
         <Card className="p-6">
           <h2 className="font-display text-xl font-semibold">Property details</h2>
+          <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Mic className="h-3.5 w-3.5" /> Tip: tap the mic on a field to dictate instead of typing.
+          </p>
 
           <div className="mt-5">
             <Label>Brand voice</Label>
