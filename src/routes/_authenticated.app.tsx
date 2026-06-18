@@ -234,10 +234,10 @@ function GeneratorPage() {
             <Field label="Utilities / broadband">
               <Input value={input.utilities} onChange={(e) => set("utilities", e.target.value)} placeholder="Mains services, Ultrafast broadband" />
             </Field>
-            <Field label="Nearby (schools, transport, amenities)">
+            <Field label="Nearby (schools, transport, amenities)" onDictate={appendTo("nearby")}>
               <Textarea value={input.nearby} onChange={(e) => set("nearby", e.target.value)} placeholder="Outstanding primary, station 0.5 miles…" rows={2} />
             </Field>
-            <Field label="Period / character features">
+            <Field label="Period / character features" onDictate={appendTo("periodFeatures")}>
               <Textarea value={input.periodFeatures} onChange={(e) => set("periodFeatures", e.target.value)} placeholder="Original cornicing, sash windows…" rows={2} />
             </Field>
             <div className="grid grid-cols-1 gap-3">
