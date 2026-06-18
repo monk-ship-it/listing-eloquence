@@ -132,12 +132,20 @@ function Landing() {
                 <Stat icon={Check} label="Tenure" value={EXAMPLE_INPUT.tenure} />
               </div>
               <dl className="mt-4 space-y-2 border-t border-border/60 pt-4 text-sm">
+                <Row label="Voice" value={EXAMPLE_INPUT.voice} />
                 <Row label="Price" value={`${EXAMPLE_INPUT.priceQualifier} £${EXAMPLE_INPUT.price}`} />
+                <Row label="Tenure" value={`${EXAMPLE_INPUT.tenure}${EXAMPLE_INPUT.leaseYears ? ` (${EXAMPLE_INPUT.leaseYears} yrs)` : ""}`} />
                 <Row label="EPC / Council Tax" value={`${EXAMPLE_INPUT.epc} / Band ${EXAMPLE_INPUT.councilTaxBand}`} />
+                <Row label="Area highlights" value={EXAMPLE_INPUT.areaHighlights} />
                 <Row label="Key features" value={EXAMPLE_INPUT.keyFeatures} />
+                <Row label="Room dimensions" value={EXAMPLE_INPUT.dimensions} />
                 <Row label="Outside space" value={EXAMPLE_INPUT.outsideSpace} />
                 <Row label="Parking" value={EXAMPLE_INPUT.parking} />
+                <Row label="Heating" value={EXAMPLE_INPUT.heating} />
+                <Row label="Utilities / broadband" value={EXAMPLE_INPUT.utilities} />
                 <Row label="Nearby" value={EXAMPLE_INPUT.nearby} />
+                <Row label="Period features" value={EXAMPLE_INPUT.periodFeatures} />
+                <Row label="Target audience" value={EXAMPLE_INPUT.targetAudience} />
               </dl>
             </Card>
 
