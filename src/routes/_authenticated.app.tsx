@@ -30,7 +30,9 @@ function copy(text: string) {
 function GeneratorPage() {
   const generate = useServerFn(generateListing);
   const subFn = useServerFn(getMySubscription);
+  const usageFn = useServerFn(getMyUsage);
   const subQuery = useQuery({ queryKey: ["subscription"], queryFn: () => subFn() });
+  const usageQuery = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
   const queryClient = useQueryClient();
 
   const [input, setInput] = useState<ListingInput>(EMPTY_INPUT);
