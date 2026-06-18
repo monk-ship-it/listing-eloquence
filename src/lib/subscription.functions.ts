@@ -188,7 +188,7 @@ export const resumeMySubscription = createServerFn({ method: "POST" })
         status: updated.status,
       })
       .eq("user_id", userId)
-      .select("status, cancel_at_period_end, trial_end, current_period_end, email")
+      .select("status, plan, cancel_at_period_end, trial_end, current_period_end, email")
       .maybeSingle();
 
     return toInfo(saved);
