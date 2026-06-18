@@ -176,36 +176,36 @@ function GeneratorPage() {
           </div>
 
           <div className="mt-5 grid gap-4">
-            <Field label="Address / location">
+            <Field label="Address / location" onDictate={appendTo("address")}>
               <Input value={input.address} onChange={(e) => set("address", e.target.value)} placeholder="12 Park Avenue, Harrogate, HG1" />
             </Field>
-            <Field label="Property type">
+            <Field label="Property type" onDictate={appendTo("propertyType")}>
               <Input value={input.propertyType} onChange={(e) => set("propertyType", e.target.value)} placeholder="Victorian semi-detached house" />
             </Field>
             <div className="grid grid-cols-3 gap-3">
-              <Field label="Bedrooms">
+              <Field label="Bedrooms" onDictate={appendTo("bedrooms")}>
                 <Input value={input.bedrooms} onChange={(e) => set("bedrooms", e.target.value)} placeholder="4" />
               </Field>
-              <Field label="Bathrooms">
+              <Field label="Bathrooms" onDictate={appendTo("bathrooms")}>
                 <Input value={input.bathrooms} onChange={(e) => set("bathrooms", e.target.value)} placeholder="2" />
               </Field>
-              <Field label="Receptions">
+              <Field label="Receptions" onDictate={appendTo("receptions")}>
                 <Input value={input.receptions} onChange={(e) => set("receptions", e.target.value)} placeholder="2" />
               </Field>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Tenure">
+              <Field label="Tenure" onDictate={appendTo("tenure")}>
                 <Input value={input.tenure} onChange={(e) => set("tenure", e.target.value)} placeholder="Freehold" />
               </Field>
-              <Field label="Asking price (£)">
+              <Field label="Asking price (£)" onDictate={appendTo("price")}>
                 <Input value={input.price} onChange={(e) => set("price", e.target.value)} placeholder="525,000" />
               </Field>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Price qualifier">
+              <Field label="Price qualifier" onDictate={appendTo("priceQualifier")}>
                 <Input value={input.priceQualifier} onChange={(e) => set("priceQualifier", e.target.value)} placeholder="Guide Price / OIEO" />
               </Field>
-              <Field label="Lease remaining (yrs)">
+              <Field label="Lease remaining (yrs)" onDictate={appendTo("leaseYears")}>
                 <Input value={input.leaseYears} onChange={(e) => set("leaseYears", e.target.value)} placeholder="If leasehold" />
               </Field>
             </div>
@@ -216,10 +216,10 @@ function GeneratorPage() {
               <Textarea value={input.dimensions} onChange={(e) => set("dimensions", e.target.value)} placeholder="Living room 5.2m x 4.1m…" rows={2} />
             </Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="EPC rating">
+              <Field label="EPC rating" onDictate={appendTo("epc")}>
                 <Input value={input.epc} onChange={(e) => set("epc", e.target.value)} placeholder="C" />
               </Field>
-              <Field label="Council Tax band">
+              <Field label="Council Tax band" onDictate={appendTo("councilTaxBand")}>
                 <Input value={input.councilTaxBand} onChange={(e) => set("councilTaxBand", e.target.value)} placeholder="D" />
               </Field>
             </div>
@@ -227,14 +227,14 @@ function GeneratorPage() {
               <Input value={input.outsideSpace} onChange={(e) => set("outsideSpace", e.target.value)} placeholder="Landscaped rear garden, patio" />
             </Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Parking">
+              <Field label="Parking" onDictate={appendTo("parking")}>
                 <Input value={input.parking} onChange={(e) => set("parking", e.target.value)} placeholder="Driveway, garage" />
               </Field>
-              <Field label="Heating">
+              <Field label="Heating" onDictate={appendTo("heating")}>
                 <Input value={input.heating} onChange={(e) => set("heating", e.target.value)} placeholder="Gas central heating" />
               </Field>
             </div>
-            <Field label="Utilities / broadband">
+            <Field label="Utilities / broadband" onDictate={appendTo("utilities")}>
               <Input value={input.utilities} onChange={(e) => set("utilities", e.target.value)} placeholder="Mains services, Ultrafast broadband" />
             </Field>
             <Field label="Nearby (schools, transport, amenities)" onDictate={appendTo("nearby")}>
@@ -244,10 +244,10 @@ function GeneratorPage() {
               <Textarea value={input.periodFeatures} onChange={(e) => set("periodFeatures", e.target.value)} placeholder="Original cornicing, sash windows…" rows={2} />
             </Field>
             <div className="grid grid-cols-1 gap-3">
-              <Field label="Area highlights">
+              <Field label="Area highlights" onDictate={appendTo("areaHighlights")}>
                 <Input value={input.areaHighlights} onChange={(e) => set("areaHighlights", e.target.value)} placeholder="Vibrant market town, riverside walks" />
               </Field>
-              <Field label="Target audience">
+              <Field label="Target audience" onDictate={appendTo("targetAudience")}>
                 <Input value={input.targetAudience} onChange={(e) => set("targetAudience", e.target.value)} placeholder="Growing families, professionals" />
               </Field>
             </div>
