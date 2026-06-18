@@ -308,11 +308,17 @@ function SubscriptionPage() {
                         className="mt-4 w-full"
                         size="sm"
                         variant={isCurrent ? "outline" : "default"}
-                        disabled={isCurrent}
+                        disabled={isCurrent || checkoutBusy !== null}
                         onClick={() => startCheckout(plan.id)}
                       >
                         <CreditCard className="mr-2 h-4 w-4" />
-                        {isCurrent ? "Current plan" : hasAccess ? "Switch" : "Start trial"}
+                        {checkoutBusy === plan.id
+                          ? "Starting…"
+                          : isCurrent
+                            ? "Current plan"
+                            : hasAccess
+                              ? "Switch"
+                              : "Start trial"}
                       </Button>
                     </div>
                   );
