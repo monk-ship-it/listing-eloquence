@@ -262,3 +262,71 @@ function Landing() {
     </div>
   );
 }
+
+const EXAMPLE_OUTPUT = {
+  headline: "A Distinguished Grade II Listed Rectory in the Heart of Burford",
+  listing: [
+    "Set back from Church Lane behind a gravelled drive and a low honey-stone wall, The Old Rectory has watched over Burford since the early 18th century. It is a house of quiet confidence — Georgian additions softening its earlier origins — and one that rewards a slow, considered walk-through.",
+    "Step inside and flagstone floors lead you between rooms of generous proportion. The drawing room (6.8m x 5.1m) is anchored by an inglenook fireplace, while exposed beams and original sash windows lend warmth and light in equal measure. At the heart of the home, a bespoke shaker kitchen and breakfast room (7.2m x 4.4m) opens onto the garden — the natural gathering place of the house.",
+    "Three reception rooms, five bedrooms and three bathrooms are arranged over two principal floors, with a cellar below offering useful storage. Throughout, original joinery and fireplaces have been retained, the period character met with considered, everyday comfort.",
+    "Beyond, a walled garden of around half an acre unfolds into mature herbaceous borders, a small orchard and a stone terrace made for long summer evenings. A gravel driveway and detached double cart shed complete the picture.",
+    "Burford itself needs little introduction — a sought-after Cotswold market town with a honey-stone high street, independent shops and the River Windrush close by. Burford Primary (Ofsted Good) and The Burford School are within reach, with Charlbury station offering trains to London Paddington in around 80 minutes.",
+  ],
+  summary:
+    "A characterful Grade II listed rectory with period detail, a half-acre walled garden and a coveted position in the heart of Burford — guide price £1,450,000.",
+  social: [
+    {
+      platform: "Instagram",
+      icon: Instagram,
+      caption:
+        "Period charm meets everyday comfort 🏡 A Grade II listed Cotswold rectory with an inglenook fireplace, flagstone floors and a half-acre walled garden in the heart of Burford. Guide £1,450,000.",
+      hashtags: "#CotswoldHomes #BurfordProperty #PeriodHome #GradeIIListed #CountryLiving #PropertyForSale",
+    },
+    {
+      platform: "Facebook",
+      icon: Facebook,
+      caption:
+        "New to market — The Old Rectory, Burford. A distinguished 5-bedroom Grade II listed home of early 18th-century origins, with three reception rooms, a bespoke shaker kitchen and a half-acre walled garden. Charlbury station offers London Paddington in ~80 mins. Guide price £1,450,000 — get in touch to arrange a viewing.",
+      hashtags: "#BurfordHomes #CotswoldsProperty #PeriodHome #ForSale",
+    },
+    {
+      platform: "X",
+      icon: Twitter,
+      caption:
+        "Just listed: a Grade II listed Cotswold rectory in the heart of Burford — 5 beds, half-acre walled garden, inglenook fireplace. Guide £1,450,000.",
+      hashtags: "#PropertyForSale #Cotswolds #Burford",
+    },
+  ],
+};
+
+function Share2Icon() {
+  return <Sparkles className="h-4 w-4" />;
+}
+
+function Stat({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-lg border border-border/60 bg-background/40 p-3">
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <Icon className="h-3.5 w-3.5 text-primary" /> {label}
+      </div>
+      <p className="mt-1 truncate text-sm font-medium" title={value}>{value || "—"}</p>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex gap-2">
+      <dt className="w-32 shrink-0 text-muted-foreground">{label}</dt>
+      <dd className="flex-1 text-foreground">{value}</dd>
+    </div>
+  );
+}
