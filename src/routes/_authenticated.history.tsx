@@ -134,7 +134,20 @@ function HistoryItem({
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => copy(`${item.output.headline}\n\n${item.output.listing}`)}
+              title="Copy all formats"
+              onClick={() => {
+                const social = (item.output.social ?? [])
+                  .map((p) => {
+                    const tags = (p.hashtags ?? []).map((t) => `#${t.replace(/^#/, "")}`).join(" ");
+                    return `${p.platform}:\n${p.caption}${tags ? `\n${tags}` : ""}`;
+                  })
+                  .join("\n\n");
+                copy(
+                  `${item.output.headline}\n\n${item.output.listing}` +
+                    (item.output.summary ? `\n\nTeaser: ${item.output.summary}` : "") +
+                    (social ? `\n\n--- Social pack ---\n${social}` : ""),
+                );
+              }}
             >
               <Copy className="h-4 w-4" />
             </Button>
