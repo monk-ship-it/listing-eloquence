@@ -285,12 +285,18 @@ function SubscriptionPage() {
             <Card className="p-6">
               <h2 className="font-display text-lg font-semibold">Billing</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Manage your subscription, payment method and invoices in your billing portal.
+                Manage your payment method, view invoices, or cancel your
+                subscription in the secure Stripe billing portal. Any change is
+                reflected here automatically.
               </p>
-              <Button asChild className="mt-4" variant="outline">
-                <Link to="/account">
-                  <Calendar className="mr-2 h-4 w-4" /> Go to account settings
-                </Link>
+              <Button
+                className="mt-4"
+                variant="outline"
+                disabled={portalLoading}
+                onClick={openBillingPortal}
+              >
+                <CreditCard className="mr-2 h-4 w-4" />
+                {portalLoading ? "Opening…" : "Manage or cancel subscription"}
               </Button>
             </Card>
           )}
