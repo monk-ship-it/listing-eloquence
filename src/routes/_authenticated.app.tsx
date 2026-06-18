@@ -16,7 +16,7 @@ import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME } from "@/lib/config";
 import { DictateButton } from "@/components/DictateButton";
-import { Copy, Sparkles, RefreshCw, Lock } from "lucide-react";
+import { Copy, Sparkles, RefreshCw, Lock, Mic } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app")({
   head: () => ({ meta: [{ title: `Generator — ${APP_NAME}` }] }),
