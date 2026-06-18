@@ -38,3 +38,11 @@ export function setSubscriptionCancelAtPeriodEnd(
     cancel_at_period_end: cancel ? "true" : "false",
   });
 }
+
+/** Create a Stripe Billing Portal session so the customer can self-manage/cancel. */
+export function createBillingPortalSession(customerId: string, returnUrl: string) {
+  return stripeRequest("/billing_portal/sessions", "POST", {
+    customer: customerId,
+    return_url: returnUrl,
+  });
+}
