@@ -95,8 +95,9 @@ export function isCompedEmail(email: string | null | undefined): boolean {
 }
 
 /** Build a payment-link URL pre-filled with the user's email and reference. */
-export function buildCheckoutUrl(userId: string, email: string): string {
-  const url = new URL(STRIPE_PAYMENT_LINK);
+export function buildCheckoutUrl(userId: string, email: string, plan: PlanId = "starter"): string {
+  const link = PLAN_MAP[plan]?.stripeLink || STRIPE_PAYMENT_LINK;
+  const url = new URL(link);
   url.searchParams.set("client_reference_id", userId);
   if (email) url.searchParams.set("prefilled_email", email);
   return url.toString();
