@@ -15,7 +15,8 @@ import { EMPTY_INPUT, EXAMPLE_INPUT, type ListingInput, type ListingOutput } fro
 import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME } from "@/lib/config";
-import { Copy, Sparkles, RefreshCw, Lock } from "lucide-react";
+import { DictateButton } from "@/components/DictateButton";
+import { Copy, Sparkles, RefreshCw, Lock, Mic } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app")({
   head: () => ({ meta: [{ title: `Generator — ${APP_NAME}` }] }),
@@ -45,6 +46,15 @@ function GeneratorPage() {
 
   function set<K extends keyof ListingInput>(key: K, value: ListingInput[K]) {
     setInput((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function appendTo(key: keyof ListingInput) {
+    return (text: string) =>
+      setInput((prev) => {
+        const current = (prev[key] as string) ?? "";
+        const next = current.trim() ? `${current.trim()} ${text}` : text;
+        return { ...prev, [key]: next };
+      });
   }
 
   function loadExample() {
@@ -140,6 +150,9 @@ function GeneratorPage() {
         {/* Input */}
         <Card className="p-6">
           <h2 className="font-display text-xl font-semibold">Property details</h2>
+          <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Mic className="h-3.5 w-3.5" /> Tip: tap the mic on a field to dictate instead of typing.
+          </p>
 
           <div className="mt-5">
             <Label>Brand voice</Label>
@@ -196,10 +209,10 @@ function GeneratorPage() {
                 <Input value={input.leaseYears} onChange={(e) => set("leaseYears", e.target.value)} placeholder="If leasehold" />
               </Field>
             </div>
-            <Field label="Key features">
+            <Field label="Key features" onDictate={appendTo("keyFeatures")}>
               <Textarea value={input.keyFeatures} onChange={(e) => set("keyFeatures", e.target.value)} placeholder="Open-plan kitchen, log burner, south-facing garden…" rows={2} />
             </Field>
-            <Field label="Room dimensions">
+            <Field label="Room dimensions" onDictate={appendTo("dimensions")}>
               <Textarea value={input.dimensions} onChange={(e) => set("dimensions", e.target.value)} placeholder="Living room 5.2m x 4.1m…" rows={2} />
             </Field>
             <div className="grid grid-cols-2 gap-3">
@@ -210,7 +223,7 @@ function GeneratorPage() {
                 <Input value={input.councilTaxBand} onChange={(e) => set("councilTaxBand", e.target.value)} placeholder="D" />
               </Field>
             </div>
-            <Field label="Outside space / garden">
+            <Field label="Outside space / garden" onDictate={appendTo("outsideSpace")}>
               <Input value={input.outsideSpace} onChange={(e) => set("outsideSpace", e.target.value)} placeholder="Landscaped rear garden, patio" />
             </Field>
             <div className="grid grid-cols-2 gap-3">
@@ -224,10 +237,10 @@ function GeneratorPage() {
             <Field label="Utilities / broadband">
               <Input value={input.utilities} onChange={(e) => set("utilities", e.target.value)} placeholder="Mains services, Ultrafast broadband" />
             </Field>
-            <Field label="Nearby (schools, transport, amenities)">
+            <Field label="Nearby (schools, transport, amenities)" onDictate={appendTo("nearby")}>
               <Textarea value={input.nearby} onChange={(e) => set("nearby", e.target.value)} placeholder="Outstanding primary, station 0.5 miles…" rows={2} />
             </Field>
-            <Field label="Period / character features">
+            <Field label="Period / character features" onDictate={appendTo("periodFeatures")}>
               <Textarea value={input.periodFeatures} onChange={(e) => set("periodFeatures", e.target.value)} placeholder="Original cornicing, sash windows…" rows={2} />
             </Field>
             <div className="grid grid-cols-1 gap-3">
@@ -325,10 +338,21 @@ function GeneratorPage() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+  onDictate,
+}: {
+  label: string;
+  children: React.ReactNode;
+  onDictate?: (text: string) => void;
+}) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-xs text-muted-foreground">{label}</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label className="text-xs text-muted-foreground">{label}</Label>
+        {onDictate && <DictateButton onResult={onDictate} />}
+      </div>
       {children}
     </div>
   );
