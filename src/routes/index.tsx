@@ -44,7 +44,7 @@ function Landing() {
   const ctaTo = user ? "/app" : "/auth";
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Header user={!!user} />
       <Hero ctaTo={ctaTo} />
       <VoiceValue />
@@ -104,20 +104,21 @@ function Hero({ ctaTo }: { ctaTo: string }) {
       <div className="pointer-events-none absolute inset-0 bg-radial-glow" />
       <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 pb-20 pt-14 lg:grid-cols-[1.05fr_1fr] lg:pb-28 lg:pt-20">
         {/* Left */}
-        <div>
+        <div className="min-w-0">
+
           <Reveal>
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
               <AudioLines className="h-3.5 w-3.5" /> AI listing writer with voice dictation
             </span>
           </Reveal>
           <Reveal delay={60}>
-            <h1 className="mt-6 text-balance font-display text-[2.6rem] font-semibold leading-[1.15] text-gradient sm:text-5xl lg:text-6xl">
+            <h1 className="mt-6 text-pretty font-display text-[clamp(1.7rem,8.5vw,1.95rem)] font-semibold leading-[1.18] text-gradient sm:text-5xl sm:leading-[1.1] lg:text-6xl">
               Speak it, type it, or paste it — {APP_NAME} turns property details into polished listing
               copy.
             </h1>
           </Reveal>
           <Reveal delay={120}>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:mt-6 sm:text-lg">
               {APP_NAME} lets UK estate agents dictate, type or paste property details, choose a brand
               voice, and generate portal-ready listings, social captions and buyer emails in minutes —
               without another CRM to manage.
@@ -160,7 +161,8 @@ function Hero({ ctaTo }: { ctaTo: string }) {
         </div>
 
         {/* Right — product mockup */}
-        <Reveal delay={120} className="relative">
+        <Reveal delay={120} className="relative min-w-0">
+
           <div className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] bg-radial-glow blur-2xl" />
           <HeroMockup />
         </Reveal>
@@ -271,7 +273,7 @@ function VoiceValue() {
     },
   ];
   return (
-    <section className="mx-auto max-w-6xl px-5 py-20 lg:py-24">
+    <section className="mx-auto max-w-6xl px-5 py-14 sm:py-20 lg:py-24">
       <Reveal className="mx-auto max-w-2xl text-center">
         <h2 className="font-display text-3xl font-semibold sm:text-4xl">
           Built for agents who need notes captured fast.
@@ -319,7 +321,7 @@ function HowItWorks() {
     },
   ];
   return (
-    <section className="border-y border-white/10 bg-card/30 py-20 lg:py-24">
+    <section className="border-y border-white/10 bg-card/30 py-14 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <Reveal className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-semibold sm:text-4xl">
@@ -388,7 +390,7 @@ const VOICE_CARDS = [
 
 function Voices() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-20 lg:py-24">
+    <section className="mx-auto max-w-6xl px-5 py-14 sm:py-20 lg:py-24">
       <Reveal className="mx-auto max-w-2xl text-center">
         <h2 className="font-display text-3xl font-semibold sm:text-4xl">
           Four crafted voices for different properties.
@@ -442,7 +444,7 @@ function LiveExample() {
   ];
 
   return (
-    <section id="example" className="border-y border-white/10 bg-card/30 py-20 lg:py-24">
+    <section id="example" className="border-y border-white/10 bg-card/30 py-14 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <Reveal className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-semibold sm:text-4xl">
@@ -473,8 +475,8 @@ function LiveExample() {
 
               <dl className="mt-4 divide-y divide-white/5 text-sm">
                 {facts.map(([label, value]) => (
-                  <div key={label} className="flex gap-3 py-2.5">
-                    <dt className="w-28 shrink-0 text-muted-foreground">{label}</dt>
+                  <div key={label} className="flex flex-col gap-0.5 py-2.5 sm:flex-row sm:gap-3">
+                    <dt className="shrink-0 text-muted-foreground sm:w-28">{label}</dt>
                     <dd className="flex-1 text-foreground">{value}</dd>
                   </div>
                 ))}
@@ -626,7 +628,7 @@ function VoiceDictation({ ctaTo }: { ctaTo: string }) {
     "Works for features, room notes, gardens, parking and local highlights",
   ];
   return (
-    <section id="voice-demo" className="mx-auto max-w-6xl px-5 py-20 lg:py-24">
+    <section id="voice-demo" className="mx-auto max-w-6xl px-5 py-14 sm:py-20 lg:py-24">
       <div className="grid items-center gap-12 lg:grid-cols-2">
         <Reveal>
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
@@ -710,7 +712,7 @@ function VoiceDictation({ ctaTo }: { ctaTo: string }) {
 
 function Pricing({ ctaTo }: { ctaTo: string }) {
   return (
-    <section id="pricing" className="border-y border-white/10 bg-card/30 py-20 lg:py-24">
+    <section id="pricing" className="border-y border-white/10 bg-card/30 py-14 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <Reveal className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-semibold sm:text-4xl">
@@ -800,7 +802,7 @@ function orderedFeatures(features: string[]): string[] {
 
 function FinalCta({ ctaTo }: { ctaTo: string }) {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-20 lg:py-24">
+    <section className="mx-auto max-w-6xl px-5 py-14 sm:py-20 lg:py-24">
       <Reveal>
         <div className="glass-strong glow-primary relative overflow-hidden rounded-3xl px-6 py-14 text-center sm:px-12">
           <div className="pointer-events-none absolute inset-0 bg-radial-glow opacity-70" />
@@ -831,9 +833,9 @@ function FinalCta({ ctaTo }: { ctaTo: string }) {
 function Footer() {
   return (
     <footer className="border-t border-white/10 py-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 text-sm text-muted-foreground sm:flex-row">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-5 px-5 text-center text-sm text-muted-foreground sm:flex-row sm:gap-4 sm:text-left">
         <Logo withByline />
-        <a href={`mailto:${CONTACT_EMAIL}`} className="transition-colors hover:text-foreground">
+        <a href={`mailto:${CONTACT_EMAIL}`} className="break-all transition-colors hover:text-foreground">
           {CONTACT_EMAIL}
         </a>
         <p>© 2026 {APP_NAME}. Crafted for UK estate agents.</p>
