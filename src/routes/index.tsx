@@ -449,7 +449,7 @@ function LiveExample() {
             See what Quill creates from simple property notes.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Dictate the details once. Quill shapes them into the formats agents need.
+            Speak, type or paste the details once. Quill shapes them into the formats agents need.
           </p>
         </Reveal>
 
@@ -463,7 +463,7 @@ function LiveExample() {
 
               <div className="mt-4 rounded-xl border border-primary/25 bg-primary/[0.06] p-4">
                 <div className="flex items-center gap-1.5 text-xs font-medium text-primary">
-                  <Mic className="h-3.5 w-3.5" /> Voice note captured
+                  <Mic className="h-3.5 w-3.5" /> Spoken, typed or pasted
                 </div>
                 <p className="mt-1.5 text-sm italic leading-relaxed text-foreground/90">
                   "Five bedrooms, Grade II listed, walled garden, original beams, period fireplaces,
@@ -637,7 +637,7 @@ function VoiceDictation({ ctaTo }: { ctaTo: string }) {
           </h2>
           <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted-foreground">
             Tap the mic, describe the property, and Quill turns spoken notes into clean, editable
-            listing text.
+            listing text. Prefer to type or paste? Every field works that way too.
           </p>
           <ul className="mt-7 space-y-3">
             {bullets.map((b) => (
