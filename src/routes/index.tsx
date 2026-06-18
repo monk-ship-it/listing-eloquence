@@ -22,6 +22,7 @@ import {
   Quote,
   Building2,
   AudioLines,
+  ClipboardPaste,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -111,14 +112,15 @@ function Hero({ ctaTo }: { ctaTo: string }) {
           </Reveal>
           <Reveal delay={60}>
             <h1 className="mt-6 text-balance font-display text-[2.6rem] font-semibold leading-[1.04] text-gradient sm:text-5xl lg:text-6xl">
-              Talk your property notes into polished listings.
+              Speak it, type it, or paste it — {APP_NAME} turns property details into polished listing
+              copy.
             </h1>
           </Reveal>
           <Reveal delay={120}>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              {APP_NAME} lets UK estate agents dictate property details, choose a brand voice, and
-              generate portal-ready listings, social captions and buyer emails in minutes — without
-              another CRM to manage.
+              {APP_NAME} lets UK estate agents dictate, type or paste property details, choose a brand
+              voice, and generate portal-ready listings, social captions and buyer emails in minutes —
+              without another CRM to manage.
             </p>
           </Reveal>
           <Reveal delay={180}>
@@ -131,7 +133,10 @@ function Hero({ ctaTo }: { ctaTo: string }) {
                 <Link to={ctaTo}>Start free trial</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-white/15">
-                <a href="#voice-demo">See voice demo</a>
+                <a href="#voice-demo">Try voice dictation</a>
+              </Button>
+              <Button asChild size="lg" variant="ghost">
+                <a href="#example">Type or paste an example</a>
               </Button>
             </div>
           </Reveal>
@@ -142,7 +147,7 @@ function Hero({ ctaTo }: { ctaTo: string }) {
           </Reveal>
           <Reveal delay={280}>
             <div className="mt-7 flex flex-wrap gap-2.5">
-              {["Voice notes in", "Listing copy out", "Editable before generation"].map((chip) => (
+              {["Speak, type or paste", "Listing copy out", "Editable before generation"].map((chip) => (
                 <span
                   key={chip}
                   className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-foreground/90"
@@ -168,19 +173,30 @@ function HeroMockup() {
   return (
     <div className="glass-strong glow-primary mx-auto w-full max-w-md rounded-3xl p-4 sm:p-5">
       <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="grid h-7 w-7 place-items-center rounded-lg bg-primary/15 text-primary">
-            <Mic className="h-3.5 w-3.5" />
-          </span>
-          <span className="text-sm font-medium">Voice capture</span>
-        </div>
-        <span className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" /> Listening…
+        <span className="text-sm font-medium">Add property details</span>
+        <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-muted-foreground">
+          Speak · type · paste
         </span>
       </div>
 
-      {/* Mic + waveform */}
-      <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-background/50 p-4">
+      {/* Input method switcher — voice prominent, typing & pasting clearly available */}
+      <div className="grid grid-cols-3 gap-2">
+        <div className="flex flex-col items-center gap-1.5 rounded-xl border border-primary/40 bg-primary/10 p-2.5 text-primary">
+          <Mic className="h-4 w-4" />
+          <span className="text-[0.7rem] font-semibold">Dictate</span>
+        </div>
+        <div className="flex flex-col items-center gap-1.5 rounded-xl border border-white/10 bg-background/50 p-2.5 text-foreground/80">
+          <Pencil className="h-4 w-4" />
+          <span className="text-[0.7rem] font-medium">Type</span>
+        </div>
+        <div className="flex flex-col items-center gap-1.5 rounded-xl border border-white/10 bg-background/50 p-2.5 text-foreground/80">
+          <ClipboardPaste className="h-4 w-4" />
+          <span className="text-[0.7rem] font-medium">Paste</span>
+        </div>
+      </div>
+
+      {/* Mic + waveform (active voice capture) */}
+      <div className="mt-3 flex items-center gap-3 rounded-2xl border border-primary/25 bg-primary/[0.06] p-4">
         <span className="mic-pulse grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_0_8px] shadow-primary/15">
           <Mic className="h-5 w-5" />
         </span>
@@ -193,26 +209,27 @@ function HeroMockup() {
             />
           ))}
         </div>
+        <span className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" /> Listening…
+        </span>
       </div>
 
-      {/* Spoken note */}
+      {/* Typed text field */}
       <div className="mt-3 rounded-2xl border border-white/10 bg-background/50 p-4">
-        <p className="text-xs font-medium text-muted-foreground">Spoken note</p>
+        <p className="text-xs font-medium text-muted-foreground">Property summary (type or edit)</p>
         <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-          "Five-bedroom detached home, walled garden, period features, gravel driveway…"
+          Five-bedroom detached home, walled garden, period features, gravel driveway
+          <span className="ml-0.5 inline-block h-4 w-px animate-pulse bg-primary align-middle" />
         </p>
       </div>
 
-      {/* Transcribing */}
-      <div className="mt-3 flex items-center gap-2 px-1 text-xs text-muted-foreground">
-        <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" /> Transcribing…
-      </div>
-
-      {/* Structured field */}
-      <div className="mt-3 rounded-2xl border border-primary/25 bg-primary/[0.06] p-4">
-        <p className="text-xs font-medium text-primary">Property details</p>
-        <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-          Five-bedroom detached home with a walled garden, period features and a gravel driveway.
+      {/* Paste area */}
+      <div className="mt-3 rounded-2xl border border-dashed border-white/15 bg-background/40 p-4">
+        <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+          <ClipboardPaste className="h-3.5 w-3.5" /> Paste existing notes, valuation or brochure text
+        </div>
+        <p className="mt-1.5 text-sm leading-relaxed text-foreground/80">
+          "Guide £750k. Sought-after lane, south-facing rear garden, recently re-roofed…"
         </p>
       </div>
 
@@ -230,6 +247,7 @@ function HeroMockup() {
   );
 }
 
+
 const WAVE_HEIGHTS = [40, 70, 95, 60, 85, 50, 75, 100, 55, 80, 45, 90, 60, 70, 40];
 
 /* ------------------------------ Voice value -------------------------------- */
@@ -238,30 +256,29 @@ function VoiceValue() {
   const cards = [
     {
       icon: Mic,
-      title: "Dictate property details",
+      title: "Dictate on the move",
       body: "Speak room notes, features, garden details, parking, local highlights and agent observations.",
     },
     {
-      icon: Pencil,
-      title: "Edit before generating",
-      body: "Quill keeps the agent in control. Clean the notes, add missing facts, then generate.",
+      icon: ClipboardPaste,
+      title: "Type or paste details",
+      body: "Enter facts manually or paste rough notes, valuation text or existing property information.",
     },
     {
       icon: Sparkles,
-      title: "Create the full pack",
-      body: "Portal description, social captions, buyer email and vendor update from one set of spoken notes.",
+      title: "Generate the full pack",
+      body: "Create the portal description, social captions, buyer email and vendor update from one set of property details.",
     },
   ];
   return (
     <section className="mx-auto max-w-6xl px-5 py-20 lg:py-24">
       <Reveal className="mx-auto max-w-2xl text-center">
         <h2 className="font-display text-3xl font-semibold sm:text-4xl">
-          Built for agents who do not have time to type.
+          Built for agents who need notes captured fast.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Between valuations, viewings and vendor calls, typing listing notes is dead time. Quill
-          lets agents speak naturally, clean up the details, and generate the full marketing pack
-          from there.
+          Some agents prefer to dictate between viewings. Others want to type, paste or tidy existing
+          notes. Quill supports all three, then turns those details into a complete listing pack.
         </p>
       </Reveal>
       <div className="mt-12 grid gap-5 md:grid-cols-3">
@@ -287,8 +304,8 @@ function HowItWorks() {
   const steps = [
     {
       icon: Mic,
-      title: "Speak or paste the details",
-      body: "Add notes by voice, typed text or copied property information.",
+      title: "Speak, type or paste the details",
+      body: "Add property notes by voice, manual typing or copied text from existing instructions.",
     },
     {
       icon: Building2,
@@ -792,14 +809,14 @@ function FinalCta({ ctaTo }: { ctaTo: string }) {
               Your next listing does not need to start with a blank page.
             </h2>
             <p className="mt-5 text-lg text-muted-foreground">
-              Speak the notes. Choose the voice. Let Quill shape the copy.
+              Speak, type or paste the notes. Choose the voice. Generate the listing pack.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <Button asChild size="lg" className="shadow-[0_14px_44px_-16px] shadow-primary/70">
                 <Link to={ctaTo}>Start free trial</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-white/15">
-                <a href="#voice-demo">See voice demo</a>
+                <a href="#voice-demo">Try voice dictation</a>
               </Button>
             </div>
           </div>
