@@ -304,8 +304,8 @@ function HowItWorks() {
   const steps = [
     {
       icon: Mic,
-      title: "Speak or paste the details",
-      body: "Add notes by voice, typed text or copied property information.",
+      title: "Speak, type or paste the details",
+      body: "Add property notes by voice, manual typing or copied text from existing instructions.",
     },
     {
       icon: Building2,
