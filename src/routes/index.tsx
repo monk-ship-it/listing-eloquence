@@ -169,7 +169,10 @@ function Landing() {
       {/* Pricing */}
       <section className="mx-auto max-w-3xl px-5 py-20 text-center">
         <h2 className="font-display text-3xl font-semibold">Simple pricing</h2>
-        <Card className="mx-auto mt-8 max-w-md border-primary/40 p-8 text-left">
+        <Card className="mx-auto mt-8 max-w-md border-primary/40 bg-gradient-to-b from-card to-card/40 p-8 text-left shadow-[0_30px_80px_-30px] shadow-primary/40">
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium uppercase tracking-wide text-primary">
+            Most popular
+          </span>
           <p className="font-display text-4xl font-semibold">
             {PRICE_MONTHLY}
             <span className="text-base font-normal text-muted-foreground">/month</span>
