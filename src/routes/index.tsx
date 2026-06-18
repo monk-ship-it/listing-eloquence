@@ -271,7 +271,7 @@ function VoiceValue() {
     },
   ];
   return (
-    <section className="mx-auto max-w-6xl px-5 py-20 lg:py-24">
+    <section className="mx-auto max-w-6xl px-5 py-14 sm:py-20 lg:py-24">
       <Reveal className="mx-auto max-w-2xl text-center">
         <h2 className="font-display text-3xl font-semibold sm:text-4xl">
           Built for agents who need notes captured fast.
@@ -319,7 +319,7 @@ function HowItWorks() {
     },
   ];
   return (
-    <section className="border-y border-white/10 bg-card/30 py-20 lg:py-24">
+    <section className="border-y border-white/10 bg-card/30 py-14 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <Reveal className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-semibold sm:text-4xl">
@@ -388,7 +388,7 @@ const VOICE_CARDS = [
 
 function Voices() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-20 lg:py-24">
+    <section className="mx-auto max-w-6xl px-5 py-14 sm:py-20 lg:py-24">
       <Reveal className="mx-auto max-w-2xl text-center">
         <h2 className="font-display text-3xl font-semibold sm:text-4xl">
           Four crafted voices for different properties.
@@ -442,7 +442,7 @@ function LiveExample() {
   ];
 
   return (
-    <section id="example" className="border-y border-white/10 bg-card/30 py-20 lg:py-24">
+    <section id="example" className="border-y border-white/10 bg-card/30 py-14 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <Reveal className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-semibold sm:text-4xl">
@@ -626,7 +626,7 @@ function VoiceDictation({ ctaTo }: { ctaTo: string }) {
     "Works for features, room notes, gardens, parking and local highlights",
   ];
   return (
-    <section id="voice-demo" className="mx-auto max-w-6xl px-5 py-20 lg:py-24">
+    <section id="voice-demo" className="mx-auto max-w-6xl px-5 py-14 sm:py-20 lg:py-24">
       <div className="grid items-center gap-12 lg:grid-cols-2">
         <Reveal>
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
@@ -710,7 +710,7 @@ function VoiceDictation({ ctaTo }: { ctaTo: string }) {
 
 function Pricing({ ctaTo }: { ctaTo: string }) {
   return (
-    <section id="pricing" className="border-y border-white/10 bg-card/30 py-20 lg:py-24">
+    <section id="pricing" className="border-y border-white/10 bg-card/30 py-14 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <Reveal className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-3xl font-semibold sm:text-4xl">
@@ -800,7 +800,7 @@ function orderedFeatures(features: string[]): string[] {
 
 function FinalCta({ ctaTo }: { ctaTo: string }) {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-20 lg:py-24">
+    <section className="mx-auto max-w-6xl px-5 py-14 sm:py-20 lg:py-24">
       <Reveal>
         <div className="glass-strong glow-primary relative overflow-hidden rounded-3xl px-6 py-14 text-center sm:px-12">
           <div className="pointer-events-none absolute inset-0 bg-radial-glow opacity-70" />
