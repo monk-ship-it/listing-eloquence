@@ -86,9 +86,21 @@ function GeneratorPage() {
             Enter the property facts, choose a voice, and generate portal-ready copy.
           </p>
         </div>
-        <Button variant="outline" onClick={loadExample}>
-          <Sparkles className="mr-2 h-4 w-4" /> Load example
-        </Button>
+        <div className="flex items-center gap-3">
+          {usage && hasAccess && (
+            <div className="rounded-lg border border-border/70 bg-card/50 px-4 py-2 text-right">
+              <p className="text-xs text-muted-foreground">{usage.planName} plan</p>
+              <p className="text-sm font-semibold">
+                {usage.unlimited
+                  ? "Unlimited listings"
+                  : `${usage.remaining} of ${usage.limit} listings left`}
+              </p>
+            </div>
+          )}
+          <Button variant="outline" onClick={loadExample}>
+            <Sparkles className="mr-2 h-4 w-4" /> Load example
+          </Button>
+        </div>
       </div>
 
       {!subQuery.isLoading && !hasAccess && (
@@ -102,6 +114,23 @@ function GeneratorPage() {
             </div>
             <Button asChild size="sm">
               <Link to="/account">Start free trial</Link>
+            </Button>
+          </div>
+        </Card>
+      )}
+
+      {hasAccess && outOfListings && (
+        <Card className="mt-6 border-destructive/40 bg-destructive/5 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Lock className="h-5 w-5 text-destructive" />
+              <p className="text-sm">
+                You've used all {usage?.limit} listings on your {usage?.planName} plan this month.
+                It renews on {usage ? new Date(usage.resetsOn).toLocaleDateString("en-GB", { day: "numeric", month: "long" }) : ""}.
+              </p>
+            </div>
+            <Button asChild size="sm">
+              <Link to="/subscription">Upgrade plan</Link>
             </Button>
           </div>
         </Card>
