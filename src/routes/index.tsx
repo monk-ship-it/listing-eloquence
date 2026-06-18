@@ -146,7 +146,7 @@ function Hero({ ctaTo }: { ctaTo: string }) {
           </Reveal>
           <Reveal delay={280}>
             <div className="mt-7 flex flex-wrap gap-2.5">
-              {["Voice notes in", "Listing copy out", "Editable before generation"].map((chip) => (
+              {["Speak, type or paste", "Listing copy out", "Editable before generation"].map((chip) => (
                 <span
                   key={chip}
                   className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-foreground/90"
