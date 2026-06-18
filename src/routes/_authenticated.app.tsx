@@ -43,6 +43,7 @@ function GeneratorPage() {
   const subQuery = useQuery({ queryKey: ["subscription"], queryFn: () => subFn() });
   const usageQuery = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
   const queryClient = useQueryClient();
+  const { lang, setLang, languages } = useDictationSettings();
 
   const [input, setInput] = useState<ListingInput>(EMPTY_INPUT);
   const [output, setOutput] = useState<ListingOutput | null>(null);
@@ -158,9 +159,26 @@ function GeneratorPage() {
         {/* Input */}
         <Card className="p-6">
           <h2 className="font-display text-xl font-semibold">Property details</h2>
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Mic className="h-3.5 w-3.5" /> Tip: tap the mic on a field to dictate instead of typing.
-          </p>
+          <div className="mt-1 flex items-center justify-between gap-2">
+            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Mic className="h-3.5 w-3.5" /> Tip: tap the mic on a field to dictate instead of typing.
+            </p>
+            <div className="flex items-center gap-1.5">
+              <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+              <Select value={lang} onValueChange={(v) => setLang(v)}>
+                <SelectTrigger className="h-7 w-[10rem] text-xs">
+                  <SelectValue placeholder="Language" />
+                </SelectTrigger>
+                <SelectContent>
+                  {languages.map((l) => (
+                    <SelectItem key={l.code} value={l.code}>
+                      {l.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
 
           <div className="mt-5">
             <Label>Brand voice</Label>
@@ -350,16 +368,18 @@ function Field({
   label,
   children,
   onDictate,
+  lang,
 }: {
   label: string;
   children: React.ReactNode;
   onDictate?: (text: string) => void;
+  lang?: string;
 }) {
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between gap-2">
         <Label className="text-xs text-muted-foreground">{label}</Label>
-        {onDictate && <DictateButton onResult={onDictate} />}
+        {onDictate && <DictateButton onResult={onDictate} lang={lang} />}
       </div>
       {children}
     </div>
