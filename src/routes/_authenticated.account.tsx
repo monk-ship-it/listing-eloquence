@@ -135,6 +135,24 @@ function AccountPage() {
       <h1 className="font-display text-3xl font-semibold">Account</h1>
       <p className="mt-1 text-sm text-muted-foreground">{user?.email}</p>
 
+      {activation === "activating" && (
+        <div className="mt-6 flex items-center gap-3 rounded-lg border border-border/70 bg-muted/30 p-4 text-sm">
+          <Loader2 className="h-4 w-4 animate-spin text-primary" />
+          <span>Activating your subscription…</span>
+        </div>
+      )}
+      {activation === "active" && (
+        <div className="mt-6 flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/5 p-4 text-sm">
+          <CheckCircle2 className="h-4 w-4 text-primary" />
+          <span>Subscription activated. Your account is ready.</span>
+        </div>
+      )}
+      {activation === "pending" && (
+        <div className="mt-6 rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 text-sm text-amber-700">
+          Payment received. Your account is still being activated. Please refresh in a moment or contact support.
+        </div>
+      )}
+
       <Card className="mt-8 p-7">
         <div className="flex items-center justify-between">
           <h2 className="font-display text-xl font-semibold">Subscription</h2>
