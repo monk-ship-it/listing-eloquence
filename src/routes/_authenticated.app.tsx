@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { VOICES, type VoiceId } from "@/lib/voices";
 import { EMPTY_INPUT, EXAMPLE_INPUT, type ListingInput, type ListingOutput } from "@/lib/listing-types";
 import { generateListing } from "@/lib/listing.functions";
-import { getMySubscription } from "@/lib/subscription.functions";
+import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME } from "@/lib/config";
 import { Copy, Sparkles, RefreshCw, Lock } from "lucide-react";
 
