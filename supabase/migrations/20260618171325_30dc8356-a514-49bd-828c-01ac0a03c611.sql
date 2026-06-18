@@ -1,0 +1,1 @@
+ALTER TABLE public.subscribers ADD COLUMN IF NOT EXISTS plan text NOT NULL DEFAULT 'starter';

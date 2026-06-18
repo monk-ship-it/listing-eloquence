@@ -75,18 +75,26 @@ export const generateListing = createServerFn({ method: "POST" })
     // Subscription gate (server-side enforcement)
     const { data: sub } = await supabase
       .from("subscribers")
-      .select("status, email, current_period_end")
+      .select("status, email, plan, current_period_end")
       .eq("user_id", userId)
       .maybeSingle();
 
-    const { isCompedEmail } = await import("./config");
-    const { hasActiveAccess } = await import("./subscription.functions");
+    const { isCompedEmail, getPlan } = await import("./config");
+    const { hasActiveAccess, computeUsage } = await import("./subscription.functions");
+    const comped = isCompedEmail(sub?.email);
     const status = sub?.status ?? "none";
     const hasAccess =
-      isCompedEmail(sub?.email) ||
-      hasActiveAccess(status, sub?.current_period_end ?? null);
+      comped || hasActiveAccess(status, sub?.current_period_end ?? null);
     if (!hasAccess) {
       throw new Error("SUBSCRIPTION_REQUIRED");
+    }
+
+    // Monthly listing allowance (per calendar month). Comped accounts are unlimited.
+    if (!comped) {
+      const usage = await computeUsage(supabase, userId, getPlan(sub?.plan).id, comped);
+      if (usage.remaining <= 0) {
+        throw new Error("LISTING_LIMIT_REACHED");
+      }
     }
 
     const voice = (data.voice ?? "professional") as VoiceId;

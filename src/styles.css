@@ -143,6 +143,8 @@
 
   html {
     font-family: var(--font-sans);
+    scrollbar-gutter: stable;
+    overflow-y: scroll;
   }
 
   body {

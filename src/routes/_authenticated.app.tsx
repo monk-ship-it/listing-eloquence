@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { VOICES, type VoiceId } from "@/lib/voices";
 import { EMPTY_INPUT, EXAMPLE_INPUT, type ListingInput, type ListingOutput } from "@/lib/listing-types";
 import { generateListing } from "@/lib/listing.functions";
-import { getMySubscription } from "@/lib/subscription.functions";
+import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME } from "@/lib/config";
 import { Copy, Sparkles, RefreshCw, Lock } from "lucide-react";
 
@@ -30,7 +30,9 @@ function copy(text: string) {
 function GeneratorPage() {
   const generate = useServerFn(generateListing);
   const subFn = useServerFn(getMySubscription);
+  const usageFn = useServerFn(getMyUsage);
   const subQuery = useQuery({ queryKey: ["subscription"], queryFn: () => subFn() });
+  const usageQuery = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
   const queryClient = useQueryClient();
 
   const [input, setInput] = useState<ListingInput>(EMPTY_INPUT);
@@ -38,6 +40,8 @@ function GeneratorPage() {
   const [busy, setBusy] = useState(false);
 
   const hasAccess = subQuery.data?.hasAccess ?? false;
+  const usage = usageQuery.data;
+  const outOfListings = !!usage && !usage.unlimited && usage.remaining <= 0;
 
   function set<K extends keyof ListingInput>(key: K, value: ListingInput[K]) {
     setInput((prev) => ({ ...prev, [key]: value }));
@@ -55,11 +59,15 @@ function GeneratorPage() {
       const result = await generate({ data: input });
       setOutput(result);
       queryClient.invalidateQueries({ queryKey: ["generations"] });
+      queryClient.invalidateQueries({ queryKey: ["usage"] });
       toast.success("Listing generated.");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Generation failed.";
       if (msg.includes("SUBSCRIPTION_REQUIRED")) {
         toast.error("Your trial or subscription is required to generate.");
+      } else if (msg.includes("LISTING_LIMIT_REACHED")) {
+        toast.error("You've used all your listings this month. Upgrade your plan or wait for next month's renewal.");
+        queryClient.invalidateQueries({ queryKey: ["usage"] });
       } else {
         toast.error(msg);
       }
@@ -67,6 +75,7 @@ function GeneratorPage() {
       setBusy(false);
     }
   }
+
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-8">
@@ -77,9 +86,21 @@ function GeneratorPage() {
             Enter the property facts, choose a voice, and generate portal-ready copy.
           </p>
         </div>
-        <Button variant="outline" onClick={loadExample}>
-          <Sparkles className="mr-2 h-4 w-4" /> Load example
-        </Button>
+        <div className="flex items-center gap-3">
+          {usage && hasAccess && (
+            <div className="rounded-lg border border-border/70 bg-card/50 px-4 py-2 text-right">
+              <p className="text-xs text-muted-foreground">{usage.planName} plan</p>
+              <p className="text-sm font-semibold">
+                {usage.unlimited
+                  ? "Unlimited listings"
+                  : `${usage.remaining} of ${usage.limit} listings left`}
+              </p>
+            </div>
+          )}
+          <Button variant="outline" onClick={loadExample}>
+            <Sparkles className="mr-2 h-4 w-4" /> Load example
+          </Button>
+        </div>
       </div>
 
       {!subQuery.isLoading && !hasAccess && (
@@ -93,6 +114,23 @@ function GeneratorPage() {
             </div>
             <Button asChild size="sm">
               <Link to="/account">Start free trial</Link>
+            </Button>
+          </div>
+        </Card>
+      )}
+
+      {hasAccess && outOfListings && (
+        <Card className="mt-6 border-destructive/40 bg-destructive/5 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Lock className="h-5 w-5 text-destructive" />
+              <p className="text-sm">
+                You've used all {usage?.limit} listings on your {usage?.planName} plan this month.
+                It renews on {usage ? new Date(usage.resetsOn).toLocaleDateString("en-GB", { day: "numeric", month: "long" }) : ""}.
+              </p>
+            </div>
+            <Button asChild size="sm">
+              <Link to="/subscription">Upgrade plan</Link>
             </Button>
           </div>
         </Card>
@@ -202,7 +240,7 @@ function GeneratorPage() {
             </div>
           </div>
 
-          <Button className="mt-6 w-full" size="lg" onClick={run} disabled={busy || !hasAccess}>
+          <Button className="mt-6 w-full" size="lg" onClick={run} disabled={busy || !hasAccess || outOfListings}>
             {busy ? (
               <>
                 <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Generating…

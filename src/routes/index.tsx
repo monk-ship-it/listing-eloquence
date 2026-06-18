@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { VOICES } from "@/lib/voices";
 import { EXAMPLE_INPUT } from "@/lib/listing-types";
-import { APP_NAME, PRICE_MONTHLY, TRIAL_DAYS, CONTACT_EMAIL } from "@/lib/config";
+import { APP_NAME, PLANS, TRIAL_DAYS, CONTACT_EMAIL } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
-import { Check, Sparkles, PenLine, Share2 } from "lucide-react";
+import { Check, Sparkles, PenLine, Instagram, Facebook, Twitter, Home, Bed, Bath, Maximize, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -77,7 +77,7 @@ function Landing() {
             </Button>
           </div>
           <p className="mt-4 text-sm text-muted-foreground">
-            Then {PRICE_MONTHLY}/month. Cancel anytime from your account.
+            Plans from {PLANS[0].price}/month. Cancel anytime from your account.
           </p>
         </div>
       </section>
@@ -109,93 +109,148 @@ function Landing() {
           <div className="flex flex-col items-center text-center">
             <h2 className="font-display text-3xl font-semibold">From details to dazzling — instantly</h2>
             <p className="mt-3 max-w-2xl text-muted-foreground">
-              Enter the facts; {APP_NAME} writes the listing. Here's a Heritage-voice example.
+              Enter the facts; {APP_NAME} writes every format you need. Here's a real
+              Heritage-voice example with the headline, full listing, teaser and social pack.
             </p>
-            <Button
-              className="mt-6"
-              variant="outline"
-              onClick={() => setShowOutput((s) => !s)}
-            >
-              {showOutput ? "Show the input" : "Reveal the listing"}
+            <Button className="mt-6" variant="outline" onClick={() => setShowOutput((s) => !s)}>
+              {showOutput ? "Show the property details" : "Reveal the generated copy"}
             </Button>
           </div>
-          <div className="mt-8 grid gap-5 md:grid-cols-2">
+
+          <div className="mt-8 grid gap-5 lg:grid-cols-2">
+            {/* Input */}
             <Card className="p-6">
-              <div className="mb-3 flex items-center gap-2 text-sm font-medium text-primary">
-                <PenLine className="h-4 w-4" /> Input
+              <div className="mb-4 flex items-center gap-2 text-sm font-medium text-primary">
+                <PenLine className="h-4 w-4" /> Property details (input)
               </div>
-              <ul className="space-y-1.5 text-sm text-muted-foreground">
-                <li><span className="text-foreground">Type:</span> {EXAMPLE_INPUT.propertyType}</li>
-                <li><span className="text-foreground">Location:</span> {EXAMPLE_INPUT.address}</li>
-                <li><span className="text-foreground">Price:</span> {EXAMPLE_INPUT.priceQualifier} £{EXAMPLE_INPUT.price}</li>
-                <li><span className="text-foreground">Beds/Baths:</span> {EXAMPLE_INPUT.bedrooms} / {EXAMPLE_INPUT.bathrooms}</li>
-                <li><span className="text-foreground">Features:</span> {EXAMPLE_INPUT.keyFeatures}</li>
-                <li><span className="text-foreground">Garden:</span> {EXAMPLE_INPUT.outsideSpace}</li>
-              </ul>
+              <div className="grid grid-cols-2 gap-3">
+                <Stat icon={Home} label="Type" value={EXAMPLE_INPUT.propertyType} />
+                <Stat icon={MapPin} label="Location" value={EXAMPLE_INPUT.address} />
+                <Stat icon={Bed} label="Bedrooms" value={EXAMPLE_INPUT.bedrooms} />
+                <Stat icon={Bath} label="Bathrooms" value={EXAMPLE_INPUT.bathrooms} />
+                <Stat icon={Maximize} label="Receptions" value={EXAMPLE_INPUT.receptions} />
+                <Stat icon={Check} label="Tenure" value={EXAMPLE_INPUT.tenure} />
+              </div>
+              <dl className="mt-4 space-y-2 border-t border-border/60 pt-4 text-sm">
+                <Row label="Price" value={`${EXAMPLE_INPUT.priceQualifier} £${EXAMPLE_INPUT.price}`} />
+                <Row label="EPC / Council Tax" value={`${EXAMPLE_INPUT.epc} / Band ${EXAMPLE_INPUT.councilTaxBand}`} />
+                <Row label="Key features" value={EXAMPLE_INPUT.keyFeatures} />
+                <Row label="Outside space" value={EXAMPLE_INPUT.outsideSpace} />
+                <Row label="Parking" value={EXAMPLE_INPUT.parking} />
+                <Row label="Nearby" value={EXAMPLE_INPUT.nearby} />
+              </dl>
             </Card>
-            <Card className="p-6">
-              <div className="mb-3 flex items-center gap-2 text-sm font-medium text-primary">
-                <Sparkles className="h-4 w-4" /> Output
-              </div>
+
+            {/* Output */}
+            <div className="space-y-5">
               {showOutput ? (
-                <div className="space-y-3 text-sm">
-                  <p className="font-display text-lg font-semibold text-foreground">
-                    A Distinguished Cotswold Rectory, Quietly Commanding the Heart of Burford
-                  </p>
-                  <p className="text-muted-foreground">
-                    Set back from Church Lane behind a gravelled drive, The Old Rectory has watched
-                    over Burford since the early 18th century. Step inside and flagstone floors give
-                    way to an inglenook fireplace, exposed beams and a bespoke shaker kitchen — period
-                    character met with considered, everyday comfort.
-                  </p>
-                  <p className="text-muted-foreground">
-                    Beyond, a walled garden of around half an acre unfolds into mature borders and a
-                    small orchard, with a stone terrace made for long summer evenings.
-                  </p>
-                  <div className="flex items-center gap-2 pt-1 text-xs text-primary">
-                    <Share2 className="h-3.5 w-3.5" /> #BurfordHomes #CotswoldsProperty #PeriodHome
-                  </div>
-                </div>
+                <>
+                  <Card className="p-6">
+                    <div className="mb-3 flex items-center gap-2 text-sm font-medium text-primary">
+                      <Sparkles className="h-4 w-4" /> Headline
+                    </div>
+                    <p className="font-display text-xl font-semibold leading-snug">
+                      {EXAMPLE_OUTPUT.headline}
+                    </p>
+                  </Card>
+
+                  <Card className="p-6">
+                    <div className="mb-3 flex items-center gap-2 text-sm font-medium text-primary">
+                      <PenLine className="h-4 w-4" /> Full portal listing
+                    </div>
+                    <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
+                      {EXAMPLE_OUTPUT.listing.map((p, i) => (
+                        <p key={i}>{p}</p>
+                      ))}
+                    </div>
+                  </Card>
+
+                  <Card className="p-6">
+                    <div className="mb-2 flex items-center gap-2 text-sm font-medium text-primary">
+                      <Sparkles className="h-4 w-4" /> Teaser
+                    </div>
+                    <p className="text-sm italic text-muted-foreground">{EXAMPLE_OUTPUT.summary}</p>
+                  </Card>
+
+                  <Card className="p-6">
+                    <div className="mb-3 flex items-center gap-2 text-sm font-medium text-primary">
+                      <Share2Icon /> Social pack
+                    </div>
+                    <div className="space-y-4">
+                      {EXAMPLE_OUTPUT.social.map((s) => (
+                        <div key={s.platform} className="rounded-lg border border-border/60 p-4">
+                          <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                            <s.icon className="h-3.5 w-3.5" /> {s.platform}
+                          </div>
+                          <p className="text-sm text-muted-foreground">{s.caption}</p>
+                          <p className="mt-2 text-xs text-primary">{s.hashtags}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                </>
               ) : (
-                <p className="text-sm text-muted-foreground">
-                  Click “Reveal the listing” to see the generated Heritage-voice copy and social pack.
-                </p>
+                <Card className="flex h-full min-h-[320px] flex-col items-center justify-center p-10 text-center">
+                  <Sparkles className="h-8 w-8 text-primary/60" />
+                  <p className="mt-4 max-w-xs text-sm text-muted-foreground">
+                    Reveal the generated copy to see the headline, full listing, teaser and a
+                    three-platform social pack — every format produced from the details on the left.
+                  </p>
+                </Card>
               )}
-            </Card>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Pricing */}
-      <section className="mx-auto max-w-3xl px-5 py-20 text-center">
-        <h2 className="font-display text-3xl font-semibold">Simple pricing</h2>
-        <Card className="mx-auto mt-8 max-w-md border-primary/40 bg-gradient-to-b from-card to-card/40 p-8 text-left shadow-[0_30px_80px_-30px] shadow-primary/40">
-          <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium uppercase tracking-wide text-primary">
-            Most popular
-          </span>
-          <p className="mt-4 font-display text-5xl font-semibold">
-            {PRICE_MONTHLY}
-            <span className="text-base font-normal text-muted-foreground">/month</span>
+      <section id="pricing" className="mx-auto max-w-6xl px-5 py-20">
+        <div className="text-center">
+          <h2 className="font-display text-3xl font-semibold">Plans that scale with your listings</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
+            Every plan includes all four voices and the full social pack. Your listing allowance
+            renews at the start of each month.
           </p>
-          <p className="mt-1 text-sm text-primary">{TRIAL_DAYS}-day free trial included</p>
-          <ul className="mt-6 space-y-3 text-sm">
-            {[
-              "Unlimited listings in all four voices",
-              "Social captions with hashtags",
-              "Saved listing history",
-              "Material Information-aware copy",
-              "Cancel anytime, self-service",
-            ].map((f) => (
-              <li key={f} className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-primary" /> {f}
-              </li>
-            ))}
-          </ul>
-          <Button asChild className="mt-8 w-full" size="lg">
-            <Link to={ctaTo}>Start free trial</Link>
-          </Button>
-        </Card>
+        </div>
+        <div className="mt-10 grid items-start gap-6 md:grid-cols-3">
+          {PLANS.map((plan) => (
+            <Card
+              key={plan.id}
+              className={`relative flex h-full flex-col p-7 transition-all duration-300 hover:-translate-y-1 ${
+                plan.popular
+                  ? "border-primary/50 bg-gradient-to-b from-card to-card/40 shadow-[0_30px_80px_-30px] shadow-primary/40"
+                  : "border-border/70"
+              }`}
+            >
+              {plan.popular && (
+                <span className="absolute right-6 top-6 inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium uppercase tracking-wide text-primary">
+                  Most popular
+                </span>
+              )}
+              <h3 className="font-display text-2xl font-semibold">{plan.name}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">{plan.tagline}</p>
+              <p className="mt-5 font-display text-4xl font-semibold">
+                {plan.price}
+                <span className="text-base font-normal text-muted-foreground">/month</span>
+              </p>
+              <p className="mt-1 text-sm text-primary">
+                {plan.monthlyListings} listings / month · {TRIAL_DAYS}-day free trial
+              </p>
+              <ul className="mt-6 flex-1 space-y-3 text-sm">
+                {plan.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {f}
+                  </li>
+                ))}
+              </ul>
+              <Button asChild className="mt-8 w-full" size="lg" variant={plan.popular ? "default" : "outline"}>
+                <Link to={ctaTo}>Start free trial</Link>
+              </Button>
+            </Card>
+          ))}
+        </div>
       </section>
+
 
       <footer className="border-t border-border/60 py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 text-sm text-muted-foreground sm:flex-row">
@@ -204,6 +259,74 @@ function Landing() {
           <p>© {new Date().getFullYear()} {APP_NAME}. Crafted for UK estate agents.</p>
         </div>
       </footer>
+    </div>
+  );
+}
+
+const EXAMPLE_OUTPUT = {
+  headline: "A Distinguished Grade II Listed Rectory in the Heart of Burford",
+  listing: [
+    "Set back from Church Lane behind a gravelled drive and a low honey-stone wall, The Old Rectory has watched over Burford since the early 18th century. It is a house of quiet confidence — Georgian additions softening its earlier origins — and one that rewards a slow, considered walk-through.",
+    "Step inside and flagstone floors lead you between rooms of generous proportion. The drawing room (6.8m x 5.1m) is anchored by an inglenook fireplace, while exposed beams and original sash windows lend warmth and light in equal measure. At the heart of the home, a bespoke shaker kitchen and breakfast room (7.2m x 4.4m) opens onto the garden — the natural gathering place of the house.",
+    "Three reception rooms, five bedrooms and three bathrooms are arranged over two principal floors, with a cellar below offering useful storage. Throughout, original joinery and fireplaces have been retained, the period character met with considered, everyday comfort.",
+    "Beyond, a walled garden of around half an acre unfolds into mature herbaceous borders, a small orchard and a stone terrace made for long summer evenings. A gravel driveway and detached double cart shed complete the picture.",
+    "Burford itself needs little introduction — a sought-after Cotswold market town with a honey-stone high street, independent shops and the River Windrush close by. Burford Primary (Ofsted Good) and The Burford School are within reach, with Charlbury station offering trains to London Paddington in around 80 minutes.",
+  ],
+  summary:
+    "A characterful Grade II listed rectory with period detail, a half-acre walled garden and a coveted position in the heart of Burford — guide price £1,450,000.",
+  social: [
+    {
+      platform: "Instagram",
+      icon: Instagram,
+      caption:
+        "Period charm meets everyday comfort 🏡 A Grade II listed Cotswold rectory with an inglenook fireplace, flagstone floors and a half-acre walled garden in the heart of Burford. Guide £1,450,000.",
+      hashtags: "#CotswoldHomes #BurfordProperty #PeriodHome #GradeIIListed #CountryLiving #PropertyForSale",
+    },
+    {
+      platform: "Facebook",
+      icon: Facebook,
+      caption:
+        "New to market — The Old Rectory, Burford. A distinguished 5-bedroom Grade II listed home of early 18th-century origins, with three reception rooms, a bespoke shaker kitchen and a half-acre walled garden. Charlbury station offers London Paddington in ~80 mins. Guide price £1,450,000 — get in touch to arrange a viewing.",
+      hashtags: "#BurfordHomes #CotswoldsProperty #PeriodHome #ForSale",
+    },
+    {
+      platform: "X",
+      icon: Twitter,
+      caption:
+        "Just listed: a Grade II listed Cotswold rectory in the heart of Burford — 5 beds, half-acre walled garden, inglenook fireplace. Guide £1,450,000.",
+      hashtags: "#PropertyForSale #Cotswolds #Burford",
+    },
+  ],
+};
+
+function Share2Icon() {
+  return <Sparkles className="h-4 w-4" />;
+}
+
+function Stat({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-lg border border-border/60 bg-background/40 p-3">
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <Icon className="h-3.5 w-3.5 text-primary" /> {label}
+      </div>
+      <p className="mt-1 truncate text-sm font-medium" title={value}>{value || "—"}</p>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex gap-2">
+      <dt className="w-32 shrink-0 text-muted-foreground">{label}</dt>
+      <dd className="flex-1 text-foreground">{value}</dd>
     </div>
   );
 }

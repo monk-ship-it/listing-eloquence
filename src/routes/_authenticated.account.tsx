@@ -19,7 +19,7 @@ import {
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { getMySubscription, cancelMySubscription, resumeMySubscription } from "@/lib/subscription.functions";
-import { APP_NAME, PRICE_MONTHLY, TRIAL_DAYS, CONTACT_EMAIL, buildCheckoutUrl } from "@/lib/config";
+import { APP_NAME, PRICE_MONTHLY, TRIAL_DAYS, CONTACT_EMAIL, getPlan } from "@/lib/config";
 import { CheckCircle2, CreditCard, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/account")({
@@ -80,10 +80,8 @@ function AccountPage() {
     }
   }
 
-  function startCheckout() {
-    if (!user) return;
-    window.location.href = buildCheckoutUrl(user.id, user.email ?? "");
-  }
+  const plan = getPlan(sub?.plan);
+
 
   return (
     <main className="mx-auto max-w-3xl px-5 py-10">
@@ -103,17 +101,21 @@ function AccountPage() {
         ) : inactive ? (
           <div className="mt-6">
             <p className="text-sm text-muted-foreground">
-              Start your {TRIAL_DAYS}-day free trial to unlock unlimited listings. Then {PRICE_MONTHLY}/month —
+              Start your {TRIAL_DAYS}-day free trial to unlock listing generation. Plans from {PRICE_MONTHLY}/month —
               cancel anytime.
             </p>
-            <Button className="mt-5" size="lg" onClick={startCheckout}>
-              <CreditCard className="mr-2 h-4 w-4" /> Start {TRIAL_DAYS}-day free trial
+            <Button asChild className="mt-5" size="lg">
+              <a href="/subscription">
+                <CreditCard className="mr-2 h-4 w-4" /> Choose a plan & start free trial
+              </a>
             </Button>
           </div>
         ) : (
           <div className="mt-6 space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Info label="Plan" value={`${PRICE_MONTHLY} / month`} />
+              <Info label="Plan" value={`${plan.name} — ${plan.price} / month`} />
+              <Info label="Listings" value={`${plan.monthlyListings} per month`} />
+
               {status === "trialing" ? (
                 <Info label="Trial ends" value={fmtDate(sub?.trialEnd ?? null)} />
               ) : (

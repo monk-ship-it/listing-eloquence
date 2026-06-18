@@ -26,6 +26,15 @@ function toIso(unixSeconds: number | null | undefined): string | null {
   return new Date(unixSeconds * 1000).toISOString();
 }
 
+/** Map a Stripe subscription's monthly amount (in pence) to a plan id. */
+function planFromSubscription(sub: any): string {
+  const amount: number | undefined = sub?.items?.data?.[0]?.price?.unit_amount;
+  if (amount == null) return "starter";
+  if (amount >= 4999) return "growth";
+  if (amount >= 2999) return "pro";
+  return "starter";
+}
+
 export const Route = createFileRoute("/api/public/stripe-webhook")({
   server: {
     handlers: {
@@ -64,6 +73,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
             let trialEnd: string | null = null;
             let periodEnd: string | null = null;
             let cancelAtPeriodEnd = false;
+            let plan = "starter";
 
             if (subscriptionId) {
               const { getStripeSubscription } = await import("@/lib/stripe.server");
@@ -72,6 +82,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               trialEnd = toIso(sub.trial_end);
               periodEnd = toIso(sub.current_period_end);
               cancelAtPeriodEnd = !!sub.cancel_at_period_end;
+              plan = planFromSubscription(sub);
             }
 
             if (userId) {
@@ -81,6 +92,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
                   stripe_customer_id: customerId,
                   stripe_subscription_id: subscriptionId,
                   status,
+                  plan,
                   trial_end: trialEnd,
                   current_period_end: periodEnd,
                   cancel_at_period_end: cancelAtPeriodEnd,
@@ -93,6 +105,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
                 .update({
                   stripe_subscription_id: subscriptionId,
                   status,
+                  plan,
                   trial_end: trialEnd,
                   current_period_end: periodEnd,
                   cancel_at_period_end: cancelAtPeriodEnd,
@@ -112,6 +125,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               .from("subscribers")
               .update({
                 status,
+                plan: planFromSubscription(sub),
                 trial_end: toIso(sub.trial_end),
                 current_period_end: toIso(sub.current_period_end),
                 cancel_at_period_end: !!sub.cancel_at_period_end,

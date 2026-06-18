@@ -5,8 +5,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { getMySubscription } from "@/lib/subscription.functions";
-import { APP_NAME, PRICE_MONTHLY, TRIAL_DAYS, buildCheckoutUrl } from "@/lib/config";
+import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
+import { APP_NAME, PLANS, getPlan, TRIAL_DAYS, buildCheckoutUrl } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
   CheckCircle2,
@@ -78,20 +78,23 @@ const STATUS_META: Record<
 function SubscriptionPage() {
   const { user } = useAuth();
   const subFn = useServerFn(getMySubscription);
+  const usageFn = useServerFn(getMyUsage);
   const { data: sub, isLoading } = useQuery({
     queryKey: ["subscription"],
     queryFn: () => subFn(),
   });
+  const { data: usage } = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
 
   const status = sub?.status ?? "none";
   const rawStatus = sub?.rawStatus ?? "none";
   const hasAccess = sub?.hasAccess ?? false;
   const meta = STATUS_META[status] ?? STATUS_META.none;
   const remaining = daysLeft(sub?.currentPeriodEnd ?? null);
+  const currentPlan = getPlan(sub?.plan);
 
-  function startCheckout() {
+  function startCheckout(planId: typeof PLANS[number]["id"] = currentPlan.id) {
     if (!user) return;
-    window.location.href = buildCheckoutUrl(user.id, user.email ?? "");
+    window.location.href = buildCheckoutUrl(user.id, user.email ?? "", planId);
   }
 
   return (
@@ -165,7 +168,20 @@ function SubscriptionPage() {
               {!sub?.isComped && (
                 <Row
                   label="Plan"
-                  value={`${PRICE_MONTHLY} / month`}
+                  value={`${currentPlan.name} — ${currentPlan.price} / month`}
+                />
+              )}
+              {!sub?.isComped && usage && (
+                <Row
+                  label="Listings this month"
+                  value={
+                    <span className="text-sm">
+                      {usage.used} of {usage.limit} used
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        (renews {fmtDate(usage.resetsOn)})
+                      </span>
+                    </span>
+                  }
                 />
               )}
               {status === "trialing" && (
@@ -220,16 +236,48 @@ function SubscriptionPage() {
             </div>
           </Card>
 
-          {/* Actions */}
-          {!hasAccess && (
+          {/* Plans */}
+          {!sub?.isComped && (
             <Card className="p-6">
-              <h2 className="font-display text-lg font-semibold">Start a subscription</h2>
+              <h2 className="font-display text-lg font-semibold">
+                {hasAccess ? "Change your plan" : "Choose a plan"}
+              </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Begin your {TRIAL_DAYS}-day free trial. Cancel anytime.
+                Listings renew at the start of each month. {TRIAL_DAYS}-day free trial on every plan.
               </p>
-              <Button className="mt-4" size="lg" onClick={startCheckout}>
-                <CreditCard className="mr-2 h-4 w-4" /> Start {TRIAL_DAYS}-day free trial
-              </Button>
+              <div className="mt-5 grid gap-4 sm:grid-cols-3">
+                {PLANS.map((plan) => {
+                  const isCurrent = hasAccess && plan.id === currentPlan.id;
+                  return (
+                    <div
+                      key={plan.id}
+                      className={`flex flex-col rounded-lg border p-4 ${
+                        isCurrent ? "border-primary bg-primary/5" : "border-border/70"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <p className="font-display text-base font-semibold">{plan.name}</p>
+                        {isCurrent && <Badge variant="default">Current</Badge>}
+                      </div>
+                      <p className="mt-1 font-display text-2xl font-semibold">
+                        {plan.price}
+                        <span className="text-xs font-normal text-muted-foreground">/mo</span>
+                      </p>
+                      <p className="mt-1 text-xs text-primary">{plan.monthlyListings} listings / month</p>
+                      <Button
+                        className="mt-4 w-full"
+                        size="sm"
+                        variant={isCurrent ? "outline" : "default"}
+                        disabled={isCurrent}
+                        onClick={() => startCheckout(plan.id)}
+                      >
+                        <CreditCard className="mr-2 h-4 w-4" />
+                        {isCurrent ? "Current plan" : hasAccess ? "Switch" : "Start trial"}
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
             </Card>
           )}
 
