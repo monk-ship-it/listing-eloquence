@@ -473,8 +473,8 @@ function LiveExample() {
 
               <dl className="mt-4 divide-y divide-white/5 text-sm">
                 {facts.map(([label, value]) => (
-                  <div key={label} className="flex gap-3 py-2.5">
-                    <dt className="w-28 shrink-0 text-muted-foreground">{label}</dt>
+                  <div key={label} className="flex flex-col gap-0.5 py-2.5 sm:flex-row sm:gap-3">
+                    <dt className="shrink-0 text-muted-foreground sm:w-28">{label}</dt>
                     <dd className="flex-1 text-foreground">{value}</dd>
                   </div>
                 ))}
