@@ -53,6 +53,9 @@ function AuthenticatedLayout() {
             <Button asChild variant={pathname === "/history" ? "secondary" : "ghost"} size="sm">
               <Link to="/history">History</Link>
             </Button>
+            <Button asChild variant={pathname === "/subscription" ? "secondary" : "ghost"} size="sm">
+              <Link to="/subscription">Subscription</Link>
+            </Button>
             <Button asChild variant={pathname === "/account" ? "secondary" : "ghost"} size="sm">
               <Link to="/account">Account</Link>
             </Button>
