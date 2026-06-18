@@ -61,7 +61,7 @@ function Landing() {
             <img
               src={LOGO_URL}
               alt={`${APP_NAME} logo`}
-              className="mx-auto h-20 w-20 rounded-full object-cover ring-2 ring-primary/40 shadow-[0_12px_40px_-12px] shadow-primary/40"
+              className="mx-auto h-14 w-14 rounded-full object-cover ring-2 ring-primary/40 shadow-[0_12px_40px_-12px] shadow-primary/40 sm:h-16 sm:w-16 md:h-20 md:w-20 lg:h-24 lg:w-24"
             />
           </div>
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm text-primary">
