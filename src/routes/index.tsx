@@ -104,7 +104,8 @@ function Hero({ ctaTo }: { ctaTo: string }) {
       <div className="pointer-events-none absolute inset-0 bg-radial-glow" />
       <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 pb-20 pt-14 lg:grid-cols-[1.05fr_1fr] lg:pb-28 lg:pt-20">
         {/* Left */}
-        <div>
+        <div className="min-w-0">
+
           <Reveal>
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
               <AudioLines className="h-3.5 w-3.5" /> AI listing writer with voice dictation
