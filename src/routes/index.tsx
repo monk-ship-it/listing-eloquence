@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { VOICES } from "@/lib/voices";
 import { EXAMPLE_INPUT } from "@/lib/listing-types";
-import { APP_NAME, PLANS, TRIAL_DAYS, CONTACT_EMAIL } from "@/lib/config";
+import { APP_NAME, LOGO_URL, PLANS, TRIAL_DAYS, CONTACT_EMAIL } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import { Check, Sparkles, PenLine, Instagram, Facebook, Twitter, Home, Bed, Bath, Maximize, MapPin } from "lucide-react";
 
@@ -56,7 +56,14 @@ function Landing() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-radial-glow" />
         <div className="absolute inset-0 bg-grid opacity-60" />
-        <div className="relative mx-auto max-w-4xl px-5 py-24 text-center">
+        <div className="relative mx-auto max-w-4xl px-5 pt-16 pb-24 text-center">
+          <div className="mx-auto mb-6 inline-block">
+            <img
+              src={LOGO_URL}
+              alt={`${APP_NAME} logo`}
+              className="mx-auto h-20 w-20 rounded-full object-cover ring-2 ring-primary/40 shadow-[0_12px_40px_-12px] shadow-primary/40"
+            />
+          </div>
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm text-primary">
             <Sparkles className="h-3.5 w-3.5" /> {TRIAL_DAYS}-day free trial — no commitment
           </span>
