@@ -36,7 +36,7 @@ const BRAND = {
 
 const APP_NAME = 'Quill'
 const LOGO_URL =
-  'https://listing-eloquence.lovable.app/logo.png'
+  'https://copybymonk.com/__l5e/assets-v1/c4ebdbb6-12e7-43e4-b33b-7c9b25f79b6b/quill-logo.png'
 
 const Email = ({ name, planName, effectiveDate, resubscribeUrl }: Props) => {
   const greeting = name ? `Hi ${name},` : 'Hi there,'
