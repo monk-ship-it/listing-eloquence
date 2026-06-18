@@ -77,7 +77,7 @@ function Landing() {
             </Button>
           </div>
           <p className="mt-4 text-sm text-muted-foreground">
-            Then {PRICE_MONTHLY}/month. Cancel anytime from your account.
+            Plans from {PLANS[0].price}/month. Cancel anytime from your account.
           </p>
         </div>
       </section>
