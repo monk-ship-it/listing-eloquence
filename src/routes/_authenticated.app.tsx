@@ -176,36 +176,36 @@ function GeneratorPage() {
           </div>
 
           <div className="mt-5 grid gap-4">
-            <Field label="Address / location">
+            <Field label="Address / location" onDictate={appendTo("address")}>
               <Input value={input.address} onChange={(e) => set("address", e.target.value)} placeholder="12 Park Avenue, Harrogate, HG1" />
             </Field>
-            <Field label="Property type">
+            <Field label="Property type" onDictate={appendTo("propertyType")}>
               <Input value={input.propertyType} onChange={(e) => set("propertyType", e.target.value)} placeholder="Victorian semi-detached house" />
             </Field>
             <div className="grid grid-cols-3 gap-3">
-              <Field label="Bedrooms">
+              <Field label="Bedrooms" onDictate={appendTo("bedrooms")}>
                 <Input value={input.bedrooms} onChange={(e) => set("bedrooms", e.target.value)} placeholder="4" />
               </Field>
-              <Field label="Bathrooms">
+              <Field label="Bathrooms" onDictate={appendTo("bathrooms")}>
                 <Input value={input.bathrooms} onChange={(e) => set("bathrooms", e.target.value)} placeholder="2" />
               </Field>
-              <Field label="Receptions">
+              <Field label="Receptions" onDictate={appendTo("receptions")}>
                 <Input value={input.receptions} onChange={(e) => set("receptions", e.target.value)} placeholder="2" />
               </Field>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Tenure">
+              <Field label="Tenure" onDictate={appendTo("tenure")}>
                 <Input value={input.tenure} onChange={(e) => set("tenure", e.target.value)} placeholder="Freehold" />
               </Field>
-              <Field label="Asking price (£)">
+              <Field label="Asking price (£)" onDictate={appendTo("price")}>
                 <Input value={input.price} onChange={(e) => set("price", e.target.value)} placeholder="525,000" />
               </Field>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Price qualifier">
+              <Field label="Price qualifier" onDictate={appendTo("priceQualifier")}>
                 <Input value={input.priceQualifier} onChange={(e) => set("priceQualifier", e.target.value)} placeholder="Guide Price / OIEO" />
               </Field>
-              <Field label="Lease remaining (yrs)">
+              <Field label="Lease remaining (yrs)" onDictate={appendTo("leaseYears")}>
                 <Input value={input.leaseYears} onChange={(e) => set("leaseYears", e.target.value)} placeholder="If leasehold" />
               </Field>
             </div>
