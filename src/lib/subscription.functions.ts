@@ -1,10 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { isCompedEmail } from "./config";
+import { isCompedEmail, getPlan, type PlanId } from "./config";
 
 export interface SubscriptionInfo {
   status: string;
   rawStatus: string;
+  plan: PlanId;
   cancelAtPeriodEnd: boolean;
   trialEnd: string | null;
   currentPeriodEnd: string | null;
@@ -13,8 +14,19 @@ export interface SubscriptionInfo {
   email: string | null;
 }
 
+export interface UsageInfo {
+  plan: PlanId;
+  planName: string;
+  limit: number;
+  used: number;
+  remaining: number;
+  unlimited: boolean;
+  resetsOn: string;
+}
+
 function toInfo(row: {
   status: string;
+  plan?: string | null;
   cancel_at_period_end: boolean;
   trial_end: string | null;
   current_period_end: string | null;
@@ -25,6 +37,7 @@ function toInfo(row: {
   return {
     status: comped ? "active" : rawStatus,
     rawStatus,
+    plan: getPlan(row?.plan).id,
     cancelAtPeriodEnd: row?.cancel_at_period_end ?? false,
     trialEnd: row?.trial_end ?? null,
     currentPeriodEnd: row?.current_period_end ?? null,
@@ -32,6 +45,18 @@ function toInfo(row: {
     isComped: comped,
     email: row?.email ?? null,
   };
+}
+
+/** First day of the current calendar month (UTC), as an ISO string. */
+function startOfMonthIso(): string {
+  const now = new Date();
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
+}
+
+/** First day of next calendar month (UTC) — when the listing allowance renews. */
+function startOfNextMonthIso(): string {
+  const now = new Date();
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)).toISOString();
 }
 
 /**
