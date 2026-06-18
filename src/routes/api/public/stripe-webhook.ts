@@ -26,6 +26,15 @@ function toIso(unixSeconds: number | null | undefined): string | null {
   return new Date(unixSeconds * 1000).toISOString();
 }
 
+/** Map a Stripe subscription's monthly amount (in pence) to a plan id. */
+function planFromSubscription(sub: any): string {
+  const amount: number | undefined = sub?.items?.data?.[0]?.price?.unit_amount;
+  if (amount == null) return "starter";
+  if (amount >= 4999) return "growth";
+  if (amount >= 2999) return "pro";
+  return "starter";
+}
+
 export const Route = createFileRoute("/api/public/stripe-webhook")({
   server: {
     handlers: {
