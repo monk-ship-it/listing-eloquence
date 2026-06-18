@@ -285,7 +285,7 @@ function Landing() {
                 </p>
               </div>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Loader2Icon />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 <span>Transcribing…</span>
               </div>
               <div className="rounded-lg border border-border/60 bg-background/40 p-4">
