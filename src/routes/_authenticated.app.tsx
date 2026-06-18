@@ -220,7 +220,7 @@ function GeneratorPage() {
                 <Input value={input.councilTaxBand} onChange={(e) => set("councilTaxBand", e.target.value)} placeholder="D" />
               </Field>
             </div>
-            <Field label="Outside space / garden">
+            <Field label="Outside space / garden" onDictate={appendTo("outsideSpace")}>
               <Input value={input.outsideSpace} onChange={(e) => set("outsideSpace", e.target.value)} placeholder="Landscaped rear garden, patio" />
             </Field>
             <div className="grid grid-cols-2 gap-3">
