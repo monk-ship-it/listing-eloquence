@@ -325,10 +325,21 @@ function GeneratorPage() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  children,
+  onDictate,
+}: {
+  label: string;
+  children: React.ReactNode;
+  onDictate?: (text: string) => void;
+}) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-xs text-muted-foreground">{label}</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label className="text-xs text-muted-foreground">{label}</Label>
+        {onDictate && <DictateButton onResult={onDictate} />}
+      </div>
       {children}
     </div>
   );
