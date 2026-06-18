@@ -5,7 +5,6 @@ import { Reveal } from "@/components/Reveal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { EXAMPLE_INPUT } from "@/lib/listing-types";
 import { APP_NAME, PLANS, TRIAL_DAYS, CONTACT_EMAIL } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
