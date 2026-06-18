@@ -1,4 +1,4 @@
-import { Mic, X, Loader2, AlertCircle } from "lucide-react";
+import { Mic, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDictation } from "@/hooks/useDictation";
 import { cn } from "@/lib/utils";
@@ -15,7 +15,9 @@ interface DictateButtonProps {
  * spinner + cancel, error → message.
  */
 export function DictateButton({ onResult, className }: DictateButtonProps) {
-  const { status, error, toggle, stop, cancel } = useDictation(onResult);
+  const { status, error, supported, toggle, stop } = useDictation(onResult);
+
+  if (!supported) return null;
 
   return (
     <div className={cn("flex items-center gap-1.5", className)}>
@@ -23,12 +25,6 @@ export function DictateButton({ onResult, className }: DictateButtonProps) {
         <span className="flex items-center gap-1 text-xs font-medium text-destructive">
           <span className="h-2 w-2 animate-pulse rounded-full bg-destructive" />
           Listening…
-        </span>
-      )}
-      {status === "processing" && (
-        <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-          <Loader2 className="h-3 w-3 animate-spin" />
-          Transcribing…
         </span>
       )}
       {status === "error" && error && (
@@ -44,22 +40,11 @@ export function DictateButton({ onResult, className }: DictateButtonProps) {
           variant="destructive"
           size="icon"
           onClick={stop}
-          aria-label="Stop and transcribe"
+          aria-label="Stop dictation"
           className="h-8 w-8"
         >
           {/* square stop icon */}
           <span className="h-3 w-3 rounded-[2px] bg-current" />
-        </Button>
-      ) : status === "processing" ? (
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          onClick={cancel}
-          aria-label="Cancel transcription"
-          className="h-8 w-8"
-        >
-          <X className="h-4 w-4" />
         </Button>
       ) : (
         <Button
