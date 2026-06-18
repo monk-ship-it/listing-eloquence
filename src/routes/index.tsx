@@ -637,7 +637,7 @@ function VoiceDictation({ ctaTo }: { ctaTo: string }) {
           </h2>
           <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted-foreground">
             Tap the mic, describe the property, and Quill turns spoken notes into clean, editable
-            listing text.
+            listing text. Prefer to type or paste? Every field works that way too.
           </p>
           <ul className="mt-7 space-y-3">
             {bullets.map((b) => (
