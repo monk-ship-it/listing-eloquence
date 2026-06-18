@@ -70,7 +70,16 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
         try {
           if (event.type === "checkout.session.completed") {
             const session = event.data.object;
-            const userId: string | null = session.client_reference_id ?? null;
+            // Only act on subscription-mode checkouts.
+            if (session.mode && session.mode !== "subscription") {
+              return new Response(JSON.stringify({ received: true, ignored: "mode" }), {
+                status: 200,
+                headers: { "Content-Type": "application/json" },
+              });
+            }
+
+            const userId: string | null =
+              session.metadata?.user_id ?? session.client_reference_id ?? null;
             const customerId: string | null = session.customer ?? null;
             const subscriptionId: string | null = session.subscription ?? null;
             const email: string | null =
@@ -80,7 +89,8 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
             let trialEnd: string | null = null;
             let periodEnd: string | null = null;
             let cancelAtPeriodEnd = false;
-            let plan = "starter";
+            let plan = session.metadata?.plan ?? "starter";
+            let priceId: string | null = session.metadata?.price_id ?? null;
 
             if (subscriptionId) {
               const { getStripeSubscription } = await import("@/lib/stripe.server");
@@ -90,33 +100,31 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               periodEnd = toIso(sub.current_period_end);
               cancelAtPeriodEnd = !!sub.cancel_at_period_end;
               plan = planFromSubscription(sub);
+              priceId = priceFromSubscription(sub) ?? priceId;
             }
 
+            const fields = {
+              stripe_customer_id: customerId,
+              stripe_subscription_id: subscriptionId,
+              stripe_price_id: priceId,
+              status,
+              plan,
+              trial_end: trialEnd,
+              current_period_end: periodEnd,
+              cancel_at_period_end: cancelAtPeriodEnd,
+            };
+
+            // Idempotent: keyed UPDATE on an existing row, so duplicate
+            // webhook deliveries simply re-apply the same values.
             if (userId) {
               await supabaseAdmin
                 .from("subscribers")
-                .update({
-                  stripe_customer_id: customerId,
-                  stripe_subscription_id: subscriptionId,
-                  status,
-                  plan,
-                  trial_end: trialEnd,
-                  current_period_end: periodEnd,
-                  cancel_at_period_end: cancelAtPeriodEnd,
-                  ...(email ? { email } : {}),
-                })
+                .update({ ...fields, ...(email ? { email } : {}) })
                 .eq("user_id", userId);
             } else if (customerId) {
               await supabaseAdmin
                 .from("subscribers")
-                .update({
-                  stripe_subscription_id: subscriptionId,
-                  status,
-                  plan,
-                  trial_end: trialEnd,
-                  current_period_end: periodEnd,
-                  cancel_at_period_end: cancelAtPeriodEnd,
-                })
+                .update(fields)
                 .eq("stripe_customer_id", customerId);
             }
           } else if (
@@ -127,17 +135,57 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
             const sub = event.data.object;
             const status =
               event.type === "customer.subscription.deleted" ? "canceled" : sub.status;
+            const userId: string | null = sub.metadata?.user_id ?? null;
 
-            await supabaseAdmin
+            const fields = {
+              stripe_customer_id: sub.customer ?? null,
+              stripe_subscription_id: sub.id,
+              stripe_price_id: priceFromSubscription(sub),
+              status,
+              plan: planFromSubscription(sub),
+              trial_end: toIso(sub.trial_end),
+              current_period_end: toIso(sub.current_period_end),
+              cancel_at_period_end: !!sub.cancel_at_period_end,
+            };
+
+            // Prefer matching by subscription id; fall back to user id from metadata.
+            const { data: updated } = await supabaseAdmin
               .from("subscribers")
-              .update({
-                status,
-                plan: planFromSubscription(sub),
-                trial_end: toIso(sub.trial_end),
-                current_period_end: toIso(sub.current_period_end),
-                cancel_at_period_end: !!sub.cancel_at_period_end,
-              })
-              .eq("stripe_subscription_id", sub.id);
+              .update(fields)
+              .eq("stripe_subscription_id", sub.id)
+              .select("user_id");
+
+            if ((!updated || updated.length === 0) && userId) {
+              await supabaseAdmin
+                .from("subscribers")
+                .update(fields)
+                .eq("user_id", userId);
+            }
+          } else if (event.type === "invoice.paid") {
+            // Payment succeeded — ensure the subscription is active and clear
+            // any prior failure state.
+            const invoice = event.data.object;
+            const subscriptionId: string | null = invoice.subscription ?? null;
+            const periodEnd = toIso(invoice.lines?.data?.[0]?.period?.end);
+            if (subscriptionId) {
+              await supabaseAdmin
+                .from("subscribers")
+                .update({
+                  status: "active",
+                  ...(periodEnd ? { current_period_end: periodEnd } : {}),
+                })
+                .eq("stripe_subscription_id", subscriptionId)
+                .in("status", ["past_due", "unpaid", "incomplete", "active", "trialing"]);
+            }
+          } else if (event.type === "invoice.payment_failed") {
+            const invoice = event.data.object;
+            const subscriptionId: string | null = invoice.subscription ?? null;
+            if (subscriptionId) {
+              await supabaseAdmin
+                .from("subscribers")
+                .update({ status: "past_due" })
+                .eq("stripe_subscription_id", subscriptionId);
+            }
           }
         } catch (err) {
           console.error("Webhook handler error:", err);
