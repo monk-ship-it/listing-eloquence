@@ -147,6 +147,14 @@
     overflow-y: scroll;
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
+    /* Stop iOS/Android from auto-inflating text on rotation/zoom so the
+       mobile type scale stays exactly as designed. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern", "liga", "calt";
   }
 
   body {
@@ -154,20 +162,61 @@
     color: var(--color-foreground);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    /* Base body rhythm — comfortable default for any untagged copy. */
+    font-size: 1rem;
+    line-height: 1.6;
   }
 
   /* Clean sans-serif by default (Apple-style); serif reserved for emotional headlines via .font-display */
   h1, h2, h3, h4 {
     font-family: var(--font-sans);
     letter-spacing: -0.02em;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  /* Paragraphs read better with pretty wrapping (avoids orphans on mobile). */
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Interactive labels: tighten just enough for a crafted feel, keep tap-friendly leading. */
+  button, [role="button"] {
+    line-height: 1.2;
+    letter-spacing: -0.005em;
   }
 
   .font-display {
     font-family: var(--font-display);
     font-optical-sizing: auto;
     letter-spacing: -0.01em;
+    line-height: 1.12;
+    font-feature-settings: "liga", "kern";
   }
 }
+
+/* ----------------------------------------------------------------------------
+   Mobile typography refinement
+   On small screens descenders need more room and dense headings need a touch
+   more air. These only apply where a component hasn't set an explicit
+   leading-* / tracking-* utility, so existing layouts stay intact.
+---------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  body {
+    line-height: 1.65;
+  }
+
+  h1, h2, h3, h4 {
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
+  .font-display {
+    line-height: 1.18;
+    letter-spacing: -0.005em;
+  }
+}
+
 
 @utility text-balance {
   text-wrap: balance;
