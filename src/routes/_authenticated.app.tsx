@@ -48,6 +48,15 @@ function GeneratorPage() {
     setInput((prev) => ({ ...prev, [key]: value }));
   }
 
+  function appendTo(key: keyof ListingInput) {
+    return (text: string) =>
+      setInput((prev) => {
+        const current = (prev[key] as string) ?? "";
+        const next = current.trim() ? `${current.trim()} ${text}` : text;
+        return { ...prev, [key]: next };
+      });
+  }
+
   function loadExample() {
     setInput(EXAMPLE_INPUT);
     setOutput(null);
