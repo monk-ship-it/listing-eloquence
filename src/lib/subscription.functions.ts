@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { isCompedEmail, getPlan, type PlanId } from "./config";
+import { isCompedEmail, getPlan, TRIAL_DAYS, type PlanId } from "./config";
 
 export interface SubscriptionInfo {
   status: string;
@@ -218,3 +218,84 @@ export const createBillingPortalUrl = createServerFn({ method: "POST" })
     const session = await createBillingPortalSession(row.stripe_customer_id, data.returnUrl);
     return { url: session.url as string };
   });
+
+/**
+ * Creates a Stripe Checkout Session for the signed-in user and selected plan,
+ * returning the hosted checkout URL. The session carries the app user id in
+ * `client_reference_id`, `metadata.user_id` and `subscription_data.metadata`
+ * so the webhook can activate the correct account.
+ */
+export const createCheckoutSession = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { plan: PlanId; origin: string }) => data)
+  .handler(async ({ context, data }): Promise<{ url: string }> => {
+    const { supabase, userId, claims } = context;
+    const plan = getPlan(data.plan).id;
+
+    const { data: row } = await supabase
+      .from("subscribers")
+      .select("stripe_customer_id, email")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    const email =
+      (claims as { email?: string } | undefined)?.email ?? row?.email ?? "";
+
+    const { resolvePriceId, createSubscriptionCheckoutSession } = await import(
+      "./stripe.server"
+    );
+    const priceId = await resolvePriceId(plan);
+
+    const origin = data.origin.replace(/\/+$/, "");
+    const session = await createSubscriptionCheckoutSession({
+      plan,
+      priceId,
+      userId,
+      email,
+      customerId: row?.stripe_customer_id ?? null,
+      successUrl: `${origin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${origin}/subscription?checkout=cancelled`,
+      trialDays: TRIAL_DAYS,
+    });
+
+    if (!session?.url) throw new Error("Could not start checkout. Please try again.");
+    return { url: session.url as string };
+  });
+
+/**
+ * Verifies a completed Checkout Session belongs to the signed-in user and
+ * returns the latest subscription info. Used by the account page after the
+ * post-payment redirect. Access is always derived from the DB record, never
+ * from the redirect URL alone.
+ */
+export const verifyCheckoutSession = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { sessionId: string }) => data)
+  .handler(
+    async ({
+      context,
+      data,
+    }): Promise<{ ok: boolean; activated: boolean; subscription: SubscriptionInfo }> => {
+      const { supabase, userId } = context;
+
+      const { getCheckoutSession } = await import("./stripe.server");
+      let belongs = false;
+      try {
+        const session = await getCheckoutSession(data.sessionId);
+        const sessionUser =
+          session?.metadata?.user_id ?? session?.client_reference_id ?? null;
+        belongs = sessionUser === userId;
+      } catch (err) {
+        console.error("verifyCheckoutSession: failed to retrieve session", err);
+      }
+
+      const { data: dbRow } = await supabase
+        .from("subscribers")
+        .select("status, plan, cancel_at_period_end, trial_end, current_period_end, email")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      const subscription = toInfo(dbRow);
+      return { ok: belongs, activated: subscription.hasAccess, subscription };
+    },
+  );

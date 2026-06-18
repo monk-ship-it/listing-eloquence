@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,9 +18,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
-import { getMySubscription, cancelMySubscription, resumeMySubscription } from "@/lib/subscription.functions";
+import { getMySubscription, cancelMySubscription, resumeMySubscription, verifyCheckoutSession } from "@/lib/subscription.functions";
 import { APP_NAME, PRICE_MONTHLY, TRIAL_DAYS, CONTACT_EMAIL, getPlan } from "@/lib/config";
-import { CheckCircle2, CreditCard, Mail } from "lucide-react";
+import { CheckCircle2, CreditCard, Mail, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/account")({
   head: () => ({ meta: [{ title: `Account — ${APP_NAME}` }] }),
@@ -47,12 +47,59 @@ function AccountPage() {
   const cancelFn = useServerFn(cancelMySubscription);
   const resumeFn = useServerFn(resumeMySubscription);
   const [busy, setBusy] = useState(false);
+  const verifyFn = useServerFn(verifyCheckoutSession);
+  // null = not in a post-checkout flow; "activating" | "active" | "pending"
+  const [activation, setActivation] = useState<null | "activating" | "active" | "pending">(null);
+  const pollStarted = useRef(false);
 
   const { data: sub, isLoading } = useQuery({ queryKey: ["subscription"], queryFn: () => subFn() });
+
+  // Post-checkout return: verify the session server-side and poll the DB until
+  // the webhook activates the subscription. Access is driven by the DB, never
+  // by the redirect URL alone.
+  useEffect(() => {
+    if (pollStarted.current) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("checkout") !== "success") return;
+    pollStarted.current = true;
+
+    const sessionId = params.get("session_id");
+    window.history.replaceState({}, "", window.location.pathname);
+    setActivation("activating");
+
+    let cancelled = false;
+    (async () => {
+      for (let attempt = 0; attempt < 10 && !cancelled; attempt++) {
+        try {
+          if (sessionId) {
+            const res = await verifyFn({ data: { sessionId } });
+            await qc.invalidateQueries({ queryKey: ["subscription"] });
+            if (res.activated) {
+              if (!cancelled) setActivation("active");
+              toast.success("Subscription activated. Your account is ready.");
+              return;
+            }
+          } else {
+            await qc.invalidateQueries({ queryKey: ["subscription"] });
+          }
+        } catch (err) {
+          console.error("Activation poll error:", err);
+        }
+        await new Promise((r) => setTimeout(r, 2000));
+      }
+      if (!cancelled) setActivation("pending");
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const status = sub?.status ?? "none";
   const hasAccess = sub?.hasAccess ?? false;
   const inactive = !hasAccess;
+
 
   async function cancel() {
     setBusy(true);
@@ -87,6 +134,24 @@ function AccountPage() {
     <main className="mx-auto max-w-3xl px-5 py-10">
       <h1 className="font-display text-3xl font-semibold">Account</h1>
       <p className="mt-1 text-sm text-muted-foreground">{user?.email}</p>
+
+      {activation === "activating" && (
+        <div className="mt-6 flex items-center gap-3 rounded-lg border border-border/70 bg-muted/30 p-4 text-sm">
+          <Loader2 className="h-4 w-4 animate-spin text-primary" />
+          <span>Activating your subscription…</span>
+        </div>
+      )}
+      {activation === "active" && (
+        <div className="mt-6 flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/5 p-4 text-sm">
+          <CheckCircle2 className="h-4 w-4 text-primary" />
+          <span>Subscription activated. Your account is ready.</span>
+        </div>
+      )}
+      {activation === "pending" && (
+        <div className="mt-6 rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 text-sm text-amber-700">
+          Payment received. Your account is still being activated. Please refresh in a moment or contact support.
+        </div>
+      )}
 
       <Card className="mt-8 p-7">
         <div className="flex items-center justify-between">
