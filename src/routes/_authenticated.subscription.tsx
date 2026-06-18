@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
+import { getMySubscription, getMyUsage, createBillingPortalUrl } from "@/lib/subscription.functions";
 import { APP_NAME, PLANS, getPlan, TRIAL_DAYS, buildCheckoutUrl } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
