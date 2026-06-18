@@ -111,7 +111,7 @@ function Hero({ ctaTo }: { ctaTo: string }) {
             </span>
           </Reveal>
           <Reveal delay={60}>
-            <h1 className="mt-6 text-balance font-display text-[2.6rem] font-semibold leading-[1.04] text-gradient sm:text-5xl lg:text-6xl">
+            <h1 className="mt-6 text-balance font-display text-[2.6rem] font-semibold leading-[1.15] text-gradient sm:text-5xl lg:text-6xl">
               Speak it, type it, or paste it — {APP_NAME} turns property details into polished listing
               copy.
             </h1>
