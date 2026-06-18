@@ -487,17 +487,17 @@ function LiveExample() {
           {/* Out */}
           <Reveal delay={120}>
             <Card className="glass h-full rounded-2xl p-6">
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                 <div className="flex items-center gap-2 text-sm font-semibold text-primary">
-                  <Sparkles className="h-4 w-4" /> Marketing pack out
+                  <Sparkles className="h-4 w-4 shrink-0" /> Marketing pack out
                 </div>
-                <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+                <span className="self-start rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary sm:self-auto">
                   Generated in seconds
                 </span>
               </div>
 
               <Tabs defaultValue="listing" className="mt-4">
-                <TabsList className="flex w-full flex-wrap justify-start gap-1 bg-background/50">
+                <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 bg-background/50 p-1">
                   <TabsTrigger value="listing">Listing</TabsTrigger>
                   <TabsTrigger value="instagram">Instagram</TabsTrigger>
                   <TabsTrigger value="tiktok">TikTok</TabsTrigger>
