@@ -111,13 +111,13 @@ function Hero({ ctaTo }: { ctaTo: string }) {
             </span>
           </Reveal>
           <Reveal delay={60}>
-            <h1 className="mt-6 text-balance font-display text-[2.6rem] font-semibold leading-[1.15] text-gradient sm:text-5xl lg:text-6xl">
+            <h1 className="mt-6 text-pretty font-display text-[1.95rem] font-semibold leading-[1.18] text-gradient sm:text-5xl sm:leading-[1.1] lg:text-6xl">
               Speak it, type it, or paste it — {APP_NAME} turns property details into polished listing
               copy.
             </h1>
           </Reveal>
           <Reveal delay={120}>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:mt-6 sm:text-lg">
               {APP_NAME} lets UK estate agents dictate, type or paste property details, choose a brand
               voice, and generate portal-ready listings, social captions and buyer emails in minutes —
               without another CRM to manage.
