@@ -113,7 +113,9 @@ function AccountPage() {
         ) : (
           <div className="mt-6 space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Info label="Plan" value={`${PRICE_MONTHLY} / month`} />
+              <Info label="Plan" value={`${plan.name} — ${plan.price} / month`} />
+              <Info label="Listings" value={`${plan.monthlyListings} per month`} />
+
               {status === "trialing" ? (
                 <Info label="Trial ends" value={fmtDate(sub?.trialEnd ?? null)} />
               ) : (
