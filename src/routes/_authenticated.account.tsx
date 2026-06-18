@@ -80,10 +80,8 @@ function AccountPage() {
     }
   }
 
-  function startCheckout() {
-    if (!user) return;
-    window.location.href = buildCheckoutUrl(user.id, user.email ?? "");
-  }
+  const plan = getPlan(sub?.plan);
+
 
   return (
     <main className="mx-auto max-w-3xl px-5 py-10">
