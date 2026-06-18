@@ -1,145 +1,139 @@
-import { useCallback, useRef, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
-import { transcribeAudio } from "@/lib/transcribe.functions";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-function blobToBase64(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const result = reader.result as string;
-      // strip "data:...;base64," prefix
-      resolve(result.slice(result.indexOf(",") + 1));
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
+export type DictationStatus = "idle" | "listening" | "error";
+
+// Minimal typings for the Web Speech API (not in standard lib DOM types).
+interface SpeechRecognitionResultLike {
+  0: { transcript: string };
+  isFinal: boolean;
+}
+interface SpeechRecognitionEventLike {
+  resultIndex: number;
+  results: { length: number; [index: number]: SpeechRecognitionResultLike };
+}
+interface SpeechRecognitionLike {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+  onresult: ((e: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((e: { error: string }) => void) | null;
+  onend: (() => void) | null;
 }
 
-export type DictationStatus = "idle" | "listening" | "processing" | "error";
+function getRecognitionCtor(): (new () => SpeechRecognitionLike) | null {
+  if (typeof window === "undefined") return null;
+  const w = window as unknown as {
+    SpeechRecognition?: new () => SpeechRecognitionLike;
+    webkitSpeechRecognition?: new () => SpeechRecognitionLike;
+  };
+  return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
+}
 
 /**
- * Microphone dictation hook. Records audio, transcribes it via the server,
- * and returns the text through onResult. Exposes status, error, and a
- * cancel control that discards the current recording/transcription.
+ * Microphone dictation using the browser's built-in Web Speech API.
+ * No server calls, no transcription credits — recognition runs on-device /
+ * via the browser. Final recognized phrases are sent through onResult.
  */
 export function useDictation(onResult: (text: string) => void) {
-  const transcribe = useServerFn(transcribeAudio);
   const [status, setStatus] = useState<DictationStatus>("idle");
   const [error, setError] = useState<string | null>(null);
-  const recorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
-  const streamRef = useRef<MediaStream | null>(null);
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const cancelledRef = useRef(false);
+  const supported = !!getRecognitionCtor();
 
-  const cleanupStream = useCallback(() => {
-    streamRef.current?.getTracks().forEach((t) => t.stop());
-    streamRef.current = null;
-  }, []);
+  // Keep latest onResult without re-creating the recognition instance.
+  const onResultRef = useRef(onResult);
+  useEffect(() => {
+    onResultRef.current = onResult;
+  }, [onResult]);
 
-  // Stop recording and transcribe what was captured.
   const stop = useCallback(() => {
-    if (recorderRef.current && recorderRef.current.state !== "inactive") {
-      recorderRef.current.stop();
-    }
+    recognitionRef.current?.stop();
   }, []);
 
-  // Discard the current recording or ignore an in-flight transcription.
   const cancel = useCallback(() => {
     cancelledRef.current = true;
-    if (recorderRef.current && recorderRef.current.state !== "inactive") {
-      recorderRef.current.stop();
-    }
-    cleanupStream();
+    recognitionRef.current?.abort();
     setStatus("idle");
     setError(null);
-  }, [cleanupStream]);
+  }, []);
 
-  const start = useCallback(async () => {
-    if (status === "listening" || status === "processing") return;
+  const start = useCallback(() => {
+    if (status === "listening") return;
     setError(null);
-    cancelledRef.current = false;
 
-    let stream: MediaStream;
+    const Ctor = getRecognitionCtor();
+    if (!Ctor) {
+      setStatus("error");
+      setError("Voice dictation isn't supported in this browser. Try Chrome.");
+      return;
+    }
+
+    cancelledRef.current = false;
+    const recognition = new Ctor();
+    recognition.lang = "en-GB";
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognitionRef.current = recognition;
+
+    recognition.onresult = (e) => {
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const result = e.results[i];
+        if (result.isFinal) {
+          const text = result[0].transcript.trim();
+          if (text) onResultRef.current(text);
+        }
+      }
+    };
+
+    recognition.onerror = (e) => {
+      if (cancelledRef.current) return;
+      setStatus("error");
+      setError(
+        e.error === "not-allowed" || e.error === "service-not-allowed"
+          ? "Microphone access is needed to dictate."
+          : e.error === "no-speech"
+            ? "Didn't catch that — please try again."
+            : "Dictation stopped unexpectedly.",
+      );
+    };
+
+    recognition.onend = () => {
+      recognitionRef.current = null;
+      setStatus((s) => (s === "listening" ? "idle" : s));
+    };
+
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recognition.start();
+      setStatus("listening");
     } catch {
       setStatus("error");
-      setError("Microphone access is needed to dictate.");
-      return;
+      setError("Couldn't start dictation — please try again.");
     }
-
-    const mimeType = ["audio/webm", "audio/mp4"].find(
-      (t) => typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(t),
-    );
-    if (!mimeType) {
-      stream.getTracks().forEach((t) => t.stop());
-      setStatus("error");
-      setError("This browser can't record a supported audio format.");
-      return;
-    }
-
-    streamRef.current = stream;
-    chunksRef.current = [];
-    const recorder = new MediaRecorder(stream, { mimeType });
-    recorderRef.current = recorder;
-
-    recorder.ondataavailable = (e) => {
-      if (e.data.size > 0) chunksRef.current.push(e.data);
-    };
-
-    recorder.onstop = async () => {
-      cleanupStream();
-      if (cancelledRef.current) {
-        setStatus("idle");
-        return;
-      }
-
-      const blob = new Blob(chunksRef.current, { type: recorder.mimeType });
-      if (blob.size < 1024) {
-        setStatus("error");
-        setError("That recording was empty — please try again.");
-        return;
-      }
-
-      setStatus("processing");
-      try {
-        const audio = await blobToBase64(blob);
-        const { text } = await transcribe({ data: { audio, mimeType: recorder.mimeType } });
-        if (cancelledRef.current) {
-          setStatus("idle");
-          return;
-        }
-        if (text) {
-          onResult(text);
-          setStatus("idle");
-        } else {
-          setStatus("error");
-          setError("Couldn't hear anything — please try again.");
-        }
-      } catch (err) {
-        if (cancelledRef.current) {
-          setStatus("idle");
-          return;
-        }
-        setStatus("error");
-        setError(err instanceof Error ? err.message : "Transcription failed.");
-      }
-    };
-
-    recorder.start();
-    setStatus("listening");
-  }, [status, transcribe, onResult, cleanupStream]);
+  }, [status]);
 
   const toggle = useCallback(() => {
     if (status === "listening") stop();
-    else if (status !== "processing") start();
+    else start();
   }, [status, start, stop]);
+
+  // Stop recognition if the component unmounts mid-session.
+  useEffect(() => {
+    return () => {
+      cancelledRef.current = true;
+      recognitionRef.current?.abort();
+    };
+  }, []);
 
   return {
     status,
     error,
+    supported,
     recording: status === "listening",
-    busy: status === "processing",
+    busy: false,
     toggle,
     start,
     stop,
