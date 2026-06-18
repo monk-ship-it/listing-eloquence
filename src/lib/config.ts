@@ -34,6 +34,7 @@ export const PLANS: Plan[] = [
       "All four brand voices",
       "Social captions with hashtags",
       "Saved listing history",
+      "Voice dictation on every field",
     ],
     // Existing live link — Starter
     stripeLink: "https://buy.stripe.com/3cI00i1Ct5oO4pg3gC7AI0C",
