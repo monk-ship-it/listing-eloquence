@@ -219,6 +219,91 @@ function Landing() {
         </div>
       </section>
 
+      {/* Voice Dictation */}
+      <section className="mx-auto max-w-6xl px-5 py-16">
+        <div className="grid items-center gap-10 lg:grid-cols-2">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm text-primary">
+              <Mic className="h-3.5 w-3.5" /> New feature
+            </span>
+            <h2 className="mt-5 font-display text-3xl font-semibold leading-snug">
+              Talk your listings into existence
+            </h2>
+            <p className="mt-3 max-w-lg text-muted-foreground">
+              Why type when you can speak? Tap the mic on any field and describe the property out loud —
+              {APP_NAME} transcribes your voice into polished text in seconds. Perfect for busy agents on the move.
+            </p>
+            <ul className="mt-6 space-y-3 text-sm">
+              <li className="flex items-start gap-3">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                  <Mic className="h-3.5 w-3.5" />
+                </span>
+                <span className="text-foreground">Works on every field — address, features, room sizes, garden notes, nearby amenities</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                  <Keyboard className="h-3.5 w-3.5" />
+                </span>
+                <span className="text-foreground">Transcription appends to existing text — edit freely afterwards</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                  <Sparkles className="h-3.5 w-3.5" />
+                </span>
+                <span className="text-foreground">Fast, accurate AI transcription powered by GPT-4o Mini</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                  <MicOff className="h-3.5 w-3.5" />
+                </span>
+                <span className="text-foreground">Full stop / cancel controls — you stay in control of every recording</span>
+              </li>
+            </ul>
+            <div className="mt-8">
+              <Button asChild size="lg">
+                <Link to={ctaTo}>Try voice dictation free</Link>
+              </Button>
+            </div>
+          </div>
+
+          <Card className="relative overflow-hidden border-border/70 bg-card/70 p-6">
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-gold to-primary" />
+            <div className="mb-4 flex items-center gap-2 text-sm font-medium text-primary">
+              <Mic className="h-4 w-4" /> Live demo
+            </div>
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border/60 bg-background/40 p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Key features</span>
+                  <span className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
+                    Listening…
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-foreground">
+                  "The kitchen has a Rangemaster cooker, quartz worktops and bi-fold doors opening onto a south-facing garden with a decked terrace…"
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Loader2Icon />
+                <span>Transcribing…</span>
+              </div>
+              <div className="rounded-lg border border-border/60 bg-background/40 p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Key features</span>
+                  <Button type="button" variant="outline" size="icon" className="h-7 w-7" aria-label="Dictate">
+                    <Mic className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+                <p className="mt-2 text-sm text-foreground">
+                  The kitchen has a Rangemaster cooker, quartz worktops and bi-fold doors opening onto a south-facing garden with a decked terrace.
+                </p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </section>
+
       {/* Pricing */}
       <section id="pricing" className="mx-auto max-w-6xl px-5 py-20">
         <div className="text-center">
