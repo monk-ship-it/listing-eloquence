@@ -18,9 +18,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
-import { getMySubscription, cancelMySubscription, resumeMySubscription } from "@/lib/subscription.functions";
+import { getMySubscription, cancelMySubscription, resumeMySubscription, verifyCheckoutSession } from "@/lib/subscription.functions";
 import { APP_NAME, PRICE_MONTHLY, TRIAL_DAYS, CONTACT_EMAIL, getPlan } from "@/lib/config";
-import { CheckCircle2, CreditCard, Mail } from "lucide-react";
+import { CheckCircle2, CreditCard, Mail, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/account")({
   head: () => ({ meta: [{ title: `Account — ${APP_NAME}` }] }),
