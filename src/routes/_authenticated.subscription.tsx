@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
+import { getMySubscription, getMyUsage, createBillingPortalUrl } from "@/lib/subscription.functions";
 import { APP_NAME, PLANS, getPlan, TRIAL_DAYS, buildCheckoutUrl } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -15,7 +17,7 @@ import {
   Crown,
   CreditCard,
   ArrowLeft,
-  Calendar,
+  
   Clock,
 } from "lucide-react";
 
@@ -84,6 +86,20 @@ function SubscriptionPage() {
     queryFn: () => subFn(),
   });
   const { data: usage } = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
+
+  const portalFn = useServerFn(createBillingPortalUrl);
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  async function openBillingPortal() {
+    setPortalLoading(true);
+    try {
+      const { url } = await portalFn({ data: { returnUrl: window.location.href } });
+      window.location.href = url;
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not open billing portal.");
+      setPortalLoading(false);
+    }
+  }
 
   const status = sub?.status ?? "none";
   const rawStatus = sub?.rawStatus ?? "none";
@@ -285,12 +301,18 @@ function SubscriptionPage() {
             <Card className="p-6">
               <h2 className="font-display text-lg font-semibold">Billing</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Manage your subscription, payment method and invoices in your billing portal.
+                Manage your payment method, view invoices, or cancel your
+                subscription in the secure Stripe billing portal. Any change is
+                reflected here automatically.
               </p>
-              <Button asChild className="mt-4" variant="outline">
-                <Link to="/account">
-                  <Calendar className="mr-2 h-4 w-4" /> Go to account settings
-                </Link>
+              <Button
+                className="mt-4"
+                variant="outline"
+                disabled={portalLoading}
+                onClick={openBillingPortal}
+              >
+                <CreditCard className="mr-2 h-4 w-4" />
+                {portalLoading ? "Opening…" : "Manage or cancel subscription"}
               </Button>
             </Card>
           )}
