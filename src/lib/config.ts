@@ -1,4 +1,4 @@
-import logoAsset from "@/assets/quill-logo.png.asset.json";
+import logoAsset from "@/assets/logo.png.asset.json";
 
 export const APP_NAME = "Quill";
 export const APP_TAGLINE = "AI listing copy for UK estate agents";
