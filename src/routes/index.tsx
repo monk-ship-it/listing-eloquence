@@ -132,7 +132,10 @@ function Hero({ ctaTo }: { ctaTo: string }) {
                 <Link to={ctaTo}>Start free trial</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-white/15">
-                <a href="#voice-demo">See voice demo</a>
+                <a href="#voice-demo">Try voice dictation</a>
+              </Button>
+              <Button asChild size="lg" variant="ghost">
+                <a href="#example">Type or paste an example</a>
               </Button>
             </div>
           </Reveal>
