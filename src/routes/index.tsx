@@ -22,6 +22,7 @@ import {
   Quote,
   Building2,
   AudioLines,
+  ClipboardPaste,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
