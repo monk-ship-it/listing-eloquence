@@ -59,11 +59,15 @@ function GeneratorPage() {
       const result = await generate({ data: input });
       setOutput(result);
       queryClient.invalidateQueries({ queryKey: ["generations"] });
+      queryClient.invalidateQueries({ queryKey: ["usage"] });
       toast.success("Listing generated.");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Generation failed.";
       if (msg.includes("SUBSCRIPTION_REQUIRED")) {
         toast.error("Your trial or subscription is required to generate.");
+      } else if (msg.includes("LISTING_LIMIT_REACHED")) {
+        toast.error("You've used all your listings this month. Upgrade your plan or wait for next month's renewal.");
+        queryClient.invalidateQueries({ queryKey: ["usage"] });
       } else {
         toast.error(msg);
       }
@@ -71,6 +75,7 @@ function GeneratorPage() {
       setBusy(false);
     }
   }
+
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-8">
