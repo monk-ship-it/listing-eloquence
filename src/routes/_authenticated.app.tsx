@@ -15,6 +15,7 @@ import { EMPTY_INPUT, EXAMPLE_INPUT, type ListingInput, type ListingOutput } fro
 import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME } from "@/lib/config";
+import { DictateButton } from "@/components/DictateButton";
 import { Copy, Sparkles, RefreshCw, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app")({
