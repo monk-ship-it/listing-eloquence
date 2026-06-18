@@ -161,7 +161,8 @@ function Hero({ ctaTo }: { ctaTo: string }) {
         </div>
 
         {/* Right — product mockup */}
-        <Reveal delay={120} className="relative">
+        <Reveal delay={120} className="relative min-w-0">
+
           <div className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] bg-radial-glow blur-2xl" />
           <HeroMockup />
         </Reveal>
