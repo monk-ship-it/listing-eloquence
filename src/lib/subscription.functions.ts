@@ -113,7 +113,7 @@ export async function computeUsage(
     planName: planMeta.name,
     limit,
     used,
-    remaining: comped ? Infinity === Infinity ? -1 : -1 : Math.max(0, limit - used),
+    remaining: comped ? -1 : Math.max(0, limit - used),
     unlimited: comped,
     resetsOn: startOfNextMonthIso(),
   };
