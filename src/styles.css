@@ -145,17 +145,27 @@
     font-family: var(--font-sans);
     scrollbar-gutter: stable;
     overflow-y: scroll;
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
-  h1, h2, h3, h4, .font-display {
+  /* Clean sans-serif by default (Apple-style); serif reserved for emotional headlines via .font-display */
+  h1, h2, h3, h4 {
+    font-family: var(--font-sans);
+    letter-spacing: -0.02em;
+  }
+
+  .font-display {
     font-family: var(--font-display);
     font-optical-sizing: auto;
+    letter-spacing: -0.01em;
   }
 }
 
@@ -165,11 +175,70 @@
 
 .bg-grid {
   background-image:
-    radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--primary) 14%, transparent) 1px, transparent 0);
-  background-size: 28px 28px;
+    radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--primary) 12%, transparent) 1px, transparent 0);
+  background-size: 30px 30px;
 }
 
 .bg-radial-glow {
   background:
     radial-gradient(60% 50% at 50% 0%, color-mix(in oklab, var(--primary) 16%, transparent), transparent 70%);
 }
+
+/* Premium glass surface */
+.glass {
+  background: color-mix(in oklab, var(--card) 55%, transparent);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid color-mix(in oklab, var(--foreground) 8%, transparent);
+}
+
+.glass-strong {
+  background: color-mix(in oklab, var(--card) 75%, transparent);
+  backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid color-mix(in oklab, var(--foreground) 10%, transparent);
+}
+
+/* Soft blue glow accents */
+.glow-primary {
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--primary) 22%, transparent),
+    0 24px 60px -28px color-mix(in oklab, var(--primary) 60%, transparent);
+}
+
+.text-gradient {
+  background: linear-gradient(180deg, var(--foreground), color-mix(in oklab, var(--foreground) 62%, var(--primary)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* Waveform pulse for voice mockups */
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
+.wave-bar {
+  animation: wave 1s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes soft-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+.mic-pulse { animation: soft-pulse 1.8s ease-in-out infinite; }
