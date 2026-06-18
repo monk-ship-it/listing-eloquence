@@ -256,30 +256,29 @@ function VoiceValue() {
   const cards = [
     {
       icon: Mic,
-      title: "Dictate property details",
+      title: "Dictate on the move",
       body: "Speak room notes, features, garden details, parking, local highlights and agent observations.",
     },
     {
-      icon: Pencil,
-      title: "Edit before generating",
-      body: "Quill keeps the agent in control. Clean the notes, add missing facts, then generate.",
+      icon: ClipboardPaste,
+      title: "Type or paste details",
+      body: "Enter facts manually or paste rough notes, valuation text or existing property information.",
     },
     {
       icon: Sparkles,
-      title: "Create the full pack",
-      body: "Portal description, social captions, buyer email and vendor update from one set of spoken notes.",
+      title: "Generate the full pack",
+      body: "Create the portal description, social captions, buyer email and vendor update from one set of property details.",
     },
   ];
   return (
     <section className="mx-auto max-w-6xl px-5 py-20 lg:py-24">
       <Reveal className="mx-auto max-w-2xl text-center">
         <h2 className="font-display text-3xl font-semibold sm:text-4xl">
-          Built for agents who do not have time to type.
+          Built for agents who need notes captured fast.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Between valuations, viewings and vendor calls, typing listing notes is dead time. Quill
-          lets agents speak naturally, clean up the details, and generate the full marketing pack
-          from there.
+          Some agents prefer to dictate between viewings. Others want to type, paste or tidy existing
+          notes. Quill supports all three, then turns those details into a complete listing pack.
         </p>
       </Reveal>
       <div className="mt-12 grid gap-5 md:grid-cols-3">
