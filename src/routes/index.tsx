@@ -60,8 +60,9 @@ function Landing() {
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm text-primary">
             <Sparkles className="h-3.5 w-3.5" /> {TRIAL_DAYS}-day free trial — no commitment
           </span>
-          <h1 className="mt-6 text-balance font-display text-5xl font-semibold leading-tight md:text-6xl">
-            Property listings that sound like your best negotiator wrote them.
+          <h1 className="mt-6 text-balance font-display text-5xl font-semibold leading-[1.05] md:text-6xl">
+            Property listings that sound like your{" "}
+            <span className="italic font-light text-primary">best negotiator</span> wrote them.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
             {APP_NAME} turns property details into portal-ready UK listings in four distinct brand
