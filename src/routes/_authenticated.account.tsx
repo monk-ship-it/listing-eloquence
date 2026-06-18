@@ -103,11 +103,13 @@ function AccountPage() {
         ) : inactive ? (
           <div className="mt-6">
             <p className="text-sm text-muted-foreground">
-              Start your {TRIAL_DAYS}-day free trial to unlock unlimited listings. Then {PRICE_MONTHLY}/month —
+              Start your {TRIAL_DAYS}-day free trial to unlock listing generation. Plans from {PRICE_MONTHLY}/month —
               cancel anytime.
             </p>
-            <Button className="mt-5" size="lg" onClick={startCheckout}>
-              <CreditCard className="mr-2 h-4 w-4" /> Start {TRIAL_DAYS}-day free trial
+            <Button asChild className="mt-5" size="lg">
+              <a href="/subscription">
+                <CreditCard className="mr-2 h-4 w-4" /> Choose a plan & start free trial
+              </a>
             </Button>
           </div>
         ) : (
