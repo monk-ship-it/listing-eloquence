@@ -40,6 +40,8 @@ function GeneratorPage() {
   const [busy, setBusy] = useState(false);
 
   const hasAccess = subQuery.data?.hasAccess ?? false;
+  const usage = usageQuery.data;
+  const outOfListings = !!usage && !usage.unlimited && usage.remaining <= 0;
 
   function set<K extends keyof ListingInput>(key: K, value: ListingInput[K]) {
     setInput((prev) => ({ ...prev, [key]: value }));
