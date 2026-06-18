@@ -9,6 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import { VOICES, type VoiceId } from "@/lib/voices";
 import { EMPTY_INPUT, EXAMPLE_INPUT, type ListingInput, type ListingOutput } from "@/lib/listing-types";
@@ -16,7 +23,8 @@ import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME } from "@/lib/config";
 import { DictateButton } from "@/components/DictateButton";
-import { Copy, Sparkles, RefreshCw, Lock, Mic } from "lucide-react";
+import { useDictationSettings } from "@/hooks/useDictationSettings";
+import { Copy, Sparkles, RefreshCw, Lock, Mic, Globe } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app")({
   head: () => ({ meta: [{ title: `Generator — ${APP_NAME}` }] }),
@@ -35,6 +43,7 @@ function GeneratorPage() {
   const subQuery = useQuery({ queryKey: ["subscription"], queryFn: () => subFn() });
   const usageQuery = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
   const queryClient = useQueryClient();
+  const { lang, setLang, languages } = useDictationSettings();
 
   const [input, setInput] = useState<ListingInput>(EMPTY_INPUT);
   const [output, setOutput] = useState<ListingOutput | null>(null);
@@ -150,9 +159,26 @@ function GeneratorPage() {
         {/* Input */}
         <Card className="p-6">
           <h2 className="font-display text-xl font-semibold">Property details</h2>
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Mic className="h-3.5 w-3.5" /> Tip: tap the mic on a field to dictate instead of typing.
-          </p>
+          <div className="mt-1 flex items-center justify-between gap-2">
+            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Mic className="h-3.5 w-3.5" /> Tip: tap the mic on a field to dictate instead of typing.
+            </p>
+            <div className="flex items-center gap-1.5">
+              <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+              <Select value={lang} onValueChange={(v) => setLang(v as typeof lang)}>
+                <SelectTrigger className="h-7 w-[10rem] text-xs">
+                  <SelectValue placeholder="Language" />
+                </SelectTrigger>
+                <SelectContent>
+                  {languages.map((l) => (
+                    <SelectItem key={l.code} value={l.code}>
+                      {l.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
 
           <div className="mt-5">
             <Label>Brand voice</Label>
@@ -176,78 +202,78 @@ function GeneratorPage() {
           </div>
 
           <div className="mt-5 grid gap-4">
-            <Field label="Address / location" onDictate={appendTo("address")}>
+            <Field label="Address / location" onDictate={appendTo("address")} lang={lang}>
               <Input value={input.address} onChange={(e) => set("address", e.target.value)} placeholder="12 Park Avenue, Harrogate, HG1" />
             </Field>
-            <Field label="Property type" onDictate={appendTo("propertyType")}>
+            <Field label="Property type" onDictate={appendTo("propertyType")} lang={lang}>
               <Input value={input.propertyType} onChange={(e) => set("propertyType", e.target.value)} placeholder="Victorian semi-detached house" />
             </Field>
             <div className="grid grid-cols-3 gap-3">
-              <Field label="Bedrooms" onDictate={appendTo("bedrooms")}>
+              <Field label="Bedrooms" onDictate={appendTo("bedrooms")} lang={lang}>
                 <Input value={input.bedrooms} onChange={(e) => set("bedrooms", e.target.value)} placeholder="4" />
               </Field>
-              <Field label="Bathrooms" onDictate={appendTo("bathrooms")}>
+              <Field label="Bathrooms" onDictate={appendTo("bathrooms")} lang={lang}>
                 <Input value={input.bathrooms} onChange={(e) => set("bathrooms", e.target.value)} placeholder="2" />
               </Field>
-              <Field label="Receptions" onDictate={appendTo("receptions")}>
+              <Field label="Receptions" onDictate={appendTo("receptions")} lang={lang}>
                 <Input value={input.receptions} onChange={(e) => set("receptions", e.target.value)} placeholder="2" />
               </Field>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Tenure" onDictate={appendTo("tenure")}>
+              <Field label="Tenure" onDictate={appendTo("tenure")} lang={lang}>
                 <Input value={input.tenure} onChange={(e) => set("tenure", e.target.value)} placeholder="Freehold" />
               </Field>
-              <Field label="Asking price (£)" onDictate={appendTo("price")}>
+              <Field label="Asking price (£)" onDictate={appendTo("price")} lang={lang}>
                 <Input value={input.price} onChange={(e) => set("price", e.target.value)} placeholder="525,000" />
               </Field>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Price qualifier" onDictate={appendTo("priceQualifier")}>
+              <Field label="Price qualifier" onDictate={appendTo("priceQualifier")} lang={lang}>
                 <Input value={input.priceQualifier} onChange={(e) => set("priceQualifier", e.target.value)} placeholder="Guide Price / OIEO" />
               </Field>
-              <Field label="Lease remaining (yrs)" onDictate={appendTo("leaseYears")}>
+              <Field label="Lease remaining (yrs)" onDictate={appendTo("leaseYears")} lang={lang}>
                 <Input value={input.leaseYears} onChange={(e) => set("leaseYears", e.target.value)} placeholder="If leasehold" />
               </Field>
             </div>
-            <Field label="Key features" onDictate={appendTo("keyFeatures")}>
+            <Field label="Key features" onDictate={appendTo("keyFeatures")} lang={lang}>
               <Textarea value={input.keyFeatures} onChange={(e) => set("keyFeatures", e.target.value)} placeholder="Open-plan kitchen, log burner, south-facing garden…" rows={2} />
             </Field>
-            <Field label="Room dimensions" onDictate={appendTo("dimensions")}>
+            <Field label="Room dimensions" onDictate={appendTo("dimensions")} lang={lang}>
               <Textarea value={input.dimensions} onChange={(e) => set("dimensions", e.target.value)} placeholder="Living room 5.2m x 4.1m…" rows={2} />
             </Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="EPC rating" onDictate={appendTo("epc")}>
+              <Field label="EPC rating" onDictate={appendTo("epc")} lang={lang}>
                 <Input value={input.epc} onChange={(e) => set("epc", e.target.value)} placeholder="C" />
               </Field>
-              <Field label="Council Tax band" onDictate={appendTo("councilTaxBand")}>
+              <Field label="Council Tax band" onDictate={appendTo("councilTaxBand")} lang={lang}>
                 <Input value={input.councilTaxBand} onChange={(e) => set("councilTaxBand", e.target.value)} placeholder="D" />
               </Field>
             </div>
-            <Field label="Outside space / garden" onDictate={appendTo("outsideSpace")}>
+            <Field label="Outside space / garden" onDictate={appendTo("outsideSpace")} lang={lang}>
               <Input value={input.outsideSpace} onChange={(e) => set("outsideSpace", e.target.value)} placeholder="Landscaped rear garden, patio" />
             </Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Parking" onDictate={appendTo("parking")}>
+              <Field label="Parking" onDictate={appendTo("parking")} lang={lang}>
                 <Input value={input.parking} onChange={(e) => set("parking", e.target.value)} placeholder="Driveway, garage" />
               </Field>
-              <Field label="Heating" onDictate={appendTo("heating")}>
+              <Field label="Heating" onDictate={appendTo("heating")} lang={lang}>
                 <Input value={input.heating} onChange={(e) => set("heating", e.target.value)} placeholder="Gas central heating" />
               </Field>
             </div>
-            <Field label="Utilities / broadband" onDictate={appendTo("utilities")}>
+            <Field label="Utilities / broadband" onDictate={appendTo("utilities")} lang={lang}>
               <Input value={input.utilities} onChange={(e) => set("utilities", e.target.value)} placeholder="Mains services, Ultrafast broadband" />
             </Field>
-            <Field label="Nearby (schools, transport, amenities)" onDictate={appendTo("nearby")}>
+            <Field label="Nearby (schools, transport, amenities)" onDictate={appendTo("nearby")} lang={lang}>
               <Textarea value={input.nearby} onChange={(e) => set("nearby", e.target.value)} placeholder="Outstanding primary, station 0.5 miles…" rows={2} />
             </Field>
-            <Field label="Period / character features" onDictate={appendTo("periodFeatures")}>
+            <Field label="Period / character features" onDictate={appendTo("periodFeatures")} lang={lang}>
               <Textarea value={input.periodFeatures} onChange={(e) => set("periodFeatures", e.target.value)} placeholder="Original cornicing, sash windows…" rows={2} />
             </Field>
             <div className="grid grid-cols-1 gap-3">
-              <Field label="Area highlights" onDictate={appendTo("areaHighlights")}>
+              <Field label="Area highlights" onDictate={appendTo("areaHighlights")} lang={lang}>
                 <Input value={input.areaHighlights} onChange={(e) => set("areaHighlights", e.target.value)} placeholder="Vibrant market town, riverside walks" />
               </Field>
-              <Field label="Target audience" onDictate={appendTo("targetAudience")}>
+              <Field label="Target audience" onDictate={appendTo("targetAudience")} lang={lang}>
                 <Input value={input.targetAudience} onChange={(e) => set("targetAudience", e.target.value)} placeholder="Growing families, professionals" />
               </Field>
             </div>
@@ -342,16 +368,18 @@ function Field({
   label,
   children,
   onDictate,
+  lang,
 }: {
   label: string;
   children: React.ReactNode;
   onDictate?: (text: string) => void;
+  lang?: string;
 }) {
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between gap-2">
         <Label className="text-xs text-muted-foreground">{label}</Label>
-        {onDictate && <DictateButton onResult={onDictate} />}
+        {onDictate && <DictateButton onResult={onDictate} lang={lang} />}
       </div>
       {children}
     </div>

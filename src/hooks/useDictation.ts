@@ -37,7 +37,7 @@ function getRecognitionCtor(): (new () => SpeechRecognitionLike) | null {
  * No server calls, no transcription credits — recognition runs on-device /
  * via the browser. Final recognized phrases are sent through onResult.
  */
-export function useDictation(onResult: (text: string) => void) {
+export function useDictation(onResult: (text: string) => void, lang?: string) {
   const [status, setStatus] = useState<DictationStatus>("idle");
   const [error, setError] = useState<string | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
@@ -74,7 +74,7 @@ export function useDictation(onResult: (text: string) => void) {
 
     cancelledRef.current = false;
     const recognition = new Ctor();
-    recognition.lang = "en-GB";
+    recognition.lang = lang || "en-GB";
     recognition.continuous = true;
     recognition.interimResults = false;
     recognitionRef.current = recognition;

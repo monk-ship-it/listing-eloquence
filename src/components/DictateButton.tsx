@@ -7,6 +7,8 @@ interface DictateButtonProps {
   /** Receives the transcribed text when dictation finishes. */
   onResult: (text: string) => void;
   className?: string;
+  /** Speech recognition language code. Defaults to en-GB. */
+  lang?: string;
 }
 
 /**
@@ -14,8 +16,8 @@ interface DictateButtonProps {
  * idle → tap to record, listening → live indicator + stop, processing →
  * spinner + cancel, error → message.
  */
-export function DictateButton({ onResult, className }: DictateButtonProps) {
-  const { status, error, supported, toggle, stop } = useDictation(onResult);
+export function DictateButton({ onResult, className, lang }: DictateButtonProps) {
+  const { status, error, supported, toggle, stop } = useDictation(onResult, lang);
 
   if (!supported) return null;
 
