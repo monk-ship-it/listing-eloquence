@@ -4,10 +4,12 @@ import { isCompedEmail } from "./config";
 
 export interface SubscriptionInfo {
   status: string;
+  rawStatus: string;
   cancelAtPeriodEnd: boolean;
   trialEnd: string | null;
   currentPeriodEnd: string | null;
   hasAccess: boolean;
+  isComped: boolean;
   email: string | null;
 }
 
@@ -18,14 +20,16 @@ function toInfo(row: {
   current_period_end: string | null;
   email: string | null;
 } | null): SubscriptionInfo {
-  const status = row?.status ?? "none";
+  const rawStatus = row?.status ?? "none";
   const comped = isCompedEmail(row?.email);
   return {
-    status: comped ? "active" : status,
+    status: comped ? "active" : rawStatus,
+    rawStatus,
     cancelAtPeriodEnd: row?.cancel_at_period_end ?? false,
     trialEnd: row?.trial_end ?? null,
     currentPeriodEnd: row?.current_period_end ?? null,
-    hasAccess: comped || hasActiveAccess(status, row?.current_period_end ?? null),
+    hasAccess: comped || hasActiveAccess(rawStatus, row?.current_period_end ?? null),
+    isComped: comped,
     email: row?.email ?? null,
   };
 }
