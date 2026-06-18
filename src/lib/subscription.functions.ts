@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { isCompedEmail, getPlan, type PlanId } from "./config";
+import { isCompedEmail, getPlan, TRIAL_DAYS, type PlanId } from "./config";
 
 export interface SubscriptionInfo {
   status: string;
