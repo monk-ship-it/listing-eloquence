@@ -831,9 +831,9 @@ function FinalCta({ ctaTo }: { ctaTo: string }) {
 function Footer() {
   return (
     <footer className="border-t border-white/10 py-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 text-sm text-muted-foreground sm:flex-row">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-5 px-5 text-center text-sm text-muted-foreground sm:flex-row sm:gap-4 sm:text-left">
         <Logo withByline />
-        <a href={`mailto:${CONTACT_EMAIL}`} className="transition-colors hover:text-foreground">
+        <a href={`mailto:${CONTACT_EMAIL}`} className="break-all transition-colors hover:text-foreground">
           {CONTACT_EMAIL}
         </a>
         <p>© 2026 {APP_NAME}. Crafted for UK estate agents.</p>
