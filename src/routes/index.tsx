@@ -60,8 +60,9 @@ function Landing() {
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm text-primary">
             <Sparkles className="h-3.5 w-3.5" /> {TRIAL_DAYS}-day free trial — no commitment
           </span>
-          <h1 className="mt-6 text-balance font-display text-5xl font-semibold leading-tight md:text-6xl">
-            Property listings that sound like your best negotiator wrote them.
+          <h1 className="mt-6 text-balance font-display text-5xl font-semibold leading-[1.05] md:text-6xl">
+            Property listings that sound like your{" "}
+            <span className="italic font-light text-primary">best negotiator</span> wrote them.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
             {APP_NAME} turns property details into portal-ready UK listings in four distinct brand
@@ -89,7 +90,11 @@ function Landing() {
         </p>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {VOICES.map((v) => (
-            <Card key={v.id} className="border-border/70 bg-card/70 p-6">
+            <Card
+              key={v.id}
+              className="group relative overflow-hidden border-border/70 bg-card/70 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_20px_40px_-20px] hover:shadow-primary/30"
+            >
+              <span className="absolute inset-y-0 left-0 w-1 origin-top scale-y-0 bg-gradient-to-b from-primary to-gold transition-transform duration-300 group-hover:scale-y-100" />
               <h3 className="font-display text-xl font-semibold">{v.name}</h3>
               <p className="mt-1 text-xs uppercase tracking-wide text-primary">{v.tagline}</p>
               <p className="mt-3 text-sm text-muted-foreground">{v.description}</p>
@@ -164,8 +169,11 @@ function Landing() {
       {/* Pricing */}
       <section className="mx-auto max-w-3xl px-5 py-20 text-center">
         <h2 className="font-display text-3xl font-semibold">Simple pricing</h2>
-        <Card className="mx-auto mt-8 max-w-md border-primary/40 p-8 text-left">
-          <p className="font-display text-4xl font-semibold">
+        <Card className="mx-auto mt-8 max-w-md border-primary/40 bg-gradient-to-b from-card to-card/40 p-8 text-left shadow-[0_30px_80px_-30px] shadow-primary/40">
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium uppercase tracking-wide text-primary">
+            Most popular
+          </span>
+          <p className="mt-4 font-display text-5xl font-semibold">
             {PRICE_MONTHLY}
             <span className="text-base font-normal text-muted-foreground">/month</span>
           </p>
