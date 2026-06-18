@@ -44,7 +44,7 @@ function Landing() {
   const ctaTo = user ? "/app" : "/auth";
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Header user={!!user} />
       <Hero ctaTo={ctaTo} />
       <VoiceValue />
