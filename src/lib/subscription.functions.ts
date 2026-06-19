@@ -251,7 +251,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       customerId: row?.stripe_customer_id ?? null,
       successUrl: `${origin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancelUrl: `${origin}/subscription?checkout=cancelled`,
-      trialDays: TRIAL_DAYS,
+      trialDays: plan === "starter" ? TRIAL_DAYS : 0,
     });
 
     if (!session?.url) throw new Error("Could not start checkout. Please try again.");
