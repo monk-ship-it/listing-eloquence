@@ -41,6 +41,7 @@ export interface ListingOutput {
 
 export const EMPTY_INPUT: ListingInput = {
   voice: "professional",
+  voiceNotes: "",
   address: "",
   areaHighlights: "",
   propertyType: "",
