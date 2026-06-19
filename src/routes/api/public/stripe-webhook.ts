@@ -74,19 +74,23 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               });
             }
 
+            // Match the user by client_reference_id first; metadata is a fallback.
             const userId: string | null =
-              session.metadata?.user_id ?? session.client_reference_id ?? null;
+              session.client_reference_id ?? session.metadata?.user_id ?? null;
             const customerId: string | null = session.customer ?? null;
             const subscriptionId: string | null = session.subscription ?? null;
             const email: string | null =
               session.customer_details?.email ?? session.customer_email ?? null;
+            const paymentLinkId: string | null = session.payment_link ?? null;
+
+            const { identifyPlan } = await import("@/lib/config.server");
 
             let status = "active";
             let trialEnd: string | null = null;
             let periodEnd: string | null = null;
             let cancelAtPeriodEnd = false;
-            let plan = session.metadata?.plan ?? "starter";
             let priceId: string | null = session.metadata?.price_id ?? null;
+            let amount: number | null = null;
 
             if (subscriptionId) {
               const { getStripeSubscription } = await import("@/lib/stripe.server");
@@ -95,14 +99,18 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               trialEnd = toIso(sub.trial_end);
               periodEnd = toIso(sub.current_period_end);
               cancelAtPeriodEnd = !!sub.cancel_at_period_end;
-              plan = planFromSubscription(sub);
               priceId = priceFromSubscription(sub) ?? priceId;
+              amount = amountFromSubscription(sub);
             }
+
+            // Plan from payment link id first, then price id, then amount.
+            const plan = identifyPlan({ paymentLinkId, priceId, amount });
 
             const fields = {
               stripe_customer_id: customerId,
               stripe_subscription_id: subscriptionId,
               stripe_price_id: priceId,
+              stripe_payment_link_id: paymentLinkId,
               status,
               plan,
               trial_end: trialEnd,
@@ -112,11 +120,18 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
 
             // Idempotent: keyed UPDATE on an existing row, so duplicate
             // webhook deliveries simply re-apply the same values.
+            // Match by user id (client_reference_id) first, then email,
+            // then customer id.
             if (userId) {
               await supabaseAdmin
                 .from("subscribers")
                 .update({ ...fields, ...(email ? { email } : {}) })
                 .eq("user_id", userId);
+            } else if (email) {
+              await supabaseAdmin
+                .from("subscribers")
+                .update(fields)
+                .eq("email", email);
             } else if (customerId) {
               await supabaseAdmin
                 .from("subscribers")
