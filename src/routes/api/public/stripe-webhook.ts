@@ -148,12 +148,19 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               event.type === "customer.subscription.deleted" ? "canceled" : sub.status;
             const userId: string | null = sub.metadata?.user_id ?? null;
 
+            const { identifyPlan } = await import("@/lib/config.server");
+            const priceId = priceFromSubscription(sub);
+            const plan = identifyPlan({
+              priceId,
+              amount: amountFromSubscription(sub),
+            });
+
             const fields = {
               stripe_customer_id: sub.customer ?? null,
               stripe_subscription_id: sub.id,
-              stripe_price_id: priceFromSubscription(sub),
+              stripe_price_id: priceId,
               status,
-              plan: planFromSubscription(sub),
+              plan,
               trial_end: toIso(sub.trial_end),
               current_period_end: toIso(sub.current_period_end),
               cancel_at_period_end: !!sub.cancel_at_period_end,
