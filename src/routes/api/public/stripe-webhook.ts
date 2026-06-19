@@ -26,13 +26,9 @@ function toIso(unixSeconds: number | null | undefined): string | null {
   return new Date(unixSeconds * 1000).toISOString();
 }
 
-/** Map a Stripe subscription's monthly amount (in pence) to a plan id. */
-function planFromSubscription(sub: any): string {
-  const amount: number | undefined = sub?.items?.data?.[0]?.price?.unit_amount;
-  if (amount == null) return "starter";
-  if (amount >= 4999) return "growth";
-  if (amount >= 2999) return "pro";
-  return "starter";
+/** Extract the recurring amount (in pence) from a subscription object. */
+function amountFromSubscription(sub: any): number | null {
+  return sub?.items?.data?.[0]?.price?.unit_amount ?? null;
 }
 
 /** Extract the Stripe price id from a subscription object. */
