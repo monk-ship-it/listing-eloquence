@@ -55,11 +55,22 @@ function booleanValue(value: unknown): boolean {
   return typeof value === "boolean" ? value : false;
 }
 
+function eventObject(event: StripeEvent): StripeRecord | null {
+  return asRecord(event.data?.object);
+}
+
 function firstSubscriptionPrice(sub: unknown): StripeRecord | null {
   const record = asRecord(sub);
   const items = asRecord(record?.items);
   const firstItem = asRecord(asArray(items?.data)[0]);
   return asRecord(firstItem?.price);
+}
+
+function invoiceLinePeriodEnd(invoice: StripeRecord): number | null {
+  const lines = asRecord(invoice.lines);
+  const firstLine = asRecord(asArray(lines?.data)[0]);
+  const period = asRecord(firstLine?.period);
+  return numberValue(period?.end);
 }
 
 /** Extract the recurring amount (in pence) from a subscription object. */
@@ -134,9 +145,12 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
 
         try {
           if (event.type === "checkout.session.completed") {
-            const session = event.data.object;
+            const session = eventObject(event);
+            if (!session) return new Response("Invalid payload", { status: 400 });
+
             // Only act on subscription-mode checkouts.
-            if (session.mode && session.mode !== "subscription") {
+            const mode = stringValue(session.mode);
+            if (mode && mode !== "subscription") {
               return new Response(JSON.stringify({ received: true, ignored: "mode" }), {
                 status: 200,
                 headers: { "Content-Type": "application/json" },
@@ -144,13 +158,15 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
             }
 
             // Match the user by client_reference_id first; metadata is a fallback.
+            const metadata = asRecord(session.metadata);
+            const customerDetails = asRecord(session.customer_details);
             const userId: string | null =
-              session.client_reference_id ?? session.metadata?.user_id ?? null;
-            const customerId: string | null = session.customer ?? null;
-            const subscriptionId: string | null = session.subscription ?? null;
+              stringValue(session.client_reference_id) ?? stringValue(metadata?.user_id);
+            const customerId: string | null = stringValue(session.customer);
+            const subscriptionId: string | null = stringValue(session.subscription);
             const email: string | null =
-              session.customer_details?.email ?? session.customer_email ?? null;
-            const paymentLinkId: string | null = session.payment_link ?? null;
+              stringValue(customerDetails?.email) ?? stringValue(session.customer_email);
+            const paymentLinkId: string | null = stringValue(session.payment_link);
 
             const { identifyPlan } = await import("@/lib/config.server");
 
@@ -220,10 +236,18 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
             event.type === "customer.subscription.created" ||
             event.type === "customer.subscription.deleted"
           ) {
-            const sub = event.data.object;
+            const sub = eventObject(event);
+            if (!sub) return new Response("Invalid payload", { status: 400 });
+
+            const subscriptionId = stringValue(sub.id);
+            if (!subscriptionId) return new Response("Invalid payload", { status: 400 });
+
             const status =
-              event.type === "customer.subscription.deleted" ? "canceled" : sub.status;
-            const userId: string | null = sub.metadata?.user_id ?? null;
+              event.type === "customer.subscription.deleted"
+                ? "canceled"
+                : (stringValue(sub.status) ?? "active");
+            const metadata = asRecord(sub.metadata);
+            const userId: string | null = stringValue(metadata?.user_id);
 
             const { identifyPlan } = await import("@/lib/config.server");
             const priceId = priceFromSubscription(sub);
@@ -233,14 +257,14 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
             });
 
             const fields = {
-              stripe_customer_id: sub.customer ?? null,
-              stripe_subscription_id: sub.id,
+              stripe_customer_id: stringValue(sub.customer),
+              stripe_subscription_id: subscriptionId,
               stripe_price_id: priceId,
               status,
               plan,
-              trial_end: toIso(sub.trial_end),
-              current_period_end: toIso(sub.current_period_end),
-              cancel_at_period_end: !!sub.cancel_at_period_end,
+              trial_end: toIso(numberValue(sub.trial_end)),
+              current_period_end: toIso(numberValue(sub.current_period_end)),
+              cancel_at_period_end: booleanValue(sub.cancel_at_period_end),
               updated_at: new Date().toISOString(),
             };
 
@@ -248,7 +272,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
             const { data: updated } = await supabaseAdmin
               .from("subscribers")
               .update(fields)
-              .eq("stripe_subscription_id", sub.id)
+              .eq("stripe_subscription_id", subscriptionId)
               .select("user_id");
 
             if ((!updated || updated.length === 0) && userId) {
@@ -260,9 +284,11 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
           } else if (event.type === "invoice.paid") {
             // Payment succeeded — ensure the subscription is active and clear
             // any prior failure state.
-            const invoice = event.data.object;
-            const subscriptionId: string | null = invoice.subscription ?? null;
-            const periodEnd = toIso(invoice.lines?.data?.[0]?.period?.end);
+            const invoice = eventObject(event);
+            if (!invoice) return new Response("Invalid payload", { status: 400 });
+
+            const subscriptionId: string | null = stringValue(invoice.subscription);
+            const periodEnd = toIso(invoiceLinePeriodEnd(invoice));
             if (subscriptionId) {
               await supabaseAdmin
                 .from("subscribers")
@@ -274,8 +300,10 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
                 .in("status", ["past_due", "unpaid", "incomplete", "active", "trialing"]);
             }
           } else if (event.type === "invoice.payment_failed") {
-            const invoice = event.data.object;
-            const subscriptionId: string | null = invoice.subscription ?? null;
+            const invoice = eventObject(event);
+            if (!invoice) return new Response("Invalid payload", { status: 400 });
+
+            const subscriptionId: string | null = stringValue(invoice.subscription);
             if (subscriptionId) {
               await supabaseAdmin
                 .from("subscribers")
