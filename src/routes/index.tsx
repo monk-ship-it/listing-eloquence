@@ -748,7 +748,7 @@ function Pricing({ ctaTo }: { ctaTo: string }) {
                   {plan.monthlyListings} listings per month
                 </p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  {TRIAL_DAYS}-day free trial · cancel anytime
+                  {plan.id === "growth" ? `${TRIAL_DAYS}-day free trial · cancel anytime` : "Cancel anytime"}
                 </p>
                 <ul className="mt-6 flex-1 space-y-3 text-sm">
                   {orderedFeatures(plan.features).map((f, idx) => (
