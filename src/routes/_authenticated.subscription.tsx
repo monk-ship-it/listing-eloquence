@@ -118,17 +118,17 @@ function SubscriptionPage() {
   const remaining = daysLeft(sub?.currentPeriodEnd ?? null);
   const currentPlan = getPlan(sub?.plan);
 
-  async function startCheckout(planId: typeof PLANS[number]["id"] = currentPlan.id) {
+  function startCheckout(planId: typeof PLANS[number]["id"] = currentPlan.id) {
     if (!user) {
       toast.error("Please log in to continue to checkout.");
       return;
     }
     setCheckoutBusy(planId);
     try {
-      const { url } = await checkoutFn({
-        data: { plan: planId, origin: window.location.origin },
-      });
-      window.location.href = url;
+      // Redirect to the plan's Stripe Payment Link with the logged-in user's
+      // id attached as client_reference_id so the webhook activates the
+      // correct account.
+      window.location.href = buildCheckoutUrl(user.id, user.email ?? "", planId);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not start checkout. Please try again.");
       setCheckoutBusy(null);
