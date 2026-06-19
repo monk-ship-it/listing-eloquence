@@ -779,10 +779,10 @@ function Pricing({ ctaTo }: { ctaTo: string }) {
   );
 }
 
-/** Surface "Voice dictation on every field" first — it's the headline feature. */
+/** Surface the dedicated voice notes feature first — it's the headline feature. */
 function orderedFeatures(features: string[]): string[] {
-  const voice = features.filter((f) => /voice dictation/i.test(f));
-  const rest = features.filter((f) => !/voice dictation/i.test(f));
+  const voice = features.filter((f) => /voice notes|voice dictation/i.test(f));
+  const rest = features.filter((f) => !/voice notes|voice dictation/i.test(f));
   const baseExtras = [
     "Portal-ready descriptions",
     "Social captions with hashtags",
