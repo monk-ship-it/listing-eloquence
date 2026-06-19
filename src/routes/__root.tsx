@@ -86,7 +86,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Quill writes polished UK property listings in four distinct brand voices, plus social captions with hashtags. 14-day free trial.",
       },
       { name: "author", content: "Quill" },
-      { property: "og:title", content: "Quill — AI Property Listing Generator for UK Estate Agents" },
+      {
+        property: "og:title",
+        content: "Quill — AI Property Listing Generator for UK Estate Agents",
+      },
       {
         property: "og:description",
         content:
@@ -94,14 +97,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Quill — AI Property Listing Generator for UK Estate Agents" },
+      {
+        name: "twitter:title",
+        content: "Quill — AI Property Listing Generator for UK Estate Agents",
+      },
       {
         name: "twitter:description",
         content:
           "Polished UK property listings in four brand voices, plus ready-to-post social captions.",
       },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781872351657-CopyByMonk_Stripe_white_bg_circle_icon_512x512.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781872351657-CopyByMonk_Stripe_white_bg_circle_icon_512x512.webp" },
+      {
+        property: "og:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781872351657-CopyByMonk_Stripe_white_bg_circle_icon_512x512.webp",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781872351657-CopyByMonk_Stripe_white_bg_circle_icon_512x512.webp",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
