@@ -317,7 +317,7 @@ function SubscriptionPage() {
                             ? "Current plan"
                             : hasAccess
                               ? "Switch"
-                              : plan.id === "growth"
+                              : plan.id === "starter"
                                 ? "Start trial"
                                 : "Subscribe"}
                       </Button>
