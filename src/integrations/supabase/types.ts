@@ -183,6 +183,7 @@ export type Database = {
           plan: string
           status: string
           stripe_customer_id: string | null
+          stripe_payment_link_id: string | null
           stripe_price_id: string | null
           stripe_subscription_id: string | null
           trial_end: string | null
@@ -198,6 +199,7 @@ export type Database = {
           plan?: string
           status?: string
           stripe_customer_id?: string | null
+          stripe_payment_link_id?: string | null
           stripe_price_id?: string | null
           stripe_subscription_id?: string | null
           trial_end?: string | null
@@ -213,6 +215,7 @@ export type Database = {
           plan?: string
           status?: string
           stripe_customer_id?: string | null
+          stripe_payment_link_id?: string | null
           stripe_price_id?: string | null
           stripe_subscription_id?: string | null
           trial_end?: string | null

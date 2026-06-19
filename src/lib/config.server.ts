@@ -19,8 +19,70 @@ import process from "node:process";
 export function getServerConfig() {
   return {
     nodeEnv: process.env.NODE_ENV,
-    // Add server-only values here, e.g.:
-    //   databaseUrl: process.env.DATABASE_URL,
-    //   stripeSecretKey: process.env.STRIPE_SECRET_KEY,
   };
+}
+
+export type PlanKey = "starter" | "pro" | "growth";
+
+/** The public base URL of the app, used for post-checkout redirects. */
+export function getAppUrl(): string {
+  return (process.env.APP_URL || "https://copybymonk.com").replace(/\/+$/, "");
+}
+
+/**
+ * Reads the Stripe Payment Link ID and Price ID for each plan from the
+ * environment. All values are optional — plan identification gracefully
+ * falls back (payment link ID -> price ID -> price amount).
+ */
+export function getStripePlanConfig(): Record<
+  PlanKey,
+  { paymentLinkId: string | null; priceId: string | null; amount: number }
+> {
+  return {
+    starter: {
+      paymentLinkId: process.env.STRIPE_STARTER_PAYMENT_LINK_ID || null,
+      priceId: process.env.STRIPE_STARTER_PRICE_ID || null,
+      amount: 2499,
+    },
+    pro: {
+      paymentLinkId: process.env.STRIPE_PRO_PAYMENT_LINK_ID || null,
+      priceId: process.env.STRIPE_PRO_PRICE_ID || null,
+      amount: 2999,
+    },
+    growth: {
+      paymentLinkId: process.env.STRIPE_GROWTH_PAYMENT_LINK_ID || null,
+      priceId: process.env.STRIPE_GROWTH_PRICE_ID || null,
+      amount: 4999,
+    },
+  };
+}
+
+/**
+ * Identifies the plan key from a Stripe checkout/subscription using, in
+ * priority order: Payment Link ID, Price ID, then the recurring amount.
+ */
+export function identifyPlan(opts: {
+  paymentLinkId?: string | null;
+  priceId?: string | null;
+  amount?: number | null;
+}): PlanKey {
+  const cfg = getStripePlanConfig();
+  const keys: PlanKey[] = ["starter", "pro", "growth"];
+
+  if (opts.paymentLinkId) {
+    for (const k of keys) {
+      if (cfg[k].paymentLinkId && cfg[k].paymentLinkId === opts.paymentLinkId) return k;
+    }
+  }
+  if (opts.priceId) {
+    for (const k of keys) {
+      if (cfg[k].priceId && cfg[k].priceId === opts.priceId) return k;
+    }
+  }
+  if (opts.amount != null) {
+    if (opts.amount >= 4999) return "growth";
+    if (opts.amount >= 2999) return "pro";
+    return "starter";
+  }
+  return "starter";
 }

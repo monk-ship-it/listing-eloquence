@@ -60,21 +60,17 @@ function startOfNextMonthIso(): string {
 }
 
 /**
- * Determines whether a subscription grants access.
- * - `active` / `trialing` always grant access.
- * - `past_due` / `unpaid` keep access during a grace window: until the paid
- *   period (current_period_end) has actually elapsed.
+ * Determines whether a subscription grants paid access.
+ * Only `active` and `trialing` grant access. All other statuses
+ * (past_due, unpaid, canceled, incomplete, incomplete_expired,
+ * payment_failed, none) restrict access. Access is always driven by the
+ * database record, never by the post-checkout redirect URL.
  */
 export function hasActiveAccess(
   status: string,
-  currentPeriodEnd: string | null,
+  _currentPeriodEnd: string | null,
 ): boolean {
-  if (status === "active" || status === "trialing") return true;
-  if (status === "past_due" || status === "unpaid") {
-    if (!currentPeriodEnd) return false;
-    return new Date(currentPeriodEnd).getTime() > Date.now();
-  }
-  return false;
+  return status === "active" || status === "trialing";
 }
 
 export const getMySubscription = createServerFn({ method: "GET" })
