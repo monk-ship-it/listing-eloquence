@@ -768,7 +768,7 @@ function Pricing({ ctaTo }: { ctaTo: string }) {
                   size="lg"
                   variant={plan.popular ? "default" : "outline"}
                 >
-                  <Link to={ctaTo}>Start free trial</Link>
+                  <Link to={ctaTo}>{plan.id === "growth" ? "Start free trial" : "Get started"}</Link>
                 </Button>
               </Card>
             </Reveal>
