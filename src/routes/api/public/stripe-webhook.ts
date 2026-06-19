@@ -221,10 +221,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
                 .update({ ...fields, ...(email ? { email } : {}) })
                 .eq("user_id", userId);
             } else if (email) {
-              await supabaseAdmin
-                .from("subscribers")
-                .update(fields)
-                .eq("email", email);
+              await supabaseAdmin.from("subscribers").update(fields).eq("email", email);
             } else if (customerId) {
               await supabaseAdmin
                 .from("subscribers")
@@ -276,10 +273,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               .select("user_id");
 
             if ((!updated || updated.length === 0) && userId) {
-              await supabaseAdmin
-                .from("subscribers")
-                .update(fields)
-                .eq("user_id", userId);
+              await supabaseAdmin.from("subscribers").update(fields).eq("user_id", userId);
             }
           } else if (event.type === "invoice.paid") {
             // Payment succeeded — ensure the subscription is active and clear
