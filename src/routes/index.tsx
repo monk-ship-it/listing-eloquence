@@ -258,8 +258,8 @@ function VoiceValue() {
   const cards = [
     {
       icon: Mic,
-      title: "Dictate on the move",
-      body: "Speak room notes, features, garden details, parking, local highlights and agent observations.",
+      title: "Dictate full property notes",
+      body: "Speak the rough notes into one dedicated voice notes field, then add exact facts in the structured fields.",
     },
     {
       icon: ClipboardPaste,
