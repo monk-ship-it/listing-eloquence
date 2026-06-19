@@ -2,6 +2,7 @@ import type { VoiceId } from "./voices";
 
 export interface ListingInput {
   voice: VoiceId;
+  voiceNotes: string;
   address: string;
   areaHighlights: string;
   propertyType: string;
@@ -40,6 +41,7 @@ export interface ListingOutput {
 
 export const EMPTY_INPUT: ListingInput = {
   voice: "professional",
+  voiceNotes: "",
   address: "",
   areaHighlights: "",
   propertyType: "",
@@ -65,6 +67,8 @@ export const EMPTY_INPUT: ListingInput = {
 
 export const EXAMPLE_INPUT: ListingInput = {
   voice: "heritage",
+  voiceNotes:
+    "This is the Old Rectory on Church Lane in Burford. Lovely characterful period rectory, Grade II listed, five bedrooms, three bathrooms, inglenook fireplace and flagstone floors. Walled garden about half an acre with an orchard. Guide price one point four five million, freehold.",
   address: "The Old Rectory, Church Lane, Burford, Oxfordshire OX18",
   areaHighlights:
     "Sought-after Cotswold market town, honey-stone high street, independent shops and the River Windrush nearby",

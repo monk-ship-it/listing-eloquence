@@ -32,10 +32,19 @@ function buildUserPrompt(input: ListingInput): string {
   details += field("Period / character features", input.periodFeatures);
   details += field("Target audience", input.targetAudience);
 
+  const voiceNotes = input.voiceNotes?.trim()
+    ? `\nAGENT VOICE NOTES (raw, dictated or pasted — treat as supplementary context only):\n${input.voiceNotes.trim()}\n`
+    : "";
+
   return `Create a UK property sales listing from the details below.
 
-PROPERTY DETAILS:
+STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 ${details}
+${voiceNotes}
+RULES FOR COMBINING SOURCES:
+- The structured property details above are authoritative. Where the agent voice notes conflict with a structured field, ALWAYS use the structured field (e.g. structured "Bedrooms: 4" wins over voice notes saying "five bedrooms").
+- Use the voice notes only to add extra colour, context or facts that are NOT already covered by a structured field. Never invent or upgrade figures from the notes.
+
 
 REQUIREMENTS:
 - Write only from the facts provided; never invent figures, names or features that are not given.
