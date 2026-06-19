@@ -2,12 +2,30 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { getMySubscription, getMyUsage, createBillingPortalUrl } from "@/lib/subscription.functions";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  getMySubscription,
+  getMyUsage,
+  createBillingPortalUrl,
+  cancelMySubscription,
+  resumeMySubscription,
+  type SubscriptionInfo,
+} from "@/lib/subscription.functions";
 import { APP_NAME, PLANS, getPlan, TRIAL_DAYS, buildCheckoutUrl } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -88,8 +106,46 @@ function SubscriptionPage() {
   const { data: usage } = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
 
   const portalFn = useServerFn(createBillingPortalUrl);
+  const cancelFn = useServerFn(cancelMySubscription);
+  const resumeFn = useServerFn(resumeMySubscription);
+  const queryClient = useQueryClient();
   const [portalLoading, setPortalLoading] = useState(false);
+  const [cancelBusy, setCancelBusy] = useState(false);
+  const [resumeBusy, setResumeBusy] = useState(false);
   const [checkoutBusy, setCheckoutBusy] = useState<string | null>(null);
+
+  function applySub(updated: SubscriptionInfo) {
+    // Reflect the change immediately in the UI, then revalidate from the server.
+    queryClient.setQueryData(["subscription"], updated);
+    queryClient.invalidateQueries({ queryKey: ["subscription"] });
+    queryClient.invalidateQueries({ queryKey: ["usage"] });
+  }
+
+  async function cancelSubscription() {
+    setCancelBusy(true);
+    try {
+      const updated = await cancelFn();
+      applySub(updated);
+      toast.success("Subscription set to cancel at the end of your billing period.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not cancel subscription.");
+    } finally {
+      setCancelBusy(false);
+    }
+  }
+
+  async function resumeSubscription() {
+    setResumeBusy(true);
+    try {
+      const updated = await resumeFn();
+      applySub(updated);
+      toast.success("Subscription resumed — it will renew automatically.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not resume subscription.");
+    } finally {
+      setResumeBusy(false);
+    }
+  }
 
   // Calm message if the user came back from a cancelled checkout.
   useEffect(() => {
@@ -328,23 +384,52 @@ function SubscriptionPage() {
             </Card>
           )}
 
-          {hasAccess && !sub?.isComped && status !== "trialing" && (
+          {hasAccess && !sub?.isComped && (status === "active" || status === "trialing") && (
             <Card className="p-6">
               <h2 className="font-display text-lg font-semibold">Billing</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Manage your payment method, view invoices, or cancel your
-                subscription in the secure Stripe billing portal. Any change is
-                reflected here automatically.
+                {sub?.cancelAtPeriodEnd
+                  ? `Your subscription is set to cancel — access ends ${fmtDate(sub?.currentPeriodEnd ?? null)}. You can resume any time before then.`
+                  : "Cancel any time. You'll keep access until the end of your current billing period, and changes are reflected here straight away."}
               </p>
-              <Button
-                className="mt-4"
-                variant="outline"
-                disabled={portalLoading}
-                onClick={openBillingPortal}
-              >
-                <CreditCard className="mr-2 h-4 w-4" />
-                {portalLoading ? "Opening…" : "Manage or cancel subscription"}
-              </Button>
+
+              <div className="mt-4 flex flex-wrap gap-3">
+                {sub?.cancelAtPeriodEnd ? (
+                  <Button onClick={resumeSubscription} disabled={resumeBusy}>
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    {resumeBusy ? "Resuming…" : "Resume subscription"}
+                  </Button>
+                ) : (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" disabled={cancelBusy}>
+                        <XCircle className="mr-2 h-4 w-4" />
+                        {cancelBusy ? "Cancelling…" : "Cancel subscription"}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Cancel your subscription?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You'll keep full access until {fmtDate(sub?.currentPeriodEnd ?? null)}. After
+                          that your subscription won't renew. You can resume any time before then.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Keep subscription</AlertDialogCancel>
+                        <AlertDialogAction onClick={cancelSubscription}>
+                          Cancel subscription
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+
+                <Button variant="outline" disabled={portalLoading} onClick={openBillingPortal}>
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  {portalLoading ? "Opening…" : "Manage billing & invoices"}
+                </Button>
+              </div>
             </Card>
           )}
         </div>
