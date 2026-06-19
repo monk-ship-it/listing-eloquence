@@ -35,7 +35,7 @@ function GeneratorPage() {
   const subQuery = useQuery({ queryKey: ["subscription"], queryFn: () => subFn() });
   const usageQuery = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
   const queryClient = useQueryClient();
-  const { lang, setLang, languages } = useDictationSettings();
+
 
   const [input, setInput] = useState<ListingInput>(EMPTY_INPUT);
   const [output, setOutput] = useState<ListingOutput | null>(null);
