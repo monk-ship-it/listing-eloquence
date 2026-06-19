@@ -28,6 +28,13 @@ function toIso(unixSeconds: number | null | undefined): string | null {
 
 type StripeRecord = Record<string, unknown>;
 
+interface StripeEvent {
+  type?: string;
+  data?: {
+    object?: unknown;
+  };
+}
+
 function asRecord(value: unknown): StripeRecord | null {
   return typeof value === "object" && value !== null ? (value as StripeRecord) : null;
 }
@@ -42,6 +49,10 @@ function stringValue(value: unknown): string | null {
 
 function numberValue(value: unknown): number | null {
   return typeof value === "number" ? value : null;
+}
+
+function booleanValue(value: unknown): boolean {
+  return typeof value === "boolean" ? value : false;
 }
 
 function firstSubscriptionPrice(sub: unknown): StripeRecord | null {
@@ -100,7 +111,10 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
           return new Response("Webhook not configured", { status: 500 });
         }
         // Support multiple endpoint signing secrets (comma/whitespace separated).
-        const secrets = secretEnv.split(/[\s,]+/).map((s) => s.trim()).filter(Boolean);
+        const secrets = secretEnv
+          .split(/[\s,]+/)
+          .map((s) => s.trim())
+          .filter(Boolean);
 
         const sig = request.headers.get("stripe-signature") ?? "";
         const payload = await request.text();
@@ -109,9 +123,9 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
           return new Response("Invalid signature", { status: 401 });
         }
 
-        let event: any;
+        let event: StripeEvent;
         try {
-          event = JSON.parse(payload);
+          event = JSON.parse(payload) as StripeEvent;
         } catch {
           return new Response("Invalid payload", { status: 400 });
         }
