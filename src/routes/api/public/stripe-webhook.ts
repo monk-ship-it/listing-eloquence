@@ -36,6 +36,24 @@ function priceFromSubscription(sub: any): string | null {
   return sub?.items?.data?.[0]?.price?.id ?? null;
 }
 
+function priceFromCheckoutSession(session: any): string | null {
+  return (
+    session.metadata?.price_id ??
+    session.line_items?.data?.[0]?.price?.id ??
+    session.display_items?.[0]?.price?.id ??
+    null
+  );
+}
+
+function amountFromCheckoutSession(session: any): number | null {
+  return (
+    session.amount_total ??
+    session.line_items?.data?.[0]?.price?.unit_amount ??
+    session.display_items?.[0]?.amount ??
+    null
+  );
+}
+
 export const Route = createFileRoute("/api/public/stripe-webhook")({
   server: {
     handlers: {
@@ -89,18 +107,25 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
             let trialEnd: string | null = null;
             let periodEnd: string | null = null;
             let cancelAtPeriodEnd = false;
-            let priceId: string | null = session.metadata?.price_id ?? null;
-            let amount: number | null = null;
+            let priceId: string | null = priceFromCheckoutSession(session);
+            let amount: number | null = amountFromCheckoutSession(session);
 
             if (subscriptionId) {
-              const { getStripeSubscription } = await import("@/lib/stripe.server");
-              const sub = await getStripeSubscription(subscriptionId);
-              status = sub.status;
-              trialEnd = toIso(sub.trial_end);
-              periodEnd = toIso(sub.current_period_end);
-              cancelAtPeriodEnd = !!sub.cancel_at_period_end;
-              priceId = priceFromSubscription(sub) ?? priceId;
-              amount = amountFromSubscription(sub);
+              try {
+                const { getStripeSubscription } = await import("@/lib/stripe.server");
+                const sub = await getStripeSubscription(subscriptionId);
+                status = sub.status;
+                trialEnd = toIso(sub.trial_end);
+                periodEnd = toIso(sub.current_period_end);
+                cancelAtPeriodEnd = !!sub.cancel_at_period_end;
+                priceId = priceFromSubscription(sub) ?? priceId;
+                amount = amountFromSubscription(sub) ?? amount;
+              } catch (err) {
+                console.warn(
+                  "Stripe subscription lookup failed; recording checkout payload only:",
+                  err,
+                );
+              }
             }
 
             // Plan from payment link id first, then price id, then amount.
@@ -116,6 +141,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               trial_end: trialEnd,
               current_period_end: periodEnd,
               cancel_at_period_end: cancelAtPeriodEnd,
+              updated_at: new Date().toISOString(),
             };
 
             // Idempotent: keyed UPDATE on an existing row, so duplicate
@@ -164,6 +190,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               trial_end: toIso(sub.trial_end),
               current_period_end: toIso(sub.current_period_end),
               cancel_at_period_end: !!sub.cancel_at_period_end,
+              updated_at: new Date().toISOString(),
             };
 
             // Prefer matching by subscription id; fall back to user id from metadata.
