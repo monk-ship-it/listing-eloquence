@@ -2,6 +2,7 @@ import type { VoiceId } from "./voices";
 
 export interface ListingInput {
   voice: VoiceId;
+  voiceNotes: string;
   address: string;
   areaHighlights: string;
   propertyType: string;
