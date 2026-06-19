@@ -173,7 +173,19 @@ export const resumeMySubscription = createServerFn({ method: "POST" })
       throw new Error("No subscription found.");
     }
 
-    const { setSubscriptionCancelAtPeriodEnd } = await import("./stripe.server");
+    const { setSubscriptionCancelAtPeriodEnd, getStripeSubscription } = await import(
+      "./stripe.server"
+    );
+
+    // A fully canceled Stripe subscription can't be updated/resumed — the user
+    // must re-subscribe via checkout. Detect that and surface a clear message.
+    const current = await getStripeSubscription(row.stripe_subscription_id);
+    if (current?.status === "canceled") {
+      throw new Error(
+        "This subscription has already ended and can't be resumed. Please choose a plan above to re-subscribe.",
+      );
+    }
+
     const updated = await setSubscriptionCancelAtPeriodEnd(row.stripe_subscription_id, false);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
