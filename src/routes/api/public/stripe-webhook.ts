@@ -113,6 +113,15 @@ function amountFromCheckoutSession(session: StripeRecord): number | null {
   );
 }
 
+function logRuntimeSecretPresence() {
+  console.info("Stripe webhook runtime secrets:", {
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ? "present" : "missing",
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET ? "present" : "missing",
+    SUPABASE_URL: process.env.SUPABASE_URL ? "present" : "missing",
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? "present" : "missing",
+  });
+}
+
 export const Route = createFileRoute("/api/public/stripe-webhook")({
   server: {
     handlers: {
@@ -140,6 +149,8 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
         } catch {
           return new Response("Invalid payload", { status: 400 });
         }
+
+        logRuntimeSecretPresence();
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
