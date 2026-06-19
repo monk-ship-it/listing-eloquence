@@ -20,6 +20,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated.account'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
+import { Route as ApiPublicStripeKeycheckRouteImport } from './routes/api/public/stripe-keycheck'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
@@ -79,6 +80,11 @@ const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   path: '/api/public/stripe-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicStripeKeycheckRoute = ApiPublicStripeKeycheckRouteImport.update({
+  id: '/api/public/stripe-keycheck',
+  path: '/api/public/stripe-keycheck',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailTransactionalSendRoute =
   LovableEmailTransactionalSendRouteImport.update({
     id: '/lovable/email/transactional/send',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/history': typeof AuthenticatedHistoryRoute
   '/subscription': typeof AuthenticatedSubscriptionRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/api/public/stripe-keycheck': typeof ApiPublicStripeKeycheckRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/history': typeof AuthenticatedHistoryRoute
   '/subscription': typeof AuthenticatedSubscriptionRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/api/public/stripe-keycheck': typeof ApiPublicStripeKeycheckRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/subscription': typeof AuthenticatedSubscriptionRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/api/public/stripe-keycheck': typeof ApiPublicStripeKeycheckRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -156,6 +165,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/subscription'
     | '/email/unsubscribe'
+    | '/api/public/stripe-keycheck'
     | '/api/public/stripe-webhook'
     | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/subscription'
     | '/email/unsubscribe'
+    | '/api/public/stripe-keycheck'
     | '/api/public/stripe-webhook'
     | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/_authenticated/history'
     | '/_authenticated/subscription'
     | '/email/unsubscribe'
+    | '/api/public/stripe-keycheck'
     | '/api/public/stripe-webhook'
     | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
@@ -199,6 +211,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  ApiPublicStripeKeycheckRoute: typeof ApiPublicStripeKeycheckRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -285,6 +298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/stripe-keycheck': {
+      id: '/api/public/stripe-keycheck'
+      path: '/api/public/stripe-keycheck'
+      fullPath: '/api/public/stripe-keycheck'
+      preLoaderRoute: typeof ApiPublicStripeKeycheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/send': {
       id: '/lovable/email/transactional/send'
       path: '/lovable/email/transactional/send'
@@ -334,6 +354,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  ApiPublicStripeKeycheckRoute: ApiPublicStripeKeycheckRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
@@ -343,13 +364,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
