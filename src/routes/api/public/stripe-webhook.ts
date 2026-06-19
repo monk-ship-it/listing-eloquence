@@ -26,30 +26,67 @@ function toIso(unixSeconds: number | null | undefined): string | null {
   return new Date(unixSeconds * 1000).toISOString();
 }
 
+type StripeRecord = Record<string, unknown>;
+
+function asRecord(value: unknown): StripeRecord | null {
+  return typeof value === "object" && value !== null ? (value as StripeRecord) : null;
+}
+
+function asArray(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function stringValue(value: unknown): string | null {
+  return typeof value === "string" && value.length > 0 ? value : null;
+}
+
+function numberValue(value: unknown): number | null {
+  return typeof value === "number" ? value : null;
+}
+
+function firstSubscriptionPrice(sub: unknown): StripeRecord | null {
+  const record = asRecord(sub);
+  const items = asRecord(record?.items);
+  const firstItem = asRecord(asArray(items?.data)[0]);
+  return asRecord(firstItem?.price);
+}
+
 /** Extract the recurring amount (in pence) from a subscription object. */
-function amountFromSubscription(sub: any): number | null {
-  return sub?.items?.data?.[0]?.price?.unit_amount ?? null;
+function amountFromSubscription(sub: unknown): number | null {
+  return numberValue(firstSubscriptionPrice(sub)?.unit_amount);
 }
 
 /** Extract the Stripe price id from a subscription object. */
-function priceFromSubscription(sub: any): string | null {
-  return sub?.items?.data?.[0]?.price?.id ?? null;
+function priceFromSubscription(sub: unknown): string | null {
+  return stringValue(firstSubscriptionPrice(sub)?.id);
 }
 
-function priceFromCheckoutSession(session: any): string | null {
+function priceFromCheckoutSession(session: StripeRecord): string | null {
+  const metadata = asRecord(session.metadata);
+  const lineItems = asRecord(session.line_items);
+  const firstLineItem = asRecord(asArray(lineItems?.data)[0]);
+  const lineItemPrice = asRecord(firstLineItem?.price);
+  const firstDisplayItem = asRecord(asArray(session.display_items)[0]);
+  const displayItemPrice = asRecord(firstDisplayItem?.price);
+
   return (
-    session.metadata?.price_id ??
-    session.line_items?.data?.[0]?.price?.id ??
-    session.display_items?.[0]?.price?.id ??
+    stringValue(metadata?.price_id) ??
+    stringValue(lineItemPrice?.id) ??
+    stringValue(displayItemPrice?.id) ??
     null
   );
 }
 
-function amountFromCheckoutSession(session: any): number | null {
+function amountFromCheckoutSession(session: StripeRecord): number | null {
+  const lineItems = asRecord(session.line_items);
+  const firstLineItem = asRecord(asArray(lineItems?.data)[0]);
+  const lineItemPrice = asRecord(firstLineItem?.price);
+  const firstDisplayItem = asRecord(asArray(session.display_items)[0]);
+
   return (
-    session.amount_total ??
-    session.line_items?.data?.[0]?.price?.unit_amount ??
-    session.display_items?.[0]?.amount ??
+    numberValue(session.amount_total) ??
+    numberValue(lineItemPrice?.unit_amount) ??
+    numberValue(firstDisplayItem?.amount) ??
     null
   );
 }
