@@ -98,8 +98,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Estate Agent Ally generates compelling UK property listings with customizable tones." },
       { property: "og:description", content: "Estate Agent Ally generates compelling UK property listings with customizable tones." },
       { name: "twitter:description", content: "Estate Agent Ally generates compelling UK property listings with customizable tones." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781657004257-ChatGPT_Image_Nov_18,_2025,_08_18_14_PM.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781657004257-ChatGPT_Image_Nov_18,_2025,_08_18_14_PM.webp" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781872351657-CopyByMonk_Stripe_white_bg_circle_icon_512x512.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781872351657-CopyByMonk_Stripe_white_bg_circle_icon_512x512.webp" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
