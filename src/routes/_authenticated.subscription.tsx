@@ -106,8 +106,46 @@ function SubscriptionPage() {
   const { data: usage } = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
 
   const portalFn = useServerFn(createBillingPortalUrl);
+  const cancelFn = useServerFn(cancelMySubscription);
+  const resumeFn = useServerFn(resumeMySubscription);
+  const queryClient = useQueryClient();
   const [portalLoading, setPortalLoading] = useState(false);
+  const [cancelBusy, setCancelBusy] = useState(false);
+  const [resumeBusy, setResumeBusy] = useState(false);
   const [checkoutBusy, setCheckoutBusy] = useState<string | null>(null);
+
+  function applySub(updated: SubscriptionInfo) {
+    // Reflect the change immediately in the UI, then revalidate from the server.
+    queryClient.setQueryData(["subscription"], updated);
+    queryClient.invalidateQueries({ queryKey: ["subscription"] });
+    queryClient.invalidateQueries({ queryKey: ["usage"] });
+  }
+
+  async function cancelSubscription() {
+    setCancelBusy(true);
+    try {
+      const updated = await cancelFn();
+      applySub(updated);
+      toast.success("Subscription set to cancel at the end of your billing period.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not cancel subscription.");
+    } finally {
+      setCancelBusy(false);
+    }
+  }
+
+  async function resumeSubscription() {
+    setResumeBusy(true);
+    try {
+      const updated = await resumeFn();
+      applySub(updated);
+      toast.success("Subscription resumed — it will renew automatically.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not resume subscription.");
+    } finally {
+      setResumeBusy(false);
+    }
+  }
 
   // Calm message if the user came back from a cancelled checkout.
   useEffect(() => {
