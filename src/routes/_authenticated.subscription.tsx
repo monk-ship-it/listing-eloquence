@@ -282,7 +282,7 @@ function SubscriptionPage() {
                 {hasAccess ? "Change your plan" : "Choose a plan"}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Listings renew at the start of each month. {TRIAL_DAYS}-day free trial on the Growth plan.
+                Listings renew at the start of each month. {TRIAL_DAYS}-day free trial on the Starter plan.
               </p>
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
                 {PLANS.map((plan) => {
@@ -317,7 +317,7 @@ function SubscriptionPage() {
                             ? "Current plan"
                             : hasAccess
                               ? "Switch"
-                              : plan.id === "growth"
+                              : plan.id === "starter"
                                 ? "Start trial"
                                 : "Subscribe"}
                       </Button>
