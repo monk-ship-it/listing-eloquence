@@ -88,7 +88,6 @@ function SubscriptionPage() {
   const { data: usage } = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
 
   const portalFn = useServerFn(createBillingPortalUrl);
-  const checkoutFn = useServerFn(createCheckoutSession);
   const [portalLoading, setPortalLoading] = useState(false);
   const [checkoutBusy, setCheckoutBusy] = useState<string | null>(null);
 
