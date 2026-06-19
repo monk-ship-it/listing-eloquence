@@ -384,23 +384,52 @@ function SubscriptionPage() {
             </Card>
           )}
 
-          {hasAccess && !sub?.isComped && status !== "trialing" && (
+          {hasAccess && !sub?.isComped && (status === "active" || status === "trialing") && (
             <Card className="p-6">
               <h2 className="font-display text-lg font-semibold">Billing</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Manage your payment method, view invoices, or cancel your
-                subscription in the secure Stripe billing portal. Any change is
-                reflected here automatically.
+                {sub?.cancelAtPeriodEnd
+                  ? `Your subscription is set to cancel — access ends ${fmtDate(sub?.currentPeriodEnd ?? null)}. You can resume any time before then.`
+                  : "Cancel any time. You'll keep access until the end of your current billing period, and changes are reflected here straight away."}
               </p>
-              <Button
-                className="mt-4"
-                variant="outline"
-                disabled={portalLoading}
-                onClick={openBillingPortal}
-              >
-                <CreditCard className="mr-2 h-4 w-4" />
-                {portalLoading ? "Opening…" : "Manage or cancel subscription"}
-              </Button>
+
+              <div className="mt-4 flex flex-wrap gap-3">
+                {sub?.cancelAtPeriodEnd ? (
+                  <Button onClick={resumeSubscription} disabled={resumeBusy}>
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    {resumeBusy ? "Resuming…" : "Resume subscription"}
+                  </Button>
+                ) : (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" disabled={cancelBusy}>
+                        <XCircle className="mr-2 h-4 w-4" />
+                        {cancelBusy ? "Cancelling…" : "Cancel subscription"}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Cancel your subscription?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You'll keep full access until {fmtDate(sub?.currentPeriodEnd ?? null)}. After
+                          that your subscription won't renew. You can resume any time before then.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Keep subscription</AlertDialogCancel>
+                        <AlertDialogAction onClick={cancelSubscription}>
+                          Cancel subscription
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+
+                <Button variant="outline" disabled={portalLoading} onClick={openBillingPortal}>
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  {portalLoading ? "Opening…" : "Manage billing & invoices"}
+                </Button>
+              </div>
             </Card>
           )}
         </div>
