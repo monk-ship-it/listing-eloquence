@@ -41,6 +41,8 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const { plan: planParam } = Route.useSearch();
+  const plan: PlanId = planParam ?? "starter";
   const [mode, setMode] = useState<"login" | "signup">("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,8 +50,8 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) navigate({ to: "/app" });
-  }, [user, loading, navigate]);
+    if (!loading && user) navigate({ to: "/subscription", search: { plan } });
+  }, [user, loading, navigate, plan]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -60,24 +62,25 @@ function AuthPage() {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/app`,
+            emailRedirectTo: `${window.location.origin}/subscription?plan=${plan}`,
             data: { full_name: fullName },
           },
         });
         if (error) throw error;
-        toast.success("Account created — taking you to the app.");
+        toast.success("Account created — taking you to secure checkout.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back.");
       }
-      navigate({ to: "/app" });
+      navigate({ to: "/subscription", search: { plan } });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setBusy(false);
     }
   }
+
 
   return (
     <div className="relative flex min-h-screen items-center justify-center px-5 py-12">
