@@ -9,9 +9,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { APP_NAME, TRIAL_DAYS } from "@/lib/config";
+import { APP_NAME, TRIAL_DAYS, type PlanId } from "@/lib/config";
+
+const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>): { plan?: PlanId } => {
+    const plan = search.plan as string | undefined;
+    return plan && VALID_PLANS.includes(plan as PlanId) ? { plan: plan as PlanId } : {};
+  },
   head: () => ({
     meta: [
       { title: `Sign in — ${APP_NAME}` },
