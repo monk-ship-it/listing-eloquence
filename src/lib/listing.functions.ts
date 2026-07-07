@@ -130,12 +130,24 @@ export const generateListing = createServerFn({ method: "POST" })
     }
 
     // Persist to history
-    await supabase.from("generations").insert({
+    const { data: savedGen } = await supabase
+      .from("generations")
+      .insert({
+        user_id: userId,
+        voice,
+        property_title: data.address || data.propertyType || "Untitled property",
+        inputs: JSON.parse(JSON.stringify(data)),
+        output: JSON.parse(JSON.stringify(parsed)),
+      })
+      .select("id")
+      .maybeSingle();
+
+    // Record durable usage independently of the deletable history row.
+    // Deleting history must never reduce monthly usage.
+    await supabase.from("generation_usage").insert({
       user_id: userId,
-      voice,
-      property_title: data.address || data.propertyType || "Untitled property",
-      inputs: JSON.parse(JSON.stringify(data)),
-      output: JSON.parse(JSON.stringify(parsed)),
+      generation_id: savedGen?.id ?? null,
+      plan: getPlan(sub?.plan).id,
     });
 
     return parsed;
