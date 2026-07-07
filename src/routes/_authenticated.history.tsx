@@ -184,6 +184,7 @@ function HistoryItem({
                           variant="ghost"
                           size="icon"
                           className="h-7 w-7"
+                          aria-label="Copy social post"
                           onClick={() => copy(`${post.caption}${tags ? `\n\n${tags}` : ""}`)}
                         >
                           <Copy className="h-3.5 w-3.5" />
