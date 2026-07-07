@@ -365,11 +365,24 @@ function SubscriptionPage() {
           {!sub?.isComped && (
             <Card className="p-6">
               <h2 className="font-display text-lg font-semibold">
-                {hasAccess ? "Change your plan" : "Choose a plan"}
+                {hasAccess ? "Your plan" : "Choose a plan"}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Listings renew at the start of each month. {TRIAL_DAYS}-day free trial on the Starter plan.
+                Listings renew at the start of each month. The {TRIAL_DAYS}-day free trial on the
+                Starter plan begins at secure checkout — card required, cancel anytime before renewal.
               </p>
+              {hasAccess && (
+                <p className="mt-2 text-sm text-muted-foreground">
+                  To change plan, please{" "}
+                  <a
+                    className="font-medium text-primary underline-offset-4 hover:underline"
+                    href={`mailto:${CONTACT_EMAIL}?subject=Change%20my%20plan`}
+                  >
+                    contact support
+                  </a>{" "}
+                  or manage billing below. We won't create a second subscription.
+                </p>
+              )}
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
                 {PLANS.map((plan) => {
                   const isCurrent = hasAccess && plan.id === currentPlan.id;
@@ -389,30 +402,42 @@ function SubscriptionPage() {
                         <span className="text-xs font-normal text-muted-foreground">/mo</span>
                       </p>
                       <p className="mt-1 text-xs text-primary">{plan.monthlyListings} listings / month</p>
-                      <Button
-                        className="mt-4 w-full"
-                        size="sm"
-                        variant={isCurrent ? "outline" : "default"}
-                        disabled={isCurrent || checkoutBusy !== null}
-                        onClick={() => startCheckout(plan.id)}
-                      >
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        {checkoutBusy === plan.id
-                          ? "Starting…"
-                          : isCurrent
-                            ? "Current plan"
-                            : hasAccess
-                              ? "Switch"
-                              : plan.id === "starter"
-                                ? "Start trial"
-                                : "Subscribe"}
-                      </Button>
+                      {hasAccess ? (
+                        isCurrent ? (
+                          <Button className="mt-4 w-full" size="sm" variant="outline" disabled>
+                            <CheckCircle2 className="mr-2 h-4 w-4" />
+                            Current plan
+                          </Button>
+                        ) : (
+                          <Button className="mt-4 w-full" size="sm" variant="outline" asChild>
+                            <a href={`mailto:${CONTACT_EMAIL}?subject=Change%20to%20${plan.name}%20plan`}>
+                              Contact support
+                            </a>
+                          </Button>
+                        )
+                      ) : (
+                        <Button
+                          className="mt-4 w-full"
+                          size="sm"
+                          variant="default"
+                          disabled={checkoutBusy !== null}
+                          onClick={() => startCheckout(plan.id)}
+                        >
+                          <CreditCard className="mr-2 h-4 w-4" />
+                          {checkoutBusy === plan.id
+                            ? "Starting…"
+                            : plan.id === "starter"
+                              ? "Start trial"
+                              : "Subscribe"}
+                        </Button>
+                      )}
                     </div>
                   );
                 })}
               </div>
             </Card>
           )}
+
 
           {hasAccess && !sub?.isComped && (status === "active" || status === "trialing") && (
             <Card className="p-6">
