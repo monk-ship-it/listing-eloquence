@@ -154,8 +154,10 @@ function AuthPage() {
           </Tabs>
         </Card>
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          By continuing you agree to start a {TRIAL_DAYS}-day trial. Cancel anytime.
+          The {TRIAL_DAYS}-day Starter trial starts at secure checkout — card required. Cancel
+          anytime before renewal; access continues until your period ends.
         </p>
+
       </div>
     </div>
   );
