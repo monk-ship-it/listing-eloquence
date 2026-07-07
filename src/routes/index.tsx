@@ -685,9 +685,9 @@ function VoiceDictation({ authed }: { authed: boolean }) {
               </li>
             ))}
           </ul>
-          <Button asChild size="lg" className="mt-8">
-            <Link to={ctaTo}>Try voice dictation free</Link>
-          </Button>
+          <CtaButton authed={authed} size="lg" className="mt-8">
+            Try voice dictation free
+          </CtaButton>
         </Reveal>
 
         <Reveal delay={120} className="relative">
