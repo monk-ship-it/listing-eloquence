@@ -842,7 +842,7 @@ function orderedFeatures(features: string[]): string[] {
 
 /* -------------------------------- Final CTA -------------------------------- */
 
-function FinalCta({ ctaTo }: { ctaTo: string }) {
+function FinalCta({ authed }: { authed: boolean }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
       <Reveal>
