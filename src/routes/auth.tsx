@@ -13,7 +13,21 @@ import { APP_NAME, TRIAL_DAYS } from "@/lib/config";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
-    meta: [{ title: `Sign in — ${APP_NAME}` }],
+    meta: [
+      { title: `Sign in — ${APP_NAME}` },
+      {
+        name: "description",
+        content: `Sign in or create your ${APP_NAME} account to generate AI property listings.`,
+      },
+      { property: "og:title", content: `Sign in — ${APP_NAME}` },
+      {
+        property: "og:description",
+        content: `Sign in or create your ${APP_NAME} account to generate AI property listings.`,
+      },
+      { property: "og:url", content: "https://copybymonk.com/auth" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://copybymonk.com/auth" }],
   }),
   component: AuthPage,
 });
