@@ -102,8 +102,10 @@ function AuthPage() {
             <TabsContent value="signup" className="mt-6">
               <h2 className="font-display text-2xl font-semibold">Create your account</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                {TRIAL_DAYS}-day free trial. No card needed to sign up.
+                The {TRIAL_DAYS}-day Starter trial begins at secure checkout — card required. Cancel
+                anytime before renewal from your account.
               </p>
+
             </TabsContent>
             <TabsContent value="login" className="mt-6">
               <h2 className="font-display text-2xl font-semibold">Welcome back</h2>
