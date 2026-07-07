@@ -208,8 +208,9 @@ function Hero({ authed }: { authed: boolean }) {
 
           <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
             <ShieldCheck className="h-4 w-4 text-primary" />
-            {TRIAL_DAYS}-day free trial · cancel anytime
+            {TRIAL_DAYS}-day trial at secure checkout · card required · cancel anytime
           </p>
+
 
           <div className="mt-7 flex flex-wrap gap-2.5">
             {HERO_CHIPS.map((chip) => (
