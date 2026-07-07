@@ -799,14 +799,16 @@ function Pricing({ authed }: { authed: boolean }) {
                     </li>
                   ))}
                 </ul>
-                <Button
-                  asChild
+                <CtaButton
+                  authed={authed}
+                  plan={plan.id}
                   className="mt-8 w-full"
                   size="lg"
                   variant={plan.popular ? "default" : "outline"}
                 >
-                  <Link to={ctaTo}>{plan.id === "starter" ? "Start free trial" : "Get started"}</Link>
-                </Button>
+                  {plan.id === "starter" ? "Start free trial" : "Get started"}
+                </CtaButton>
+
               </div>
             </Reveal>
           ))}
