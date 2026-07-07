@@ -122,6 +122,7 @@ export async function createSubscriptionCheckoutSession(params: CheckoutParams) 
     "subscription_data[metadata][user_id]": params.userId,
     "subscription_data[metadata][plan]": params.plan,
     allow_promotion_codes: "true",
+    payment_method_collection: "always",
   };
 
   if (params.customerId) {
