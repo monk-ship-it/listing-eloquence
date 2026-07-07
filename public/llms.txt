@@ -1,0 +1,7 @@
+# Quill
+
+> Quill is an AI listing writer with voice dictation for UK estate agents. Speak or type property notes and generate portal-ready listings, social captions and buyer emails in minutes.
+
+## Pages
+
+- [Home](/): What Quill does, brand voices, how it works, and pricing.
