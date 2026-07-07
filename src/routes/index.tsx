@@ -749,6 +749,12 @@ function Pricing({ ctaTo }: { ctaTo: string }) {
             </Reveal>
           ))}
         </div>
+
+        <Reveal className="mt-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            Annual plans available with two months free.
+          </p>
+        </Reveal>
       </div>
     </section>
   );
