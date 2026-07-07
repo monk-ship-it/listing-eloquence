@@ -780,9 +780,10 @@ function Pricing({ authed }: { authed: boolean }) {
                 </p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
                   {plan.id === "starter"
-                    ? `${TRIAL_DAYS}-day free trial · cancel anytime`
+                    ? `${TRIAL_DAYS}-day trial at checkout · card required · cancel anytime`
                     : "Cancel anytime"}
                 </p>
+
                 <div className="rule my-6" />
                 <ul className="flex-1 space-y-3 text-sm">
                   {orderedFeatures(plan.features).map((f, idx) => (
