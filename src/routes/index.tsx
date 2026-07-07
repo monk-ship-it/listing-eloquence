@@ -3,7 +3,7 @@ import { Logo } from "@/components/Logo";
 import { Reveal } from "@/components/Reveal";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { APP_NAME, PLANS, TRIAL_DAYS, CONTACT_EMAIL } from "@/lib/config";
+import { APP_NAME, PLANS, TRIAL_DAYS, CONTACT_EMAIL, type PlanId } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
   Check,
