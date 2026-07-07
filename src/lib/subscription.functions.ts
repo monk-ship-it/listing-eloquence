@@ -257,7 +257,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const email =
       (claims as { email?: string } | undefined)?.email ?? row?.email ?? "";
 
-    if (isCompedEmail(email) || row?.status === "active" || row?.status === "trialing") {
+    if (isCompedEmail(email) || hasActiveAccess(row?.status ?? "none", row?.current_period_end ?? null)) {
       throw new Error(
         "You already have subscription access. Manage billing or contact support to change plan.",
       );
