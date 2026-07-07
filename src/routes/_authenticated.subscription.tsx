@@ -40,7 +40,13 @@ import {
   Clock,
 } from "lucide-react";
 
+const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
+
 export const Route = createFileRoute("/_authenticated/subscription")({
+  validateSearch: (search: Record<string, unknown>): { plan?: PlanId } => {
+    const plan = search.plan as string | undefined;
+    return plan && VALID_PLANS.includes(plan as PlanId) ? { plan: plan as PlanId } : {};
+  },
   head: () => ({ meta: [{ title: `Subscription — ${APP_NAME}` }] }),
   component: SubscriptionPage,
 });
