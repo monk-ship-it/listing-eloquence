@@ -183,22 +183,43 @@ function SubscriptionPage() {
   const remaining = daysLeft(sub?.currentPeriodEnd ?? null);
   const currentPlan = getPlan(sub?.plan);
 
-  function startCheckout(planId: typeof PLANS[number]["id"] = currentPlan.id) {
+  const isComped = sub?.isComped ?? false;
+
+  async function startCheckout(planId: PlanId = currentPlan.id) {
     if (!user) {
       toast.error("Please log in to continue to checkout.");
       return;
     }
     setCheckoutBusy(planId);
     try {
-      // Redirect to the plan's Stripe Payment Link with the logged-in user's
-      // id attached as client_reference_id so the webhook activates the
-      // correct account.
-      window.location.href = buildCheckoutUrl(user.id, user.email ?? "", planId);
+      // Create a Stripe Checkout Session server-side so it carries the
+      // logged-in user's id (client_reference_id), metadata and the exact
+      // server-selected Price ID. The webhook activates the correct account.
+      const { url } = await checkoutFn({
+        data: { plan: planId, origin: window.location.origin },
+      });
+      window.location.href = url;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not start checkout. Please try again.");
       setCheckoutBusy(null);
     }
   }
+
+  // Preserve plan choice from marketing/auth: if the user arrives with a plan
+  // and has no current access, start checkout for that plan automatically.
+  // Never auto-start for users who already have access (avoids duplicate subs).
+  const autoStartedRef = useRef(false);
+  useEffect(() => {
+    if (autoStartedRef.current) return;
+    if (isLoading || !user) return;
+    if (!planParam) return;
+    if (hasAccess || isComped) return;
+    autoStartedRef.current = true;
+    startCheckout(planParam);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, user, planParam, hasAccess, isComped]);
+
+
 
 
   return (
