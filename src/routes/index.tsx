@@ -188,9 +188,9 @@ function Hero({ authed }: { authed: boolean }) {
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-            <Button asChild size="lg" className="w-full sm:w-auto">
-              <Link to={ctaTo}>Start free trial</Link>
-            </Button>
+            <CtaButton authed={authed} size="lg" className="w-full sm:w-auto">
+              Start free trial
+            </CtaButton>
             <Button
               asChild
               size="lg"
