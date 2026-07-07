@@ -165,7 +165,7 @@ const HERO_CHIPS = [
   "No CRM migration",
 ];
 
-function Hero({ ctaTo }: { ctaTo: string }) {
+function Hero({ authed }: { authed: boolean }) {
   return (
     <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-25" />
