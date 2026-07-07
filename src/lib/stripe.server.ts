@@ -1,4 +1,4 @@
-import { STRIPE_PLAN_IDS, type PlanId } from "./config";
+import { STRIPE_PLAN_IDS } from "./config";
 
 const STRIPE_API = "https://api.stripe.com/v1";
 
