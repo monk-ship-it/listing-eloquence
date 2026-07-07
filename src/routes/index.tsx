@@ -740,7 +740,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
 
 /* --------------------------------- Pricing --------------------------------- */
 
-function Pricing({ ctaTo }: { ctaTo: string }) {
+function Pricing({ authed }: { authed: boolean }) {
   return (
     <section id="pricing" className="border-y border-border bg-card/30 py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
