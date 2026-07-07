@@ -856,9 +856,9 @@ function FinalCta({ authed }: { authed: boolean }) {
               Speak, type or paste the notes. Choose the voice. Generate the listing pack.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-              <Button asChild size="lg" className="w-full sm:w-auto">
-                <Link to={ctaTo}>Start free trial</Link>
-              </Button>
+              <CtaButton authed={authed} size="lg" className="w-full sm:w-auto">
+                Start free trial
+              </CtaButton>
               <Button
                 asChild
                 size="lg"
