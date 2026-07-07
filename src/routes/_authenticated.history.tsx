@@ -108,7 +108,7 @@ function HistoryItem({
         <Badge variant="secondary" className="shrink-0">{item.voice}</Badge>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="icon" className="shrink-0 text-destructive">
+            <Button variant="ghost" size="icon" className="shrink-0 text-destructive" aria-label="Delete listing">
               <Trash2 className="h-4 w-4" />
             </Button>
           </AlertDialogTrigger>
@@ -134,7 +134,7 @@ function HistoryItem({
             <Button
               variant="ghost"
               size="icon"
-              title="Copy all formats"
+              title="Copy all formats" aria-label="Copy all formats"
               onClick={() => {
                 const social = (item.output.social ?? [])
                   .map((p) => {
@@ -162,7 +162,7 @@ function HistoryItem({
             <div className="mt-4">
               <div className="flex items-center justify-between gap-2">
                 <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Teaser summary</h3>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => copy(item.output.summary)}>
+                <Button variant="ghost" size="icon" className="h-7 w-7" aria-label="Copy teaser summary" onClick={() => copy(item.output.summary)}>
                   <Copy className="h-3.5 w-3.5" />
                 </Button>
               </div>
