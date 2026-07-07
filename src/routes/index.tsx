@@ -816,9 +816,11 @@ function Pricing({ authed }: { authed: boolean }) {
 
         <Reveal className="mt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            Annual plans available with two months free.
+            {TRIAL_DAYS}-day Starter trial at secure checkout · card required · cancel anytime before
+            renewal.
           </p>
         </Reveal>
+
       </div>
     </section>
   );
