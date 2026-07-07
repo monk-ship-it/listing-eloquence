@@ -250,12 +250,18 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
 
     const { data: row } = await supabase
       .from("subscribers")
-      .select("stripe_customer_id, email")
+      .select("stripe_customer_id, email, status, current_period_end")
       .eq("user_id", userId)
       .maybeSingle();
 
     const email =
       (claims as { email?: string } | undefined)?.email ?? row?.email ?? "";
+
+    if (isCompedEmail(email) || row?.status === "active" || row?.status === "trialing") {
+      throw new Error(
+        "You already have subscription access. Manage billing or contact support to change plan.",
+      );
+    }
 
     const { resolvePriceId, createSubscriptionCheckoutSession } = await import(
       "./stripe.server"
