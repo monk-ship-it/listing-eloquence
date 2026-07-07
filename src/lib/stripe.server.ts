@@ -39,20 +39,34 @@ export function getCheckoutSession(sessionId: string) {
   );
 }
 
-/** Monthly GBP price (in pence) expected for each plan. Mirrors planFromSubscription. */
+/** Monthly GBP price (in pence) expected for each plan (current live pricing). */
 const PLAN_AMOUNTS: Record<string, number> = {
-  starter: 2499,
-  pro: 2999,
-  growth: 4999,
+  starter: STRIPE_PLAN_IDS.starter.amount,
+  pro: STRIPE_PLAN_IDS.pro.amount,
+  growth: STRIPE_PLAN_IDS.growth.amount,
+};
+
+/** Exact live Stripe Price IDs per plan — the authoritative source of truth. */
+const PLAN_PRICE_IDS: Record<string, string> = {
+  starter: STRIPE_PLAN_IDS.starter.priceId,
+  pro: STRIPE_PLAN_IDS.pro.priceId,
+  growth: STRIPE_PLAN_IDS.growth.priceId,
 };
 
 let _priceCache: { at: number; map: Record<string, string> } | undefined;
 
 /**
- * Resolves the live Stripe price id for a plan by matching the recurring
- * monthly amount. This avoids hardcoding ids while never creating new prices.
+ * Resolves the live Stripe price id for a plan.
+ *
+ * 1. Prefer the exact known Price ID constant (STRIPE_PLAN_IDS). This is the
+ *    authoritative path and requires no API call.
+ * 2. Fall back to matching an active recurring MONTHLY GBP price at the exact
+ *    plan amount only if the constant is somehow missing.
  */
 export async function resolvePriceId(plan: string): Promise<string> {
+  const known = PLAN_PRICE_IDS[plan] ?? PLAN_PRICE_IDS.starter;
+  if (known) return known;
+
   const amount = PLAN_AMOUNTS[plan] ?? PLAN_AMOUNTS.starter;
   if (_priceCache && Date.now() - _priceCache.at < 5 * 60_000) {
     const cached = _priceCache.map[plan];
@@ -62,7 +76,9 @@ export async function resolvePriceId(plan: string): Promise<string> {
   const res = await stripeRequest("/prices?active=true&limit=100", "GET");
   const map: Record<string, string> = {};
   for (const p of res.data ?? []) {
+    // Fallback lookup requires: monthly interval, GBP currency, exact amount.
     if (p?.recurring?.interval !== "month") continue;
+    if (p?.currency !== "gbp") continue;
     const amt = p.unit_amount as number | undefined;
     if (amt == null) continue;
     for (const [planId, planAmt] of Object.entries(PLAN_AMOUNTS)) {
@@ -74,7 +90,7 @@ export async function resolvePriceId(plan: string): Promise<string> {
   const priceId = map[plan];
   if (!priceId) {
     throw new Error(
-      `No active Stripe price found for plan "${plan}" (expected £${(amount / 100).toFixed(2)}/month).`,
+      `No active Stripe price found for plan "${plan}" (expected £${(amount / 100).toFixed(2)}/month, GBP).`,
     );
   }
   return priceId;
