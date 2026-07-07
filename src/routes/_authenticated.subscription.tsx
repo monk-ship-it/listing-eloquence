@@ -104,6 +104,8 @@ const STATUS_META: Record<
 
 function SubscriptionPage() {
   const { user } = useAuth();
+  const { plan: planParam } = Route.useSearch();
+  const checkoutFn = useServerFn(createCheckoutSession);
   const subFn = useServerFn(getMySubscription);
   const usageFn = useServerFn(getMyUsage);
   const { data: sub, isLoading } = useQuery({
