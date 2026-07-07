@@ -73,8 +73,7 @@ export function getStripePlanConfig(): Record<
       paymentLinkId:
         envWithPrefix("STRIPE_GROWTH_PAYMENT_LINK_ID", "plink_") ??
         STRIPE_PLAN_IDS.growth.paymentLinkId,
-      priceId:
-        envWithPrefix("STRIPE_GROWTH_PRICE_ID", "price_") ?? STRIPE_PLAN_IDS.growth.priceId,
+      priceId: envWithPrefix("STRIPE_GROWTH_PRICE_ID", "price_") ?? STRIPE_PLAN_IDS.growth.priceId,
       amount: STRIPE_PLAN_IDS.growth.amount,
     },
   };
