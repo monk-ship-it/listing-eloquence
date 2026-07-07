@@ -146,7 +146,9 @@ function Header({ user }: { user: boolean }) {
                 </Link>
               </Button>
               <Button asChild>
-                <Link to="/auth">Start free trial</Link>
+                <Link to="/auth" search={{ plan: "starter" }}>
+                  Start free trial
+                </Link>
               </Button>
             </>
           )}
