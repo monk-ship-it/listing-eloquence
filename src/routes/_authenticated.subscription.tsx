@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -24,9 +24,10 @@ import {
   createBillingPortalUrl,
   cancelMySubscription,
   resumeMySubscription,
+  createCheckoutSession,
   type SubscriptionInfo,
 } from "@/lib/subscription.functions";
-import { APP_NAME, PLANS, getPlan, TRIAL_DAYS, buildCheckoutUrl } from "@/lib/config";
+import { APP_NAME, PLANS, getPlan, TRIAL_DAYS, CONTACT_EMAIL, type PlanId } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
   CheckCircle2,
@@ -39,7 +40,13 @@ import {
   Clock,
 } from "lucide-react";
 
+const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
+
 export const Route = createFileRoute("/_authenticated/subscription")({
+  validateSearch: (search: Record<string, unknown>): { plan?: PlanId } => {
+    const plan = search.plan as string | undefined;
+    return plan && VALID_PLANS.includes(plan as PlanId) ? { plan: plan as PlanId } : {};
+  },
   head: () => ({ meta: [{ title: `Subscription — ${APP_NAME}` }] }),
   component: SubscriptionPage,
 });
@@ -97,6 +104,8 @@ const STATUS_META: Record<
 
 function SubscriptionPage() {
   const { user } = useAuth();
+  const { plan: planParam } = Route.useSearch();
+  const checkoutFn = useServerFn(createCheckoutSession);
   const subFn = useServerFn(getMySubscription);
   const usageFn = useServerFn(getMyUsage);
   const { data: sub, isLoading } = useQuery({
@@ -174,22 +183,43 @@ function SubscriptionPage() {
   const remaining = daysLeft(sub?.currentPeriodEnd ?? null);
   const currentPlan = getPlan(sub?.plan);
 
-  function startCheckout(planId: typeof PLANS[number]["id"] = currentPlan.id) {
+  const isComped = sub?.isComped ?? false;
+
+  async function startCheckout(planId: PlanId = currentPlan.id) {
     if (!user) {
       toast.error("Please log in to continue to checkout.");
       return;
     }
     setCheckoutBusy(planId);
     try {
-      // Redirect to the plan's Stripe Payment Link with the logged-in user's
-      // id attached as client_reference_id so the webhook activates the
-      // correct account.
-      window.location.href = buildCheckoutUrl(user.id, user.email ?? "", planId);
+      // Create a Stripe Checkout Session server-side so it carries the
+      // logged-in user's id (client_reference_id), metadata and the exact
+      // server-selected Price ID. The webhook activates the correct account.
+      const { url } = await checkoutFn({
+        data: { plan: planId, origin: window.location.origin },
+      });
+      window.location.href = url;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not start checkout. Please try again.");
       setCheckoutBusy(null);
     }
   }
+
+  // Preserve plan choice from marketing/auth: if the user arrives with a plan
+  // and has no current access, start checkout for that plan automatically.
+  // Never auto-start for users who already have access (avoids duplicate subs).
+  const autoStartedRef = useRef(false);
+  useEffect(() => {
+    if (autoStartedRef.current) return;
+    if (isLoading || !user) return;
+    if (!planParam) return;
+    if (hasAccess || isComped) return;
+    autoStartedRef.current = true;
+    startCheckout(planParam);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, user, planParam, hasAccess, isComped]);
+
+
 
 
   return (
@@ -335,11 +365,24 @@ function SubscriptionPage() {
           {!sub?.isComped && (
             <Card className="p-6">
               <h2 className="font-display text-lg font-semibold">
-                {hasAccess ? "Change your plan" : "Choose a plan"}
+                {hasAccess ? "Your plan" : "Choose a plan"}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Listings renew at the start of each month. {TRIAL_DAYS}-day free trial on the Starter plan.
+                Listings renew at the start of each month. The {TRIAL_DAYS}-day free trial on the
+                Starter plan begins at secure checkout — card required, cancel anytime before renewal.
               </p>
+              {hasAccess && (
+                <p className="mt-2 text-sm text-muted-foreground">
+                  To change plan, please{" "}
+                  <a
+                    className="font-medium text-primary underline-offset-4 hover:underline"
+                    href={`mailto:${CONTACT_EMAIL}?subject=Change%20my%20plan`}
+                  >
+                    contact support
+                  </a>{" "}
+                  or manage billing below. We won't create a second subscription.
+                </p>
+              )}
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
                 {PLANS.map((plan) => {
                   const isCurrent = hasAccess && plan.id === currentPlan.id;
@@ -359,30 +402,42 @@ function SubscriptionPage() {
                         <span className="text-xs font-normal text-muted-foreground">/mo</span>
                       </p>
                       <p className="mt-1 text-xs text-primary">{plan.monthlyListings} listings / month</p>
-                      <Button
-                        className="mt-4 w-full"
-                        size="sm"
-                        variant={isCurrent ? "outline" : "default"}
-                        disabled={isCurrent || checkoutBusy !== null}
-                        onClick={() => startCheckout(plan.id)}
-                      >
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        {checkoutBusy === plan.id
-                          ? "Starting…"
-                          : isCurrent
-                            ? "Current plan"
-                            : hasAccess
-                              ? "Switch"
-                              : plan.id === "starter"
-                                ? "Start trial"
-                                : "Subscribe"}
-                      </Button>
+                      {hasAccess ? (
+                        isCurrent ? (
+                          <Button className="mt-4 w-full" size="sm" variant="outline" disabled>
+                            <CheckCircle2 className="mr-2 h-4 w-4" />
+                            Current plan
+                          </Button>
+                        ) : (
+                          <Button className="mt-4 w-full" size="sm" variant="outline" asChild>
+                            <a href={`mailto:${CONTACT_EMAIL}?subject=Change%20to%20${plan.name}%20plan`}>
+                              Contact support
+                            </a>
+                          </Button>
+                        )
+                      ) : (
+                        <Button
+                          className="mt-4 w-full"
+                          size="sm"
+                          variant="default"
+                          disabled={checkoutBusy !== null}
+                          onClick={() => startCheckout(plan.id)}
+                        >
+                          <CreditCard className="mr-2 h-4 w-4" />
+                          {checkoutBusy === plan.id
+                            ? "Starting…"
+                            : plan.id === "starter"
+                              ? "Start trial"
+                              : "Subscribe"}
+                        </Button>
+                      )}
                     </div>
                   );
                 })}
               </div>
             </Card>
           )}
+
 
           {hasAccess && !sub?.isComped && (status === "active" || status === "trialing") && (
             <Card className="p-6">

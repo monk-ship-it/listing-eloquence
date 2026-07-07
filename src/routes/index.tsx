@@ -3,7 +3,7 @@ import { Logo } from "@/components/Logo";
 import { Reveal } from "@/components/Reveal";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { APP_NAME, PLANS, TRIAL_DAYS, CONTACT_EMAIL } from "@/lib/config";
+import { APP_NAME, PLANS, TRIAL_DAYS, CONTACT_EMAIL, type PlanId } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
   Check,
@@ -73,21 +73,47 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   const { user } = useAuth();
-  const ctaTo = user ? "/app" : "/auth";
+  const authed = !!user;
 
   return (
     <div className="min-h-screen overflow-x-hidden">
-      <Header user={!!user} />
-      <Hero ctaTo={ctaTo} />
+      <Header user={authed} />
+      <Hero authed={authed} />
       <VoiceValue />
       <HowItWorks />
       <Voices />
       <LiveExample />
-      <VoiceDictation ctaTo={ctaTo} />
-      <Pricing ctaTo={ctaTo} />
-      <FinalCta ctaTo={ctaTo} />
+      <VoiceDictation authed={authed} />
+      <Pricing authed={authed} />
+      <FinalCta authed={authed} />
       <Footer />
     </div>
+  );
+}
+
+/**
+ * A "Start free trial"-style CTA that preserves the chosen plan and routes
+ * signed-in users straight to checkout, signed-out users to sign up.
+ */
+function CtaButton({
+  authed,
+  plan = "starter",
+  children,
+  ...rest
+}: {
+  authed: boolean;
+  plan?: PlanId;
+  children: React.ReactNode;
+  size?: React.ComponentProps<typeof Button>["size"];
+  variant?: React.ComponentProps<typeof Button>["variant"];
+  className?: string;
+}) {
+  return (
+    <Button asChild {...rest}>
+      <Link to={authed ? "/subscription" : "/auth"} search={{ plan }}>
+        {children}
+      </Link>
+    </Button>
   );
 }
 
@@ -120,7 +146,9 @@ function Header({ user }: { user: boolean }) {
                 </Link>
               </Button>
               <Button asChild>
-                <Link to="/auth">Start free trial</Link>
+                <Link to="/auth" search={{ plan: "starter" }}>
+                  Start free trial
+                </Link>
               </Button>
             </>
           )}
@@ -139,7 +167,7 @@ const HERO_CHIPS = [
   "No CRM migration",
 ];
 
-function Hero({ ctaTo }: { ctaTo: string }) {
+function Hero({ authed }: { authed: boolean }) {
   return (
     <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-25" />
@@ -162,9 +190,9 @@ function Hero({ ctaTo }: { ctaTo: string }) {
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-            <Button asChild size="lg" className="w-full sm:w-auto">
-              <Link to={ctaTo}>Start free trial</Link>
-            </Button>
+            <CtaButton authed={authed} size="lg" className="w-full sm:w-auto">
+              Start free trial
+            </CtaButton>
             <Button
               asChild
               size="lg"
@@ -180,8 +208,9 @@ function Hero({ ctaTo }: { ctaTo: string }) {
 
           <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
             <ShieldCheck className="h-4 w-4 text-primary" />
-            {TRIAL_DAYS}-day free trial · cancel anytime
+            {TRIAL_DAYS}-day trial at secure checkout · card required · cancel anytime
           </p>
+
 
           <div className="mt-7 flex flex-wrap gap-2.5">
             {HERO_CHIPS.map((chip) => (
@@ -627,7 +656,7 @@ const DEMO = {
 
 /* ----------------------------- Voice dictation ----------------------------- */
 
-function VoiceDictation({ ctaTo }: { ctaTo: string }) {
+function VoiceDictation({ authed }: { authed: boolean }) {
   const bullets = [
     "Dictate notes into any field",
     "Add to existing text without overwriting it",
@@ -659,9 +688,9 @@ function VoiceDictation({ ctaTo }: { ctaTo: string }) {
               </li>
             ))}
           </ul>
-          <Button asChild size="lg" className="mt-8">
-            <Link to={ctaTo}>Try voice dictation free</Link>
-          </Button>
+          <CtaButton authed={authed} size="lg" className="mt-8">
+            Try voice dictation free
+          </CtaButton>
         </Reveal>
 
         <Reveal delay={120} className="relative">
@@ -714,7 +743,7 @@ function VoiceDictation({ ctaTo }: { ctaTo: string }) {
 
 /* --------------------------------- Pricing --------------------------------- */
 
-function Pricing({ ctaTo }: { ctaTo: string }) {
+function Pricing({ authed }: { authed: boolean }) {
   return (
     <section id="pricing" className="border-y border-border bg-card/30 py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
@@ -754,9 +783,10 @@ function Pricing({ ctaTo }: { ctaTo: string }) {
                 </p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
                   {plan.id === "starter"
-                    ? `${TRIAL_DAYS}-day free trial · cancel anytime`
+                    ? `${TRIAL_DAYS}-day trial at checkout · card required · cancel anytime`
                     : "Cancel anytime"}
                 </p>
+
                 <div className="rule my-6" />
                 <ul className="flex-1 space-y-3 text-sm">
                   {orderedFeatures(plan.features).map((f, idx) => (
@@ -772,14 +802,16 @@ function Pricing({ ctaTo }: { ctaTo: string }) {
                     </li>
                   ))}
                 </ul>
-                <Button
-                  asChild
+                <CtaButton
+                  authed={authed}
+                  plan={plan.id}
                   className="mt-8 w-full"
                   size="lg"
                   variant={plan.popular ? "default" : "outline"}
                 >
-                  <Link to={ctaTo}>{plan.id === "starter" ? "Start free trial" : "Get started"}</Link>
-                </Button>
+                  {plan.id === "starter" ? "Start free trial" : "Get started"}
+                </CtaButton>
+
               </div>
             </Reveal>
           ))}
@@ -787,9 +819,11 @@ function Pricing({ ctaTo }: { ctaTo: string }) {
 
         <Reveal className="mt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            Annual plans available with two months free.
+            {TRIAL_DAYS}-day Starter trial at secure checkout · card required · cancel anytime before
+            renewal.
           </p>
         </Reveal>
+
       </div>
     </section>
   );
@@ -811,7 +845,7 @@ function orderedFeatures(features: string[]): string[] {
 
 /* -------------------------------- Final CTA -------------------------------- */
 
-function FinalCta({ ctaTo }: { ctaTo: string }) {
+function FinalCta({ authed }: { authed: boolean }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
       <Reveal>
@@ -825,9 +859,9 @@ function FinalCta({ ctaTo }: { ctaTo: string }) {
               Speak, type or paste the notes. Choose the voice. Generate the listing pack.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-              <Button asChild size="lg" className="w-full sm:w-auto">
-                <Link to={ctaTo}>Start free trial</Link>
-              </Button>
+              <CtaButton authed={authed} size="lg" className="w-full sm:w-auto">
+                Start free trial
+              </CtaButton>
               <Button
                 asChild
                 size="lg"
