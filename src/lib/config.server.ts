@@ -30,9 +30,24 @@ export function getAppUrl(): string {
 }
 
 /**
- * Reads the Stripe Payment Link ID and Price ID for each plan from the
- * environment. All values are optional — plan identification gracefully
- * falls back (payment link ID -> price ID -> price amount).
+ * Returns an env value only when it is present AND matches the expected id
+ * prefix. This guards against the historically swapped
+ * STRIPE_*_PRICE_ID / STRIPE_*_PAYMENT_LINK_ID secrets, where a price-id slot
+ * actually held a `plink_` value (and vice-versa). A mismatched value is
+ * treated as missing so the hardcoded public constants are used instead.
+ */
+function envWithPrefix(name: string, prefix: "price_" | "plink_"): string | null {
+  const v = process.env[name];
+  if (!v) return null;
+  const trimmed = v.trim();
+  return trimmed.startsWith(prefix) ? trimmed : null;
+}
+
+/**
+ * Reads the Stripe Payment Link ID and Price ID for each plan. Env secrets are
+ * used only when they carry the correct prefix; otherwise the authoritative
+ * public constants in STRIPE_PLAN_IDS (config.ts) are used. Amounts are the
+ * current live pence amounts.
  */
 export function getStripePlanConfig(): Record<
   PlanKey,
@@ -40,19 +55,26 @@ export function getStripePlanConfig(): Record<
 > {
   return {
     starter: {
-      paymentLinkId: process.env.STRIPE_STARTER_PAYMENT_LINK_ID || null,
-      priceId: process.env.STRIPE_STARTER_PRICE_ID || null,
-      amount: 2499,
+      paymentLinkId:
+        envWithPrefix("STRIPE_STARTER_PAYMENT_LINK_ID", "plink_") ??
+        STRIPE_PLAN_IDS.starter.paymentLinkId,
+      priceId:
+        envWithPrefix("STRIPE_STARTER_PRICE_ID", "price_") ?? STRIPE_PLAN_IDS.starter.priceId,
+      amount: STRIPE_PLAN_IDS.starter.amount,
     },
     pro: {
-      paymentLinkId: process.env.STRIPE_PRO_PAYMENT_LINK_ID || null,
-      priceId: process.env.STRIPE_PRO_PRICE_ID || null,
-      amount: 2999,
+      paymentLinkId:
+        envWithPrefix("STRIPE_PRO_PAYMENT_LINK_ID", "plink_") ?? STRIPE_PLAN_IDS.pro.paymentLinkId,
+      priceId: envWithPrefix("STRIPE_PRO_PRICE_ID", "price_") ?? STRIPE_PLAN_IDS.pro.priceId,
+      amount: STRIPE_PLAN_IDS.pro.amount,
     },
     growth: {
-      paymentLinkId: process.env.STRIPE_GROWTH_PAYMENT_LINK_ID || null,
-      priceId: process.env.STRIPE_GROWTH_PRICE_ID || null,
-      amount: 4999,
+      paymentLinkId:
+        envWithPrefix("STRIPE_GROWTH_PAYMENT_LINK_ID", "plink_") ??
+        STRIPE_PLAN_IDS.growth.paymentLinkId,
+      priceId:
+        envWithPrefix("STRIPE_GROWTH_PRICE_ID", "price_") ?? STRIPE_PLAN_IDS.growth.priceId,
+      amount: STRIPE_PLAN_IDS.growth.amount,
     },
   };
 }
@@ -60,6 +82,8 @@ export function getStripePlanConfig(): Record<
 /**
  * Identifies the plan key from a Stripe checkout/subscription using, in
  * priority order: Payment Link ID, Price ID, then the recurring amount.
+ * Matches both the new live ids/amounts and (via exact amount) the legacy
+ * amounts so existing subscriptions still map to the right plan.
  */
 export function identifyPlan(opts: {
   paymentLinkId?: string | null;
@@ -80,8 +104,17 @@ export function identifyPlan(opts: {
     }
   }
   if (opts.amount != null) {
-    if (opts.amount >= 4999) return "growth";
-    if (opts.amount >= 2999) return "pro";
+    // Exact new-price amounts first.
+    for (const k of keys) {
+      if (opts.amount === cfg[k].amount) return k;
+    }
+    // Legacy amounts (£24.99 / £29.99 / £49.99) for grandfathered subs.
+    if (opts.amount === 4999) return "growth";
+    if (opts.amount === 2999) return "pro";
+    if (opts.amount === 2499) return "starter";
+    // Threshold fallback for anything else.
+    if (opts.amount >= 14900) return "growth";
+    if (opts.amount >= 7900) return "pro";
     return "starter";
   }
   return "starter";
