@@ -190,6 +190,14 @@ function SubscriptionPage() {
       toast.error("Please log in to continue to checkout.");
       return;
     }
+    if (hasAccess || isComped) {
+      toast.info(
+        planId === currentPlan.id
+          ? "You're already on this plan."
+          : "You already have access. Contact support or manage billing to change plan.",
+      );
+      return;
+    }
     setCheckoutBusy(planId);
     try {
       // Create a Stripe Checkout Session server-side so it carries the

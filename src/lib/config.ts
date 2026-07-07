@@ -15,8 +15,9 @@ export type PlanId = "starter" | "pro" | "growth";
  * authoritative source of truth for checkout, used ahead of any env secrets.
  * Amounts are in pence.
  *
- * NOTE: The old payment links (£24.99/£29.99/£49.99) are intentionally left
- * active in Stripe; new checkouts use the links/prices below.
+ * NOTE: The old payment links (£24.99/£29.99/£49.99) are intentionally
+ * inactive in Stripe; authenticated checkouts use server-created sessions
+ * with the prices below.
  */
 export const STRIPE_PLAN_IDS: Record<
   PlanId,

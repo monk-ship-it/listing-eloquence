@@ -783,7 +783,7 @@ function Pricing({ authed }: { authed: boolean }) {
                 </p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
                   {plan.id === "starter"
-                    ? `${TRIAL_DAYS}-day trial at checkout · card required · cancel anytime`
+                    ? `${TRIAL_DAYS}-day Starter trial at secure checkout · card required · cancel anytime`
                     : "Cancel anytime"}
                 </p>
 
