@@ -24,9 +24,10 @@ import {
   createBillingPortalUrl,
   cancelMySubscription,
   resumeMySubscription,
+  createCheckoutSession,
   type SubscriptionInfo,
 } from "@/lib/subscription.functions";
-import { APP_NAME, PLANS, getPlan, TRIAL_DAYS, buildCheckoutUrl } from "@/lib/config";
+import { APP_NAME, PLANS, getPlan, TRIAL_DAYS, CONTACT_EMAIL, type PlanId } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
   CheckCircle2,
