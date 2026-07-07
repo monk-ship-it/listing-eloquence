@@ -29,7 +29,42 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Speak your property notes into Quill and generate portal-ready listings, social captions and buyer emails in minutes. Premium AI listing writer with voice dictation for UK estate agents.",
+          "Speak your property notes into Quill to generate portal-ready listings, social captions and buyer emails in minutes. AI listing writer for UK estate agents.",
+      },
+      {
+        property: "og:title",
+        content: "Quill — Voice-to-Listing AI for UK Estate Agents",
+      },
+      {
+        property: "og:description",
+        content:
+          "Speak your property notes and generate portal-ready listings, social captions and buyer emails in minutes.",
+      },
+      { property: "og:url", content: "https://copybymonk.com/" },
+    ],
+    links: [{ rel: "canonical", href: "https://copybymonk.com/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Quill",
+          url: "https://copybymonk.com/",
+          description:
+            "AI listing writer with voice dictation for UK estate agents.",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Quill",
+          url: "https://copybymonk.com/",
+          description:
+            "Quill generates portal-ready UK property listings, social captions and buyer emails from voice or typed notes.",
+        }),
       },
     ],
   }),

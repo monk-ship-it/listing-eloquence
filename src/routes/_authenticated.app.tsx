@@ -285,7 +285,7 @@ function GeneratorPage() {
               <Card className="p-6">
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="font-display text-xl font-semibold">{output.headline}</h2>
-                  <Button variant="ghost" size="icon" onClick={() => copy(`${output.headline}\n\n${output.listing}`)}>
+                  <Button variant="ghost" size="icon" aria-label="Copy listing" onClick={() => copy(`${output.headline}\n\n${output.listing}`)}>
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
@@ -299,7 +299,7 @@ function GeneratorPage() {
               <Card className="p-6">
                 <div className="flex items-center justify-between">
                   <h3 className="font-display text-lg font-semibold">Teaser</h3>
-                  <Button variant="ghost" size="icon" onClick={() => copy(output.summary)}>
+                  <Button variant="ghost" size="icon" aria-label="Copy teaser" onClick={() => copy(output.summary)}>
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
@@ -316,6 +316,7 @@ function GeneratorPage() {
                         <Button
                           variant="ghost"
                           size="icon"
+                          aria-label="Copy social post"
                           onClick={() => copy(`${post.caption}\n\n${post.hashtags.map((h) => `#${h}`).join(" ")}`)}
                         >
                           <Copy className="h-4 w-4" />

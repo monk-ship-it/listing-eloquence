@@ -13,7 +13,21 @@ import { APP_NAME, TRIAL_DAYS } from "@/lib/config";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
-    meta: [{ title: `Sign in — ${APP_NAME}` }],
+    meta: [
+      { title: `Sign in — ${APP_NAME}` },
+      {
+        name: "description",
+        content: `Sign in or create your ${APP_NAME} account to generate AI property listings.`,
+      },
+      { property: "og:title", content: `Sign in — ${APP_NAME}` },
+      {
+        property: "og:description",
+        content: `Sign in or create your ${APP_NAME} account to generate AI property listings.`,
+      },
+      { property: "og:url", content: "https://copybymonk.com/auth" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://copybymonk.com/auth" }],
   }),
   component: AuthPage,
 });
@@ -77,13 +91,13 @@ function AuthPage() {
             </TabsList>
 
             <TabsContent value="signup" className="mt-6">
-              <h1 className="font-display text-2xl font-semibold">Create your account</h1>
+              <h2 className="font-display text-2xl font-semibold">Create your account</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 {TRIAL_DAYS}-day free trial. No card needed to sign up.
               </p>
             </TabsContent>
             <TabsContent value="login" className="mt-6">
-              <h1 className="font-display text-2xl font-semibold">Welcome back</h1>
+              <h2 className="font-display text-2xl font-semibold">Welcome back</h2>
               <p className="mt-1 text-sm text-muted-foreground">Log in to keep writing.</p>
             </TabsContent>
 
