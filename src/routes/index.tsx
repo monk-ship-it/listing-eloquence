@@ -73,21 +73,47 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   const { user } = useAuth();
-  const ctaTo = user ? "/app" : "/auth";
+  const authed = !!user;
 
   return (
     <div className="min-h-screen overflow-x-hidden">
-      <Header user={!!user} />
-      <Hero ctaTo={ctaTo} />
+      <Header user={authed} />
+      <Hero authed={authed} />
       <VoiceValue />
       <HowItWorks />
       <Voices />
       <LiveExample />
-      <VoiceDictation ctaTo={ctaTo} />
-      <Pricing ctaTo={ctaTo} />
-      <FinalCta ctaTo={ctaTo} />
+      <VoiceDictation authed={authed} />
+      <Pricing authed={authed} />
+      <FinalCta authed={authed} />
       <Footer />
     </div>
+  );
+}
+
+/**
+ * A "Start free trial"-style CTA that preserves the chosen plan and routes
+ * signed-in users straight to checkout, signed-out users to sign up.
+ */
+function CtaButton({
+  authed,
+  plan = "starter",
+  children,
+  ...rest
+}: {
+  authed: boolean;
+  plan?: PlanId;
+  children: React.ReactNode;
+  size?: React.ComponentProps<typeof Button>["size"];
+  variant?: React.ComponentProps<typeof Button>["variant"];
+  className?: string;
+}) {
+  return (
+    <Button asChild {...rest}>
+      <Link to={authed ? "/subscription" : "/auth"} search={{ plan }}>
+        {children}
+      </Link>
+    </Button>
   );
 }
 
