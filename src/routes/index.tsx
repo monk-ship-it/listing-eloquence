@@ -653,7 +653,7 @@ const DEMO = {
 
 /* ----------------------------- Voice dictation ----------------------------- */
 
-function VoiceDictation({ ctaTo }: { ctaTo: string }) {
+function VoiceDictation({ authed }: { authed: boolean }) {
   const bullets = [
     "Dictate notes into any field",
     "Add to existing text without overwriting it",
