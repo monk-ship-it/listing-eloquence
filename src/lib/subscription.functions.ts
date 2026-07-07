@@ -97,7 +97,7 @@ export async function computeUsage(
 ): Promise<UsageInfo> {
   const planMeta = getPlan(plan);
   const { count } = await supabase
-    .from("generations")
+    .from("generation_usage")
     .select("id", { count: "exact", head: true })
     .eq("user_id", userId)
     .gte("created_at", startOfMonthIso());

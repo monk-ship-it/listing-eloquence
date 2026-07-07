@@ -119,6 +119,30 @@ export type Database = {
         }
         Relationships: []
       }
+      generation_usage: {
+        Row: {
+          created_at: string
+          generation_id: string | null
+          id: string
+          plan: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          generation_id?: string | null
+          id?: string
+          plan?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          generation_id?: string | null
+          id?: string
+          plan?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       generations: {
         Row: {
           created_at: string
