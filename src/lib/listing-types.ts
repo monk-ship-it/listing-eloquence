@@ -27,6 +27,14 @@ export interface ListingInput {
   nearby: string;
   periodFeatures: string;
   targetAudience: string;
+  /** Year the property was built (US MLS core fact). */
+  yearBuilt: string;
+  /** Disclosures / condition notes — only surfaced factually when provided. */
+  disclosures: string;
+  /** Showing / access notes — kept out of public remarks; used for buyer emails. */
+  showingNotes: string;
+  /** Media / photo / floor-plan notes. */
+  mediaNotes: string;
 }
 
 export interface SocialPost {
