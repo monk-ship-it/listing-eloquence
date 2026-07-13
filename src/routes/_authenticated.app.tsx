@@ -234,6 +234,31 @@ function GeneratorPage() {
             </p>
 
             <div className="mt-5">
+              <Label>Market</Label>
+              <div className="mt-2 inline-flex rounded-lg border border-border/70 p-1">
+                {Object.values(MARKETS).map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => setMarket(m.id)}
+                    className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                      market === m.id
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {isUs
+                  ? "US mode writes MLS-ready US English copy and follows Fair Housing language."
+                  : "UK mode writes portal-ready UK English copy following Material Information guidance."}
+              </p>
+            </div>
+
+            <div className="mt-5">
               <Label>Brand voice</Label>
               <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {VOICES.map((v) => (
@@ -255,79 +280,82 @@ function GeneratorPage() {
             </div>
 
             <div className="mt-5 grid gap-4">
-              <Field label="Address / location">
-                <Input value={input.address} onChange={(e) => set("address", e.target.value)} placeholder="12 Park Avenue, Harrogate, HG1" />
+              <Field label={L.address}>
+                <Input value={input.address} onChange={(e) => set("address", e.target.value)} placeholder={L.addressPh} />
               </Field>
-              <Field label="Property type">
-                <Input value={input.propertyType} onChange={(e) => set("propertyType", e.target.value)} placeholder="Victorian semi-detached house" />
+              <Field label={L.propertyType}>
+                <Input value={input.propertyType} onChange={(e) => set("propertyType", e.target.value)} placeholder={L.propertyTypePh} />
               </Field>
               <div className="grid grid-cols-3 gap-3">
                 <Field label="Bedrooms">
                   <Input value={input.bedrooms} onChange={(e) => set("bedrooms", e.target.value)} placeholder="4" />
                 </Field>
                 <Field label="Bathrooms">
-                  <Input value={input.bathrooms} onChange={(e) => set("bathrooms", e.target.value)} placeholder="2" />
+                  <Input value={input.bathrooms} onChange={(e) => set("bathrooms", e.target.value)} placeholder={isUs ? "3.5" : "2"} />
                 </Field>
-                <Field label="Receptions">
+                <Field label={isUs ? "Living spaces" : "Receptions"}>
                   <Input value={input.receptions} onChange={(e) => set("receptions", e.target.value)} placeholder="2" />
                 </Field>
               </div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label="Tenure">
-                  <Input value={input.tenure} onChange={(e) => set("tenure", e.target.value)} placeholder="Freehold" />
+                <Field label={L.tenure}>
+                  <Input value={input.tenure} onChange={(e) => set("tenure", e.target.value)} placeholder={L.tenurePh} />
                 </Field>
-                <Field label="Asking price (£)">
-                  <Input value={input.price} onChange={(e) => set("price", e.target.value)} placeholder="525,000" />
+                <Field label={L.price}>
+                  <Input value={input.price} onChange={(e) => set("price", e.target.value)} placeholder={L.pricePh} />
                 </Field>
               </div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field label="Price qualifier">
-                  <Input value={input.priceQualifier} onChange={(e) => set("priceQualifier", e.target.value)} placeholder="Guide Price / OIEO" />
+                  <Input value={input.priceQualifier} onChange={(e) => set("priceQualifier", e.target.value)} placeholder={isUs ? "e.g. Best offer" : "Guide Price / OIEO"} />
                 </Field>
-                <Field label="Lease remaining (yrs)">
-                  <Input value={input.leaseYears} onChange={(e) => set("leaseYears", e.target.value)} placeholder="If leasehold" />
+                <Field label={L.lease}>
+                  <Input value={input.leaseYears} onChange={(e) => set("leaseYears", e.target.value)} placeholder={L.leasePh} />
                 </Field>
               </div>
               <Field label="Key features">
-                <Textarea value={input.keyFeatures} onChange={(e) => set("keyFeatures", e.target.value)} placeholder="Open-plan kitchen, log burner, south-facing garden…" rows={2} />
+                <Textarea value={input.keyFeatures} onChange={(e) => set("keyFeatures", e.target.value)} placeholder={isUs ? "Chef's kitchen, quartz counters, heated pool…" : "Open-plan kitchen, log burner, south-facing garden…"} rows={2} />
               </Field>
-              <Field label="Room dimensions">
-                <Textarea value={input.dimensions} onChange={(e) => set("dimensions", e.target.value)} placeholder="Living room 5.2m x 4.1m…" rows={2} />
+              <Field label={L.dimensions}>
+                <Textarea value={input.dimensions} onChange={(e) => set("dimensions", e.target.value)} placeholder={L.dimensionsPh} rows={2} />
               </Field>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label="EPC rating">
-                  <Input value={input.epc} onChange={(e) => set("epc", e.target.value)} placeholder="C" />
+                <Field label={L.epc}>
+                  <Input value={input.epc} onChange={(e) => set("epc", e.target.value)} placeholder={L.epcPh} />
                 </Field>
-                <Field label="Council Tax band">
-                  <Input value={input.councilTaxBand} onChange={(e) => set("councilTaxBand", e.target.value)} placeholder="D" />
+                <Field label={L.tax}>
+                  <Input value={input.councilTaxBand} onChange={(e) => set("councilTaxBand", e.target.value)} placeholder={L.taxPh} />
                 </Field>
               </div>
-              <Field label="Outside space / garden">
-                <Input value={input.outsideSpace} onChange={(e) => set("outsideSpace", e.target.value)} placeholder="Landscaped rear garden, patio" />
+              <Field label={L.outside}>
+                <Input value={input.outsideSpace} onChange={(e) => set("outsideSpace", e.target.value)} placeholder={L.outsidePh} />
               </Field>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Field label="Parking">
-                  <Input value={input.parking} onChange={(e) => set("parking", e.target.value)} placeholder="Driveway, garage" />
+                  <Input value={input.parking} onChange={(e) => set("parking", e.target.value)} placeholder={isUs ? "Three-car garage, driveway" : "Driveway, garage"} />
                 </Field>
-                <Field label="Heating">
-                  <Input value={input.heating} onChange={(e) => set("heating", e.target.value)} placeholder="Gas central heating" />
+                <Field label={L.heating}>
+                  <Input value={input.heating} onChange={(e) => set("heating", e.target.value)} placeholder={L.heatingPh} />
                 </Field>
               </div>
-              <Field label="Utilities / broadband">
-                <Input value={input.utilities} onChange={(e) => set("utilities", e.target.value)} placeholder="Mains services, Ultrafast broadband" />
+              <Field label={L.utilities}>
+                <Input value={input.utilities} onChange={(e) => set("utilities", e.target.value)} placeholder={L.utilitiesPh} />
               </Field>
-              <Field label="Nearby (schools, transport, amenities)">
-                <Textarea value={input.nearby} onChange={(e) => set("nearby", e.target.value)} placeholder="Outstanding primary, station 0.5 miles…" rows={2} />
+              <Field label={L.nearby}>
+                <Textarea value={input.nearby} onChange={(e) => set("nearby", e.target.value)} placeholder={L.nearbyPh} rows={2} />
               </Field>
-              <Field label="Period / character features">
-                <Textarea value={input.periodFeatures} onChange={(e) => set("periodFeatures", e.target.value)} placeholder="Original cornicing, sash windows…" rows={2} />
+              <Field label={L.periodFeatures}>
+                <Textarea value={input.periodFeatures} onChange={(e) => set("periodFeatures", e.target.value)} placeholder={L.periodFeaturesPh} rows={2} />
               </Field>
               <Field label="Area highlights">
-                <Input value={input.areaHighlights} onChange={(e) => set("areaHighlights", e.target.value)} placeholder="Vibrant market town, riverside walks" />
+                <Input value={input.areaHighlights} onChange={(e) => set("areaHighlights", e.target.value)} placeholder={isUs ? "Established neighborhood, near dining and parks" : "Vibrant market town, riverside walks"} />
               </Field>
-              <Field label="Target audience">
-                <Input value={input.targetAudience} onChange={(e) => set("targetAudience", e.target.value)} placeholder="Growing families, professionals" />
-              </Field>
+              {!isUs && (
+                <Field label="Target audience">
+                  <Input value={input.targetAudience} onChange={(e) => set("targetAudience", e.target.value)} placeholder="Growing families, professionals" />
+                </Field>
+              )}
+
             </div>
 
             <Button className="mt-6 w-full" size="lg" onClick={run} disabled={busy || !hasAccess || outOfListings}>
