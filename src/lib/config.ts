@@ -9,6 +9,87 @@ export const CONTACT_EMAIL = "domenico@copybymonk.com";
 
 export type PlanId = "starter" | "pro" | "growth";
 
+// ---------------------------------------------------------------------------
+// Markets & currencies
+// ---------------------------------------------------------------------------
+export type MarketId = "uk" | "us";
+export type CurrencyId = "gbp" | "usd";
+
+export interface Market {
+  id: MarketId;
+  currency: CurrencyId;
+  /** Long selector label, e.g. "UK estate agents · GBP". */
+  label: string;
+  /** Compact label, e.g. "UK · GBP". */
+  shortLabel: string;
+  /** Currency symbol. */
+  symbol: string;
+  /** Audience noun, e.g. "estate agents" / "real estate agents". */
+  audience: string;
+}
+
+export const MARKETS: Record<MarketId, Market> = {
+  uk: {
+    id: "uk",
+    currency: "gbp",
+    label: "UK estate agents · GBP",
+    shortLabel: "UK · GBP",
+    symbol: "£",
+    audience: "estate agents",
+  },
+  us: {
+    id: "us",
+    currency: "usd",
+    label: "US real estate agents · USD",
+    shortLabel: "US · USD",
+    symbol: "$",
+    audience: "real estate agents",
+  },
+};
+
+export const DEFAULT_MARKET: MarketId = "uk";
+
+export function getMarket(market: string | null | undefined): Market {
+  return MARKETS[(market as MarketId) ?? DEFAULT_MARKET] ?? MARKETS[DEFAULT_MARKET];
+}
+
+/** Narrow an untrusted value to a valid MarketId, defaulting to UK. */
+export function resolveMarketId(market: string | null | undefined): MarketId {
+  return market === "us" ? "us" : "uk";
+}
+
+/**
+ * Authoritative, hard-coded Stripe price identifiers per market and plan.
+ * Amounts are in the currency's minor unit (pence / cents). These are the
+ * single source of truth used server-side to resolve the correct price id —
+ * the client never provides a price id.
+ */
+export const PLAN_PRICING: Record<
+  MarketId,
+  Record<PlanId, { amount: number; priceId: string; display: string }>
+> = {
+  uk: {
+    starter: { amount: 3900, priceId: "price_1TqWz1AAj6LfwOUatt9zzYA1", display: "£39" },
+    pro: { amount: 7900, priceId: "price_1TqWz2AAj6LfwOUaQBZwZyJr", display: "£79" },
+    growth: { amount: 14900, priceId: "price_1TqWz3AAj6LfwOUat924mxdX", display: "£149" },
+  },
+  us: {
+    starter: { amount: 4900, priceId: "price_1Tst7KAAj6LfwOUap6nwwkT1", display: "$49" },
+    pro: { amount: 9900, priceId: "price_1Tst7TAAj6LfwOUaTOG299iy", display: "$99" },
+    growth: { amount: 19900, priceId: "price_1Tst7dAAj6LfwOUaD8AqhUVE", display: "$199" },
+  },
+};
+
+/** Display price string (e.g. "£39" / "$49") for a plan in a given market. */
+export function planPriceDisplay(plan: PlanId, market: MarketId): string {
+  return PLAN_PRICING[market]?.[plan]?.display ?? PLAN_PRICING.uk[plan].display;
+}
+
+/** Authoritative Stripe price id for a plan + market (server-side resolution). */
+export function resolvePlanPriceId(plan: PlanId, market: MarketId): string {
+  return PLAN_PRICING[market]?.[plan]?.priceId ?? PLAN_PRICING.uk[plan].priceId;
+}
+
 /**
  * Live Stripe identifiers for the current pricing (GBP, monthly).
  * These are public identifiers (safe in the client bundle) and act as the

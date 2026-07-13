@@ -1,9 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { createContext, useContext, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { Reveal } from "@/components/Reveal";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { APP_NAME, PLANS, TRIAL_DAYS, CONTACT_EMAIL, type PlanId } from "@/lib/config";
+import {
+  APP_NAME,
+  PLANS,
+  TRIAL_DAYS,
+  CONTACT_EMAIL,
+  MARKETS,
+  DEFAULT_MARKET,
+  planPriceDisplay,
+  type PlanId,
+  type MarketId,
+} from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
   Check,
@@ -71,29 +82,70 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
+const MarketContext = createContext<{
+  market: MarketId;
+  setMarket: (m: MarketId) => void;
+}>({ market: DEFAULT_MARKET, setMarket: () => {} });
+
+function useMarket() {
+  return useContext(MarketContext);
+}
+
 function Landing() {
   const { user } = useAuth();
   const authed = !!user;
+  const [market, setMarket] = useState<MarketId>(DEFAULT_MARKET);
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
-      <Header user={authed} />
-      <Hero authed={authed} />
-      <VoiceValue />
-      <HowItWorks />
-      <Voices />
-      <LiveExample />
-      <VoiceDictation authed={authed} />
-      <Pricing authed={authed} />
-      <FinalCta authed={authed} />
-      <Footer />
+    <MarketContext.Provider value={{ market, setMarket }}>
+      <div className="min-h-screen overflow-x-hidden">
+        <Header user={authed} />
+        <Hero authed={authed} />
+        <VoiceValue />
+        <HowItWorks />
+        <Voices />
+        <LiveExample />
+        <VoiceDictation authed={authed} />
+        <Pricing authed={authed} />
+        <FinalCta authed={authed} />
+        <Footer />
+      </div>
+    </MarketContext.Provider>
+  );
+}
+
+/** Segmented UK / US market + currency toggle. */
+function MarketToggle({ className = "" }: { className?: string }) {
+  const { market, setMarket } = useMarket();
+  return (
+    <div
+      className={`inline-flex rounded-full border border-border/70 bg-card/50 p-1 backdrop-blur ${className}`}
+      role="tablist"
+      aria-label="Choose your market"
+    >
+      {Object.values(MARKETS).map((m) => (
+        <button
+          key={m.id}
+          type="button"
+          role="tab"
+          aria-selected={market === m.id}
+          onClick={() => setMarket(m.id)}
+          className={`rounded-full px-4 py-1.5 text-xs font-medium transition-colors sm:text-sm ${
+            market === m.id
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          {m.label}
+        </button>
+      ))}
     </div>
   );
 }
 
 /**
- * A "Start free trial"-style CTA that preserves the chosen plan and routes
- * signed-in users straight to checkout, signed-out users to sign up.
+ * A "Start free trial"-style CTA that preserves the chosen plan and market and
+ * routes signed-in users straight to checkout, signed-out users to sign up.
  */
 function CtaButton({
   authed,
@@ -108,9 +160,10 @@ function CtaButton({
   variant?: React.ComponentProps<typeof Button>["variant"];
   className?: string;
 }) {
+  const { market } = useMarket();
   return (
     <Button asChild {...rest}>
-      <Link to={authed ? "/subscription" : "/auth"} search={{ plan }}>
+      <Link to={authed ? "/subscription" : "/auth"} search={{ plan, market }}>
         {children}
       </Link>
     </Button>
@@ -126,6 +179,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 /* ---------------------------------- Header --------------------------------- */
 
 function Header({ user }: { user: boolean }) {
+  const { market } = useMarket();
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
@@ -146,7 +200,7 @@ function Header({ user }: { user: boolean }) {
                 </Link>
               </Button>
               <Button asChild>
-                <Link to="/auth" search={{ plan: "starter" }}>
+                <Link to="/auth" search={{ plan: "starter", market }}>
                   Start free trial
                 </Link>
               </Button>
@@ -160,14 +214,19 @@ function Header({ user }: { user: boolean }) {
 
 /* ----------------------------------- Hero ---------------------------------- */
 
-const HERO_CHIPS = [
-  "Built for UK estate agents",
-  "Portal-ready copy",
-  "Voice notes in minutes",
-  "No CRM migration",
-];
+function heroChips(market: MarketId): string[] {
+  return [
+    market === "us" ? "Built for US real estate agents" : "Built for UK estate agents",
+    market === "us" ? "MLS-ready copy" : "Portal-ready copy",
+    "Voice notes in minutes",
+    "No CRM migration",
+  ];
+}
 
 function Hero({ authed }: { authed: boolean }) {
+  const { market } = useMarket();
+  const audience = MARKETS[market].audience;
+  const portalWord = market === "us" ? "MLS-ready" : "portal-ready";
   return (
     <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-25" />
@@ -179,13 +238,17 @@ function Hero({ authed }: { authed: boolean }) {
             <AudioLines className="h-3.5 w-3.5" /> AI listing writer with voice dictation
           </span>
 
+          <div className="mt-5">
+            <MarketToggle />
+          </div>
+
           <h1 className="mt-5 text-balance font-display text-[clamp(2rem,8vw,2.6rem)] font-semibold leading-[1.12] sm:mt-6 sm:text-5xl lg:text-[3.6rem]">
             Write every listing in minutes — <span className="text-gradient">just say the words.</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {APP_NAME} lets UK estate agents speak, type or paste property details, choose a brand
-            voice, and generate portal-ready listings, social captions and buyer emails in minutes —
+            {APP_NAME} lets {audience} speak, type or paste property details, choose a brand
+            voice, and generate {portalWord} listings, social captions and buyer emails in minutes —
             without another CRM to manage.
           </p>
 
@@ -212,8 +275,9 @@ function Hero({ authed }: { authed: boolean }) {
           </p>
 
 
+
           <div className="mt-7 flex flex-wrap gap-2.5">
-            {HERO_CHIPS.map((chip) => (
+            {heroChips(market).map((chip) => (
               <span
                 key={chip}
                 className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/50 px-3 py-1.5 text-xs font-medium text-foreground/90"
@@ -726,30 +790,52 @@ const DEMO = {
 
 /* ----------------------------- Voice dictation ----------------------------- */
 
-const DICTATION_EXAMPLES = [
+const DICTATION_EXAMPLES_UK = [
   {
     label: "Kitchen",
     raw: "Kitchen’s been redone, oak units, Miele oven, big island, sliders to the west terrace, evening sun…",
-    out: "Bespoke oak kitchen with Miele appliances, central island and sliding doors opening to a west-facing terrace.",
+    out: "Bespoke oak kitchen with Miele appliances, a central island and sliding doors opening to a west-facing terrace that catches the evening sun.",
   },
   {
     label: "Garden",
     raw: "Garden’s properly private, old brick wall, pear trees trained along it, stone terrace, lighting already in…",
-    out: "Private walled garden with espalier pear trees, stone terrace and discreet external lighting.",
+    out: "Private walled garden with espalier pear trees along the brickwork, a stone terrace and discreet external lighting already installed.",
   },
   {
     label: "Parking & local",
     raw: "Double cart lodge, EV point, station’s walkable, market square under ten minutes…",
-    out: "Double cart lodge with EV charging, within walking distance of the station and market square.",
+    out: "Double cart lodge with EV charging, within walking distance of the station and around ten minutes from the market square.",
+  },
+];
+
+const DICTATION_EXAMPLES_US = [
+  {
+    label: "Kitchen",
+    raw: "Kitchen’s all redone, white oak cabinets, Sub-Zero fridge, quartz island, sliders out to the deck, gets the afternoon sun…",
+    out: "Renovated kitchen with white oak cabinetry, a Sub-Zero refrigerator, a quartz-topped island and sliding doors opening to the deck.",
+  },
+  {
+    label: "Outdoor",
+    raw: "Backyard’s fenced, heated pool, covered patio, quarter-acre lot, sprinklers already in…",
+    out: "Fenced backyard on a quarter-acre lot with a heated pool, a covered patio and an in-ground sprinkler system.",
+  },
+  {
+    label: "Parking & area",
+    raw: "Three-car garage, EV charger, close to the interstate, downtown’s about ten minutes…",
+    out: "Three-car attached garage with an EV charger, quick interstate access and roughly ten minutes to downtown.",
   },
 ];
 
 function VoiceDictation({ authed }: { authed: boolean }) {
+  const { market } = useMarket();
+  const examples = market === "us" ? DICTATION_EXAMPLES_US : DICTATION_EXAMPLES_UK;
   const bullets = [
     "Dictate rough notes into one voice notes field",
     "Add to existing text without overwriting it",
     "Every transcript stays fully editable before generating",
-    "Useful between viewings, valuations and vendor calls",
+    market === "us"
+      ? "Useful between showings, valuations and client calls"
+      : "Useful between viewings, valuations and vendor calls",
   ];
   return (
     <section id="voice-demo" className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
@@ -803,7 +889,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
             </div>
 
             <div className="mt-4 space-y-3">
-              {DICTATION_EXAMPLES.map((ex) => (
+              {examples.map((ex) => (
                 <div
                   key={ex.label}
                   className="overflow-hidden rounded-2xl border border-border/70 bg-background/40"
@@ -846,6 +932,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
 /* --------------------------------- Pricing --------------------------------- */
 
 function Pricing({ authed }: { authed: boolean }) {
+  const { market } = useMarket();
   return (
     <section id="pricing" className="border-y border-border bg-card/30 py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
@@ -857,7 +944,11 @@ function Pricing({ authed }: { authed: boolean }) {
           <p className="mt-4 text-lg text-muted-foreground">
             Every plan includes voice dictation, all four brand voices and the full social pack.
           </p>
+          <div className="mt-6 flex justify-center">
+            <MarketToggle />
+          </div>
         </Reveal>
+
 
         <div className="mt-12 grid items-stretch gap-6 md:grid-cols-3">
           {PLANS.map((plan, i) => (
@@ -877,7 +968,8 @@ function Pricing({ authed }: { authed: boolean }) {
                 <h3 className="font-display text-2xl font-semibold">{plan.name}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{plan.tagline}</p>
                 <p className="mt-5 font-display text-4xl font-semibold tracking-tight">
-                  {plan.price}
+                  {planPriceDisplay(plan.id, market)}
+
                   <span className="text-base font-normal text-muted-foreground">/month</span>
                 </p>
                 <p className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
@@ -936,7 +1028,7 @@ function Pricing({ authed }: { authed: boolean }) {
 function orderedFeatures(features: string[]): string[] {
   const voice = features.filter((f) => /voice notes|voice dictation/i.test(f));
   const rest = features.filter((f) => !/voice notes|voice dictation/i.test(f));
-  const baseExtras = ["Portal-ready descriptions", "Social captions with hashtags"];
+  const baseExtras = ["Listing descriptions", "Social captions with hashtags"];
   const merged = [...rest];
   for (const extra of baseExtras) {
     if (!merged.some((f) => f.toLowerCase() === extra.toLowerCase())) {
@@ -1006,7 +1098,7 @@ function Footer() {
         </div>
         <div className="rule my-6" />
         <p className="text-center text-xs text-muted-foreground sm:text-left">
-          © 2026 {APP_NAME}. Crafted for UK estate agents.
+          © 2026 {APP_NAME}. Crafted for estate and real estate agents in the UK and US.
         </p>
       </div>
     </footer>

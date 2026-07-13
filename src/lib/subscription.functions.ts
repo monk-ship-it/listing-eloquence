@@ -1,6 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { isCompedEmail, getPlan, TRIAL_DAYS, type PlanId } from "./config";
+import {
+  isCompedEmail,
+  getPlan,
+  TRIAL_DAYS,
+  MARKETS,
+  resolveMarketId,
+  type PlanId,
+} from "./config";
 
 export interface SubscriptionInfo {
   status: string;
@@ -243,10 +250,14 @@ export const createBillingPortalUrl = createServerFn({ method: "POST" })
  */
 export const createCheckoutSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { plan: PlanId; origin: string }) => data)
+  .inputValidator((data: { plan: PlanId; origin: string; market?: string }) => data)
   .handler(async ({ context, data }): Promise<{ url: string }> => {
     const { supabase, userId, claims } = context;
     const plan = getPlan(data.plan).id;
+    // Never trust a client-provided price id: validate the market and resolve
+    // the authoritative Stripe price id server-side from plan + market.
+    const market = resolveMarketId(data.market);
+    const currency = MARKETS[market].currency;
 
     const { data: row } = await supabase
       .from("subscribers")
@@ -266,7 +277,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const { resolvePriceId, createSubscriptionCheckoutSession } = await import(
       "./stripe.server"
     );
-    const priceId = await resolvePriceId(plan);
+    const priceId = await resolvePriceId(plan, market);
 
     const origin = data.origin.replace(/\/+$/, "");
     const session = await createSubscriptionCheckoutSession({
@@ -276,8 +287,10 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       email,
       customerId: row?.stripe_customer_id ?? null,
       successUrl: `${origin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${origin}/subscription?checkout=cancelled`,
+      cancelUrl: `${origin}/subscription?checkout=cancelled&market=${market}`,
       trialDays: plan === "starter" ? TRIAL_DAYS : 0,
+      market,
+      currency,
     });
 
     if (!session?.url) throw new Error("Could not start checkout. Please try again.");

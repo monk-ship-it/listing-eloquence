@@ -27,7 +27,18 @@ import {
   createCheckoutSession,
   type SubscriptionInfo,
 } from "@/lib/subscription.functions";
-import { APP_NAME, PLANS, getPlan, TRIAL_DAYS, CONTACT_EMAIL, type PlanId } from "@/lib/config";
+import {
+  APP_NAME,
+  PLANS,
+  getPlan,
+  TRIAL_DAYS,
+  CONTACT_EMAIL,
+  MARKETS,
+  resolveMarketId,
+  planPriceDisplay,
+  type PlanId,
+  type MarketId,
+} from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
   CheckCircle2,
@@ -43,9 +54,12 @@ import {
 const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
 
 export const Route = createFileRoute("/_authenticated/subscription")({
-  validateSearch: (search: Record<string, unknown>): { plan?: PlanId } => {
+  validateSearch: (search: Record<string, unknown>): { plan?: PlanId; market?: MarketId } => {
     const plan = search.plan as string | undefined;
-    return plan && VALID_PLANS.includes(plan as PlanId) ? { plan: plan as PlanId } : {};
+    const out: { plan?: PlanId; market?: MarketId } = {};
+    if (plan && VALID_PLANS.includes(plan as PlanId)) out.plan = plan as PlanId;
+    if (search.market === "us" || search.market === "uk") out.market = search.market as MarketId;
+    return out;
   },
   head: () => ({ meta: [{ title: `Subscription — ${APP_NAME}` }] }),
   component: SubscriptionPage,
@@ -104,7 +118,8 @@ const STATUS_META: Record<
 
 function SubscriptionPage() {
   const { user } = useAuth();
-  const { plan: planParam } = Route.useSearch();
+  const { plan: planParam, market: marketParam } = Route.useSearch();
+  const [market, setMarket] = useState<MarketId>(resolveMarketId(marketParam));
   const checkoutFn = useServerFn(createCheckoutSession);
   const subFn = useServerFn(getMySubscription);
   const usageFn = useServerFn(getMyUsage);
@@ -204,7 +219,7 @@ function SubscriptionPage() {
       // logged-in user's id (client_reference_id), metadata and the exact
       // server-selected Price ID. The webhook activates the correct account.
       const { url } = await checkoutFn({
-        data: { plan: planId, origin: window.location.origin },
+        data: { plan: planId, origin: window.location.origin, market },
       });
       window.location.href = url;
     } catch (err) {
@@ -391,7 +406,26 @@ function SubscriptionPage() {
                   or manage billing below. We won't create a second subscription.
                 </p>
               )}
+              {!hasAccess && (
+                <div className="mt-4 inline-flex rounded-lg border border-border/70 p-1">
+                  {(Object.values(MARKETS)).map((m) => (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => setMarket(m.id)}
+                      className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                        market === m.id
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
+
                 {PLANS.map((plan) => {
                   const isCurrent = hasAccess && plan.id === currentPlan.id;
                   return (
@@ -406,7 +440,8 @@ function SubscriptionPage() {
                         {isCurrent && <Badge variant="default">Current</Badge>}
                       </div>
                       <p className="mt-1 font-display text-2xl font-semibold">
-                        {plan.price}
+                        {planPriceDisplay(plan.id, market)}
+
                         <span className="text-xs font-normal text-muted-foreground">/mo</span>
                       </p>
                       <p className="mt-1 text-xs text-primary">{plan.monthlyListings} listings / month</p>

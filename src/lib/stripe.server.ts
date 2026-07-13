@@ -1,4 +1,4 @@
-import { STRIPE_PLAN_IDS } from "./config";
+import { PLAN_PRICING, MARKETS, type MarketId, type PlanId } from "./config";
 
 const STRIPE_API = "https://api.stripe.com/v1";
 
@@ -39,62 +39,63 @@ export function getCheckoutSession(sessionId: string) {
   );
 }
 
-/** Monthly GBP price (in pence) expected for each plan (current live pricing). */
-const PLAN_AMOUNTS: Record<string, number> = {
-  starter: STRIPE_PLAN_IDS.starter.amount,
-  pro: STRIPE_PLAN_IDS.pro.amount,
-  growth: STRIPE_PLAN_IDS.growth.amount,
-};
-
-/** Exact live Stripe Price IDs per plan — the authoritative source of truth. */
-const PLAN_PRICE_IDS: Record<string, string> = {
-  starter: STRIPE_PLAN_IDS.starter.priceId,
-  pro: STRIPE_PLAN_IDS.pro.priceId,
-  growth: STRIPE_PLAN_IDS.growth.priceId,
-};
-
 let _priceCache: { at: number; map: Record<string, string> } | undefined;
 
 /**
- * Resolves the live Stripe price id for a plan.
+ * Resolves the live Stripe price id for a plan + market.
  *
- * 1. Prefer the exact known Price ID constant (STRIPE_PLAN_IDS). This is the
- *    authoritative path and requires no API call.
- * 2. Fall back to matching an active recurring MONTHLY GBP price at the exact
- *    plan amount only if the constant is somehow missing.
+ * 1. Prefer the exact known Price ID constant (PLAN_PRICING). This is the
+ *    authoritative path and requires no API call. The client never supplies a
+ *    price id — it is resolved server-side from the validated plan + market.
+ * 2. Fall back to matching an active recurring MONTHLY price in the market's
+ *    currency at the exact plan amount only if the constant is somehow missing.
  */
-export async function resolvePriceId(plan: string): Promise<string> {
-  const known = PLAN_PRICE_IDS[plan] ?? PLAN_PRICE_IDS.starter;
+export async function resolvePriceId(
+  plan: string,
+  market: MarketId = "uk",
+): Promise<string> {
+  const marketPricing = PLAN_PRICING[market] ?? PLAN_PRICING.uk;
+  const planPricing =
+    marketPricing[plan as PlanId] ?? marketPricing.starter;
+
+  const known = planPricing.priceId;
   if (known) return known;
 
-  const amount = PLAN_AMOUNTS[plan] ?? PLAN_AMOUNTS.starter;
+  const amount = planPricing.amount;
+  const currency = MARKETS[market].currency;
+  const cacheKey = `${market}:${plan}`;
   if (_priceCache && Date.now() - _priceCache.at < 5 * 60_000) {
-    const cached = _priceCache.map[plan];
+    const cached = _priceCache.map[cacheKey];
     if (cached) return cached;
   }
 
   const res = await stripeRequest("/prices?active=true&limit=100", "GET");
   const map: Record<string, string> = {};
   for (const p of res.data ?? []) {
-    // Fallback lookup requires: monthly interval, GBP currency, exact amount.
+    // Fallback lookup requires: monthly interval, matching currency, exact amount.
     if (p?.recurring?.interval !== "month") continue;
-    if (p?.currency !== "gbp") continue;
+    if (p?.currency !== currency) continue;
     const amt = p.unit_amount as number | undefined;
     if (amt == null) continue;
-    for (const [planId, planAmt] of Object.entries(PLAN_AMOUNTS)) {
-      if (amt === planAmt && !map[planId]) map[planId] = p.id;
+    for (const mkt of Object.keys(PLAN_PRICING) as MarketId[]) {
+      if (MARKETS[mkt].currency !== p.currency) continue;
+      for (const [planId, meta] of Object.entries(PLAN_PRICING[mkt])) {
+        const key = `${mkt}:${planId}`;
+        if (amt === meta.amount && !map[key]) map[key] = p.id;
+      }
     }
   }
   _priceCache = { at: Date.now(), map };
 
-  const priceId = map[plan];
+  const priceId = map[cacheKey];
   if (!priceId) {
     throw new Error(
-      `No active Stripe price found for plan "${plan}" (expected £${(amount / 100).toFixed(2)}/month, GBP).`,
+      `No active Stripe price found for plan "${plan}" in ${currency.toUpperCase()} (expected ${(amount / 100).toFixed(2)}/month).`,
     );
   }
   return priceId;
 }
+
 
 export interface CheckoutParams {
   plan: string;
@@ -105,10 +106,14 @@ export interface CheckoutParams {
   successUrl: string;
   cancelUrl: string;
   trialDays?: number;
+  market?: MarketId;
+  currency?: string;
 }
 
 /** Create a subscription Checkout Session tied to the logged-in app user. */
 export async function createSubscriptionCheckoutSession(params: CheckoutParams) {
+  const market = params.market ?? "uk";
+  const currency = params.currency ?? MARKETS[market].currency;
   const form: Record<string, string> = {
     mode: "subscription",
     "line_items[0][price]": params.priceId,
@@ -119,11 +124,16 @@ export async function createSubscriptionCheckoutSession(params: CheckoutParams) 
     "metadata[user_id]": params.userId,
     "metadata[plan]": params.plan,
     "metadata[price_id]": params.priceId,
+    "metadata[market]": market,
+    "metadata[currency]": currency,
     "subscription_data[metadata][user_id]": params.userId,
     "subscription_data[metadata][plan]": params.plan,
+    "subscription_data[metadata][market]": market,
+    "subscription_data[metadata][currency]": currency,
     allow_promotion_codes: "true",
     payment_method_collection: "always",
   };
+
 
   if (params.customerId) {
     form.customer = params.customerId;
