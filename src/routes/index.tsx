@@ -631,18 +631,18 @@ const DEMO = {
   ],
   instagram: {
     caption:
-      "Period charm meets everyday comfort. A Grade II listed Cotswold home with an inglenook fireplace, flagstone floors and a walled garden. Guide £1,450,000. Book your viewing today.",
-    hashtags: "#CotswoldHomes #PeriodHome #GradeIIListed #CountryLiving #PropertyForSale",
+      "A Grade II listed home in the heart of a Cotswold market town — inglenook fireplace, flagstone floors and a private walled garden. Five bedrooms, three receptions. Guide £1,450,000.",
+    hashtags: "#CotswoldHomes #GradeIIListed #CountryLiving #PropertyForSale #CotswoldProperty",
   },
   tiktok: {
     caption:
-      "Come walk through this Grade II listed Cotswold home — original beams, an inglenook fireplace and a walled garden you won't want to leave. Guide £1,450,000.",
-    hashtags: "#PropertyTok #CotswoldHome #HouseTour #PeriodProperty #EstateAgent",
+      "Walk through this Grade II listed Cotswold home — original beams, an inglenook fireplace and a private walled garden. Five bedrooms, three receptions. Guide £1,450,000.",
+    hashtags: "#PropertyTok #CotswoldHome #HouseTour #GradeIIListed #EstateAgent",
   },
   facebook: {
     caption:
-      "New to market — a distinguished 5-bedroom Grade II listed home in the heart of a Cotswold market town. Three reception rooms, a bespoke kitchen and a private walled garden. Guide price £1,450,000 — get in touch to arrange a viewing.",
-    hashtags: "#CotswoldsProperty #PeriodHome #ForSale",
+      "New to market — a five-bedroom Grade II listed home in the heart of a Cotswold market town. Three reception rooms, a bespoke kitchen and a private walled garden. Guide price £1,450,000. Get in touch to arrange a viewing.",
+    hashtags: "#CotswoldsProperty #GradeIIListed #ForSale",
   },
   email: {
     subject: "A characterful Grade II listed home I think you'll want to see",
