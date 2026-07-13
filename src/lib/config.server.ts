@@ -110,10 +110,13 @@ export function identifyPlan(opts: {
     }
   }
   if (opts.amount != null) {
-    // Exact new-price amounts first.
-    for (const k of keys) {
-      if (opts.amount === cfg[k].amount) return k;
+    // Exact new-price amounts first (all markets).
+    for (const market of Object.keys(PLAN_PRICING) as (keyof typeof PLAN_PRICING)[]) {
+      for (const k of keys) {
+        if (opts.amount === PLAN_PRICING[market][k].amount) return k;
+      }
     }
+
     // Legacy amounts (£24.99 / £29.99 / £49.99) for grandfathered subs.
     if (opts.amount === 4999) return "growth";
     if (opts.amount === 2999) return "pro";
