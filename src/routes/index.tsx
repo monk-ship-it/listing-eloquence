@@ -950,10 +950,12 @@ function FinalCta({ authed }: { authed: boolean }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
       <Reveal>
-        <div className="glow-primary relative overflow-hidden rounded-3xl border border-primary/30 bg-card px-6 py-14 text-center sm:px-12">
+        <div className="glow-primary relative overflow-hidden rounded-3xl border border-primary/30 bg-card px-6 py-16 text-center sm:px-12">
           <div className="pointer-events-none absolute inset-0 bg-radial-glow opacity-70" />
+          <div className="pointer-events-none absolute inset-0 bg-grid opacity-[0.15]" />
           <div className="relative mx-auto max-w-2xl">
-            <h2 className="text-balance font-display text-3xl font-semibold sm:text-4xl lg:text-5xl">
+            <span className="eyebrow inline-block">Start today</span>
+            <h2 className="mt-4 text-balance font-display text-3xl font-semibold sm:text-4xl lg:text-5xl">
               Your next listing does not need to start with a blank page.
             </h2>
             <p className="mt-5 text-lg text-muted-foreground">
@@ -972,12 +974,17 @@ function FinalCta({ authed }: { authed: boolean }) {
                 <a href="#voice-demo">Try voice dictation</a>
               </Button>
             </div>
+            <p className="mt-5 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <ShieldCheck className="h-4 w-4 text-primary" />
+              {TRIAL_DAYS}-day trial · card required · cancel anytime
+            </p>
           </div>
         </div>
       </Reveal>
     </section>
   );
 }
+
 
 /* --------------------------------- Footer --------------------------------- */
 
