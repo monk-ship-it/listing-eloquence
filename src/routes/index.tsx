@@ -1005,7 +1005,7 @@ function Pricing({ authed }: { authed: boolean }) {
 function orderedFeatures(features: string[]): string[] {
   const voice = features.filter((f) => /voice notes|voice dictation/i.test(f));
   const rest = features.filter((f) => !/voice notes|voice dictation/i.test(f));
-  const baseExtras = ["Portal-ready descriptions", "Social captions with hashtags"];
+  const baseExtras = ["Listing descriptions", "Social captions with hashtags"];
   const merged = [...rest];
   for (const extra of baseExtras) {
     if (!merged.some((f) => f.toLowerCase() === extra.toLowerCase())) {
