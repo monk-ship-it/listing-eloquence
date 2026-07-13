@@ -276,7 +276,7 @@ function Hero({ authed }: { authed: boolean }) {
 
 
           <div className="mt-7 flex flex-wrap gap-2.5">
-            {HERO_CHIPS.map((chip) => (
+            {heroChips(market).map((chip) => (
               <span
                 key={chip}
                 className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/50 px-3 py-1.5 text-xs font-medium text-foreground/90"
