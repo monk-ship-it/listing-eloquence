@@ -889,7 +889,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
             </div>
 
             <div className="mt-4 space-y-3">
-              {DICTATION_EXAMPLES.map((ex) => (
+              {examples.map((ex) => (
                 <div
                   key={ex.label}
                   className="overflow-hidden rounded-2xl border border-border/70 bg-background/40"
