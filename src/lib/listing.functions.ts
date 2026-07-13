@@ -59,6 +59,7 @@ function buildUserPrompt(input: ListingInput, market: MarketId): string {
   details += field("Address / location", input.address);
   details += field("Area highlights", input.areaHighlights);
   details += field("Property type", input.propertyType);
+  details += field(L.yearBuilt, input.yearBuilt);
   details += field(L.tenure, input.tenure);
   details += field(L.lease, input.leaseYears);
   details += field(L.price, input.price);
@@ -76,6 +77,9 @@ function buildUserPrompt(input: ListingInput, market: MarketId): string {
   details += field(L.utilities, input.utilities);
   details += field(L.nearby, input.nearby);
   details += field(L.periodFeatures, input.periodFeatures);
+  details += field(L.disclosures, input.disclosures);
+  details += field(L.showingNotes, input.showingNotes);
+  details += field(L.mediaNotes, input.mediaNotes);
   details += field("Target audience", input.targetAudience);
 
   const voiceNotes = input.voiceNotes?.trim()
