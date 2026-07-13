@@ -952,8 +952,9 @@ function FinalCta({ authed }: { authed: boolean }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
       <Reveal>
-        <div className="glow-primary relative overflow-hidden rounded-3xl border border-primary/30 bg-card px-6 py-16 text-center sm:px-12">
-          <div className="pointer-events-none absolute inset-0 bg-radial-glow opacity-70" />
+        <div className="glow-primary relative overflow-hidden rounded-3xl border border-primary/40 bg-gradient-to-br from-primary/20 via-card to-card px-6 py-16 text-center sm:px-12">
+          <div className="pointer-events-none absolute inset-0 bg-radial-glow opacity-90" />
+          <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-gold/10 blur-3xl" />
           <div className="pointer-events-none absolute inset-0 bg-grid opacity-[0.15]" />
           <div className="relative mx-auto max-w-2xl">
             <span className="eyebrow inline-block">Start today</span>
