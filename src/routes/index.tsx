@@ -1076,7 +1076,7 @@ function Footer() {
         </div>
         <div className="rule my-6" />
         <p className="text-center text-xs text-muted-foreground sm:text-left">
-          © 2026 {APP_NAME}. Crafted for UK estate agents.
+          © 2026 {APP_NAME}. Crafted for estate and real estate agents in the UK and US.
         </p>
       </div>
     </footer>
