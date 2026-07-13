@@ -496,23 +496,29 @@ function Voices() {
           Choose the tone that fits the home, the market and the agency brand.
         </p>
       </Reveal>
-      <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {VOICE_CARDS.map((v, i) => (
           <Reveal key={v.name} delay={i * 80} className="h-full">
-            <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40">
-              <span className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-primary to-gold" />
-              <h3 className="text-xl font-semibold">{v.name}</h3>
-              <p className="mt-1.5 text-xs font-semibold uppercase tracking-wide text-primary">
+            <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/60 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card">
+              <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-gold/60" />
+              <div className="flex items-center justify-between">
+                <h3 className="font-display text-xl font-semibold">{v.name}</h3>
+                <span className="text-xs font-semibold tabular-nums text-foreground/30">
+                  0{i + 1}
+                </span>
+              </div>
+              <p className="mt-1.5 text-[0.7rem] font-semibold uppercase tracking-wider text-primary">
                 {v.tagline}
               </p>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{v.body}</p>
-              <p className="mt-auto border-t border-border pt-4 text-sm italic leading-relaxed text-foreground/90">
+              <p className="mt-auto border-t border-border/70 pt-4 font-display text-sm italic leading-relaxed text-foreground/85">
                 “{v.sample}”
               </p>
             </div>
           </Reveal>
         ))}
       </div>
+
     </section>
   );
 }
