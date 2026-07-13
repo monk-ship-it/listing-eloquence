@@ -592,8 +592,8 @@ function LiveExample() {
           </Reveal>
 
           {/* Out */}
-          <Reveal delay={120}>
-            <div className="h-full rounded-2xl border border-primary/30 bg-card p-6 shadow-[0_24px_60px_-30px] shadow-primary/40 ring-1 ring-primary/5">
+          <Reveal delay={120} className="min-w-0">
+            <div className="h-full min-w-0 rounded-2xl border border-primary/30 bg-card p-6 shadow-[0_24px_60px_-30px] shadow-primary/40 ring-1 ring-primary/5">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                 <div className="flex items-center gap-2 text-sm font-semibold text-primary">
                   <Sparkles className="h-4 w-4 shrink-0" /> Marketing pack out
@@ -603,14 +603,15 @@ function LiveExample() {
                 </span>
               </div>
 
-              <Tabs defaultValue="listing" className="mt-4">
-                <TabsList className="-mx-1 flex h-auto w-[calc(100%+0.5rem)] flex-nowrap justify-start gap-1 overflow-x-auto bg-secondary p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:w-full sm:flex-wrap">
+              <Tabs defaultValue="listing" className="mt-4 w-full min-w-0">
+                <TabsList className="-mx-1 flex h-auto w-[calc(100%+0.5rem)] max-w-[calc(100%+0.5rem)] flex-nowrap justify-start gap-1 overflow-x-auto bg-secondary p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:w-full sm:max-w-full sm:flex-wrap">
                   <TabsTrigger value="listing" className="shrink-0">Listing</TabsTrigger>
                   <TabsTrigger value="instagram" className="shrink-0">Instagram</TabsTrigger>
                   <TabsTrigger value="tiktok" className="shrink-0">TikTok</TabsTrigger>
                   <TabsTrigger value="facebook" className="shrink-0">Facebook</TabsTrigger>
                   <TabsTrigger value="email" className="shrink-0">Buyer email</TabsTrigger>
                 </TabsList>
+
 
 
                 <TabsContent value="listing" className="mt-4">
