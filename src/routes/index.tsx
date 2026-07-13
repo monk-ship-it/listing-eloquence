@@ -790,30 +790,52 @@ const DEMO = {
 
 /* ----------------------------- Voice dictation ----------------------------- */
 
-const DICTATION_EXAMPLES = [
+const DICTATION_EXAMPLES_UK = [
   {
     label: "Kitchen",
     raw: "Kitchen’s been redone, oak units, Miele oven, big island, sliders to the west terrace, evening sun…",
-    out: "Bespoke oak kitchen with Miele appliances, central island and sliding doors opening to a west-facing terrace.",
+    out: "Bespoke oak kitchen with Miele appliances, a central island and sliding doors opening to a west-facing terrace that catches the evening sun.",
   },
   {
     label: "Garden",
     raw: "Garden’s properly private, old brick wall, pear trees trained along it, stone terrace, lighting already in…",
-    out: "Private walled garden with espalier pear trees, stone terrace and discreet external lighting.",
+    out: "Private walled garden with espalier pear trees along the brickwork, a stone terrace and discreet external lighting already installed.",
   },
   {
     label: "Parking & local",
     raw: "Double cart lodge, EV point, station’s walkable, market square under ten minutes…",
-    out: "Double cart lodge with EV charging, within walking distance of the station and market square.",
+    out: "Double cart lodge with EV charging, within walking distance of the station and around ten minutes from the market square.",
+  },
+];
+
+const DICTATION_EXAMPLES_US = [
+  {
+    label: "Kitchen",
+    raw: "Kitchen’s all redone, white oak cabinets, Sub-Zero fridge, quartz island, sliders out to the deck, gets the afternoon sun…",
+    out: "Renovated kitchen with white oak cabinetry, a Sub-Zero refrigerator, a quartz-topped island and sliding doors opening to the deck.",
+  },
+  {
+    label: "Outdoor",
+    raw: "Backyard’s fenced, heated pool, covered patio, quarter-acre lot, sprinklers already in…",
+    out: "Fenced backyard on a quarter-acre lot with a heated pool, a covered patio and an in-ground sprinkler system.",
+  },
+  {
+    label: "Parking & area",
+    raw: "Three-car garage, EV charger, close to the interstate, downtown’s about ten minutes…",
+    out: "Three-car attached garage with an EV charger, quick interstate access and roughly ten minutes to downtown.",
   },
 ];
 
 function VoiceDictation({ authed }: { authed: boolean }) {
+  const { market } = useMarket();
+  const examples = market === "us" ? DICTATION_EXAMPLES_US : DICTATION_EXAMPLES_UK;
   const bullets = [
     "Dictate rough notes into one voice notes field",
     "Add to existing text without overwriting it",
     "Every transcript stays fully editable before generating",
-    "Useful between viewings, valuations and vendor calls",
+    market === "us"
+      ? "Useful between showings, valuations and client calls"
+      : "Useful between viewings, valuations and vendor calls",
   ];
   return (
     <section id="voice-demo" className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
