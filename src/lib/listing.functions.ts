@@ -108,14 +108,12 @@ export const generateListing = createServerFn({ method: "POST" })
     }
 
     const voice = (data.voice ?? "professional") as VoiceId;
-    const systemPrompt =
-      VOICE_PROMPTS[voice] ??
-      VOICE_PROMPTS.professional;
+    const voicePrompt = VOICE_PROMPTS[voice] ?? VOICE_PROMPTS.professional;
 
     const content = await callLovableAiJson([
       {
         role: "system",
-        content: `You are an expert UK estate agency copywriter who follows National Trading Standards "Material Information" guidance. ${systemPrompt} Always return valid JSON only.`,
+        content: `${MASTER_LISTING_SYSTEM_PROMPT}\n\nBRAND VOICE FOR THIS LISTING:\n${voicePrompt}`,
       },
       { role: "user", content: buildUserPrompt(data) },
     ]);
