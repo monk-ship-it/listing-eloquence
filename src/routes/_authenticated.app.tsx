@@ -64,11 +64,79 @@ function GeneratorPage() {
       });
   }
 
+  const market = input.market;
+  const isUs = market === "us";
+
+  function setMarket(m: MarketId) {
+    // Switching market keeps typed facts but resets to the market default when
+    // the form is still empty, so the correct example/labels apply cleanly.
+    setInput((prev) => ({ ...prev, market: m }));
+  }
+
   function loadExample() {
-    setInput(EXAMPLE_INPUT);
+    setInput(isUs ? US_EXAMPLE_INPUT : EXAMPLE_INPUT);
     setOutput(null);
     toast.success("Example property loaded.");
   }
+
+  const L = isUs
+    ? {
+        address: "Address / location",
+        addressPh: "148 Magnolia Court, Winter Park, FL 32789",
+        propertyType: "Property type",
+        propertyTypePh: "Single-family home",
+        tenure: "Ownership",
+        tenurePh: "Fee simple / condo",
+        price: "Asking price ($)",
+        pricePh: "895,000",
+        lease: "HOA / monthly dues",
+        leasePh: "$90 / month",
+        dimensions: "Square footage / lot / room sizes",
+        dimensionsPh: "Approx. 3,200 sq ft, 0.25-acre lot…",
+        epc: "Energy rating",
+        epcPh: "If available",
+        tax: "Property taxes",
+        taxPh: "Approx. $9,000 / year",
+        outside: "Outdoor space / lot",
+        outsidePh: "Fenced backyard, heated pool",
+        heating: "Heating / cooling",
+        heatingPh: "Central heat & A/C",
+        utilities: "Utilities / internet",
+        utilitiesPh: "City water & sewer, fiber internet",
+        nearby: "Nearby (school district, transit, amenities)",
+        nearbyPh: "Winter Park school district; near Park Ave, I-4…",
+        periodFeatures: "Architectural / notable features",
+        periodFeaturesPh: "Craftsman detailing, coffered ceilings…",
+      }
+    : {
+        address: "Address / location",
+        addressPh: "12 Park Avenue, Harrogate, HG1",
+        propertyType: "Property type",
+        propertyTypePh: "Victorian semi-detached house",
+        tenure: "Tenure",
+        tenurePh: "Freehold",
+        price: "Asking price (£)",
+        pricePh: "525,000",
+        lease: "Lease remaining (yrs)",
+        leasePh: "If leasehold",
+        dimensions: "Room dimensions",
+        dimensionsPh: "Living room 5.2m x 4.1m…",
+        epc: "EPC rating",
+        epcPh: "C",
+        tax: "Council Tax band",
+        taxPh: "D",
+        outside: "Outside space / garden",
+        outsidePh: "Landscaped rear garden, patio",
+        heating: "Heating",
+        heatingPh: "Gas central heating",
+        utilities: "Utilities / broadband",
+        utilitiesPh: "Mains services, Ultrafast broadband",
+        nearby: "Nearby (schools, transport, amenities)",
+        nearbyPh: "Outstanding primary, station 0.5 miles…",
+        periodFeatures: "Period / character features",
+        periodFeaturesPh: "Original cornicing, sash windows…",
+      };
+
 
   async function run() {
     setBusy(true);
