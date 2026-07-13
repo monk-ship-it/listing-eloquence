@@ -864,28 +864,29 @@ function Pricing({ authed }: { authed: boolean }) {
                 className={`relative flex h-full flex-col rounded-2xl border p-7 transition-all duration-300 hover:-translate-y-1 ${
                   plan.popular
                     ? "glow-primary border-primary/50 bg-card md:scale-[1.03]"
-                    : "border-border bg-card hover:border-primary/30"
+                    : "border-border/70 bg-card/60 backdrop-blur-sm hover:border-primary/30 hover:bg-card"
                 }`}
               >
                 {plan.popular && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3.5 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">
-                    Best value
+                  <span className="absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-gradient-to-r from-primary to-primary/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-lg shadow-primary/30">
+                    <Sparkles className="h-3 w-3" /> Best value
                   </span>
                 )}
-                <h3 className="text-2xl font-semibold">{plan.name}</h3>
+                <h3 className="font-display text-2xl font-semibold">{plan.name}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{plan.tagline}</p>
-                <p className="mt-5 font-display text-4xl font-semibold">
+                <p className="mt-5 font-display text-4xl font-semibold tracking-tight">
                   {plan.price}
                   <span className="text-base font-normal text-muted-foreground">/month</span>
                 </p>
-                <p className="mt-1.5 text-sm font-medium text-primary">
+                <p className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
                   {plan.monthlyListings} listings per month
                 </p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
+                <p className="mt-2 text-xs text-muted-foreground">
                   {plan.id === "starter"
                     ? `${TRIAL_DAYS}-day Starter trial at secure checkout · card required · cancel anytime`
                     : "Cancel anytime"}
                 </p>
+
 
                 <div className="rule my-6" />
                 <ul className="flex-1 space-y-3 text-sm">
