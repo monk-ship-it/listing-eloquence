@@ -285,8 +285,8 @@ function HeroMockup() {
           <Sparkles className="h-3.5 w-3.5" /> Listing preview
         </div>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          A handsome five-bedroom detached home set behind a gravel driveway, with period character
-          throughout and a private walled garden made for long summer evenings.
+          A five-bedroom detached home approached by a gravel driveway, with generous reception
+          space, a private walled garden and a layout arranged for family life and entertaining.
         </p>
       </div>
     </div>
