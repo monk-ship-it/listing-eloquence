@@ -213,12 +213,14 @@ function Header({ user }: { user: boolean }) {
 
 /* ----------------------------------- Hero ---------------------------------- */
 
-const HERO_CHIPS = [
-  "Built for UK estate agents",
-  "Portal-ready copy",
-  "Voice notes in minutes",
-  "No CRM migration",
-];
+function heroChips(market: MarketId): string[] {
+  return [
+    market === "us" ? "Built for US real estate agents" : "Built for UK estate agents",
+    market === "us" ? "MLS-ready copy" : "Portal-ready copy",
+    "Voice notes in minutes",
+    "No CRM migration",
+  ];
+}
 
 function Hero({ authed }: { authed: boolean }) {
   const { market } = useMarket();
