@@ -82,29 +82,70 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
+const MarketContext = createContext<{
+  market: MarketId;
+  setMarket: (m: MarketId) => void;
+}>({ market: DEFAULT_MARKET, setMarket: () => {} });
+
+function useMarket() {
+  return useContext(MarketContext);
+}
+
 function Landing() {
   const { user } = useAuth();
   const authed = !!user;
+  const [market, setMarket] = useState<MarketId>(DEFAULT_MARKET);
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
-      <Header user={authed} />
-      <Hero authed={authed} />
-      <VoiceValue />
-      <HowItWorks />
-      <Voices />
-      <LiveExample />
-      <VoiceDictation authed={authed} />
-      <Pricing authed={authed} />
-      <FinalCta authed={authed} />
-      <Footer />
+    <MarketContext.Provider value={{ market, setMarket }}>
+      <div className="min-h-screen overflow-x-hidden">
+        <Header user={authed} />
+        <Hero authed={authed} />
+        <VoiceValue />
+        <HowItWorks />
+        <Voices />
+        <LiveExample />
+        <VoiceDictation authed={authed} />
+        <Pricing authed={authed} />
+        <FinalCta authed={authed} />
+        <Footer />
+      </div>
+    </MarketContext.Provider>
+  );
+}
+
+/** Segmented UK / US market + currency toggle. */
+function MarketToggle({ className = "" }: { className?: string }) {
+  const { market, setMarket } = useMarket();
+  return (
+    <div
+      className={`inline-flex rounded-full border border-border/70 bg-card/50 p-1 backdrop-blur ${className}`}
+      role="tablist"
+      aria-label="Choose your market"
+    >
+      {Object.values(MARKETS).map((m) => (
+        <button
+          key={m.id}
+          type="button"
+          role="tab"
+          aria-selected={market === m.id}
+          onClick={() => setMarket(m.id)}
+          className={`rounded-full px-4 py-1.5 text-xs font-medium transition-colors sm:text-sm ${
+            market === m.id
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          {m.label}
+        </button>
+      ))}
     </div>
   );
 }
 
 /**
- * A "Start free trial"-style CTA that preserves the chosen plan and routes
- * signed-in users straight to checkout, signed-out users to sign up.
+ * A "Start free trial"-style CTA that preserves the chosen plan and market and
+ * routes signed-in users straight to checkout, signed-out users to sign up.
  */
 function CtaButton({
   authed,
@@ -119,9 +160,10 @@ function CtaButton({
   variant?: React.ComponentProps<typeof Button>["variant"];
   className?: string;
 }) {
+  const { market } = useMarket();
   return (
     <Button asChild {...rest}>
-      <Link to={authed ? "/subscription" : "/auth"} search={{ plan }}>
+      <Link to={authed ? "/subscription" : "/auth"} search={{ plan, market }}>
         {children}
       </Link>
     </Button>
