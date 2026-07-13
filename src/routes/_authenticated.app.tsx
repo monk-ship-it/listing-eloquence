@@ -107,6 +107,14 @@ function GeneratorPage() {
         nearbyPh: "Winter Park school district; near Park Ave, I-4…",
         periodFeatures: "Architectural / notable features",
         periodFeaturesPh: "Craftsman detailing, coffered ceilings…",
+        yearBuilt: "Year built",
+        yearBuiltPh: "2016",
+        disclosures: "Disclosures / condition notes",
+        disclosuresPh: "Roof replaced 2021; seller's disclosure available…",
+        showingNotes: "Showing / access notes (kept out of public remarks)",
+        showingNotesPh: "By appointment via ShowingTime; 24 hrs' notice…",
+        mediaNotes: "Media / photo / floor-plan notes",
+        mediaNotesPh: "Pro photos + drone scheduled; floor plan to follow…",
       }
     : {
         address: "Address / location",
