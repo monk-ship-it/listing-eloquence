@@ -717,8 +717,8 @@ function VoiceDictation({ authed }: { authed: boolean }) {
             <div className="mt-3 rounded-2xl border border-border bg-background/50 p-4">
               <p className="text-xs font-medium text-muted-foreground">Spoken note</p>
               <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-                “The kitchen has a Rangemaster cooker, quartz worktops and bi-fold doors onto a
-                south-facing garden with a decked terrace…”
+                “Kitchen has the Rangemaster, quartz, bifolds to the south garden, decked bit, good
+                afternoon light…”
               </p>
             </div>
 
@@ -730,8 +730,8 @@ function VoiceDictation({ authed }: { authed: boolean }) {
                 </span>
               </div>
               <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-                Rangemaster cooker, quartz worktops and bi-fold doors opening onto a south-facing
-                garden with a decked terrace.
+                Kitchen with Rangemaster cooker, quartz worktops and bi-fold doors opening to a
+                south-facing garden with a decked terrace.
               </p>
             </div>
           </div>
