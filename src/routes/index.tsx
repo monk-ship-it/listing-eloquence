@@ -422,7 +422,7 @@ const VOICE_CARDS = [
   {
     name: "Heritage",
     tagline: "Atmosphere. History. Local charm.",
-    body: "For period homes, village settings and character properties that need a guided walk-through.",
+    body: "For listed homes, architecturally interesting houses, village settings and characterful properties that benefit from a guided description.",
     sample:
       "Beyond the old stone threshold, the house opens with warmth, texture and a clear sense of place.",
   },
