@@ -9,14 +9,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { APP_NAME, TRIAL_DAYS, type PlanId } from "@/lib/config";
+import { APP_NAME, TRIAL_DAYS, resolveMarketId, type PlanId, type MarketId } from "@/lib/config";
 
 const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>): { plan?: PlanId } => {
+  validateSearch: (search: Record<string, unknown>): { plan?: PlanId; market?: MarketId } => {
     const plan = search.plan as string | undefined;
-    return plan && VALID_PLANS.includes(plan as PlanId) ? { plan: plan as PlanId } : {};
+    const out: { plan?: PlanId; market?: MarketId } = {};
+    if (plan && VALID_PLANS.includes(plan as PlanId)) out.plan = plan as PlanId;
+    if (search.market === "us" || search.market === "uk") out.market = search.market as MarketId;
+    return out;
   },
   head: () => ({
     meta: [
@@ -41,8 +44,9 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const { plan: planParam } = Route.useSearch();
+  const { plan: planParam, market: marketParam } = Route.useSearch();
   const plan: PlanId = planParam ?? "starter";
+  const market: MarketId = resolveMarketId(marketParam);
   const [mode, setMode] = useState<"login" | "signup">("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,8 +54,8 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) navigate({ to: "/subscription", search: { plan } });
-  }, [user, loading, navigate, plan]);
+    if (!loading && user) navigate({ to: "/subscription", search: { plan, market } });
+  }, [user, loading, navigate, plan, market]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -62,7 +66,7 @@ function AuthPage() {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/subscription?plan=${plan}`,
+            emailRedirectTo: `${window.location.origin}/subscription?plan=${plan}&market=${market}`,
             data: { full_name: fullName },
           },
         });
@@ -73,7 +77,7 @@ function AuthPage() {
         if (error) throw error;
         toast.success("Welcome back.");
       }
-      navigate({ to: "/subscription", search: { plan } });
+      navigate({ to: "/subscription", search: { plan, market } });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
