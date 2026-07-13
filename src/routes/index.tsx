@@ -350,18 +350,21 @@ function VoiceValue() {
   const cards = [
     {
       icon: Mic,
+      step: "01",
       title: "Dictate full property notes",
-      body: "Speak the rough notes into one dedicated voice notes field, then add exact facts in the structured fields.",
+      body: "Speak rough notes into one voice notes field, then add exact facts in the structured fields.",
     },
     {
       icon: ClipboardPaste,
+      step: "02",
       title: "Type or paste details",
       body: "Enter facts manually or paste rough notes, valuation text or existing property information.",
     },
     {
       icon: Sparkles,
+      step: "03",
       title: "Generate the full pack",
-      body: "Create the portal description, social captions, buyer email and vendor update from one set of property details.",
+      body: "Produce the portal description, social captions, buyer email and vendor update in one pass.",
     },
   ];
   return (
@@ -372,19 +375,22 @@ function VoiceValue() {
           Built for agents who need notes captured fast.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Some agents prefer to dictate between viewings. Others want to type, paste or tidy existing
-          notes. Quill supports all three, then turns those details into a complete listing pack.
+          Dictate between viewings, type at your desk or paste existing instructions. Quill turns any
+          of them into a complete listing pack.
         </p>
       </Reveal>
-      <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-3">
+      <div className="mt-12 grid gap-4 md:grid-cols-3">
         {cards.map((c, i) => (
-          <Reveal key={c.title} delay={i * 90} className="bg-card">
-            <div className="group h-full p-7 transition-colors duration-300 hover:bg-accent/40">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary/15 text-primary transition-colors group-hover:bg-primary/25">
+          <Reveal key={c.title} delay={i * 90} className="h-full">
+            <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/60 p-7 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card">
+              <span className="pointer-events-none absolute -right-6 -top-4 font-display text-6xl font-semibold text-foreground/[0.04] transition-colors group-hover:text-primary/10">
+                {c.step}
+              </span>
+              <span className="relative grid h-12 w-12 place-items-center rounded-xl border border-primary/20 bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
                 <c.icon className="h-5 w-5" />
               </span>
-              <h3 className="mt-5 text-xl font-semibold">{c.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.body}</p>
+              <h3 className="relative mt-5 text-lg font-semibold">{c.title}</h3>
+              <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">{c.body}</p>
             </div>
           </Reveal>
         ))}
@@ -400,17 +406,17 @@ function HowItWorks() {
     {
       icon: Mic,
       title: "Speak, type or paste the details",
-      body: "Add property notes by voice, manual typing or copied text from existing instructions.",
+      body: "Add property notes by voice, typing or copied text from existing instructions.",
     },
     {
       icon: Building2,
       title: "Choose the brand voice",
-      body: "Select Professional, Premium, Luxury or Heritage depending on the property.",
+      body: "Select Professional, Premium, Luxury or Heritage to match the property.",
     },
     {
       icon: Sparkles,
       title: "Generate and edit",
-      body: "Quill creates the listing, social captions and emails. You stay in control before using the copy.",
+      body: "Quill drafts the listing, captions and emails. You stay in control before anything is used.",
     },
   ];
   return (
@@ -422,12 +428,12 @@ function HowItWorks() {
             From spoken notes to finished listing pack.
           </h2>
         </Reveal>
-        <div className="relative mt-14 grid gap-10 md:grid-cols-3 md:gap-6">
-          <div className="pointer-events-none absolute left-0 right-0 top-[2.25rem] hidden h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent md:block" />
+        <div className="relative mt-14 grid gap-8 md:grid-cols-3 md:gap-5">
+          <div className="pointer-events-none absolute left-[16%] right-[16%] top-[2.4rem] hidden h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent md:block" />
           {steps.map((s, i) => (
             <Reveal key={s.title} delay={i * 110} className="relative">
               <div className="flex flex-col items-center text-center">
-                <span className="relative z-10 grid h-[4.5rem] w-[4.5rem] place-items-center rounded-2xl border border-primary/30 bg-background text-primary">
+                <span className="relative z-10 grid h-[4.75rem] w-[4.75rem] place-items-center rounded-2xl border border-primary/25 bg-background text-primary shadow-[0_12px_30px_-16px] shadow-primary/40">
                   <s.icon className="h-6 w-6" />
                   <span className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                     {i + 1}
@@ -445,6 +451,7 @@ function HowItWorks() {
     </section>
   );
 }
+
 
 /* --------------------------------- Voices ---------------------------------- */
 
@@ -489,23 +496,29 @@ function Voices() {
           Choose the tone that fits the home, the market and the agency brand.
         </p>
       </Reveal>
-      <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {VOICE_CARDS.map((v, i) => (
           <Reveal key={v.name} delay={i * 80} className="h-full">
-            <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40">
-              <span className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-primary to-gold" />
-              <h3 className="text-xl font-semibold">{v.name}</h3>
-              <p className="mt-1.5 text-xs font-semibold uppercase tracking-wide text-primary">
+            <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/60 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card">
+              <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-gold/60" />
+              <div className="flex items-center justify-between">
+                <h3 className="font-display text-xl font-semibold">{v.name}</h3>
+                <span className="text-xs font-semibold tabular-nums text-foreground/30">
+                  0{i + 1}
+                </span>
+              </div>
+              <p className="mt-1.5 text-[0.7rem] font-semibold uppercase tracking-wider text-primary">
                 {v.tagline}
               </p>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{v.body}</p>
-              <p className="mt-auto border-t border-border pt-4 text-sm italic leading-relaxed text-foreground/90">
+              <p className="mt-auto border-t border-border/70 pt-4 font-display text-sm italic leading-relaxed text-foreground/85">
                 “{v.sample}”
               </p>
             </div>
           </Reveal>
         ))}
       </div>
+
     </section>
   );
 }
@@ -543,12 +556,18 @@ function LiveExample() {
           </p>
         </Reveal>
 
-        <div className="mt-12 grid items-start gap-5 lg:grid-cols-2">
+        <div className="mt-12 grid items-start gap-5 lg:grid-cols-[0.85fr_1.15fr]">
           {/* In */}
-          <Reveal>
-            <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-sm">
-              <div className="flex items-center gap-2 text-sm font-semibold text-primary">
-                <FileText className="h-4 w-4" /> Property details in
+          <Reveal className="min-w-0">
+            <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-[0_20px_50px_-30px] shadow-black/40">
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm font-semibold text-primary">
+                  <FileText className="h-4 w-4" /> Details in
+                </div>
+                <span className="text-[0.7rem] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Step 1
+                </span>
               </div>
 
               <div className="mt-4 rounded-xl border border-primary/25 bg-primary/[0.06] p-4">
@@ -573,8 +592,8 @@ function LiveExample() {
           </Reveal>
 
           {/* Out */}
-          <Reveal delay={120}>
-            <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-sm">
+          <Reveal delay={120} className="min-w-0">
+            <div className="h-full min-w-0 rounded-2xl border border-primary/30 bg-card p-6 shadow-[0_24px_60px_-30px] shadow-primary/40 ring-1 ring-primary/5">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                 <div className="flex items-center gap-2 text-sm font-semibold text-primary">
                   <Sparkles className="h-4 w-4 shrink-0" /> Marketing pack out
@@ -584,14 +603,16 @@ function LiveExample() {
                 </span>
               </div>
 
-              <Tabs defaultValue="listing" className="mt-4">
-                <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 bg-secondary p-1">
-                  <TabsTrigger value="listing">Listing</TabsTrigger>
-                  <TabsTrigger value="instagram">Instagram</TabsTrigger>
-                  <TabsTrigger value="tiktok">TikTok</TabsTrigger>
-                  <TabsTrigger value="facebook">Facebook</TabsTrigger>
-                  <TabsTrigger value="email">Buyer email</TabsTrigger>
+              <Tabs defaultValue="listing" className="mt-4 w-full min-w-0">
+                <TabsList className="-mx-1 flex h-auto w-[calc(100%+0.5rem)] max-w-[calc(100%+0.5rem)] flex-nowrap justify-start gap-1 overflow-x-auto bg-secondary p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:w-full sm:max-w-full sm:flex-wrap">
+                  <TabsTrigger value="listing" className="shrink-0">Listing</TabsTrigger>
+                  <TabsTrigger value="instagram" className="shrink-0">Instagram</TabsTrigger>
+                  <TabsTrigger value="tiktok" className="shrink-0">TikTok</TabsTrigger>
+                  <TabsTrigger value="facebook" className="shrink-0">Facebook</TabsTrigger>
+                  <TabsTrigger value="email" className="shrink-0">Buyer email</TabsTrigger>
                 </TabsList>
+
+
 
                 <TabsContent value="listing" className="mt-4">
                   <h3 className="font-display text-lg font-semibold leading-snug">{DEMO.headline}</h3>
@@ -845,28 +866,29 @@ function Pricing({ authed }: { authed: boolean }) {
                 className={`relative flex h-full flex-col rounded-2xl border p-7 transition-all duration-300 hover:-translate-y-1 ${
                   plan.popular
                     ? "glow-primary border-primary/50 bg-card md:scale-[1.03]"
-                    : "border-border bg-card hover:border-primary/30"
+                    : "border-border/70 bg-card/60 backdrop-blur-sm hover:border-primary/30 hover:bg-card"
                 }`}
               >
                 {plan.popular && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3.5 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">
-                    Best value
+                  <span className="absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-gradient-to-r from-primary to-primary/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-lg shadow-primary/30">
+                    <Sparkles className="h-3 w-3" /> Best value
                   </span>
                 )}
-                <h3 className="text-2xl font-semibold">{plan.name}</h3>
+                <h3 className="font-display text-2xl font-semibold">{plan.name}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{plan.tagline}</p>
-                <p className="mt-5 font-display text-4xl font-semibold">
+                <p className="mt-5 font-display text-4xl font-semibold tracking-tight">
                   {plan.price}
                   <span className="text-base font-normal text-muted-foreground">/month</span>
                 </p>
-                <p className="mt-1.5 text-sm font-medium text-primary">
+                <p className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
                   {plan.monthlyListings} listings per month
                 </p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
+                <p className="mt-2 text-xs text-muted-foreground">
                   {plan.id === "starter"
                     ? `${TRIAL_DAYS}-day Starter trial at secure checkout · card required · cancel anytime`
                     : "Cancel anytime"}
                 </p>
+
 
                 <div className="rule my-6" />
                 <ul className="flex-1 space-y-3 text-sm">
@@ -930,10 +952,12 @@ function FinalCta({ authed }: { authed: boolean }) {
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
       <Reveal>
-        <div className="glow-primary relative overflow-hidden rounded-3xl border border-primary/30 bg-card px-6 py-14 text-center sm:px-12">
+        <div className="glow-primary relative overflow-hidden rounded-3xl border border-primary/30 bg-card px-6 py-16 text-center sm:px-12">
           <div className="pointer-events-none absolute inset-0 bg-radial-glow opacity-70" />
+          <div className="pointer-events-none absolute inset-0 bg-grid opacity-[0.15]" />
           <div className="relative mx-auto max-w-2xl">
-            <h2 className="text-balance font-display text-3xl font-semibold sm:text-4xl lg:text-5xl">
+            <span className="eyebrow inline-block">Start today</span>
+            <h2 className="mt-4 text-balance font-display text-3xl font-semibold sm:text-4xl lg:text-5xl">
               Your next listing does not need to start with a blank page.
             </h2>
             <p className="mt-5 text-lg text-muted-foreground">
@@ -952,6 +976,10 @@ function FinalCta({ authed }: { authed: boolean }) {
                 <a href="#voice-demo">Try voice dictation</a>
               </Button>
             </div>
+            <p className="mt-5 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <ShieldCheck className="h-4 w-4 text-primary" />
+              {TRIAL_DAYS}-day trial · card required · cancel anytime
+            </p>
           </div>
         </div>
       </Reveal>
@@ -959,21 +987,28 @@ function FinalCta({ authed }: { authed: boolean }) {
   );
 }
 
+
 /* --------------------------------- Footer --------------------------------- */
 
 function Footer() {
   return (
-    <footer className="border-t border-border py-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-5 px-5 text-center text-sm text-muted-foreground sm:flex-row sm:gap-4 sm:text-left">
-        <Logo withByline />
-        <a
-          href={`mailto:${CONTACT_EMAIL}`}
-          className="break-all transition-colors hover:text-foreground"
-        >
-          {CONTACT_EMAIL}
-        </a>
-        <p>© 2026 {APP_NAME}. Crafted for UK estate agents.</p>
+    <footer className="border-t border-border/70 bg-card/30 py-12">
+      <div className="mx-auto max-w-6xl px-5">
+        <div className="flex flex-col items-center justify-between gap-6 sm:flex-row sm:gap-4">
+          <Logo withByline />
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="break-all text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {CONTACT_EMAIL}
+          </a>
+        </div>
+        <div className="rule my-6" />
+        <p className="text-center text-xs text-muted-foreground sm:text-left">
+          © 2026 {APP_NAME}. Crafted for UK estate agents.
+        </p>
       </div>
     </footer>
   );
 }
+
