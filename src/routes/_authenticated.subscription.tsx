@@ -219,7 +219,7 @@ function SubscriptionPage() {
       // logged-in user's id (client_reference_id), metadata and the exact
       // server-selected Price ID. The webhook activates the correct account.
       const { url } = await checkoutFn({
-        data: { plan: planId, origin: window.location.origin },
+        data: { plan: planId, origin: window.location.origin, market },
       });
       window.location.href = url;
     } catch (err) {
