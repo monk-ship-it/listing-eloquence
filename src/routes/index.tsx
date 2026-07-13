@@ -909,6 +909,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
 /* --------------------------------- Pricing --------------------------------- */
 
 function Pricing({ authed }: { authed: boolean }) {
+  const { market } = useMarket();
   return (
     <section id="pricing" className="border-y border-border bg-card/30 py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
@@ -920,7 +921,11 @@ function Pricing({ authed }: { authed: boolean }) {
           <p className="mt-4 text-lg text-muted-foreground">
             Every plan includes voice dictation, all four brand voices and the full social pack.
           </p>
+          <div className="mt-6 flex justify-center">
+            <MarketToggle />
+          </div>
         </Reveal>
+
 
         <div className="mt-12 grid items-stretch gap-6 md:grid-cols-3">
           {PLANS.map((plan, i) => (
