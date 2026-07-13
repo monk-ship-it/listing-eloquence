@@ -625,9 +625,9 @@ function SocialBlock({
 const DEMO = {
   headline: "A Distinguished Grade II Listed Home in the Heart of a Cotswold Market Town",
   listing: [
-    "Set back behind a gravel driveway and a low honey-stone wall, this Grade II listed home carries the quiet confidence of a house that has watched over its market town for generations. It rewards a slow, considered walk-through.",
-    "Inside, flagstone floors lead between rooms of generous proportion. The drawing room is anchored by an inglenook fireplace, while exposed beams and original sash windows bring warmth and light in equal measure. A bespoke kitchen sits at the heart of the home, opening onto the garden.",
-    "Five bedrooms, three bathrooms and three reception rooms are arranged with a cellar below for useful storage. Beyond, a walled garden unfolds into mature borders, an orchard and a stone terrace made for long summer evenings.",
+    "Set back behind a gravel driveway and a low honey-stone wall, this Grade II listed home carries the quiet confidence of a house that has watched over its market town for generations. The layout unfolds in sequence, with rooms of generous proportion and a clear sense of purpose.",
+    "Inside, flagstone floors lead between reception rooms anchored by an inglenook fireplace. Exposed beams and original sash windows bring warmth and controlled light, while a bespoke kitchen sits at the heart of the home, opening onto the garden.",
+    "Five bedrooms, three bathrooms and three reception rooms are arranged over the principal floors, with a cellar below for useful storage. Beyond, a walled garden with mature borders, an orchard and a stone terrace offers a sheltered setting for outdoor dining and entertaining.",
   ],
   instagram: {
     caption:
@@ -641,15 +641,15 @@ const DEMO = {
   },
   facebook: {
     caption:
-      "New to market — a five-bedroom Grade II listed home in the heart of a Cotswold market town. Three reception rooms, a bespoke kitchen and a private walled garden. Guide price £1,450,000. Get in touch to arrange a viewing.",
+      "New to market — a five-bedroom Grade II listed home in the heart of a Cotswold market town. Three reception rooms, a bespoke kitchen and a private walled garden. Guide price £1,450,000. Viewings are available by appointment.",
     hashtags: "#CotswoldsProperty #GradeIIListed #ForSale",
   },
   email: {
-    subject: "A characterful Grade II listed home I think you'll want to see",
+    subject: "A five-bedroom Grade II listed home in the heart of a Cotswold market town",
     body: [
       "Hi there,",
-      "Based on what you're looking for, I wanted to share a five-bedroom Grade II listed home that has just come to market in the heart of a Cotswold market town. It has an inglenook fireplace, original beams and a private walled garden, all within walking distance of the high street.",
-      "Guide price is £1,450,000. I'd be happy to arrange a private viewing at a time that suits you — just let me know.",
+      "We have brought to market a five-bedroom Grade II listed detached home in the heart of a Cotswold market town. The property features an inglenook fireplace, exposed beams, original sash windows and a private walled garden, all within walking distance of the high street.",
+      "Guide price is £1,450,000. Viewings are available by appointment; please reply with the times that suit you and we will arrange access.",
     ],
   },
 };
