@@ -221,6 +221,9 @@ const HERO_CHIPS = [
 ];
 
 function Hero({ authed }: { authed: boolean }) {
+  const { market } = useMarket();
+  const audience = MARKETS[market].audience;
+  const portalWord = market === "us" ? "MLS-ready" : "portal-ready";
   return (
     <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-25" />
@@ -232,13 +235,17 @@ function Hero({ authed }: { authed: boolean }) {
             <AudioLines className="h-3.5 w-3.5" /> AI listing writer with voice dictation
           </span>
 
+          <div className="mt-5">
+            <MarketToggle />
+          </div>
+
           <h1 className="mt-5 text-balance font-display text-[clamp(2rem,8vw,2.6rem)] font-semibold leading-[1.12] sm:mt-6 sm:text-5xl lg:text-[3.6rem]">
             Write every listing in minutes — <span className="text-gradient">just say the words.</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {APP_NAME} lets UK estate agents speak, type or paste property details, choose a brand
-            voice, and generate portal-ready listings, social captions and buyer emails in minutes —
+            {APP_NAME} lets {audience} speak, type or paste property details, choose a brand
+            voice, and generate {portalWord} listings, social captions and buyer emails in minutes —
             without another CRM to manage.
           </p>
 
@@ -263,6 +270,7 @@ function Hero({ authed }: { authed: boolean }) {
             <ShieldCheck className="h-4 w-4 text-primary" />
             {TRIAL_DAYS}-day trial at secure checkout · card required · cancel anytime
           </p>
+
 
 
           <div className="mt-7 flex flex-wrap gap-2.5">
