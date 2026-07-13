@@ -507,8 +507,8 @@ function LiveExample() {
                   <Mic className="h-3.5 w-3.5" /> Spoken, typed or pasted
                 </div>
                 <p className="mt-1.5 text-sm italic leading-relaxed text-foreground/90">
-                  “Five bedrooms, Grade II listed, walled garden, original beams, period fireplaces,
-                  near the high street…”
+                  “Five bedrooms, Grade II listed, walled garden, original beams, inglenook
+                  fireplace, near the high street…”
                 </p>
               </div>
 
