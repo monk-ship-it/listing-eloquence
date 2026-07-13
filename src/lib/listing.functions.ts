@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { callLovableAiJson } from "./ai-gateway.server";
 import { VOICE_PROMPTS, type VoiceId } from "./voices";
+import { MASTER_LISTING_SYSTEM_PROMPT } from "./master-listing-prompt";
 import type { ListingInput, ListingOutput } from "./listing-types";
 
 function field(label: string, value: string) {
