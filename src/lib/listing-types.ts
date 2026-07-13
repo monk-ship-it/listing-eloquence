@@ -75,6 +75,10 @@ export const EMPTY_INPUT: ListingInput = {
   nearby: "",
   periodFeatures: "",
   targetAudience: "",
+  yearBuilt: "",
+  disclosures: "",
+  showingNotes: "",
+  mediaNotes: "",
 };
 
 export const EXAMPLE_INPUT: ListingInput = {
