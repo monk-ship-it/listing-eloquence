@@ -143,6 +143,14 @@ function GeneratorPage() {
         nearbyPh: "Outstanding primary, station 0.5 miles…",
         periodFeatures: "Period / character features",
         periodFeaturesPh: "Original cornicing, sash windows…",
+        yearBuilt: "Year built",
+        yearBuiltPh: "1901",
+        disclosures: "Disclosures / condition notes",
+        disclosuresPh: "Recent rewire; survey available…",
+        showingNotes: "Viewing / access notes (kept out of the listing)",
+        showingNotesPh: "By appointment; key with branch…",
+        mediaNotes: "Media / photo / floor-plan notes",
+        mediaNotesPh: "Photos + floor plan booked…",
       };
 
 
