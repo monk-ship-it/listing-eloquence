@@ -54,9 +54,12 @@ import {
 const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
 
 export const Route = createFileRoute("/_authenticated/subscription")({
-  validateSearch: (search: Record<string, unknown>): { plan?: PlanId } => {
+  validateSearch: (search: Record<string, unknown>): { plan?: PlanId; market?: MarketId } => {
     const plan = search.plan as string | undefined;
-    return plan && VALID_PLANS.includes(plan as PlanId) ? { plan: plan as PlanId } : {};
+    const out: { plan?: PlanId; market?: MarketId } = {};
+    if (plan && VALID_PLANS.includes(plan as PlanId)) out.plan = plan as PlanId;
+    if (search.market === "us" || search.market === "uk") out.market = search.market as MarketId;
+    return out;
   },
   head: () => ({ meta: [{ title: `Subscription — ${APP_NAME}` }] }),
   component: SubscriptionPage,
