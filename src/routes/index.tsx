@@ -383,7 +383,7 @@ function VoiceValue() {
         {cards.map((c, i) => (
           <Reveal key={c.title} delay={i * 90} className="h-full">
             <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/60 p-7 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card">
-              <span className="pointer-events-none absolute -right-6 -top-4 font-display text-6xl font-semibold text-foreground/[0.04] transition-colors group-hover:text-primary/10">
+              <span className="pointer-events-none absolute -right-4 -top-3 font-display text-7xl font-bold text-primary/15 transition-colors duration-300 group-hover:text-gold/30">
                 {c.step}
               </span>
               <span className="relative grid h-12 w-12 place-items-center rounded-xl border border-primary/20 bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
@@ -616,7 +616,7 @@ function LiveExample() {
 
                 <TabsContent value="listing" className="mt-4">
                   <h3 className="font-display text-lg font-semibold leading-snug">{DEMO.headline}</h3>
-                  <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                  <div className="mt-3 space-y-3 text-sm leading-relaxed text-foreground/90">
                     {DEMO.listing.map((p, i) => (
                       <p key={i}>{p}</p>
                     ))}
@@ -655,7 +655,7 @@ function LiveExample() {
                     <Mail className="h-3.5 w-3.5" /> Buyer email
                   </div>
                   <p className="mt-3 text-sm font-medium text-foreground">{DEMO.email.subject}</p>
-                  <div className="mt-2 space-y-2.5 text-sm leading-relaxed text-muted-foreground">
+                  <div className="mt-2 space-y-2.5 text-sm leading-relaxed text-foreground/90">
                     {DEMO.email.body.map((p, i) => (
                       <p key={i}>{p}</p>
                     ))}
