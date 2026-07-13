@@ -465,7 +465,7 @@ function Voices() {
 
 function LiveExample() {
   const facts: [string, string][] = [
-    ["Type", "Grade II listed detached period home"],
+    ["Type", "Grade II listed detached home"],
     ["Location", "Cotswold market town"],
     ["Bedrooms", "5"],
     ["Bathrooms", "3"],
