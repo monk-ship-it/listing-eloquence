@@ -285,8 +285,8 @@ function HeroMockup() {
           <Sparkles className="h-3.5 w-3.5" /> Listing preview
         </div>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          A handsome five-bedroom detached home set behind a gravel driveway, with period character
-          throughout and a private walled garden made for long summer evenings.
+          A five-bedroom detached home approached by a gravel driveway, with generous reception
+          space, a private walled garden and a layout arranged for family life and entertaining.
         </p>
       </div>
     </div>
@@ -465,7 +465,7 @@ function Voices() {
 
 function LiveExample() {
   const facts: [string, string][] = [
-    ["Type", "Grade II listed detached period home"],
+    ["Type", "Grade II listed detached home"],
     ["Location", "Cotswold market town"],
     ["Bedrooms", "5"],
     ["Bathrooms", "3"],
@@ -507,8 +507,8 @@ function LiveExample() {
                   <Mic className="h-3.5 w-3.5" /> Spoken, typed or pasted
                 </div>
                 <p className="mt-1.5 text-sm italic leading-relaxed text-foreground/90">
-                  “Five bedrooms, Grade II listed, walled garden, original beams, period fireplaces,
-                  near the high street…”
+                  “Five bedrooms, Grade II listed, walled garden, original beams, inglenook
+                  fireplace, near the high street…”
                 </p>
               </div>
 
@@ -631,18 +631,18 @@ const DEMO = {
   ],
   instagram: {
     caption:
-      "Period charm meets everyday comfort. A Grade II listed Cotswold home with an inglenook fireplace, flagstone floors and a walled garden. Guide £1,450,000. Book your viewing today.",
-    hashtags: "#CotswoldHomes #PeriodHome #GradeIIListed #CountryLiving #PropertyForSale",
+      "A Grade II listed home in the heart of a Cotswold market town — inglenook fireplace, flagstone floors and a private walled garden. Five bedrooms, three receptions. Guide £1,450,000.",
+    hashtags: "#CotswoldHomes #GradeIIListed #CountryLiving #PropertyForSale #CotswoldProperty",
   },
   tiktok: {
     caption:
-      "Come walk through this Grade II listed Cotswold home — original beams, an inglenook fireplace and a walled garden you won't want to leave. Guide £1,450,000.",
-    hashtags: "#PropertyTok #CotswoldHome #HouseTour #PeriodProperty #EstateAgent",
+      "Walk through this Grade II listed Cotswold home — original beams, an inglenook fireplace and a private walled garden. Five bedrooms, three receptions. Guide £1,450,000.",
+    hashtags: "#PropertyTok #CotswoldHome #HouseTour #GradeIIListed #EstateAgent",
   },
   facebook: {
     caption:
-      "New to market — a distinguished 5-bedroom Grade II listed home in the heart of a Cotswold market town. Three reception rooms, a bespoke kitchen and a private walled garden. Guide price £1,450,000 — get in touch to arrange a viewing.",
-    hashtags: "#CotswoldsProperty #PeriodHome #ForSale",
+      "New to market — a five-bedroom Grade II listed home in the heart of a Cotswold market town. Three reception rooms, a bespoke kitchen and a private walled garden. Guide price £1,450,000. Get in touch to arrange a viewing.",
+    hashtags: "#CotswoldsProperty #GradeIIListed #ForSale",
   },
   email: {
     subject: "A characterful Grade II listed home I think you'll want to see",
@@ -717,8 +717,8 @@ function VoiceDictation({ authed }: { authed: boolean }) {
             <div className="mt-3 rounded-2xl border border-border bg-background/50 p-4">
               <p className="text-xs font-medium text-muted-foreground">Spoken note</p>
               <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-                “The kitchen has a Rangemaster cooker, quartz worktops and bi-fold doors onto a
-                south-facing garden with a decked terrace…”
+                “Kitchen has the Rangemaster, quartz, bifolds to the south garden, decked bit, good
+                afternoon light…”
               </p>
             </div>
 
@@ -730,8 +730,8 @@ function VoiceDictation({ authed }: { authed: boolean }) {
                 </span>
               </div>
               <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-                Rangemaster cooker, quartz worktops and bi-fold doors opening onto a south-facing
-                garden with a decked terrace.
+                Kitchen with Rangemaster cooker, quartz worktops and bi-fold doors opening to a
+                south-facing garden with a decked terrace.
               </p>
             </div>
           </div>
