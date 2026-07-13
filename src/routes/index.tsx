@@ -556,12 +556,17 @@ function LiveExample() {
           </p>
         </Reveal>
 
-        <div className="mt-12 grid items-start gap-5 lg:grid-cols-2">
+        <div className="mt-12 grid items-start gap-5 lg:grid-cols-[0.85fr_1.15fr]">
           {/* In */}
           <Reveal>
-            <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-sm">
-              <div className="flex items-center gap-2 text-sm font-semibold text-primary">
-                <FileText className="h-4 w-4" /> Property details in
+            <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-[0_20px_50px_-30px] shadow-black/40">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm font-semibold text-primary">
+                  <FileText className="h-4 w-4" /> Details in
+                </div>
+                <span className="text-[0.7rem] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Step 1
+                </span>
               </div>
 
               <div className="mt-4 rounded-xl border border-primary/25 bg-primary/[0.06] p-4">
@@ -587,7 +592,7 @@ function LiveExample() {
 
           {/* Out */}
           <Reveal delay={120}>
-            <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-sm">
+            <div className="h-full rounded-2xl border border-primary/30 bg-card p-6 shadow-[0_24px_60px_-30px] shadow-primary/40 ring-1 ring-primary/5">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                 <div className="flex items-center gap-2 text-sm font-semibold text-primary">
                   <Sparkles className="h-4 w-4 shrink-0" /> Marketing pack out
@@ -598,13 +603,14 @@ function LiveExample() {
               </div>
 
               <Tabs defaultValue="listing" className="mt-4">
-                <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 bg-secondary p-1">
-                  <TabsTrigger value="listing">Listing</TabsTrigger>
-                  <TabsTrigger value="instagram">Instagram</TabsTrigger>
-                  <TabsTrigger value="tiktok">TikTok</TabsTrigger>
-                  <TabsTrigger value="facebook">Facebook</TabsTrigger>
-                  <TabsTrigger value="email">Buyer email</TabsTrigger>
+                <TabsList className="-mx-1 flex h-auto w-[calc(100%+0.5rem)] flex-nowrap justify-start gap-1 overflow-x-auto bg-secondary p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:w-full sm:flex-wrap">
+                  <TabsTrigger value="listing" className="shrink-0">Listing</TabsTrigger>
+                  <TabsTrigger value="instagram" className="shrink-0">Instagram</TabsTrigger>
+                  <TabsTrigger value="tiktok" className="shrink-0">TikTok</TabsTrigger>
+                  <TabsTrigger value="facebook" className="shrink-0">Facebook</TabsTrigger>
+                  <TabsTrigger value="email" className="shrink-0">Buyer email</TabsTrigger>
                 </TabsList>
+
 
                 <TabsContent value="listing" className="mt-4">
                   <h3 className="font-display text-lg font-semibold leading-snug">{DEMO.headline}</h3>
