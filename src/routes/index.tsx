@@ -383,7 +383,7 @@ function VoiceValue() {
         {cards.map((c, i) => (
           <Reveal key={c.title} delay={i * 90} className="h-full">
             <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/60 p-7 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card">
-              <span className="pointer-events-none absolute -right-4 -top-3 font-display text-7xl font-bold text-primary/15 transition-colors duration-300 group-hover:text-gold/30">
+              <span className="absolute right-4 top-4 inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-2.5 py-1 text-xs font-semibold tracking-wide text-primary transition-colors duration-300 group-hover:border-gold/60 group-hover:bg-gold/10 group-hover:text-gold">
                 {c.step}
               </span>
               <span className="relative grid h-12 w-12 place-items-center rounded-xl border border-primary/20 bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
