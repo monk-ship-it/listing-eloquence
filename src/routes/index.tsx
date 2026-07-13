@@ -705,27 +705,44 @@ const DEMO = {
 
 /* ----------------------------- Voice dictation ----------------------------- */
 
+const DICTATION_EXAMPLES = [
+  {
+    label: "Kitchen",
+    raw: "Kitchen’s been redone, oak units, Miele oven, big island, sliders to the west terrace, evening sun…",
+    out: "Bespoke oak kitchen with Miele appliances, central island and sliding doors opening to a west-facing terrace.",
+  },
+  {
+    label: "Garden",
+    raw: "Garden’s properly private, old brick wall, pear trees trained along it, stone terrace, lighting already in…",
+    out: "Private walled garden with espalier pear trees, stone terrace and discreet external lighting.",
+  },
+  {
+    label: "Parking & local",
+    raw: "Double cart lodge, EV point, station’s walkable, market square under ten minutes…",
+    out: "Double cart lodge with EV charging, within walking distance of the station and market square.",
+  },
+];
+
 function VoiceDictation({ authed }: { authed: boolean }) {
   const bullets = [
-    "Dictate notes into any field",
+    "Dictate rough notes into one voice notes field",
     "Add to existing text without overwriting it",
-    "Edit before generating",
+    "Every transcript stays fully editable before generating",
     "Useful between viewings, valuations and vendor calls",
-    "Works for features, room notes, gardens, parking and local highlights",
   ];
   return (
     <section id="voice-demo" className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
-      <div className="grid items-center gap-12 lg:grid-cols-2">
-        <Reveal>
+      <div className="grid items-start gap-12 lg:grid-cols-2">
+        <Reveal className="lg:sticky lg:top-24">
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
             <Mic className="h-3.5 w-3.5" /> Voice dictation
           </span>
           <h2 className="mt-5 font-display text-3xl font-semibold sm:text-4xl">
-            Talk your listing into shape.
+            Rough voice notes become structured, editable listing detail.
           </h2>
           <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted-foreground">
-            Dictate the rough notes in one dedicated voice notes field, then add exact facts in the
-            structured fields. Prefer to type or paste? Every field works that way too.
+            Speak the way you would between viewings. Quill keeps the facts, drops the filler and
+            returns clean copy you can edit before it goes anywhere.
           </p>
           <ul className="mt-7 space-y-3">
             {bullets.map((b) => (
@@ -744,12 +761,13 @@ function VoiceDictation({ authed }: { authed: boolean }) {
 
         <Reveal delay={120} className="relative">
           <div className="pointer-events-none absolute -inset-8 -z-10 rounded-[3rem] bg-radial-glow opacity-60 blur-2xl" />
-          <div className="glow-primary rounded-3xl border border-border bg-card p-5 shadow-2xl shadow-black/20">
-            <div className="flex items-center gap-3 rounded-2xl border border-border bg-background/50 p-4">
-              <span className="mic-pulse grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_0_8px] shadow-primary/15">
-                <Mic className="h-5 w-5" />
+          <div className="glow-primary rounded-3xl border border-border/80 bg-card p-4 shadow-2xl shadow-black/25 sm:p-5">
+            {/* Live capture bar */}
+            <div className="flex items-center gap-3 rounded-2xl border border-primary/25 bg-primary/[0.06] p-3.5">
+              <span className="mic-pulse grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_0_6px] shadow-primary/15">
+                <Mic className="h-4.5 w-4.5" />
               </span>
-              <div className="flex h-9 flex-1 items-center gap-1">
+              <div className="flex h-8 flex-1 items-center gap-1">
                 {WAVE_HEIGHTS.map((h, i) => (
                   <span
                     key={i}
@@ -759,29 +777,41 @@ function VoiceDictation({ authed }: { authed: boolean }) {
                 ))}
               </div>
               <span className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" /> Listening…
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" /> Listening
               </span>
             </div>
 
-            <div className="mt-3 rounded-2xl border border-border bg-background/50 p-4">
-              <p className="text-xs font-medium text-muted-foreground">Spoken note</p>
-              <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-                “Kitchen has the Rangemaster, quartz, bifolds to the south garden, decked bit, good
-                afternoon light…”
-              </p>
-            </div>
-
-            <div className="mt-3 rounded-2xl border border-primary/25 bg-primary/[0.06] p-4">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-medium text-primary">Key features (editable)</p>
-                <span className="grid h-7 w-7 place-items-center rounded-lg border border-border text-primary">
-                  <Mic className="h-3.5 w-3.5" />
-                </span>
-              </div>
-              <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-                Kitchen with Rangemaster cooker, quartz worktops and bi-fold doors opening to a
-                south-facing garden with a decked terrace.
-              </p>
+            <div className="mt-4 space-y-3">
+              {DICTATION_EXAMPLES.map((ex) => (
+                <div
+                  key={ex.label}
+                  className="overflow-hidden rounded-2xl border border-border/70 bg-background/40"
+                >
+                  <div className="flex items-center justify-between border-b border-border/60 px-3.5 py-2">
+                    <span className="text-xs font-semibold text-foreground">{ex.label}</span>
+                    <span className="flex items-center gap-1.5 text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground">
+                      Raw note <ArrowRight className="h-3 w-3 text-primary" /> Editable feature
+                    </span>
+                  </div>
+                  <div className="space-y-2.5 p-3.5">
+                    <div className="flex items-start gap-2">
+                      <AudioLines className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                      <p className="text-xs italic leading-relaxed text-muted-foreground">
+                        “{ex.raw}”
+                      </p>
+                    </div>
+                    <div className="rounded-xl border border-primary/25 bg-primary/[0.06] p-3">
+                      <div className="mb-1 flex items-center justify-between">
+                        <span className="flex items-center gap-1.5 text-[0.65rem] font-semibold uppercase tracking-wide text-primary">
+                          <Sparkles className="h-3 w-3" /> Editable feature
+                        </span>
+                        <Pencil className="h-3 w-3 text-primary/70" />
+                      </div>
+                      <p className="text-sm leading-relaxed text-foreground">{ex.out}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </Reveal>
@@ -789,6 +819,8 @@ function VoiceDictation({ authed }: { authed: boolean }) {
     </section>
   );
 }
+
+
 
 /* --------------------------------- Pricing --------------------------------- */
 
