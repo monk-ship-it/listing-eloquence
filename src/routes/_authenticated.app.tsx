@@ -11,10 +11,16 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { VOICES, type VoiceId } from "@/lib/voices";
-import { EMPTY_INPUT, EXAMPLE_INPUT, type ListingInput, type ListingOutput } from "@/lib/listing-types";
+import {
+  EMPTY_INPUT,
+  EXAMPLE_INPUT,
+  US_EXAMPLE_INPUT,
+  type ListingInput,
+  type ListingOutput,
+} from "@/lib/listing-types";
 import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
-import { APP_NAME } from "@/lib/config";
+import { APP_NAME, MARKETS, type MarketId } from "@/lib/config";
 import { VoiceNotes } from "@/components/VoiceNotes";
 import { Copy, Sparkles, RefreshCw, Lock } from "lucide-react";
 
