@@ -406,7 +406,26 @@ function SubscriptionPage() {
                   or manage billing below. We won't create a second subscription.
                 </p>
               )}
+              {!hasAccess && (
+                <div className="mt-4 inline-flex rounded-lg border border-border/70 p-1">
+                  {(Object.values(MARKETS)).map((m) => (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => setMarket(m.id)}
+                      className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                        market === m.id
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
+
                 {PLANS.map((plan) => {
                   const isCurrent = hasAccess && plan.id === currentPlan.id;
                   return (
