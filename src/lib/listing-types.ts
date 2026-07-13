@@ -147,6 +147,10 @@ export const US_EXAMPLE_INPUT: ListingInput = {
     "Winter Park school district; near Park Avenue, Rollins College and I-4",
   periodFeatures: "",
   targetAudience: "",
+  yearBuilt: "2016",
+  disclosures: "Roof replaced 2021; seller's property disclosure available. No known material defects.",
+  showingNotes: "Showings by appointment via ShowingTime; 24 hours' notice preferred. Pets on site.",
+  mediaNotes: "Professional photos and drone shots scheduled; interactive floor plan to follow.",
   // US-specific facts surfaced via structured fields:
   // square footage ~3,200 sq ft, HOA ~$90/mo, property taxes ~$9,000/yr, lot 0.25 acre.
 };
