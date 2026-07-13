@@ -558,8 +558,9 @@ function LiveExample() {
 
         <div className="mt-12 grid items-start gap-5 lg:grid-cols-[0.85fr_1.15fr]">
           {/* In */}
-          <Reveal>
+          <Reveal className="min-w-0">
             <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-[0_20px_50px_-30px] shadow-black/40">
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm font-semibold text-primary">
                   <FileText className="h-4 w-4" /> Details in
