@@ -350,18 +350,21 @@ function VoiceValue() {
   const cards = [
     {
       icon: Mic,
+      step: "01",
       title: "Dictate full property notes",
-      body: "Speak the rough notes into one dedicated voice notes field, then add exact facts in the structured fields.",
+      body: "Speak rough notes into one voice notes field, then add exact facts in the structured fields.",
     },
     {
       icon: ClipboardPaste,
+      step: "02",
       title: "Type or paste details",
       body: "Enter facts manually or paste rough notes, valuation text or existing property information.",
     },
     {
       icon: Sparkles,
+      step: "03",
       title: "Generate the full pack",
-      body: "Create the portal description, social captions, buyer email and vendor update from one set of property details.",
+      body: "Produce the portal description, social captions, buyer email and vendor update in one pass.",
     },
   ];
   return (
@@ -372,19 +375,22 @@ function VoiceValue() {
           Built for agents who need notes captured fast.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Some agents prefer to dictate between viewings. Others want to type, paste or tidy existing
-          notes. Quill supports all three, then turns those details into a complete listing pack.
+          Dictate between viewings, type at your desk or paste existing instructions. Quill turns any
+          of them into a complete listing pack.
         </p>
       </Reveal>
-      <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-3">
+      <div className="mt-12 grid gap-4 md:grid-cols-3">
         {cards.map((c, i) => (
-          <Reveal key={c.title} delay={i * 90} className="bg-card">
-            <div className="group h-full p-7 transition-colors duration-300 hover:bg-accent/40">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary/15 text-primary transition-colors group-hover:bg-primary/25">
+          <Reveal key={c.title} delay={i * 90} className="h-full">
+            <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/60 p-7 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card">
+              <span className="pointer-events-none absolute -right-6 -top-4 font-display text-6xl font-semibold text-foreground/[0.04] transition-colors group-hover:text-primary/10">
+                {c.step}
+              </span>
+              <span className="relative grid h-12 w-12 place-items-center rounded-xl border border-primary/20 bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
                 <c.icon className="h-5 w-5" />
               </span>
-              <h3 className="mt-5 text-xl font-semibold">{c.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.body}</p>
+              <h3 className="relative mt-5 text-lg font-semibold">{c.title}</h3>
+              <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">{c.body}</p>
             </div>
           </Reveal>
         ))}
@@ -400,17 +406,17 @@ function HowItWorks() {
     {
       icon: Mic,
       title: "Speak, type or paste the details",
-      body: "Add property notes by voice, manual typing or copied text from existing instructions.",
+      body: "Add property notes by voice, typing or copied text from existing instructions.",
     },
     {
       icon: Building2,
       title: "Choose the brand voice",
-      body: "Select Professional, Premium, Luxury or Heritage depending on the property.",
+      body: "Select Professional, Premium, Luxury or Heritage to match the property.",
     },
     {
       icon: Sparkles,
       title: "Generate and edit",
-      body: "Quill creates the listing, social captions and emails. You stay in control before using the copy.",
+      body: "Quill drafts the listing, captions and emails. You stay in control before anything is used.",
     },
   ];
   return (
@@ -422,12 +428,12 @@ function HowItWorks() {
             From spoken notes to finished listing pack.
           </h2>
         </Reveal>
-        <div className="relative mt-14 grid gap-10 md:grid-cols-3 md:gap-6">
-          <div className="pointer-events-none absolute left-0 right-0 top-[2.25rem] hidden h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent md:block" />
+        <div className="relative mt-14 grid gap-8 md:grid-cols-3 md:gap-5">
+          <div className="pointer-events-none absolute left-[16%] right-[16%] top-[2.4rem] hidden h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent md:block" />
           {steps.map((s, i) => (
             <Reveal key={s.title} delay={i * 110} className="relative">
               <div className="flex flex-col items-center text-center">
-                <span className="relative z-10 grid h-[4.5rem] w-[4.5rem] place-items-center rounded-2xl border border-primary/30 bg-background text-primary">
+                <span className="relative z-10 grid h-[4.75rem] w-[4.75rem] place-items-center rounded-2xl border border-primary/25 bg-background text-primary shadow-[0_12px_30px_-16px] shadow-primary/40">
                   <s.icon className="h-6 w-6" />
                   <span className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                     {i + 1}
@@ -445,6 +451,7 @@ function HowItWorks() {
     </section>
   );
 }
+
 
 /* --------------------------------- Voices ---------------------------------- */
 
