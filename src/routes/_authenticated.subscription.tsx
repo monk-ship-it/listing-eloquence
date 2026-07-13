@@ -440,7 +440,8 @@ function SubscriptionPage() {
                         {isCurrent && <Badge variant="default">Current</Badge>}
                       </div>
                       <p className="mt-1 font-display text-2xl font-semibold">
-                        {plan.price}
+                        {planPriceDisplay(plan.id, market)}
+
                         <span className="text-xs font-normal text-muted-foreground">/mo</span>
                       </p>
                       <p className="mt-1 text-xs text-primary">{plan.monthlyListings} listings / month</p>
