@@ -112,6 +112,10 @@ export const EXAMPLE_INPUT: ListingInput = {
   periodFeatures:
     "Early 18th-century origins, later Georgian additions, retains much original joinery and fireplaces",
   targetAudience: "Families and downsizers seeking a characterful country home within a vibrant town",
+  yearBuilt: "",
+  disclosures: "",
+  showingNotes: "",
+  mediaNotes: "",
 };
 
 export const US_EXAMPLE_INPUT: ListingInput = {
