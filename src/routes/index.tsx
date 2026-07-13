@@ -945,7 +945,8 @@ function Pricing({ authed }: { authed: boolean }) {
                 <h3 className="font-display text-2xl font-semibold">{plan.name}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{plan.tagline}</p>
                 <p className="mt-5 font-display text-4xl font-semibold tracking-tight">
-                  {plan.price}
+                  {planPriceDisplay(plan.id, market)}
+
                   <span className="text-base font-normal text-muted-foreground">/month</span>
                 </p>
                 <p className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
