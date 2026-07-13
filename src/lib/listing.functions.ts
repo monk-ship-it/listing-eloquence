@@ -28,6 +28,10 @@ function fieldLabels(market: MarketId) {
       utilities: "Utilities / internet",
       nearby: "Nearby (school district, transit, amenities)",
       periodFeatures: "Architectural / notable features",
+      yearBuilt: "Year built",
+      disclosures: "Disclosures / condition notes",
+      showingNotes: "Showing / access notes",
+      mediaNotes: "Media / photo / floor-plan notes",
     };
   }
   return {
@@ -42,6 +46,10 @@ function fieldLabels(market: MarketId) {
     utilities: "Utilities / broadband",
     nearby: "Nearby (schools, transport, amenities)",
     periodFeatures: "Period / character features",
+    yearBuilt: "Year built",
+    disclosures: "Disclosures / condition notes",
+    showingNotes: "Viewing / access notes",
+    mediaNotes: "Media / photo / floor-plan notes",
   };
 }
 
