@@ -102,6 +102,12 @@ export function identifyPlan(opts: {
     for (const k of keys) {
       if (cfg[k].priceId && cfg[k].priceId === opts.priceId) return k;
     }
+    // Match hard-coded per-market price ids (e.g. USD prices) exactly.
+    for (const market of Object.keys(PLAN_PRICING) as (keyof typeof PLAN_PRICING)[]) {
+      for (const k of keys) {
+        if (PLAN_PRICING[market][k].priceId === opts.priceId) return k;
+      }
+    }
   }
   if (opts.amount != null) {
     // Exact new-price amounts first.
