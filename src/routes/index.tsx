@@ -990,17 +990,23 @@ function FinalCta({ authed }: { authed: boolean }) {
 
 function Footer() {
   return (
-    <footer className="border-t border-border py-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-5 px-5 text-center text-sm text-muted-foreground sm:flex-row sm:gap-4 sm:text-left">
-        <Logo withByline />
-        <a
-          href={`mailto:${CONTACT_EMAIL}`}
-          className="break-all transition-colors hover:text-foreground"
-        >
-          {CONTACT_EMAIL}
-        </a>
-        <p>© 2026 {APP_NAME}. Crafted for UK estate agents.</p>
+    <footer className="border-t border-border/70 bg-card/30 py-12">
+      <div className="mx-auto max-w-6xl px-5">
+        <div className="flex flex-col items-center justify-between gap-6 sm:flex-row sm:gap-4">
+          <Logo withByline />
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="break-all text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {CONTACT_EMAIL}
+          </a>
+        </div>
+        <div className="rule my-6" />
+        <p className="text-center text-xs text-muted-foreground sm:text-left">
+          © 2026 {APP_NAME}. Crafted for UK estate agents.
+        </p>
       </div>
     </footer>
   );
 }
+
