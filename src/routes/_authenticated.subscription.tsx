@@ -118,7 +118,8 @@ const STATUS_META: Record<
 
 function SubscriptionPage() {
   const { user } = useAuth();
-  const { plan: planParam } = Route.useSearch();
+  const { plan: planParam, market: marketParam } = Route.useSearch();
+  const [market, setMarket] = useState<MarketId>(resolveMarketId(marketParam));
   const checkoutFn = useServerFn(createCheckoutSession);
   const subFn = useServerFn(getMySubscription);
   const usageFn = useServerFn(getMyUsage);
