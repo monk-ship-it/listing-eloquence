@@ -100,6 +100,10 @@ function buildUserPrompt(input: ListingInput, market: MarketId): string {
     ? "- The full listing should be MLS-ready: an opening hook, then well-organised paragraphs covering the home, layout, outdoor space and location. Describe the property, not the ideal buyer — follow Fair Housing (no protected-class references; no school/safety overclaims)."
     : "- The full listing should be portal-ready (Rightmove / OnTheMarket style): an opening hook, then well-organised paragraphs covering the property, accommodation, outside space and location.";
 
+  const factHandlingLine = isUs
+    ? "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. State disclosure/condition facts factually and never speculate. Keep showing/access notes OUT of the public MLS remarks and social captions — use them only in the buyer email where scheduling is appropriate."
+    : "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. Keep viewing/access notes out of the portal description and social captions — use them only in the buyer email.";
+
   return `Create a ${isUs ? "US real estate" : "UK property"} sales listing from the details below.
 
 STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
