@@ -121,6 +121,7 @@ REQUIREMENTS:
 ${languageLine}
 ${materialLine}
 ${portalLine}
+${factHandlingLine}
 - Provide a short punchy teaser summary (1–2 sentences).
 - Provide three social media posts (Instagram, Facebook, X) — each an engaging caption appropriate to that platform, plus a list of relevant hashtags (no '#' symbol in the array, just the words).
 
