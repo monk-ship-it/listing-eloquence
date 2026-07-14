@@ -427,6 +427,8 @@ const WAVE_HEIGHTS = [40, 70, 95, 60, 85, 50, 75, 100, 55, 80, 45, 90, 60, 70, 4
 /* ------------------------------ Voice value -------------------------------- */
 
 function VoiceValue() {
+  const { market } = useMarket();
+  const isUs = market === "us";
   const cards = [
     {
       icon: Mic,
@@ -444,7 +446,9 @@ function VoiceValue() {
       icon: Sparkles,
       step: "03",
       title: "Generate the full pack",
-      body: "Produce the portal description, social captions, buyer email and vendor update in one pass.",
+      body: isUs
+        ? "Produce the MLS listing description, social captions, buyer email and seller update in one pass."
+        : "Produce the portal description, social captions, buyer email and vendor update in one pass.",
     },
   ];
   return (
@@ -455,8 +459,8 @@ function VoiceValue() {
           Built for agents who need notes captured fast.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Dictate between viewings, type at your desk or paste existing instructions. Quill turns any
-          of them into a complete listing pack.
+          Dictate between {isUs ? "showings" : "viewings"}, type at your desk or paste existing
+          instructions. Quill turns any of them into a complete listing pack.
         </p>
       </Reveal>
       <div className="mt-12 grid gap-4 md:grid-cols-3">
