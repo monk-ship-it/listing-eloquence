@@ -246,6 +246,9 @@ function Hero({ authed }: { authed: boolean }) {
           </span>
 
           <div className="mt-5">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Choose your market
+            </p>
             <MarketToggle />
           </div>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
