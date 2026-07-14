@@ -248,15 +248,20 @@ function Hero({ authed }: { authed: boolean }) {
           <div className="mt-5">
             <MarketToggle />
           </div>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
+            Switch between UK portal-ready copy and US MLS-ready copy. Quill adapts terminology,
+            pricing, listing fields and compliance guidance.
+          </p>
 
           <h1 className="mt-5 text-balance font-display text-[clamp(2rem,8vw,2.6rem)] font-semibold leading-[1.12] sm:mt-6 sm:text-5xl lg:text-[3.6rem]">
-            Write every listing in minutes — <span className="text-gradient">just say the words.</span>
+            AI listing writer for UK estate agents and US real estate agents —{" "}
+            <span className="text-gradient">just say the words.</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {APP_NAME} lets {audience} speak, type or paste property details, choose a brand
-            voice, and generate {portalWord} listings, social captions and buyer emails in minutes —
-            without another CRM to manage.
+            {APP_NAME} lets {audience} speak, type or paste property details, choose a brand voice,
+            and generate {portalWord} listings, social captions and buyer emails in minutes — without
+            another CRM to manage.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
