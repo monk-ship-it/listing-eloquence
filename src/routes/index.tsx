@@ -108,6 +108,7 @@ function Landing() {
         <Hero authed={authed} />
         <VoiceValue />
         <HowItWorks />
+        <ListingDetail />
         <Voices />
         <LiveExample />
         <VoiceDictation authed={authed} />
