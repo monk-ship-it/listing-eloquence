@@ -36,20 +36,20 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Quill — Voice-to-Listing AI for UK Estate Agents" },
+      { title: "Quill — Voice-to-Listing AI for UK & US Estate Agents" },
       {
         name: "description",
         content:
-          "Speak your property notes into Quill to generate portal-ready listings, social captions and buyer emails in minutes. AI listing writer for UK estate agents.",
+          "Speak your property notes into Quill to generate portal- and MLS-ready listings, social captions and buyer emails in minutes. AI listing writer for UK estate agents and US real estate agents.",
       },
       {
         property: "og:title",
-        content: "Quill — Voice-to-Listing AI for UK Estate Agents",
+        content: "Quill — Voice-to-Listing AI for UK & US Estate Agents",
       },
       {
         property: "og:description",
         content:
-          "Speak your property notes and generate portal-ready listings, social captions and buyer emails in minutes.",
+          "Speak your property notes and generate portal- and MLS-ready listings, social captions and buyer emails in minutes.",
       },
       { property: "og:url", content: "https://copybymonk.com/" },
     ],
@@ -63,7 +63,7 @@ export const Route = createFileRoute("/")({
           name: "Quill",
           url: "https://copybymonk.com/",
           description:
-            "AI listing writer with voice dictation for UK estate agents.",
+            "AI listing writer with voice dictation for UK estate agents and US real estate agents.",
         }),
       },
       {
@@ -74,7 +74,7 @@ export const Route = createFileRoute("/")({
           name: "Quill",
           url: "https://copybymonk.com/",
           description:
-            "Quill generates portal-ready UK property listings, social captions and buyer emails from voice or typed notes.",
+            "Quill generates portal- and MLS-ready property listings, social captions and buyer emails from voice or typed notes.",
         }),
       },
     ],
