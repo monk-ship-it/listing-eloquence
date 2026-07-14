@@ -880,7 +880,7 @@ function SocialBlock({
   );
 }
 
-const DEMO = {
+const DEMO_UK = {
   headline: "A Distinguished Grade II Listed Home in the Heart of a Cotswold Market Town",
   listing: [
     "Set back behind a gravel driveway and a low honey-stone wall, this Grade II listed home carries the quiet confidence of a house that has watched over its market town for generations. The layout unfolds in sequence, with rooms of generous proportion and a clear sense of purpose.",
