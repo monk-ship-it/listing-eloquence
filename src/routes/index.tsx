@@ -691,22 +691,46 @@ function Voices() {
 /* ------------------------------ Live example ------------------------------- */
 
 function LiveExample() {
-  const facts: [string, string][] = [
-    ["Type", "Grade II listed detached home"],
-    ["Location", "Cotswold market town"],
-    ["Bedrooms", "5"],
-    ["Bathrooms", "3"],
-    ["Receptions", "3"],
-    ["Price", "Guide Price £1,450,000"],
-    ["Tenure", "Freehold"],
-    [
-      "Key features",
-      "Inglenook fireplace, flagstone floors, exposed beams, bespoke kitchen, cellar, original sash windows",
-    ],
-    ["Outside space", "Walled garden, mature borders, orchard, stone terrace"],
-    ["Parking", "Gravel driveway and detached double cart shed"],
-    ["Voice", "Heritage"],
-  ];
+  const { market } = useMarket();
+  const isUs = market === "us";
+  const facts: [string, string][] = isUs
+    ? [
+        ["Type", "Single-family home"],
+        ["Location", "Winter Park, FL"],
+        ["Beds / baths", "4 bed · 3.5 bath"],
+        ["Square footage", "≈ 3,200 sq ft"],
+        ["Lot size", "0.25-acre lot"],
+        ["Price", "$895,000"],
+        ["Year built", "2016"],
+        [
+          "Key features",
+          "Chef's kitchen, quartz counters, first-floor primary suite, screened lanai, heated pool",
+        ],
+        ["Ownership", "Fee simple · HOA $90/mo"],
+        ["Parking", "Three-car attached garage"],
+        ["Voice", "Premium"],
+      ]
+    : [
+        ["Type", "Grade II listed detached home"],
+        ["Location", "Cotswold market town"],
+        ["Bedrooms", "5"],
+        ["Bathrooms", "3"],
+        ["Receptions", "3"],
+        ["Price", "Guide Price £1,450,000"],
+        ["Tenure", "Freehold"],
+        [
+          "Key features",
+          "Inglenook fireplace, flagstone floors, exposed beams, bespoke kitchen, cellar, original sash windows",
+        ],
+        ["Outside space", "Walled garden, mature borders, orchard, stone terrace"],
+        ["Parking", "Gravel driveway and detached double cart shed"],
+        ["Voice", "Heritage"],
+      ];
+  const spokenNote = isUs
+    ? "“Four bed three and a half bath in Winter Park, about 3,200 square feet, quarter-acre lot, heated pool, three-car garage, asking eight ninety-five…”"
+    : "“Five bedrooms, Grade II listed, walled garden, original beams, inglenook fireplace, near the high street…”";
+  const demo = isUs ? DEMO_US : DEMO_UK;
+
 
   return (
     <section id="example" className="panel-ivory border-y border-border py-16 sm:py-24">
