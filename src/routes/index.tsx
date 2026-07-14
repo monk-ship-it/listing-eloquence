@@ -615,6 +615,12 @@ function ListingDetail() {
               ? "Quill captures structured property facts — the way MLS data is organised — not just prose, so your public remarks stay accurate in a competitive market."
               : "Quill captures structured property facts, not just prose, so your listings stay accurate and compliant with Material Information guidance."}
           </p>
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Choose your market
+            </p>
+            <MarketToggle />
+          </div>
         </Reveal>
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {groups.map((g, i) => (
