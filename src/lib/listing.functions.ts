@@ -28,6 +28,10 @@ function fieldLabels(market: MarketId) {
       utilities: "Utilities / internet",
       nearby: "Nearby (school district, transit, amenities)",
       periodFeatures: "Architectural / notable features",
+      yearBuilt: "Year built",
+      disclosures: "Disclosures / condition notes",
+      showingNotes: "Showing / access notes",
+      mediaNotes: "Media / photo / floor-plan notes",
     };
   }
   return {
@@ -42,6 +46,10 @@ function fieldLabels(market: MarketId) {
     utilities: "Utilities / broadband",
     nearby: "Nearby (schools, transport, amenities)",
     periodFeatures: "Period / character features",
+    yearBuilt: "Year built",
+    disclosures: "Disclosures / condition notes",
+    showingNotes: "Viewing / access notes",
+    mediaNotes: "Media / photo / floor-plan notes",
   };
 }
 
@@ -51,6 +59,7 @@ function buildUserPrompt(input: ListingInput, market: MarketId): string {
   details += field("Address / location", input.address);
   details += field("Area highlights", input.areaHighlights);
   details += field("Property type", input.propertyType);
+  details += field(L.yearBuilt, input.yearBuilt);
   details += field(L.tenure, input.tenure);
   details += field(L.lease, input.leaseYears);
   details += field(L.price, input.price);
@@ -68,6 +77,9 @@ function buildUserPrompt(input: ListingInput, market: MarketId): string {
   details += field(L.utilities, input.utilities);
   details += field(L.nearby, input.nearby);
   details += field(L.periodFeatures, input.periodFeatures);
+  details += field(L.disclosures, input.disclosures);
+  details += field(L.showingNotes, input.showingNotes);
+  details += field(L.mediaNotes, input.mediaNotes);
   details += field("Target audience", input.targetAudience);
 
   const voiceNotes = input.voiceNotes?.trim()
@@ -88,6 +100,10 @@ function buildUserPrompt(input: ListingInput, market: MarketId): string {
     ? "- The full listing should be MLS-ready: an opening hook, then well-organised paragraphs covering the home, layout, outdoor space and location. Describe the property, not the ideal buyer — follow Fair Housing (no protected-class references; no school/safety overclaims)."
     : "- The full listing should be portal-ready (Rightmove / OnTheMarket style): an opening hook, then well-organised paragraphs covering the property, accommodation, outside space and location.";
 
+  const factHandlingLine = isUs
+    ? "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. State disclosure/condition facts factually and never speculate. Keep showing/access notes OUT of the public MLS remarks and social captions — use them only in the buyer email where scheduling is appropriate."
+    : "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. Keep viewing/access notes out of the portal description and social captions — use them only in the buyer email.";
+
   return `Create a ${isUs ? "US real estate" : "UK property"} sales listing from the details below.
 
 STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
@@ -105,6 +121,7 @@ REQUIREMENTS:
 ${languageLine}
 ${materialLine}
 ${portalLine}
+${factHandlingLine}
 - Provide a short punchy teaser summary (1–2 sentences).
 - Provide three social media posts (Instagram, Facebook, X) — each an engaging caption appropriate to that platform, plus a list of relevant hashtags (no '#' symbol in the array, just the words).
 

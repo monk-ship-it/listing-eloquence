@@ -31,25 +31,30 @@ import {
   AudioLines,
   ClipboardPaste,
   ShieldCheck,
+  Home,
+  Wallet,
+  Thermometer,
+  MapPin,
+  Megaphone,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Quill — Voice-to-Listing AI for UK Estate Agents" },
+      { title: "Quill — Voice-to-Listing AI for UK & US Estate Agents" },
       {
         name: "description",
         content:
-          "Speak your property notes into Quill to generate portal-ready listings, social captions and buyer emails in minutes. AI listing writer for UK estate agents.",
+          "Speak your property notes into Quill to generate portal- and MLS-ready listings, social captions and buyer emails in minutes. AI listing writer for UK estate agents and US real estate agents.",
       },
       {
         property: "og:title",
-        content: "Quill — Voice-to-Listing AI for UK Estate Agents",
+        content: "Quill — Voice-to-Listing AI for UK & US Estate Agents",
       },
       {
         property: "og:description",
         content:
-          "Speak your property notes and generate portal-ready listings, social captions and buyer emails in minutes.",
+          "Speak your property notes and generate portal- and MLS-ready listings, social captions and buyer emails in minutes.",
       },
       { property: "og:url", content: "https://copybymonk.com/" },
     ],
@@ -63,7 +68,7 @@ export const Route = createFileRoute("/")({
           name: "Quill",
           url: "https://copybymonk.com/",
           description:
-            "AI listing writer with voice dictation for UK estate agents.",
+            "AI listing writer with voice dictation for UK estate agents and US real estate agents.",
         }),
       },
       {
@@ -74,7 +79,7 @@ export const Route = createFileRoute("/")({
           name: "Quill",
           url: "https://copybymonk.com/",
           description:
-            "Quill generates portal-ready UK property listings, social captions and buyer emails from voice or typed notes.",
+            "Quill generates portal- and MLS-ready property listings, social captions and buyer emails from voice or typed notes.",
         }),
       },
     ],
@@ -103,6 +108,7 @@ function Landing() {
         <Hero authed={authed} />
         <VoiceValue />
         <HowItWorks />
+        <ListingDetail />
         <Voices />
         <LiveExample />
         <VoiceDictation authed={authed} />
@@ -517,6 +523,101 @@ function HowItWorks() {
 }
 
 
+/* ----------------------------- Listing detail ------------------------------ */
+
+const DETAIL_GROUPS_US = [
+  {
+    icon: Home,
+    title: "Core MLS facts",
+    items: "List price, address & location, property type, beds, baths, square footage, lot size, year built",
+  },
+  {
+    icon: Wallet,
+    title: "Ownership & costs",
+    items: "Ownership / condo status, HOA dues, property taxes, price qualifiers",
+  },
+  {
+    icon: Thermometer,
+    title: "Home systems",
+    items: "Heating & cooling, utilities, internet, parking & garage, pool & patio",
+  },
+  {
+    icon: MapPin,
+    title: "Location & compliance",
+    items: "School district & nearby amenities stated factually, disclosures, condition & showing notes — Fair Housing safe",
+  },
+  {
+    icon: Megaphone,
+    title: "Marketing outputs",
+    items: "MLS public remarks, short descriptions, social captions, buyer emails, media & floor-plan notes",
+  },
+];
+
+const DETAIL_GROUPS_UK = [
+  {
+    icon: Home,
+    title: "Core property facts",
+    items: "Asking price, address & location, property type, bedrooms, bathrooms, receptions, room dimensions",
+  },
+  {
+    icon: Wallet,
+    title: "Material Information",
+    items: "Tenure, lease years, Council Tax band, EPC rating, price qualifiers",
+  },
+  {
+    icon: Thermometer,
+    title: "Home systems",
+    items: "Heating, utilities, broadband, parking & garage, outside space & garden",
+  },
+  {
+    icon: MapPin,
+    title: "Location & detail",
+    items: "Schools, transport & amenities, period features, condition & viewing notes",
+  },
+  {
+    icon: Megaphone,
+    title: "Marketing outputs",
+    items: "Portal descriptions, teaser summaries, social captions, buyer emails, media & floor-plan notes",
+  },
+];
+
+function ListingDetail() {
+  const { market } = useMarket();
+  const isUs = market === "us";
+  const groups = isUs ? DETAIL_GROUPS_US : DETAIL_GROUPS_UK;
+  return (
+    <section className="border-y border-border bg-card/30 py-16 sm:py-24">
+      <div className="mx-auto max-w-6xl px-5">
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <Eyebrow>{isUs ? "Built for US MLS workflows" : "Built for UK listing workflows"}</Eyebrow>
+          <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
+            {isUs ? "Every US listing detail, covered." : "Every UK listing detail, covered."}
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            {isUs
+              ? "Quill captures structured property facts — the way MLS data is organised — not just prose, so your public remarks stay accurate in a competitive market."
+              : "Quill captures structured property facts, not just prose, so your listings stay accurate and compliant with Material Information guidance."}
+          </p>
+        </Reveal>
+        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {groups.map((g, i) => (
+            <Reveal key={g.title} delay={i * 80} className="h-full">
+              <div className="flex h-full flex-col rounded-2xl border border-border/70 bg-card/60 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card">
+                <span className="grid h-11 w-11 place-items-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                  <g.icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 text-lg font-semibold">{g.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{g.items}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 /* --------------------------------- Voices ---------------------------------- */
 
 const VOICE_CARDS = [
@@ -590,22 +691,46 @@ function Voices() {
 /* ------------------------------ Live example ------------------------------- */
 
 function LiveExample() {
-  const facts: [string, string][] = [
-    ["Type", "Grade II listed detached home"],
-    ["Location", "Cotswold market town"],
-    ["Bedrooms", "5"],
-    ["Bathrooms", "3"],
-    ["Receptions", "3"],
-    ["Price", "Guide Price £1,450,000"],
-    ["Tenure", "Freehold"],
-    [
-      "Key features",
-      "Inglenook fireplace, flagstone floors, exposed beams, bespoke kitchen, cellar, original sash windows",
-    ],
-    ["Outside space", "Walled garden, mature borders, orchard, stone terrace"],
-    ["Parking", "Gravel driveway and detached double cart shed"],
-    ["Voice", "Heritage"],
-  ];
+  const { market } = useMarket();
+  const isUs = market === "us";
+  const facts: [string, string][] = isUs
+    ? [
+        ["Type", "Single-family home"],
+        ["Location", "Winter Park, FL"],
+        ["Beds / baths", "4 bed · 3.5 bath"],
+        ["Square footage", "≈ 3,200 sq ft"],
+        ["Lot size", "0.25-acre lot"],
+        ["Price", "$895,000"],
+        ["Year built", "2016"],
+        [
+          "Key features",
+          "Chef's kitchen, quartz counters, first-floor primary suite, screened lanai, heated pool",
+        ],
+        ["Ownership", "Fee simple · HOA $90/mo"],
+        ["Parking", "Three-car attached garage"],
+        ["Voice", "Premium"],
+      ]
+    : [
+        ["Type", "Grade II listed detached home"],
+        ["Location", "Cotswold market town"],
+        ["Bedrooms", "5"],
+        ["Bathrooms", "3"],
+        ["Receptions", "3"],
+        ["Price", "Guide Price £1,450,000"],
+        ["Tenure", "Freehold"],
+        [
+          "Key features",
+          "Inglenook fireplace, flagstone floors, exposed beams, bespoke kitchen, cellar, original sash windows",
+        ],
+        ["Outside space", "Walled garden, mature borders, orchard, stone terrace"],
+        ["Parking", "Gravel driveway and detached double cart shed"],
+        ["Voice", "Heritage"],
+      ];
+  const spokenNote = isUs
+    ? "“Four bed three and a half bath in Winter Park, about 3,200 square feet, quarter-acre lot, heated pool, three-car garage, asking eight ninety-five…”"
+    : "“Five bedrooms, Grade II listed, walled garden, original beams, inglenook fireplace, near the high street…”";
+  const demo = isUs ? DEMO_US : DEMO_UK;
+
 
   return (
     <section id="example" className="panel-ivory border-y border-border py-16 sm:py-24">
@@ -639,8 +764,7 @@ function LiveExample() {
                   <Mic className="h-3.5 w-3.5" /> Spoken, typed or pasted
                 </div>
                 <p className="mt-1.5 text-sm italic leading-relaxed text-foreground/90">
-                  “Five bedrooms, Grade II listed, walled garden, original beams, inglenook
-                  fireplace, near the high street…”
+                  {spokenNote}
                 </p>
               </div>
 
@@ -679,9 +803,9 @@ function LiveExample() {
 
 
                 <TabsContent value="listing" className="mt-4">
-                  <h3 className="font-display text-lg font-semibold leading-snug">{DEMO.headline}</h3>
+                  <h3 className="font-display text-lg font-semibold leading-snug">{demo.headline}</h3>
                   <div className="mt-3 space-y-3 text-sm leading-relaxed text-foreground/90">
-                    {DEMO.listing.map((p, i) => (
+                    {demo.listing.map((p, i) => (
                       <p key={i}>{p}</p>
                     ))}
                   </div>
@@ -691,8 +815,8 @@ function LiveExample() {
                   <SocialBlock
                     icon={Instagram}
                     label="Instagram"
-                    caption={DEMO.instagram.caption}
-                    hashtags={DEMO.instagram.hashtags}
+                    caption={demo.instagram.caption}
+                    hashtags={demo.instagram.hashtags}
                   />
                 </TabsContent>
 
@@ -700,8 +824,8 @@ function LiveExample() {
                   <SocialBlock
                     icon={Music2}
                     label="TikTok"
-                    caption={DEMO.tiktok.caption}
-                    hashtags={DEMO.tiktok.hashtags}
+                    caption={demo.tiktok.caption}
+                    hashtags={demo.tiktok.hashtags}
                   />
                 </TabsContent>
 
@@ -709,8 +833,8 @@ function LiveExample() {
                   <SocialBlock
                     icon={Facebook}
                     label="Facebook"
-                    caption={DEMO.facebook.caption}
-                    hashtags={DEMO.facebook.hashtags}
+                    caption={demo.facebook.caption}
+                    hashtags={demo.facebook.hashtags}
                   />
                 </TabsContent>
 
@@ -718,9 +842,9 @@ function LiveExample() {
                   <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
                     <Mail className="h-3.5 w-3.5" /> Buyer email
                   </div>
-                  <p className="mt-3 text-sm font-medium text-foreground">{DEMO.email.subject}</p>
+                  <p className="mt-3 text-sm font-medium text-foreground">{demo.email.subject}</p>
                   <div className="mt-2 space-y-2.5 text-sm leading-relaxed text-foreground/90">
-                    {DEMO.email.body.map((p, i) => (
+                    {demo.email.body.map((p, i) => (
                       <p key={i}>{p}</p>
                     ))}
                   </div>
@@ -756,7 +880,7 @@ function SocialBlock({
   );
 }
 
-const DEMO = {
+const DEMO_UK = {
   headline: "A Distinguished Grade II Listed Home in the Heart of a Cotswold Market Town",
   listing: [
     "Set back behind a gravel driveway and a low honey-stone wall, this Grade II listed home carries the quiet confidence of a house that has watched over its market town for generations. The layout unfolds in sequence, with rooms of generous proportion and a clear sense of purpose.",
@@ -787,6 +911,39 @@ const DEMO = {
     ],
   },
 };
+
+const DEMO_US = {
+  headline: "Refined 4-Bedroom Winter Park Home with Heated Pool and Chef's Kitchen",
+  listing: [
+    "Set on a quarter-acre lot on a tree-lined street in Winter Park, this 2016-built single-family home offers approximately 3,200 square feet of well-proportioned living space with a layout arranged for everyday comfort and entertaining.",
+    "The chef's kitchen features quartz countertops and opens to the main living area, while the first-floor primary suite adds convenience and privacy. A screened lanai extends the living space outdoors to a heated pool set within a fenced backyard.",
+    "Four bedrooms, three and a half bathrooms and a three-car attached garage complete the home. Offered fee simple with an HOA of $90 per month, close to Park Avenue shops and dining.",
+  ],
+  instagram: {
+    caption:
+      "Winter Park single-family home — chef's kitchen with quartz counters, first-floor primary suite, screened lanai and a heated pool. 4 bed, 3.5 bath, ~3,200 sq ft. Offered at $895,000.",
+    hashtags: "#WinterParkFL #FloridaRealEstate #JustListed #HomeForSale #PoolHome",
+  },
+  tiktok: {
+    caption:
+      "Tour this Winter Park home — quartz kitchen, first-floor primary suite, screened lanai and a heated pool on a quarter-acre lot. 4 bed, 3.5 bath. Offered at $895,000.",
+    hashtags: "#RealEstateTok #HomeTour #WinterPark #FloridaHomes #JustListed",
+  },
+  facebook: {
+    caption:
+      "Just listed in Winter Park — a 4-bedroom, 3.5-bath single-family home of about 3,200 sq ft on a quarter-acre lot. Chef's kitchen, first-floor primary suite, screened lanai and a heated pool. Offered at $895,000. Showings by appointment.",
+    hashtags: "#WinterParkHomes #FloridaRealEstate #ForSale",
+  },
+  email: {
+    subject: "Just listed: 4-bedroom Winter Park home with a heated pool — $895,000",
+    body: [
+      "Hi there,",
+      "I've just listed a 4-bedroom, 3.5-bath single-family home in Winter Park — approximately 3,200 square feet on a quarter-acre lot, built in 2016. It features a chef's kitchen with quartz countertops, a first-floor primary suite, a screened lanai and a heated pool, with a three-car garage.",
+      "It's offered at $895,000 (HOA $90/month). Showings are by appointment via ShowingTime — reply with a few times that work and I'll get you in.",
+    ],
+  },
+};
+
 
 /* ----------------------------- Voice dictation ----------------------------- */
 

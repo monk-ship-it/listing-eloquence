@@ -27,6 +27,14 @@ export interface ListingInput {
   nearby: string;
   periodFeatures: string;
   targetAudience: string;
+  /** Year the property was built (US MLS core fact). */
+  yearBuilt: string;
+  /** Disclosures / condition notes — only surfaced factually when provided. */
+  disclosures: string;
+  /** Showing / access notes — kept out of public remarks; used for buyer emails. */
+  showingNotes: string;
+  /** Media / photo / floor-plan notes. */
+  mediaNotes: string;
 }
 
 export interface SocialPost {
@@ -67,6 +75,10 @@ export const EMPTY_INPUT: ListingInput = {
   nearby: "",
   periodFeatures: "",
   targetAudience: "",
+  yearBuilt: "",
+  disclosures: "",
+  showingNotes: "",
+  mediaNotes: "",
 };
 
 export const EXAMPLE_INPUT: ListingInput = {
@@ -100,6 +112,10 @@ export const EXAMPLE_INPUT: ListingInput = {
   periodFeatures:
     "Early 18th-century origins, later Georgian additions, retains much original joinery and fireplaces",
   targetAudience: "Families and downsizers seeking a characterful country home within a vibrant town",
+  yearBuilt: "",
+  disclosures: "",
+  showingNotes: "",
+  mediaNotes: "",
 };
 
 export const US_EXAMPLE_INPUT: ListingInput = {
@@ -131,6 +147,10 @@ export const US_EXAMPLE_INPUT: ListingInput = {
     "Winter Park school district; near Park Avenue, Rollins College and I-4",
   periodFeatures: "",
   targetAudience: "",
+  yearBuilt: "2016",
+  disclosures: "Roof replaced 2021; seller's property disclosure available. No known material defects.",
+  showingNotes: "Showings by appointment via ShowingTime; 24 hours' notice preferred. Pets on site.",
+  mediaNotes: "Professional photos and drone shots scheduled; interactive floor plan to follow.",
   // US-specific facts surfaced via structured fields:
   // square footage ~3,200 sq ft, HOA ~$90/mo, property taxes ~$9,000/yr, lot 0.25 acre.
 };

@@ -107,6 +107,14 @@ function GeneratorPage() {
         nearbyPh: "Winter Park school district; near Park Ave, I-4…",
         periodFeatures: "Architectural / notable features",
         periodFeaturesPh: "Craftsman detailing, coffered ceilings…",
+        yearBuilt: "Year built",
+        yearBuiltPh: "2016",
+        disclosures: "Disclosures / condition notes",
+        disclosuresPh: "Roof replaced 2021; seller's disclosure available…",
+        showingNotes: "Showing / access notes (kept out of public remarks)",
+        showingNotesPh: "By appointment via ShowingTime; 24 hrs' notice…",
+        mediaNotes: "Media / photo / floor-plan notes",
+        mediaNotesPh: "Pro photos + drone scheduled; floor plan to follow…",
       }
     : {
         address: "Address / location",
@@ -135,6 +143,14 @@ function GeneratorPage() {
         nearbyPh: "Outstanding primary, station 0.5 miles…",
         periodFeatures: "Period / character features",
         periodFeaturesPh: "Original cornicing, sash windows…",
+        yearBuilt: "Year built",
+        yearBuiltPh: "1901",
+        disclosures: "Disclosures / condition notes",
+        disclosuresPh: "Recent rewire; survey available…",
+        showingNotes: "Viewing / access notes (kept out of the listing)",
+        showingNotesPh: "By appointment; key with branch…",
+        mediaNotes: "Media / photo / floor-plan notes",
+        mediaNotesPh: "Photos + floor plan booked…",
       };
 
 
@@ -283,9 +299,14 @@ function GeneratorPage() {
               <Field label={L.address}>
                 <Input value={input.address} onChange={(e) => set("address", e.target.value)} placeholder={L.addressPh} />
               </Field>
-              <Field label={L.propertyType}>
-                <Input value={input.propertyType} onChange={(e) => set("propertyType", e.target.value)} placeholder={L.propertyTypePh} />
-              </Field>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Field label={L.propertyType}>
+                  <Input value={input.propertyType} onChange={(e) => set("propertyType", e.target.value)} placeholder={L.propertyTypePh} />
+                </Field>
+                <Field label={L.yearBuilt}>
+                  <Input value={input.yearBuilt} onChange={(e) => set("yearBuilt", e.target.value)} placeholder={L.yearBuiltPh} />
+                </Field>
+              </div>
               <div className="grid grid-cols-3 gap-3">
                 <Field label="Bedrooms">
                   <Input value={input.bedrooms} onChange={(e) => set("bedrooms", e.target.value)} placeholder="4" />
@@ -349,6 +370,15 @@ function GeneratorPage() {
               </Field>
               <Field label="Area highlights">
                 <Input value={input.areaHighlights} onChange={(e) => set("areaHighlights", e.target.value)} placeholder={isUs ? "Established neighborhood, near dining and parks" : "Vibrant market town, riverside walks"} />
+              </Field>
+              <Field label={L.disclosures}>
+                <Textarea value={input.disclosures} onChange={(e) => set("disclosures", e.target.value)} placeholder={L.disclosuresPh} rows={2} />
+              </Field>
+              <Field label={L.showingNotes}>
+                <Textarea value={input.showingNotes} onChange={(e) => set("showingNotes", e.target.value)} placeholder={L.showingNotesPh} rows={2} />
+              </Field>
+              <Field label={L.mediaNotes}>
+                <Textarea value={input.mediaNotes} onChange={(e) => set("mediaNotes", e.target.value)} placeholder={L.mediaNotesPh} rows={2} />
               </Field>
               {!isUs && (
                 <Field label="Target audience">
