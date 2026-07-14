@@ -31,6 +31,11 @@ import {
   AudioLines,
   ClipboardPaste,
   ShieldCheck,
+  Home,
+  Wallet,
+  Thermometer,
+  MapPin,
+  Megaphone,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
