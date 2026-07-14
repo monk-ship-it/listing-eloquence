@@ -285,6 +285,10 @@ function Hero({ authed }: { authed: boolean }) {
             <ShieldCheck className="h-4 w-4 text-primary" />
             {TRIAL_DAYS}-day trial at secure checkout · card required · cancel anytime
           </p>
+          <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+            <ArrowLeftRight className="h-4 w-4 text-primary" />
+            Switch between UK and US markets any time before checkout.
+          </p>
 
 
 
