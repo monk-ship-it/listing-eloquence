@@ -523,6 +523,101 @@ function HowItWorks() {
 }
 
 
+/* ----------------------------- Listing detail ------------------------------ */
+
+const DETAIL_GROUPS_US = [
+  {
+    icon: Home,
+    title: "Core MLS facts",
+    items: "List price, address & location, property type, beds, baths, square footage, lot size, year built",
+  },
+  {
+    icon: Wallet,
+    title: "Ownership & costs",
+    items: "Ownership / condo status, HOA dues, property taxes, price qualifiers",
+  },
+  {
+    icon: Thermometer,
+    title: "Home systems",
+    items: "Heating & cooling, utilities, internet, parking & garage, pool & patio",
+  },
+  {
+    icon: MapPin,
+    title: "Location & compliance",
+    items: "School district & nearby amenities stated factually, disclosures, condition & showing notes — Fair Housing safe",
+  },
+  {
+    icon: Megaphone,
+    title: "Marketing outputs",
+    items: "MLS public remarks, short descriptions, social captions, buyer emails, media & floor-plan notes",
+  },
+];
+
+const DETAIL_GROUPS_UK = [
+  {
+    icon: Home,
+    title: "Core property facts",
+    items: "Asking price, address & location, property type, bedrooms, bathrooms, receptions, room dimensions",
+  },
+  {
+    icon: Wallet,
+    title: "Material Information",
+    items: "Tenure, lease years, Council Tax band, EPC rating, price qualifiers",
+  },
+  {
+    icon: Thermometer,
+    title: "Home systems",
+    items: "Heating, utilities, broadband, parking & garage, outside space & garden",
+  },
+  {
+    icon: MapPin,
+    title: "Location & detail",
+    items: "Schools, transport & amenities, period features, condition & viewing notes",
+  },
+  {
+    icon: Megaphone,
+    title: "Marketing outputs",
+    items: "Portal descriptions, teaser summaries, social captions, buyer emails, media & floor-plan notes",
+  },
+];
+
+function ListingDetail() {
+  const { market } = useMarket();
+  const isUs = market === "us";
+  const groups = isUs ? DETAIL_GROUPS_US : DETAIL_GROUPS_UK;
+  return (
+    <section className="border-y border-border bg-card/30 py-16 sm:py-24">
+      <div className="mx-auto max-w-6xl px-5">
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <Eyebrow>{isUs ? "Built for US MLS workflows" : "Built for UK listing workflows"}</Eyebrow>
+          <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
+            {isUs ? "Every US listing detail, covered." : "Every UK listing detail, covered."}
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            {isUs
+              ? "Quill captures structured property facts — the way MLS data is organised — not just prose, so your public remarks stay accurate in a competitive market."
+              : "Quill captures structured property facts, not just prose, so your listings stay accurate and compliant with Material Information guidance."}
+          </p>
+        </Reveal>
+        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {groups.map((g, i) => (
+            <Reveal key={g.title} delay={i * 80} className="h-full">
+              <div className="flex h-full flex-col rounded-2xl border border-border/70 bg-card/60 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card">
+                <span className="grid h-11 w-11 place-items-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                  <g.icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 text-lg font-semibold">{g.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{g.items}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 /* --------------------------------- Voices ---------------------------------- */
 
 const VOICE_CARDS = [
