@@ -803,9 +803,9 @@ function LiveExample() {
 
 
                 <TabsContent value="listing" className="mt-4">
-                  <h3 className="font-display text-lg font-semibold leading-snug">{DEMO.headline}</h3>
+                  <h3 className="font-display text-lg font-semibold leading-snug">{demo.headline}</h3>
                   <div className="mt-3 space-y-3 text-sm leading-relaxed text-foreground/90">
-                    {DEMO.listing.map((p, i) => (
+                    {demo.listing.map((p, i) => (
                       <p key={i}>{p}</p>
                     ))}
                   </div>
@@ -815,8 +815,8 @@ function LiveExample() {
                   <SocialBlock
                     icon={Instagram}
                     label="Instagram"
-                    caption={DEMO.instagram.caption}
-                    hashtags={DEMO.instagram.hashtags}
+                    caption={demo.instagram.caption}
+                    hashtags={demo.instagram.hashtags}
                   />
                 </TabsContent>
 
@@ -824,8 +824,8 @@ function LiveExample() {
                   <SocialBlock
                     icon={Music2}
                     label="TikTok"
-                    caption={DEMO.tiktok.caption}
-                    hashtags={DEMO.tiktok.hashtags}
+                    caption={demo.tiktok.caption}
+                    hashtags={demo.tiktok.hashtags}
                   />
                 </TabsContent>
 
@@ -833,8 +833,8 @@ function LiveExample() {
                   <SocialBlock
                     icon={Facebook}
                     label="Facebook"
-                    caption={DEMO.facebook.caption}
-                    hashtags={DEMO.facebook.hashtags}
+                    caption={demo.facebook.caption}
+                    hashtags={demo.facebook.hashtags}
                   />
                 </TabsContent>
 
@@ -842,9 +842,9 @@ function LiveExample() {
                   <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
                     <Mail className="h-3.5 w-3.5" /> Buyer email
                   </div>
-                  <p className="mt-3 text-sm font-medium text-foreground">{DEMO.email.subject}</p>
+                  <p className="mt-3 text-sm font-medium text-foreground">{demo.email.subject}</p>
                   <div className="mt-2 space-y-2.5 text-sm leading-relaxed text-foreground/90">
-                    {DEMO.email.body.map((p, i) => (
+                    {demo.email.body.map((p, i) => (
                       <p key={i}>{p}</p>
                     ))}
                   </div>
