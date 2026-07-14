@@ -20,6 +20,7 @@ import {
   Check,
   Mic,
   ArrowRight,
+  ArrowLeftRight,
   Pencil,
   Sparkles,
   FileText,
@@ -247,15 +248,20 @@ function Hero({ authed }: { authed: boolean }) {
           <div className="mt-5">
             <MarketToggle />
           </div>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
+            Switch between UK portal-ready copy and US MLS-ready copy. Quill adapts terminology,
+            pricing, listing fields and compliance guidance.
+          </p>
 
           <h1 className="mt-5 text-balance font-display text-[clamp(2rem,8vw,2.6rem)] font-semibold leading-[1.12] sm:mt-6 sm:text-5xl lg:text-[3.6rem]">
-            Write every listing in minutes — <span className="text-gradient">just say the words.</span>
+            AI listing writer for UK estate agents and US real estate agents —{" "}
+            <span className="text-gradient">just say the words.</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {APP_NAME} lets {audience} speak, type or paste property details, choose a brand
-            voice, and generate {portalWord} listings, social captions and buyer emails in minutes —
-            without another CRM to manage.
+            {APP_NAME} lets {audience} speak, type or paste property details, choose a brand voice,
+            and generate {portalWord} listings, social captions and buyer emails in minutes — without
+            another CRM to manage.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -278,6 +284,10 @@ function Hero({ authed }: { authed: boolean }) {
           <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
             <ShieldCheck className="h-4 w-4 text-primary" />
             {TRIAL_DAYS}-day trial at secure checkout · card required · cancel anytime
+          </p>
+          <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+            <ArrowLeftRight className="h-4 w-4 text-primary" />
+            Switch between UK and US markets any time before checkout.
           </p>
 
 
@@ -417,6 +427,8 @@ const WAVE_HEIGHTS = [40, 70, 95, 60, 85, 50, 75, 100, 55, 80, 45, 90, 60, 70, 4
 /* ------------------------------ Voice value -------------------------------- */
 
 function VoiceValue() {
+  const { market } = useMarket();
+  const isUs = market === "us";
   const cards = [
     {
       icon: Mic,
@@ -434,7 +446,9 @@ function VoiceValue() {
       icon: Sparkles,
       step: "03",
       title: "Generate the full pack",
-      body: "Produce the portal description, social captions, buyer email and vendor update in one pass.",
+      body: isUs
+        ? "Produce the MLS listing description, social captions, buyer email and seller update in one pass."
+        : "Produce the portal description, social captions, buyer email and vendor update in one pass.",
     },
   ];
   return (
@@ -445,8 +459,8 @@ function VoiceValue() {
           Built for agents who need notes captured fast.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Dictate between viewings, type at your desk or paste existing instructions. Quill turns any
-          of them into a complete listing pack.
+          Dictate between {isUs ? "showings" : "viewings"}, type at your desk or paste existing
+          instructions. Quill turns any of them into a complete listing pack.
         </p>
       </Reveal>
       <div className="mt-12 grid gap-4 md:grid-cols-3">
