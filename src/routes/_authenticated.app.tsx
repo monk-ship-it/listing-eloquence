@@ -371,6 +371,15 @@ function GeneratorPage() {
               <Field label="Area highlights">
                 <Input value={input.areaHighlights} onChange={(e) => set("areaHighlights", e.target.value)} placeholder={isUs ? "Established neighborhood, near dining and parks" : "Vibrant market town, riverside walks"} />
               </Field>
+              <Field label={L.disclosures}>
+                <Textarea value={input.disclosures} onChange={(e) => set("disclosures", e.target.value)} placeholder={L.disclosuresPh} rows={2} />
+              </Field>
+              <Field label={L.showingNotes}>
+                <Textarea value={input.showingNotes} onChange={(e) => set("showingNotes", e.target.value)} placeholder={L.showingNotesPh} rows={2} />
+              </Field>
+              <Field label={L.mediaNotes}>
+                <Textarea value={input.mediaNotes} onChange={(e) => set("mediaNotes", e.target.value)} placeholder={L.mediaNotesPh} rows={2} />
+              </Field>
               {!isUs && (
                 <Field label="Target audience">
                   <Input value={input.targetAudience} onChange={(e) => set("targetAudience", e.target.value)} placeholder="Growing families, professionals" />
