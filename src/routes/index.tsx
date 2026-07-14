@@ -20,6 +20,7 @@ import {
   Check,
   Mic,
   ArrowRight,
+  ArrowLeftRight,
   Pencil,
   Sparkles,
   FileText,
