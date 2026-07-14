@@ -299,9 +299,14 @@ function GeneratorPage() {
               <Field label={L.address}>
                 <Input value={input.address} onChange={(e) => set("address", e.target.value)} placeholder={L.addressPh} />
               </Field>
-              <Field label={L.propertyType}>
-                <Input value={input.propertyType} onChange={(e) => set("propertyType", e.target.value)} placeholder={L.propertyTypePh} />
-              </Field>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Field label={L.propertyType}>
+                  <Input value={input.propertyType} onChange={(e) => set("propertyType", e.target.value)} placeholder={L.propertyTypePh} />
+                </Field>
+                <Field label={L.yearBuilt}>
+                  <Input value={input.yearBuilt} onChange={(e) => set("yearBuilt", e.target.value)} placeholder={L.yearBuiltPh} />
+                </Field>
+              </div>
               <div className="grid grid-cols-3 gap-3">
                 <Field label="Bedrooms">
                   <Input value={input.bedrooms} onChange={(e) => set("bedrooms", e.target.value)} placeholder="4" />
