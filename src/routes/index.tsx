@@ -912,6 +912,39 @@ const DEMO_UK = {
   },
 };
 
+const DEMO_US = {
+  headline: "Refined 4-Bedroom Winter Park Home with Heated Pool and Chef's Kitchen",
+  listing: [
+    "Set on a quarter-acre lot on a tree-lined street in Winter Park, this 2016-built single-family home offers approximately 3,200 square feet of well-proportioned living space with a layout arranged for everyday comfort and entertaining.",
+    "The chef's kitchen features quartz countertops and opens to the main living area, while the first-floor primary suite adds convenience and privacy. A screened lanai extends the living space outdoors to a heated pool set within a fenced backyard.",
+    "Four bedrooms, three and a half bathrooms and a three-car attached garage complete the home. Offered fee simple with an HOA of $90 per month, close to Park Avenue shops and dining.",
+  ],
+  instagram: {
+    caption:
+      "Winter Park single-family home — chef's kitchen with quartz counters, first-floor primary suite, screened lanai and a heated pool. 4 bed, 3.5 bath, ~3,200 sq ft. Offered at $895,000.",
+    hashtags: "#WinterParkFL #FloridaRealEstate #JustListed #HomeForSale #PoolHome",
+  },
+  tiktok: {
+    caption:
+      "Tour this Winter Park home — quartz kitchen, first-floor primary suite, screened lanai and a heated pool on a quarter-acre lot. 4 bed, 3.5 bath. Offered at $895,000.",
+    hashtags: "#RealEstateTok #HomeTour #WinterPark #FloridaHomes #JustListed",
+  },
+  facebook: {
+    caption:
+      "Just listed in Winter Park — a 4-bedroom, 3.5-bath single-family home of about 3,200 sq ft on a quarter-acre lot. Chef's kitchen, first-floor primary suite, screened lanai and a heated pool. Offered at $895,000. Showings by appointment.",
+    hashtags: "#WinterParkHomes #FloridaRealEstate #ForSale",
+  },
+  email: {
+    subject: "Just listed: 4-bedroom Winter Park home with a heated pool — $895,000",
+    body: [
+      "Hi there,",
+      "I've just listed a 4-bedroom, 3.5-bath single-family home in Winter Park — approximately 3,200 square feet on a quarter-acre lot, built in 2016. It features a chef's kitchen with quartz countertops, a first-floor primary suite, a screened lanai and a heated pool, with a three-car garage.",
+      "It's offered at $895,000 (HOA $90/month). Showings are by appointment via ShowingTime — reply with a few times that work and I'll get you in.",
+    ],
+  },
+};
+
+
 /* ----------------------------- Voice dictation ----------------------------- */
 
 const DICTATION_EXAMPLES_UK = [
