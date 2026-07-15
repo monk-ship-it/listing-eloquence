@@ -151,6 +151,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
         }
 
         logRuntimeSecretPresence();
+        console.info("Stripe webhook received:", { type: event.type });
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -276,15 +277,25 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               updated_at: new Date().toISOString(),
             };
 
-            // Prefer matching by subscription id; fall back to user id from metadata.
+            // Prefer matching by subscription id; then metadata.user_id; then customer id.
             const { data: updated } = await supabaseAdmin
               .from("subscribers")
               .update(fields)
               .eq("stripe_subscription_id", subscriptionId)
               .select("user_id");
 
-            if ((!updated || updated.length === 0) && userId) {
-              await supabaseAdmin.from("subscribers").update(fields).eq("user_id", userId);
+            if (!updated || updated.length === 0) {
+              if (userId) {
+                await supabaseAdmin
+                  .from("subscribers")
+                  .update(fields)
+                  .eq("user_id", userId);
+              } else if (fields.stripe_customer_id) {
+                await supabaseAdmin
+                  .from("subscribers")
+                  .update(fields)
+                  .eq("stripe_customer_id", fields.stripe_customer_id);
+              }
             }
           } else if (event.type === "invoice.paid") {
             // Payment succeeded — ensure the subscription is active and clear
