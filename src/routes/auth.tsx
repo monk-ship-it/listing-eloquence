@@ -13,12 +13,22 @@ import { APP_NAME, TRIAL_DAYS, resolveMarketId, type PlanId, type MarketId } fro
 
 const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
 
+// Only allow same-origin, path-only next targets (e.g. /.lovable/oauth/consent?...).
+function sanitizeNext(value: unknown): string | undefined {
+  if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//")) return undefined;
+  return value;
+}
+
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>): { plan?: PlanId; market?: MarketId } => {
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { plan?: PlanId; market?: MarketId; next?: string } => {
     const plan = search.plan as string | undefined;
-    const out: { plan?: PlanId; market?: MarketId } = {};
+    const out: { plan?: PlanId; market?: MarketId; next?: string } = {};
     if (plan && VALID_PLANS.includes(plan as PlanId)) out.plan = plan as PlanId;
     if (search.market === "us" || search.market === "uk") out.market = search.market as MarketId;
+    const next = sanitizeNext(search.next);
+    if (next) out.next = next;
     return out;
   },
   head: () => ({
@@ -44,7 +54,7 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const { plan: planParam, market: marketParam } = Route.useSearch();
+  const { plan: planParam, market: marketParam, next } = Route.useSearch();
   const plan: PlanId = planParam ?? "starter";
   const market: MarketId = resolveMarketId(marketParam);
   const [mode, setMode] = useState<"login" | "signup">("signup");
@@ -53,31 +63,45 @@ function AuthPage() {
   const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
 
+  function goPostAuth() {
+    if (next) {
+      // Same-origin relative path (validated above). Use window.location so we
+      // land on non-router routes like /.lovable/oauth/consent cleanly.
+      window.location.href = next;
+      return;
+    }
+    navigate({ to: "/subscription", search: { plan, market } });
+  }
+
   useEffect(() => {
-    if (!loading && user) navigate({ to: "/subscription", search: { plan, market } });
-  }, [user, loading, navigate, plan, market]);
+    if (!loading && user) goPostAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, loading]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     try {
       if (mode === "signup") {
+        const emailRedirectTo = next
+          ? `${window.location.origin}${next}`
+          : `${window.location.origin}/subscription?plan=${plan}&market=${market}`;
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/subscription?plan=${plan}&market=${market}`,
+            emailRedirectTo,
             data: { full_name: fullName },
           },
         });
         if (error) throw error;
-        toast.success("Account created — taking you to secure checkout.");
+        toast.success("Account created — taking you to the next step.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back.");
       }
-      navigate({ to: "/subscription", search: { plan, market } });
+      goPostAuth();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
