@@ -494,18 +494,18 @@ function HowItWorks() {
   const steps = [
     {
       icon: Mic,
-      title: "Speak, type or paste the details",
-      body: "Add property notes by voice, typing or copied text from existing instructions.",
+      title: "Capture the property once",
+      body: "Speak, type or paste the facts — valuation notes, room dimensions, features, the lot. One source of truth for every asset.",
     },
     {
       icon: Building2,
-      title: "Choose the brand voice",
-      body: "Select Professional, Premium, Luxury or Heritage to match the property.",
+      title: "Choose market and brand voice",
+      body: "Switch between UK and US mode, then pick Professional, Premium, Luxury or Heritage so tone matches the property.",
     },
     {
       icon: Sparkles,
-      title: "Generate and edit",
-      body: "Quill drafts the listing, captions and emails. You stay in control before anything is used.",
+      title: "Generate the full pack",
+      body: "Listing description, short copy, social caption, buyer email and review notes — drafted together and fully editable before use.",
     },
   ];
   return (
@@ -514,8 +514,12 @@ function HowItWorks() {
         <Reveal className="mx-auto max-w-2xl text-center">
           <Eyebrow>How it works</Eyebrow>
           <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            From spoken notes to finished listing pack.
+            One workflow for the whole team.
           </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Practical for negotiators, admins and branch managers — the same source of truth
+            drives every asset your listing needs.
+          </p>
         </Reveal>
         <div className="relative mt-14 grid gap-8 md:grid-cols-3 md:gap-5">
           <div className="pointer-events-none absolute left-[16%] right-[16%] top-[2.4rem] hidden h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent md:block" />
