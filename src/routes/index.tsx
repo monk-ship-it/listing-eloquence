@@ -614,12 +614,12 @@ function ListingDetail() {
         <Reveal className="mx-auto max-w-2xl text-center">
           <Eyebrow>{isUs ? "Built for US MLS workflows" : "Built for UK listing workflows"}</Eyebrow>
           <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            {isUs ? "Every US listing detail, covered." : "Every UK listing detail, covered."}
+            {isUs ? "Every MLS detail, in one pack." : "Every UK listing detail, in one pack."}
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             {isUs
-              ? "Quill captures structured property facts — the way MLS data is organised — not just prose, so your public remarks stay accurate in a competitive market."
-              : "Quill captures structured property facts, not just prose, so your listings stay accurate and compliant with Material Information guidance."}
+              ? "Quill captures structured facts the way MLS data is organised — so public remarks stay accurate, disclosures are surfaced and nothing important goes missing before you publish."
+              : "Quill captures structured facts, not just prose, so your listings stay accurate, consistent with Material Information guidance and free of last-minute fact chases."}
           </p>
           <div className="mt-6 flex flex-col items-center gap-2">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
