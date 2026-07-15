@@ -1,81 +1,52 @@
-# Quill — UK Estate Agent Listing Generator
 
-An attractive, subscription-gated web app that turns property details into polished UK property listings in four distinct brand voices, plus social media captions with hashtags. Access requires sign-up; the app is gated behind a Stripe 14-day free trial + £24.99/month subscription, with a self-service cancel button.
+# Deployment Readiness Diagnostic — Quill (production)
 
-## Branding
-- Use the uploaded quill/play logo as the app logo (header, auth page, favicon).
-- Dark, premium aesthetic echoing the logo: deep navy background, sky-blue accent, clean serif display font for headings + refined sans for body. Avoid generic AI look.
+Read-only audit. No code changes proposed; nothing is critically broken.
 
-## Core research baked into the form (UK listing + Material Information)
-The input form collects the fields UK agents and Trading Standards "Material Information" guidance expect, so the AI has real substance to work with:
-- Address / location & area highlights
-- Property type (detached, semi, terrace, flat, bungalow, cottage, etc.)
-- Tenure (freehold / leasehold / share of freehold) + lease years if leasehold
-- Asking price & price qualifier (Guide Price, OIEO, etc.)
-- Bedrooms, bathrooms, reception rooms
-- Key features (free text / chips)
-- Room dimensions (optional)
-- EPC rating, Council Tax band
-- Garden / outside space, parking / garage
-- Heating, broadband/utilities notes
-- Nearby: schools, transport links, amenities
-- Period / character features (for Heritage voice)
-- Target audience (families, professionals, investors, downsizers)
+## Environment variables (server runtime)
 
-## The four voices (tone presets)
-Each is a carefully engineered system prompt:
-- **Professional** — Refined, confident, lifestyle-aware. Everyday high-street voice; reads like a senior negotiator.
-- **Premium** — Restrained, understated, considered. Upper-market, lifestyle-led, careful rhythm.
-- **Luxury** — Warm, cinematic, story-led. Prime/country homes; quiet authority, no overblown adjectives.
-- **Heritage** — Guided walk-through with atmosphere, period detail and local charm; premium but never overblown.
+| Variable | Status | Notes / Action |
+|---|---|---|
+| `STRIPE_SECRET_KEY` | PASS (present) | Confirm it is a **live** `sk_live_…` key in prod, not test. |
+| `STRIPE_WEBHOOK_SECRET` | PASS (present) | Must match the live webhook endpoint's signing secret. |
+| `APP_URL` | PASS (present) | Code defaults to `https://copybymonk.com` if unset — verify the configured value matches the canonical prod domain (no trailing slash, https). |
+| `SUPABASE_URL` | PASS (present) | — |
+| `SUPABASE_SERVICE_ROLE_KEY` | PASS (present) | Server-only; never referenced from client code. |
+| `SUPABASE_PUBLISHABLE_KEY` | PASS (present) | Used server-side. |
+| `LOVABLE_API_KEY`, `ANTHROPIC_API_KEY` | PASS (present) | AI generation dependencies. |
+| Legacy `STRIPE_STARTER/GROWTH/PRO_PRICE_ID` + `_PAYMENT_LINK_ID` | WARN | Not read by current checkout code (price IDs are hardcoded in `src/lib/config.ts`). Safe to leave, but consider deleting to avoid confusion. |
 
-## Outputs
-For each generation the app produces:
-1. A full portal-ready listing (headline + body, structured paragraphs).
-2. A short summary / teaser.
-3. **Social media pack**: platform captions (Instagram/Facebook/X) with relevant hashtags.
-Each block has copy-to-clipboard and regenerate.
+## Public / Vite env vars (client bundle)
 
-## Example mode
-A prominent "See an example" toggle pre-fills the form with a sample property and shows a sample output, so first-time users instantly understand input → output.
+| Variable | Status | Notes |
+|---|---|---|
+| `VITE_SUPABASE_URL` | PASS | Present in `.env`. |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | PASS | Publishable key — safe client-side. |
+| `VITE_SUPABASE_PROJECT_ID` | PASS | — |
+| Any `VITE_STRIPE_*` | N/A (PASS) | None required; checkout is fully server-side. |
 
-## Pages / flow
-```
-/                -> Landing (hero, voices showcase, pricing £24.99 + 14-day trial, example I/O, Start free trial CTA)
-/auth            -> Sign up / Log in (email + password)
-/reset-password  -> Set new password (recovery)
-_authenticated/
-  /app           -> The generator (form + voice picker + outputs + example mode)
-  /account       -> Subscription status, trial countdown, Manage/Cancel subscription
-/api/public/stripe-webhook -> Stripe webhook (subscription lifecycle)
-```
+## App-side production config
 
-## Access & subscription gating
-- Email + password auth via Lovable Cloud. A `profiles` row is auto-created on signup.
-- After signup, user is sent to Stripe Payment Link (trial configured on the Stripe price) with their email pre-filled and a reference linking the checkout back to their account.
-- A Stripe webhook updates a `subscribers` table with subscription status (trialing / active / canceled), current period end, Stripe customer & subscription IDs.
-- The `/app` generator checks subscription status: allowed when `trialing` or `active`; otherwise shows a "Subscribe to continue" screen.
-- **Cancel**: `/account` has a Cancel button calling a secure server function that cancels the Stripe subscription (cancel at period end) via the Stripe API and reflects status in-app.
+| Check | Status | Detail |
+|---|---|---|
+| Checkout `success_url` / `cancel_url` use prod URL, not localhost | PASS | `subscription.functions.ts` allow-lists `APP_URL`, `copybymonk.com`, `www.copybymonk.com`, `listing-eloquence.lovable.app`; unknown origins fall back to `APP_URL`. No localhost fallback in prod path. |
+| Stripe webhook route | PASS | `POST /api/public/stripe-webhook` — this is the URL to register in Stripe Dashboard (prod + preview stable URLs both available). |
+| Signature verification + raw body + timing-safe compare | PASS | Present in `stripe-webhook.ts`. |
+| Billing Portal route uses logged-in user's Stripe customer ID | PASS | `createBillingPortalUrl` in `subscription.functions.ts` is auth-gated (`requireSupabaseAuth`) and looks up the caller's `stripe_customer_id` from `subscribers` before calling Stripe. |
+| Checkout uses live Quill price IDs only | PASS | `PLAN_PRICING` in `src/lib/config.ts` maps plan × market → single authoritative price ID. No legacy £24.99/£29.99/£49.99 references. |
+| Checkout uses `mode: 'subscription'` | PASS | Confirmed in `stripe.server.ts`. |
+| Stripe secret key exposed to client | PASS | Only referenced in `*.server.ts` and server function handlers; not in any `VITE_*` var or client import. |
+| Subscription gating (`active`/`trialing` only) | PASS | Enforced server-side in `hasActiveAccess` and `generateListing`. |
 
-## Technical notes
-- **Lovable Cloud** enabled for auth + Postgres.
-- **Tables** (all with RLS + grants):
-  - `profiles` (id -> auth.users, email) — user reads/updates own row.
-  - `subscribers` (user_id, email, stripe_customer_id, stripe_subscription_id, status, trial_end, current_period_end) — user reads own row; writes done server-side.
-  - `generations` (id, user_id, voice, inputs jsonb, output text, created_at) — user reads/writes own rows; a saved history list on `/app`.
-- **AI**: Lovable AI Gateway (`google/gemini-3-flash-preview`) via a `createServerFn` server function; voice → system prompt; structured output for listing + social pack. Server-only `LOVABLE_API_KEY`.
-- **Stripe webhook**: server route under `/api/public/stripe-webhook`, verifies signature using the provided signing secret (`whsec_…`), updates `subscribers`. Signing secret + Stripe secret key stored as secrets.
-- **Stripe payment link**: `https://buy.stripe.com/3cI00i1Ct5oO4pg3gC7AI0C` used for the trial/subscribe CTA.
-- **Secrets needed**: `STRIPE_SECRET_KEY` (for cancel + reading subscription), `STRIPE_WEBHOOK_SECRET` (provided), `LOVABLE_API_KEY` (auto).
+## Manual actions still required in Stripe Dashboard (not code)
 
-## Build order
-1. Enable Lovable Cloud; create tables, RLS, grants, signup trigger.
-2. Add logo asset; build design system (tokens, fonts) + landing page.
-3. Auth (signup/login/reset) + auth gate.
-4. Generator server function (voices + social pack) and `/app` UI with example mode + history.
-5. Stripe: webhook route, subscribe CTA wiring, `/account` status + cancel.
-6. Verify end-to-end (build, generation, gating).
+1. **Live mode toggle** — confirm `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` in prod env are the **live** values, not test.
+2. **Webhook endpoint registered** at `https://copybymonk.com/api/public/stripe-webhook` (or the custom domain in use) subscribing to: `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid`, `invoice.payment_failed`.
+3. **Billing Portal enabled** in Stripe Dashboard → Settings → Billing → Customer portal, with cancel-at-period-end permitted.
+4. **Deactivate legacy products/prices** (£24.99 / £29.99 / £49.99 and any legacy payment links) so they cannot be purchased.
+5. **Confirm live price IDs are active** for all six SKUs (Starter/Pro/Growth × GBP/USD) referenced in `src/lib/config.ts`.
+6. Optional: remove unused `STRIPE_*_PRICE_ID` / `STRIPE_*_PAYMENT_LINK_ID` secrets from Project Settings to reduce noise.
 
-## Notes / assumptions
-- The Stripe price behind your Payment Link must have the 14-day trial configured in Stripe for "trial via Stripe" to work; the webhook will read `trialing` status from it.
-- Self-service cancel requires your Stripe secret key (requested securely during build). If you'd prefer to avoid sharing it, the alternative is Stripe's hosted Customer Portal link instead — tell me and I'll switch.
+## Overall
+
+No FAIL items. One WARN: obsolete legacy Stripe env vars are still stored but not referenced — cosmetic. Ready to sell once the six Stripe Dashboard items above are verified.
