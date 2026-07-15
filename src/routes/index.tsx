@@ -1017,7 +1017,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
             ))}
           </ul>
           <CtaButton authed={authed} size="lg" className="mt-8">
-            Try it on your next instruction
+            Create first pack
           </CtaButton>
         </Reveal>
 
