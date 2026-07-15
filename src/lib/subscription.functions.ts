@@ -277,9 +277,20 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const { resolvePriceId, createSubscriptionCheckoutSession } = await import(
       "./stripe.server"
     );
+    const { getAppUrl } = await import("./config.server");
     const priceId = await resolvePriceId(plan, market);
 
-    const origin = data.origin.replace(/\/+$/, "");
+    // Never trust a client-supplied origin verbatim for Stripe redirect URLs.
+    // Allowlist known public app origins; otherwise fall back to APP_URL.
+    const rawOrigin = (data.origin ?? "").replace(/\/+$/, "");
+    const ALLOWED_ORIGINS = new Set([
+      getAppUrl(),
+      "https://copybymonk.com",
+      "https://www.copybymonk.com",
+      "https://listing-eloquence.lovable.app",
+    ]);
+    const origin = ALLOWED_ORIGINS.has(rawOrigin) ? rawOrigin : getAppUrl();
+
     const session = await createSubscriptionCheckoutSession({
       plan,
       priceId,
