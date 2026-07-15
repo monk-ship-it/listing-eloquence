@@ -223,17 +223,17 @@ function Header({ user }: { user: boolean }) {
 
 function heroChips(market: MarketId): string[] {
   return [
-    market === "us" ? "Built for US real estate agents" : "Built for UK estate agents",
-    market === "us" ? "MLS-ready copy" : "Portal-ready copy",
-    "Voice notes in minutes",
+    market === "us" ? "Built for US real estate teams" : "Built for UK estate agencies",
+    market === "us" ? "MLS-ready remarks" : "Portal-ready descriptions",
+    "One source of truth for every asset",
     "No CRM migration",
   ];
 }
 
 function Hero({ authed }: { authed: boolean }) {
   const { market } = useMarket();
+  const isUs = market === "us";
   const audience = MARKETS[market].audience;
-  const portalWord = market === "us" ? "MLS-ready" : "portal-ready";
   return (
     <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-25" />
@@ -242,7 +242,7 @@ function Hero({ authed }: { authed: boolean }) {
         {/* Left — critical above-the-fold content renders immediately (no reveal). */}
         <div className="min-w-0">
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-            <AudioLines className="h-3.5 w-3.5" /> AI listing writer with voice dictation
+            <AudioLines className="h-3.5 w-3.5" /> One set of notes → a complete listing pack
           </span>
 
           <div className="mt-5">
@@ -252,24 +252,25 @@ function Hero({ authed }: { authed: boolean }) {
             <MarketToggle />
           </div>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            Switch between UK portal-ready copy and US MLS-ready copy. Quill adapts terminology,
-            pricing, listing fields and compliance guidance.
+            Switching adapts terminology, pricing, listing fields and compliance guidance —
+            {isUs ? " US mode writes MLS-ready remarks." : " UK mode writes portal-ready descriptions."}
           </p>
 
           <h1 className="mt-5 text-balance font-display text-[clamp(2rem,8vw,2.6rem)] font-semibold leading-[1.12] sm:mt-6 sm:text-5xl lg:text-[3.6rem]">
-            AI listing writer for UK estate agents and US real estate agents —{" "}
-            <span className="text-gradient">just say the words.</span>
+            Turn one set of notes into a{" "}
+            <span className="text-gradient">complete listing pack.</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {APP_NAME} lets {audience} speak, type or paste property details, choose a brand voice,
-            and generate {portalWord} listings, social captions and buyer emails in minutes — without
-            another CRM to manage.
+            {APP_NAME} helps {audience} remove the slow admin between instruction and launch.
+            Speak, type or paste the facts once, choose the brand voice, and generate the{" "}
+            {isUs ? "MLS description" : "portal description"}, short copy, social caption and
+            buyer email from the same source of truth.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <CtaButton authed={authed} size="lg" className="w-full sm:w-auto">
-              Start free trial
+              Create your first pack
             </CtaButton>
             <Button
               asChild
@@ -277,10 +278,10 @@ function Hero({ authed }: { authed: boolean }) {
               variant="outline"
               className="w-full border-border bg-card/60 hover:bg-card sm:w-auto"
             >
-              <a href="#voice-demo">Try voice dictation</a>
+              <a href="#example">See a worked example</a>
             </Button>
             <Button asChild size="lg" variant="ghost" className="w-full sm:w-auto">
-              <a href="#example">See an example</a>
+              <a href="#voice-demo">Try voice dictation</a>
             </Button>
           </div>
 
@@ -306,6 +307,7 @@ function Hero({ authed }: { authed: boolean }) {
             ))}
           </div>
         </div>
+
 
         {/* Right — product mockup */}
         <Reveal delay={120} className="relative min-w-0">
