@@ -547,28 +547,28 @@ function HowItWorks() {
 const BENEFIT_GROUPS = [
   {
     icon: Mic,
-    title: "Fact capture",
-    items: "Speak, type or paste rough notes once. Quill keeps the facts in one place so the team stops re-keying details.",
+    title: "Generate from one set of notes",
+    items: "Speak, type or paste the property facts once. Quill turns them into the listing pack instead of making the team re-key details across formats.",
   },
   {
     icon: ShieldCheck,
-    title: "Review prompts",
-    items: "Built-in prompts surface the details that often get missed before launch, so listings are complete first time.",
+    title: "Built-in review prompts",
+    items: "Missing details are flagged before launch, so admins and agents know what needs checking without rebuilding the copy manually.",
   },
   {
     icon: Building2,
     title: "Brand voice packs",
-    items: "Professional, Premium, Luxury and Heritage voices keep every listing on-brand, whoever presses generate.",
+    items: "Professional, Premium, Luxury and Heritage voices keep every listing on-brand without rewriting from scratch.",
   },
   {
     icon: ArrowLeftRight,
     title: "UK / US market-aware copy",
-    items: "Switch between UK portal-ready descriptions and US MLS-ready remarks without rewriting your process.",
+    items: "Descriptions and remarks adapt to UK portal or US MLS conventions from the same facts, so the team doesn't retype the same property twice.",
   },
   {
     icon: FileText,
     title: "Reusable outputs",
-    items: "One set of facts produces the listing description, short copy, social captions and buyer email — all editable before use.",
+    items: "One set of notes produces the listing description, short copy, social captions and buyer email — each editable, none written from scratch.",
   },
 ];
 
@@ -579,13 +579,13 @@ function ListingDetail() {
     <section className="border-y border-border bg-card/30 py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <Eyebrow>What Quill takes off the admin desk</Eyebrow>
+          <Eyebrow>WHAT QUILL TAKES OFF THE ADMIN DESK</Eyebrow>
           <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            Less retyping, more launching.
+            Less listing admin. More time back.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Quill handles the repetitive jobs that sit between instruction and launch, so your team can
-            spend time on the listing, not on the paperwork.
+            Quill generates the listing pack from one set of notes, so your team spends less time
+            retyping, rewriting and formatting property copy.
           </p>
           <div className="mt-6 flex flex-col items-center gap-2">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
