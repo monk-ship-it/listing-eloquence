@@ -42,20 +42,20 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Quill — Voice-to-Listing AI for UK & US Estate Agents" },
+      { title: "Quill — One Set of Notes, a Complete Listing Pack" },
       {
         name: "description",
         content:
-          "Speak your property notes into Quill to generate portal- and MLS-ready listings, social captions and buyer emails in minutes. AI listing writer for UK estate agents and US real estate agents.",
+          "Quill helps UK estate agents and US real estate teams turn one set of property notes into a full listing pack — portal or MLS description, teaser, social caption and buyer email. Less listing admin between instruction and launch.",
       },
       {
         property: "og:title",
-        content: "Quill — Voice-to-Listing AI for UK & US Estate Agents",
+        content: "Quill — One Set of Notes, a Complete Listing Pack",
       },
       {
         property: "og:description",
         content:
-          "Speak your property notes and generate portal- and MLS-ready listings, social captions and buyer emails in minutes.",
+          "Turn one set of property notes into a portal or MLS description, teaser, social caption and buyer email. Built for UK estate agents and US real estate teams.",
       },
       { property: "og:url", content: "https://copybymonk.com/" },
     ],
@@ -69,7 +69,7 @@ export const Route = createFileRoute("/")({
           name: "Quill",
           url: "https://copybymonk.com/",
           description:
-            "AI listing writer with voice dictation for UK estate agents and US real estate agents.",
+            "Quill turns one set of property notes into a complete listing pack for UK estate agents and US real estate teams.",
         }),
       },
       {
@@ -80,7 +80,7 @@ export const Route = createFileRoute("/")({
           name: "Quill",
           url: "https://copybymonk.com/",
           description:
-            "Quill generates portal- and MLS-ready property listings, social captions and buyer emails from voice or typed notes.",
+            "Quill removes repetitive listing admin between instruction and launch — generating the portal or MLS description, teaser, social caption and buyer email from one source of truth.",
         }),
       },
     ],
