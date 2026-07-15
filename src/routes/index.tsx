@@ -435,28 +435,6 @@ function VoiceValue() {
     {
       icon: Mic,
       step: "01",
-      title: "Capture the facts once",
-      body: "Speak, type or paste rough notes into one voice notes field, then confirm exact facts in the structured fields.",
-    },
-    {
-      icon: ClipboardPaste,
-      step: "02",
-      title: "Pick market and brand voice",
-      body: "Choose UK or US mode, then pick Professional, Premium, Luxury or Heritage so the copy matches the property and the agency.",
-    },
-    {
-      icon: Sparkles,
-      step: "03",
-      title: "Generate the full pack",
-      body: isUs
-        ? "Produce MLS public remarks, a short description, social captions, a buyer email and review notes — from the same source of truth."
-        : "Produce the portal description, a teaser, social captions, a buyer email and review notes — from the same source of truth.",
-    },
-  ];
-  const cards = [
-    {
-      icon: Mic,
-      step: "01",
       title: "Capture the instruction once",
       body: "Speak, type or paste rough notes from the valuation or viewing. One source of truth for every asset that follows.",
     },
