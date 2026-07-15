@@ -491,18 +491,18 @@ function HowItWorks() {
   const steps = [
     {
       icon: Mic,
-      title: "Capture the property once",
-      body: "Speak, type or paste the facts — valuation notes, room dimensions, features, the lot. One source of truth for every asset.",
+      title: "Capture the instruction once",
+      body: "Speak, type or paste rough notes from the valuation or viewing. One source of truth for every asset that follows.",
     },
     {
-      icon: Building2,
-      title: "Choose market and brand voice",
-      body: "Switch between UK and US mode, then pick Professional, Premium, Luxury or Heritage so tone matches the property.",
+      icon: ShieldCheck,
+      title: "Separate facts from copy",
+      body: "Quill extracts structured facts, then drafts copy from them — so accuracy and tone are handled independently.",
     },
     {
       icon: Sparkles,
-      title: "Generate the full pack",
-      body: "Listing description, short copy, social caption, buyer email and review notes — drafted together and fully editable before use.",
+      title: "Produce the full pack",
+      body: "Listing description, short copy, social captions, buyer email and review notes — drafted together and fully editable before use.",
     },
   ];
   return (
