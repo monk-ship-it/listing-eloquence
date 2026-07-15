@@ -233,7 +233,6 @@ function heroChips(market: MarketId): string[] {
 function Hero({ authed }: { authed: boolean }) {
   const { market } = useMarket();
   const isUs = market === "us";
-  const audience = MARKETS[market].audience;
   return (
     <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-25" />
@@ -262,15 +261,15 @@ function Hero({ authed }: { authed: boolean }) {
           </h1>
 
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {APP_NAME} helps {audience} remove the slow admin between instruction and launch.
-            Speak, type or paste the facts once, choose the brand voice, and generate the{" "}
-            {isUs ? "MLS description" : "portal description"}, short copy, social caption and
-            buyer email from the same source of truth.
+            {APP_NAME} helps UK estate agents and US real estate teams remove the slow admin between
+            instruction and launch. Speak, type or paste the facts once, choose the brand voice, and
+            generate the listing description, short copy, captions and buyer email from the same
+            source of truth.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <CtaButton authed={authed} size="lg" className="w-full sm:w-auto">
-              Create your first pack
+              Create first pack
             </CtaButton>
             <Button
               asChild
@@ -278,10 +277,7 @@ function Hero({ authed }: { authed: boolean }) {
               variant="outline"
               className="w-full border-border bg-card/60 hover:bg-card sm:w-auto"
             >
-              <a href="#example">See a worked example</a>
-            </Button>
-            <Button asChild size="lg" variant="ghost" className="w-full sm:w-auto">
-              <a href="#voice-demo">Try voice dictation</a>
+              <a href="#workflow">See the workflow</a>
             </Button>
           </div>
 
@@ -438,26 +434,26 @@ function VoiceValue() {
     {
       icon: Mic,
       step: "01",
-      title: "Capture the facts once",
-      body: "Speak, type or paste rough notes into one voice notes field, then confirm exact facts in the structured fields.",
+      title: "Capture the instruction once",
+      body: "Speak, type or paste rough notes from the valuation or viewing. One source of truth for every asset that follows.",
     },
     {
-      icon: ClipboardPaste,
+      icon: ShieldCheck,
       step: "02",
-      title: "Pick market and brand voice",
-      body: "Choose UK or US mode, then pick Professional, Premium, Luxury or Heritage so the copy matches the property and the agency.",
+      title: "Separate facts from copy",
+      body: "Quill extracts the structured facts, then drafts copy from them — so accuracy and tone are handled independently.",
     },
     {
       icon: Sparkles,
       step: "03",
-      title: "Generate the full pack",
+      title: "Produce the full pack",
       body: isUs
-        ? "Produce MLS public remarks, a short description, social captions, a buyer email and review notes — from the same source of truth."
-        : "Produce the portal description, a teaser, social captions, a buyer email and review notes — from the same source of truth.",
+        ? "Generate MLS public remarks, a short description, social captions, buyer email and review notes — all from the same facts."
+        : "Generate the portal description, a teaser, social captions, buyer email and review notes — all from the same facts.",
     },
   ];
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
+    <section id="workflow" className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
       <Reveal className="mx-auto max-w-2xl text-center">
         <Eyebrow>The workflow</Eyebrow>
         <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
@@ -494,18 +490,18 @@ function HowItWorks() {
   const steps = [
     {
       icon: Mic,
-      title: "Capture the property once",
-      body: "Speak, type or paste the facts — valuation notes, room dimensions, features, the lot. One source of truth for every asset.",
+      title: "Capture the instruction once",
+      body: "Speak, type or paste rough notes from the valuation or viewing. One source of truth for every asset that follows.",
     },
     {
-      icon: Building2,
-      title: "Choose market and brand voice",
-      body: "Switch between UK and US mode, then pick Professional, Premium, Luxury or Heritage so tone matches the property.",
+      icon: ShieldCheck,
+      title: "Separate facts from copy",
+      body: "Quill extracts structured facts, then drafts copy from them — so accuracy and tone are handled independently.",
     },
     {
       icon: Sparkles,
-      title: "Generate the full pack",
-      body: "Listing description, short copy, social caption, buyer email and review notes — drafted together and fully editable before use.",
+      title: "Produce the full pack",
+      body: "Listing description, short copy, social captions, buyer email and review notes — drafted together and fully editable before use.",
     },
   ];
   return (
@@ -548,78 +544,48 @@ function HowItWorks() {
 
 /* ----------------------------- Listing detail ------------------------------ */
 
-const DETAIL_GROUPS_US = [
+const BENEFIT_GROUPS = [
   {
-    icon: Home,
-    title: "Core MLS facts",
-    items: "List price, address & location, property type, beds, baths, square footage, lot size, year built",
+    icon: Mic,
+    title: "Fact capture",
+    items: "Speak, type or paste rough notes once. Quill keeps the facts in one place so the team stops re-keying details.",
   },
   {
-    icon: Wallet,
-    title: "Ownership & costs",
-    items: "Ownership / condo status, HOA dues, property taxes, price qualifiers",
+    icon: ShieldCheck,
+    title: "Review prompts",
+    items: "Built-in prompts surface the details that often get missed before launch, so listings are complete first time.",
   },
   {
-    icon: Thermometer,
-    title: "Home systems",
-    items: "Heating & cooling, utilities, internet, parking & garage, pool & patio",
+    icon: Building2,
+    title: "Brand voice packs",
+    items: "Professional, Premium, Luxury and Heritage voices keep every listing on-brand, whoever presses generate.",
   },
   {
-    icon: MapPin,
-    title: "Location & compliance",
-    items: "School district & nearby amenities stated factually, disclosures, condition & showing notes — Fair Housing safe",
+    icon: ArrowLeftRight,
+    title: "UK / US market-aware copy",
+    items: "Switch between UK portal-ready descriptions and US MLS-ready remarks without rewriting your process.",
   },
   {
-    icon: Megaphone,
-    title: "Marketing outputs",
-    items: "MLS public remarks, short descriptions, social captions, buyer emails, media & floor-plan notes",
-  },
-];
-
-const DETAIL_GROUPS_UK = [
-  {
-    icon: Home,
-    title: "Core property facts",
-    items: "Asking price, address & location, property type, bedrooms, bathrooms, receptions, room dimensions",
-  },
-  {
-    icon: Wallet,
-    title: "Material Information",
-    items: "Tenure, lease years, Council Tax band, EPC rating, price qualifiers",
-  },
-  {
-    icon: Thermometer,
-    title: "Home systems",
-    items: "Heating, utilities, broadband, parking & garage, outside space & garden",
-  },
-  {
-    icon: MapPin,
-    title: "Location & detail",
-    items: "Schools, transport & amenities, period features, condition & viewing notes",
-  },
-  {
-    icon: Megaphone,
-    title: "Marketing outputs",
-    items: "Portal descriptions, teaser summaries, social captions, buyer emails, media & floor-plan notes",
+    icon: FileText,
+    title: "Reusable outputs",
+    items: "One set of facts produces the listing description, short copy, social captions and buyer email — all editable before use.",
   },
 ];
 
 function ListingDetail() {
   const { market } = useMarket();
   const isUs = market === "us";
-  const groups = isUs ? DETAIL_GROUPS_US : DETAIL_GROUPS_UK;
   return (
     <section className="border-y border-border bg-card/30 py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <Eyebrow>{isUs ? "Built for US MLS workflows" : "Built for UK listing workflows"}</Eyebrow>
+          <Eyebrow>What Quill takes off the admin desk</Eyebrow>
           <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            {isUs ? "Every MLS detail, in one pack." : "Every UK listing detail, in one pack."}
+            Less retyping, more launching.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            {isUs
-              ? "Quill captures structured facts the way MLS data is organised — so public remarks stay accurate, disclosures are surfaced and nothing important goes missing before you publish."
-              : "Quill captures structured facts, not just prose, so your listings stay accurate, consistent with Material Information guidance and free of last-minute fact chases."}
+            Quill handles the repetitive jobs that sit between instruction and launch, so your team can
+            spend time on the listing, not on the paperwork.
           </p>
           <div className="mt-6 flex flex-col items-center gap-2">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -629,7 +595,7 @@ function ListingDetail() {
           </div>
         </Reveal>
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {groups.map((g, i) => (
+          {BENEFIT_GROUPS.map((g, i) => (
             <Reveal key={g.title} delay={i * 80} className="h-full">
               <div className="flex h-full flex-col rounded-2xl border border-border/70 bg-card/60 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card">
                 <span className="grid h-11 w-11 place-items-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
@@ -1050,7 +1016,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
             ))}
           </ul>
           <CtaButton authed={authed} size="lg" className="mt-8">
-            Try it on your next instruction
+            Create first pack
           </CtaButton>
         </Reveal>
 
@@ -1238,13 +1204,13 @@ function FinalCta({ authed }: { authed: boolean }) {
           <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-gold/10 blur-3xl" />
           <div className="pointer-events-none absolute inset-0 bg-grid opacity-[0.15]" />
           <div className="relative mx-auto max-w-2xl">
-            <span className="eyebrow inline-block">Try it on your next instruction</span>
+            <span className="eyebrow inline-block">Ready when your next instruction lands</span>
             <h2 className="mt-4 text-balance font-display text-3xl font-semibold sm:text-4xl lg:text-5xl">
-              Take the admin out of your next listing launch.
+              Test it on the next listing your team has to launch.
             </h2>
             <p className="mt-5 text-lg text-muted-foreground">
-              Bring your next real instruction. Capture the property once and let Quill hand you
-              a full, brand-consistent listing pack — ready to review, not rewritten from scratch.
+              Bring a real instruction, capture the property once and let Quill hand you a full,
+              brand-consistent listing pack — ready to review, not rewritten from scratch.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <CtaButton authed={authed} size="lg" className="w-full sm:w-auto">
