@@ -453,8 +453,30 @@ function VoiceValue() {
         : "Produce the portal description, a teaser, social captions, a buyer email and review notes — from the same source of truth.",
     },
   ];
+  const cards = [
+    {
+      icon: Mic,
+      step: "01",
+      title: "Capture the instruction once",
+      body: "Speak, type or paste rough notes from the valuation or viewing. One source of truth for every asset that follows.",
+    },
+    {
+      icon: ShieldCheck,
+      step: "02",
+      title: "Separate facts from copy",
+      body: "Quill extracts the structured facts, then drafts copy from them — so accuracy and tone are handled independently.",
+    },
+    {
+      icon: Sparkles,
+      step: "03",
+      title: "Produce the full pack",
+      body: isUs
+        ? "Generate MLS public remarks, a short description, social captions, buyer email and review notes — all from the same facts."
+        : "Generate the portal description, a teaser, social captions, buyer email and review notes — all from the same facts.",
+    },
+  ];
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
+    <section id="workflow" className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
       <Reveal className="mx-auto max-w-2xl text-center">
         <Eyebrow>The workflow</Eyebrow>
         <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
