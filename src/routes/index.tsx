@@ -1127,10 +1127,11 @@ function Pricing({ authed }: { authed: boolean }) {
         <Reveal className="mx-auto max-w-2xl text-center">
           <Eyebrow>Pricing</Eyebrow>
           <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            Plans that scale with your listings.
+            Plans that scale with your instructions.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Every plan includes voice dictation, all four brand voices and the full social pack.
+            Every plan includes UK and US markets, all four brand voices, voice dictation and the
+            full listing pack — description, teaser, social captions and buyer email.
           </p>
           <div className="mt-6 flex justify-center">
             <MarketToggle />
