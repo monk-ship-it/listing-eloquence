@@ -42,20 +42,20 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Quill — Voice-to-Listing AI for UK & US Estate Agents" },
+      { title: "Quill — One Set of Notes, a Complete Listing Pack" },
       {
         name: "description",
         content:
-          "Speak your property notes into Quill to generate portal- and MLS-ready listings, social captions and buyer emails in minutes. AI listing writer for UK estate agents and US real estate agents.",
+          "Quill helps UK estate agents and US real estate teams turn one set of property notes into a full listing pack — portal or MLS description, teaser, social caption and buyer email. Less listing admin between instruction and launch.",
       },
       {
         property: "og:title",
-        content: "Quill — Voice-to-Listing AI for UK & US Estate Agents",
+        content: "Quill — One Set of Notes, a Complete Listing Pack",
       },
       {
         property: "og:description",
         content:
-          "Speak your property notes and generate portal- and MLS-ready listings, social captions and buyer emails in minutes.",
+          "Turn one set of property notes into a portal or MLS description, teaser, social caption and buyer email. Built for UK estate agents and US real estate teams.",
       },
       { property: "og:url", content: "https://copybymonk.com/" },
     ],
@@ -69,7 +69,7 @@ export const Route = createFileRoute("/")({
           name: "Quill",
           url: "https://copybymonk.com/",
           description:
-            "AI listing writer with voice dictation for UK estate agents and US real estate agents.",
+            "Quill turns one set of property notes into a complete listing pack for UK estate agents and US real estate teams.",
         }),
       },
       {
@@ -80,7 +80,7 @@ export const Route = createFileRoute("/")({
           name: "Quill",
           url: "https://copybymonk.com/",
           description:
-            "Quill generates portal- and MLS-ready property listings, social captions and buyer emails from voice or typed notes.",
+            "Quill removes repetitive listing admin between instruction and launch — generating the portal or MLS description, teaser, social caption and buyer email from one source of truth.",
         }),
       },
     ],
@@ -223,17 +223,17 @@ function Header({ user }: { user: boolean }) {
 
 function heroChips(market: MarketId): string[] {
   return [
-    market === "us" ? "Built for US real estate agents" : "Built for UK estate agents",
-    market === "us" ? "MLS-ready copy" : "Portal-ready copy",
-    "Voice notes in minutes",
+    market === "us" ? "Built for US real estate teams" : "Built for UK estate agencies",
+    market === "us" ? "MLS-ready remarks" : "Portal-ready descriptions",
+    "One source of truth for every asset",
     "No CRM migration",
   ];
 }
 
 function Hero({ authed }: { authed: boolean }) {
   const { market } = useMarket();
+  const isUs = market === "us";
   const audience = MARKETS[market].audience;
-  const portalWord = market === "us" ? "MLS-ready" : "portal-ready";
   return (
     <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-25" />
@@ -242,7 +242,7 @@ function Hero({ authed }: { authed: boolean }) {
         {/* Left — critical above-the-fold content renders immediately (no reveal). */}
         <div className="min-w-0">
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-            <AudioLines className="h-3.5 w-3.5" /> AI listing writer with voice dictation
+            <AudioLines className="h-3.5 w-3.5" /> One set of notes → a complete listing pack
           </span>
 
           <div className="mt-5">
@@ -252,24 +252,25 @@ function Hero({ authed }: { authed: boolean }) {
             <MarketToggle />
           </div>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            Switch between UK portal-ready copy and US MLS-ready copy. Quill adapts terminology,
-            pricing, listing fields and compliance guidance.
+            Switching adapts terminology, pricing, listing fields and compliance guidance —
+            {isUs ? " US mode writes MLS-ready remarks." : " UK mode writes portal-ready descriptions."}
           </p>
 
           <h1 className="mt-5 text-balance font-display text-[clamp(2rem,8vw,2.6rem)] font-semibold leading-[1.12] sm:mt-6 sm:text-5xl lg:text-[3.6rem]">
-            AI listing writer for UK estate agents and US real estate agents —{" "}
-            <span className="text-gradient">just say the words.</span>
+            Turn one set of notes into a{" "}
+            <span className="text-gradient">complete listing pack.</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {APP_NAME} lets {audience} speak, type or paste property details, choose a brand voice,
-            and generate {portalWord} listings, social captions and buyer emails in minutes — without
-            another CRM to manage.
+            {APP_NAME} helps {audience} remove the slow admin between instruction and launch.
+            Speak, type or paste the facts once, choose the brand voice, and generate the{" "}
+            {isUs ? "MLS description" : "portal description"}, short copy, social caption and
+            buyer email from the same source of truth.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <CtaButton authed={authed} size="lg" className="w-full sm:w-auto">
-              Start free trial
+              Create your first pack
             </CtaButton>
             <Button
               asChild
@@ -277,10 +278,10 @@ function Hero({ authed }: { authed: boolean }) {
               variant="outline"
               className="w-full border-border bg-card/60 hover:bg-card sm:w-auto"
             >
-              <a href="#voice-demo">Try voice dictation</a>
+              <a href="#example">See a worked example</a>
             </Button>
             <Button asChild size="lg" variant="ghost" className="w-full sm:w-auto">
-              <a href="#example">See an example</a>
+              <a href="#voice-demo">Try voice dictation</a>
             </Button>
           </div>
 
@@ -306,6 +307,7 @@ function Hero({ authed }: { authed: boolean }) {
             ))}
           </div>
         </div>
+
 
         {/* Right — product mockup */}
         <Reveal delay={120} className="relative min-w-0">
@@ -436,34 +438,34 @@ function VoiceValue() {
     {
       icon: Mic,
       step: "01",
-      title: "Dictate full property notes",
-      body: "Speak rough notes into one voice notes field, then add exact facts in the structured fields.",
+      title: "Capture the facts once",
+      body: "Speak, type or paste rough notes into one voice notes field, then confirm exact facts in the structured fields.",
     },
     {
       icon: ClipboardPaste,
       step: "02",
-      title: "Type or paste details",
-      body: "Enter facts manually or paste rough notes, valuation text or existing property information.",
+      title: "Pick market and brand voice",
+      body: "Choose UK or US mode, then pick Professional, Premium, Luxury or Heritage so the copy matches the property and the agency.",
     },
     {
       icon: Sparkles,
       step: "03",
       title: "Generate the full pack",
       body: isUs
-        ? "Produce the MLS listing description, social captions, buyer email and seller update in one pass."
-        : "Produce the portal description, social captions, buyer email and vendor update in one pass.",
+        ? "Produce MLS public remarks, a short description, social captions, a buyer email and review notes — from the same source of truth."
+        : "Produce the portal description, a teaser, social captions, a buyer email and review notes — from the same source of truth.",
     },
   ];
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
       <Reveal className="mx-auto max-w-2xl text-center">
-        <Eyebrow>Three ways in</Eyebrow>
+        <Eyebrow>The workflow</Eyebrow>
         <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-          Built for agents who need notes captured fast.
+          Built to remove listing admin, not to replace agents.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Dictate between {isUs ? "showings" : "viewings"}, type at your desk or paste existing
-          instructions. Quill turns any of them into a complete listing pack.
+          Quill sits between instruction and launch. Capture the property once and hand your team
+          a consistent, {isUs ? "MLS-ready" : "portal-ready"} pack instead of copy-and-paste work.
         </p>
       </Reveal>
       <div className="mt-12 grid gap-4 md:grid-cols-3">
@@ -492,18 +494,18 @@ function HowItWorks() {
   const steps = [
     {
       icon: Mic,
-      title: "Speak, type or paste the details",
-      body: "Add property notes by voice, typing or copied text from existing instructions.",
+      title: "Capture the property once",
+      body: "Speak, type or paste the facts — valuation notes, room dimensions, features, the lot. One source of truth for every asset.",
     },
     {
       icon: Building2,
-      title: "Choose the brand voice",
-      body: "Select Professional, Premium, Luxury or Heritage to match the property.",
+      title: "Choose market and brand voice",
+      body: "Switch between UK and US mode, then pick Professional, Premium, Luxury or Heritage so tone matches the property.",
     },
     {
       icon: Sparkles,
-      title: "Generate and edit",
-      body: "Quill drafts the listing, captions and emails. You stay in control before anything is used.",
+      title: "Generate the full pack",
+      body: "Listing description, short copy, social caption, buyer email and review notes — drafted together and fully editable before use.",
     },
   ];
   return (
@@ -512,8 +514,12 @@ function HowItWorks() {
         <Reveal className="mx-auto max-w-2xl text-center">
           <Eyebrow>How it works</Eyebrow>
           <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            From spoken notes to finished listing pack.
+            One workflow for the whole team.
           </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Practical for negotiators, admins and branch managers — the same source of truth
+            drives every asset your listing needs.
+          </p>
         </Reveal>
         <div className="relative mt-14 grid gap-8 md:grid-cols-3 md:gap-5">
           <div className="pointer-events-none absolute left-[16%] right-[16%] top-[2.4rem] hidden h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent md:block" />
@@ -608,12 +614,12 @@ function ListingDetail() {
         <Reveal className="mx-auto max-w-2xl text-center">
           <Eyebrow>{isUs ? "Built for US MLS workflows" : "Built for UK listing workflows"}</Eyebrow>
           <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            {isUs ? "Every US listing detail, covered." : "Every UK listing detail, covered."}
+            {isUs ? "Every MLS detail, in one pack." : "Every UK listing detail, in one pack."}
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             {isUs
-              ? "Quill captures structured property facts — the way MLS data is organised — not just prose, so your public remarks stay accurate in a competitive market."
-              : "Quill captures structured property facts, not just prose, so your listings stay accurate and compliant with Material Information guidance."}
+              ? "Quill captures structured facts the way MLS data is organised — so public remarks stay accurate, disclosures are surfaced and nothing important goes missing before you publish."
+              : "Quill captures structured facts, not just prose, so your listings stay accurate, consistent with Material Information guidance and free of last-minute fact chases."}
           </p>
           <div className="mt-6 flex flex-col items-center gap-2">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -678,10 +684,11 @@ function Voices() {
       <Reveal className="mx-auto max-w-2xl text-center">
         <Eyebrow>Brand voices</Eyebrow>
         <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-          Four crafted voices for different properties.
+          Four brand voices for a consistent agency tone.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Choose the tone that fits the home, the market and the agency brand.
+          Pick the voice that fits the property and the agency — every asset in the pack is
+          drafted in the same tone, so brand consistency doesn't rely on the person on the keyboard.
         </p>
       </Reveal>
       <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -761,10 +768,11 @@ function LiveExample() {
         <Reveal className="mx-auto max-w-2xl text-center">
           <Eyebrow>Worked example</Eyebrow>
           <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            See what Quill creates from simple property notes.
+            One set of notes. A complete listing pack.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Speak, type or paste the details once. Quill shapes them into the formats agents need.
+            Same source of truth, every asset. See how a handful of property facts becomes the
+            listing description, social captions and a buyer email — brand-consistent and ready to review.
           </p>
         </Reveal>
 
@@ -1025,11 +1033,11 @@ function VoiceDictation({ authed }: { authed: boolean }) {
             <Mic className="h-3.5 w-3.5" /> Voice dictation
           </span>
           <h2 className="mt-5 font-display text-3xl font-semibold sm:text-4xl">
-            Rough voice notes become structured, editable listing detail.
+            Capture the property in the car, not at the desk.
           </h2>
           <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted-foreground">
-            Speak the way you would between viewings. Quill keeps the facts, drops the filler and
-            returns clean copy you can edit before it goes anywhere.
+            Rough voice notes become structured, editable listing detail. Quill keeps the facts,
+            drops the filler and returns clean copy your team can review before anything goes live.
           </p>
           <ul className="mt-7 space-y-3">
             {bullets.map((b) => (
@@ -1042,7 +1050,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
             ))}
           </ul>
           <CtaButton authed={authed} size="lg" className="mt-8">
-            Try voice dictation free
+            Try it on your next instruction
           </CtaButton>
         </Reveal>
 
@@ -1119,10 +1127,11 @@ function Pricing({ authed }: { authed: boolean }) {
         <Reveal className="mx-auto max-w-2xl text-center">
           <Eyebrow>Pricing</Eyebrow>
           <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            Plans that scale with your listings.
+            Plans that scale with your instructions.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Every plan includes voice dictation, all four brand voices and the full social pack.
+            Every plan includes UK and US markets, all four brand voices, voice dictation and the
+            full listing pack — description, teaser, social captions and buyer email.
           </p>
           <div className="mt-6 flex justify-center">
             <MarketToggle />
@@ -1229,16 +1238,17 @@ function FinalCta({ authed }: { authed: boolean }) {
           <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-gold/10 blur-3xl" />
           <div className="pointer-events-none absolute inset-0 bg-grid opacity-[0.15]" />
           <div className="relative mx-auto max-w-2xl">
-            <span className="eyebrow inline-block">Start today</span>
+            <span className="eyebrow inline-block">Try it on your next instruction</span>
             <h2 className="mt-4 text-balance font-display text-3xl font-semibold sm:text-4xl lg:text-5xl">
-              Your next listing does not need to start with a blank page.
+              Take the admin out of your next listing launch.
             </h2>
             <p className="mt-5 text-lg text-muted-foreground">
-              Speak, type or paste the notes. Choose the voice. Generate the listing pack.
+              Bring your next real instruction. Capture the property once and let Quill hand you
+              a full, brand-consistent listing pack — ready to review, not rewritten from scratch.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <CtaButton authed={authed} size="lg" className="w-full sm:w-auto">
-                Start free trial
+                Generate a listing pack
               </CtaButton>
               <Button
                 asChild
@@ -1246,7 +1256,7 @@ function FinalCta({ authed }: { authed: boolean }) {
                 variant="outline"
                 className="w-full border-border bg-card/60 hover:bg-card sm:w-auto"
               >
-                <a href="#voice-demo">Try voice dictation</a>
+                <a href="#example">See a worked example</a>
               </Button>
             </div>
             <p className="mt-5 flex items-center justify-center gap-2 text-sm text-muted-foreground">
