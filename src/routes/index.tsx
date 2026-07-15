@@ -768,10 +768,11 @@ function LiveExample() {
         <Reveal className="mx-auto max-w-2xl text-center">
           <Eyebrow>Worked example</Eyebrow>
           <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            See what Quill creates from simple property notes.
+            One set of notes. A complete listing pack.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Speak, type or paste the details once. Quill shapes them into the formats agents need.
+            Same source of truth, every asset. See how a handful of property facts becomes the
+            listing description, social captions and a buyer email — brand-consistent and ready to review.
           </p>
         </Reveal>
 
