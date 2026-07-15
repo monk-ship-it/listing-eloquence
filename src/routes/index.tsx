@@ -270,7 +270,7 @@ function Hero({ authed }: { authed: boolean }) {
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <CtaButton authed={authed} size="lg" className="w-full sm:w-auto">
-              Create your first pack
+              Create first pack
             </CtaButton>
             <Button
               asChild
@@ -278,10 +278,7 @@ function Hero({ authed }: { authed: boolean }) {
               variant="outline"
               className="w-full border-border bg-card/60 hover:bg-card sm:w-auto"
             >
-              <a href="#example">See a worked example</a>
-            </Button>
-            <Button asChild size="lg" variant="ghost" className="w-full sm:w-auto">
-              <a href="#voice-demo">Try voice dictation</a>
+              <a href="#workflow">See the workflow</a>
             </Button>
           </div>
 
