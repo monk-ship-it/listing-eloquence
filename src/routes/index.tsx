@@ -438,34 +438,34 @@ function VoiceValue() {
     {
       icon: Mic,
       step: "01",
-      title: "Dictate full property notes",
-      body: "Speak rough notes into one voice notes field, then add exact facts in the structured fields.",
+      title: "Capture the facts once",
+      body: "Speak, type or paste rough notes into one voice notes field, then confirm exact facts in the structured fields.",
     },
     {
       icon: ClipboardPaste,
       step: "02",
-      title: "Type or paste details",
-      body: "Enter facts manually or paste rough notes, valuation text or existing property information.",
+      title: "Pick market and brand voice",
+      body: "Choose UK or US mode, then pick Professional, Premium, Luxury or Heritage so the copy matches the property and the agency.",
     },
     {
       icon: Sparkles,
       step: "03",
       title: "Generate the full pack",
       body: isUs
-        ? "Produce the MLS listing description, social captions, buyer email and seller update in one pass."
-        : "Produce the portal description, social captions, buyer email and vendor update in one pass.",
+        ? "Produce MLS public remarks, a short description, social captions, a buyer email and review notes — from the same source of truth."
+        : "Produce the portal description, a teaser, social captions, a buyer email and review notes — from the same source of truth.",
     },
   ];
   return (
     <section className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
       <Reveal className="mx-auto max-w-2xl text-center">
-        <Eyebrow>Three ways in</Eyebrow>
+        <Eyebrow>The workflow</Eyebrow>
         <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-          Built for agents who need notes captured fast.
+          Built to remove listing admin, not to replace agents.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Dictate between {isUs ? "showings" : "viewings"}, type at your desk or paste existing
-          instructions. Quill turns any of them into a complete listing pack.
+          Quill sits between instruction and launch. Capture the property once and hand your team
+          a consistent, {isUs ? "MLS-ready" : "portal-ready"} pack instead of copy-and-paste work.
         </p>
       </Reveal>
       <div className="mt-12 grid gap-4 md:grid-cols-3">
