@@ -1205,13 +1205,13 @@ function FinalCta({ authed }: { authed: boolean }) {
           <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-gold/10 blur-3xl" />
           <div className="pointer-events-none absolute inset-0 bg-grid opacity-[0.15]" />
           <div className="relative mx-auto max-w-2xl">
-            <span className="eyebrow inline-block">Try it on your next instruction</span>
+            <span className="eyebrow inline-block">Ready when your next instruction lands</span>
             <h2 className="mt-4 text-balance font-display text-3xl font-semibold sm:text-4xl lg:text-5xl">
-              Take the admin out of your next listing launch.
+              Test it on the next listing your team has to launch.
             </h2>
             <p className="mt-5 text-lg text-muted-foreground">
-              Bring your next real instruction. Capture the property once and let Quill hand you
-              a full, brand-consistent listing pack — ready to review, not rewritten from scratch.
+              Bring a real instruction, capture the property once and let Quill hand you a full,
+              brand-consistent listing pack — ready to review, not rewritten from scratch.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <CtaButton authed={authed} size="lg" className="w-full sm:w-auto">
