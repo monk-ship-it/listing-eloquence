@@ -262,10 +262,10 @@ function Hero({ authed }: { authed: boolean }) {
           </h1>
 
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {APP_NAME} helps {audience} remove the slow admin between instruction and launch.
-            Speak, type or paste the facts once, choose the brand voice, and generate the{" "}
-            {isUs ? "MLS description" : "portal description"}, short copy, social caption and
-            buyer email from the same source of truth.
+            {APP_NAME} helps UK estate agents and US real estate teams remove the slow admin between
+            instruction and launch. Speak, type or paste the facts once, choose the brand voice, and
+            generate the listing description, short copy, captions and buyer email from the same
+            source of truth.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
