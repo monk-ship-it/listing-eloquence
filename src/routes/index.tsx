@@ -233,7 +233,6 @@ function heroChips(market: MarketId): string[] {
 function Hero({ authed }: { authed: boolean }) {
   const { market } = useMarket();
   const isUs = market === "us";
-  const audience = MARKETS[market].audience;
   return (
     <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-25" />
