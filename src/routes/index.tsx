@@ -684,10 +684,11 @@ function Voices() {
       <Reveal className="mx-auto max-w-2xl text-center">
         <Eyebrow>Brand voices</Eyebrow>
         <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-          Four crafted voices for different properties.
+          Four brand voices for a consistent agency tone.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Choose the tone that fits the home, the market and the agency brand.
+          Pick the voice that fits the property and the agency — every asset in the pack is
+          drafted in the same tone, so brand consistency doesn't rely on the person on the keyboard.
         </p>
       </Reveal>
       <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
