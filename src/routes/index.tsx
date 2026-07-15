@@ -1033,11 +1033,11 @@ function VoiceDictation({ authed }: { authed: boolean }) {
             <Mic className="h-3.5 w-3.5" /> Voice dictation
           </span>
           <h2 className="mt-5 font-display text-3xl font-semibold sm:text-4xl">
-            Rough voice notes become structured, editable listing detail.
+            Capture the property in the car, not at the desk.
           </h2>
           <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted-foreground">
-            Speak the way you would between viewings. Quill keeps the facts, drops the filler and
-            returns clean copy you can edit before it goes anywhere.
+            Rough voice notes become structured, editable listing detail. Quill keeps the facts,
+            drops the filler and returns clean copy your team can review before anything goes live.
           </p>
           <ul className="mt-7 space-y-3">
             {bullets.map((b) => (
@@ -1050,7 +1050,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
             ))}
           </ul>
           <CtaButton authed={authed} size="lg" className="mt-8">
-            Try voice dictation free
+            Try it on your next instruction
           </CtaButton>
         </Reveal>
 
