@@ -1238,16 +1238,17 @@ function FinalCta({ authed }: { authed: boolean }) {
           <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-gold/10 blur-3xl" />
           <div className="pointer-events-none absolute inset-0 bg-grid opacity-[0.15]" />
           <div className="relative mx-auto max-w-2xl">
-            <span className="eyebrow inline-block">Start today</span>
+            <span className="eyebrow inline-block">Try it on your next instruction</span>
             <h2 className="mt-4 text-balance font-display text-3xl font-semibold sm:text-4xl lg:text-5xl">
-              Your next listing does not need to start with a blank page.
+              Take the admin out of your next listing launch.
             </h2>
             <p className="mt-5 text-lg text-muted-foreground">
-              Speak, type or paste the notes. Choose the voice. Generate the listing pack.
+              Bring your next real instruction. Capture the property once and let Quill hand you
+              a full, brand-consistent listing pack — ready to review, not rewritten from scratch.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <CtaButton authed={authed} size="lg" className="w-full sm:w-auto">
-                Start free trial
+                Generate a listing pack
               </CtaButton>
               <Button
                 asChild
@@ -1255,7 +1256,7 @@ function FinalCta({ authed }: { authed: boolean }) {
                 variant="outline"
                 className="w-full border-border bg-card/60 hover:bg-card sm:w-auto"
               >
-                <a href="#voice-demo">Try voice dictation</a>
+                <a href="#example">See a worked example</a>
               </Button>
             </div>
             <p className="mt-5 flex items-center justify-center gap-2 text-sm text-muted-foreground">
