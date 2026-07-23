@@ -41,11 +41,6 @@ async function copyToast(text: string, label = "Copied to clipboard.") {
 }
 
 
-function copy(text: string) {
-  navigator.clipboard.writeText(text);
-  toast.success("Copied to clipboard.");
-}
-
 function GeneratorPage() {
   const generate = useServerFn(generateListing);
   const subFn = useServerFn(getMySubscription);
@@ -54,10 +49,13 @@ function GeneratorPage() {
   const usageQuery = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
   const queryClient = useQueryClient();
 
-
   const [input, setInput] = useState<ListingInput>(EMPTY_INPUT);
   const [output, setOutput] = useState<ListingOutput | null>(null);
   const [busy, setBusy] = useState(false);
+  // Immediate lock so rapid double-submits can't race the disabled UI state.
+  const inFlight = useRef(false);
+  // Bumped on every request; late responses whose id doesn't match are ignored.
+  const requestId = useRef(0);
 
   const hasAccess = subQuery.data?.hasAccess ?? false;
   const usage = usageQuery.data;
