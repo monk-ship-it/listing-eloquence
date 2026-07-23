@@ -338,6 +338,16 @@ function HistoryItem({
             </div>
           )}
 
+          {item.output.emailBlast && (
+            <div className="mt-5">
+              <EmailBlastCard
+                emailBlast={item.output.emailBlast}
+                keyFeatures={features}
+                onCopy={(text) => doCopy(text, "Email Blast copied.")}
+              />
+            </div>
+          )}
+
           {item.output.social && item.output.social.length > 0 && (
             <div className="mt-5">
               <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
