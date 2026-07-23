@@ -1,9 +1,9 @@
 # Quill
 
-> Quill turns one set of property notes into a complete listing pack for UK estate agents and US real estate teams. Speak or type the facts once and generate a portal-ready description (or MLS-ready remarks), a set of Key Features bullets, a teaser summary, ready-to-post social captions and a buyer email.
+> Quill turns one set of property notes into a complete listing pack for UK estate agents and US real estate teams. Speak or type the facts once and generate a portal-ready description (or MLS-ready remarks), 6–10 generated Key Features bullets, a short teaser summary and social captions for Instagram, Facebook and X.
 
 ## Pages
 
 - [Home](/): Product overview, UK/US markets, brand voices, workflow and pricing.
-- [UK property listing generator](/uk-property-listing-generator): Deep dive on the UK workflow — Material Information, Rightmove/OnTheMarket-style descriptions, Key Features bullets and compliance.
-- [US real estate listing generator](/us-real-estate-listing-generator): Deep dive on the US workflow — MLS remarks, Key Features highlights, Fair Housing guidance and disclosures.
+- [UK property listing generator](/uk-property-listing-generator): Deep dive on the UK workflow — Material Information, Rightmove/OnTheMarket-style descriptions, generated Key Features bullets and compliance.
+- [US real estate listing generator](/us-real-estate-listing-generator): Deep dive on the US workflow — MLS remarks, generated Key Features highlights, Fair Housing guidance and disclosures.
