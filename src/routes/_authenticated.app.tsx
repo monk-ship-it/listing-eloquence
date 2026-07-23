@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { VOICES, type VoiceId } from "@/lib/voices";
@@ -22,12 +21,25 @@ import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME, MARKETS, type MarketId } from "@/lib/config";
 import { VoiceNotes } from "@/components/VoiceNotes";
+import { copyText, buildCopyAllText, formatKeyFeaturesBlock } from "@/lib/clipboard";
 import { Copy, Sparkles, RefreshCw, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app")({
-  head: () => ({ meta: [{ title: `Generator — ${APP_NAME}` }] }),
+  head: () => ({
+    meta: [
+      { title: `Generator — ${APP_NAME}` },
+      { name: "robots", content: "noindex,follow" },
+    ],
+  }),
   component: GeneratorPage,
 });
+
+async function copyToast(text: string, label = "Copied to clipboard.") {
+  const ok = await copyText(text);
+  if (ok) toast.success(label);
+  else toast.error("Couldn't copy — please copy manually.");
+}
+
 
 function copy(text: string) {
   navigator.clipboard.writeText(text);
