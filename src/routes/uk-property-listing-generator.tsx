@@ -253,10 +253,10 @@ function UKPage() {
             <ShieldCheck className="h-6 w-6 shrink-0 text-primary" />
             <div className="text-sm text-muted-foreground">
               <p>
-                Quill's master prompt refuses to invent tenure, EPC, council tax or period claims.
-                A descriptor attached to a specific feature (e.g. “Victorian fireplace”) stays
-                scoped to that feature — it never becomes “a Victorian house” unless the property
-                type explicitly says so. Any private viewing notes you type stay out of the public
+                Quill's master prompt refuses to invent tenure, EPC, council tax or period claims. A
+                descriptor attached to a specific feature (e.g. “Victorian fireplace”) stays scoped
+                to that feature — it never becomes “a Victorian house” unless the property type
+                explicitly says so. Any private viewing notes you type stay out of the public
                 description and captions.
               </p>
             </div>
