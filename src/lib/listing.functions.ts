@@ -34,7 +34,7 @@ function normaliseInput(input: ListingInput): ListingInput {
   ];
   for (const k of stringKeys) {
     const max = k === "voiceNotes" ? MAX_VOICE_NOTES_LEN : MAX_FIELD_LEN;
-    (out as Record<string, string>)[k as string] = clip((input as unknown as Record<string, unknown>)[k as string], max);
+    (out as unknown as Record<string, string>)[k as string] = clip((input as unknown as Record<string, unknown>)[k as string], max);
   }
   return out;
 }
