@@ -150,7 +150,42 @@ export function normaliseListingOutput(raw: unknown): ListingOutput {
     })
     .filter((p): p is SocialPost => p !== null);
 
-  return { headline, listing, summary, keyFeatures, social };
+  const emailBlast = coerceLegacyEmailBlast(r.emailBlast);
+  return { headline, listing, summary, keyFeatures, emailBlast, social };
+}
+
+/**
+ * Tolerant email-blast coercion for legacy rows or partial payloads. Never
+ * throws. Returns null when the payload is missing or unusable.
+ */
+export function coerceLegacyEmailBlast(raw: unknown): EmailBlast | null {
+  if (!raw || typeof raw !== "object") return null;
+  const e = raw as Record<string, unknown>;
+  const rawSubjects = Array.isArray(e.subjectLines) ? (e.subjectLines as unknown[]) : [];
+  const seenS = new Set<string>();
+  const subjectLines = rawSubjects
+    .map((s) => (typeof s === "string" ? s.trim() : ""))
+    .filter((s) => s.length > 0)
+    .filter((s) => {
+      const k = s.toLowerCase();
+      if (seenS.has(k)) return false;
+      seenS.add(k);
+      return true;
+    });
+  const previewText = typeof e.previewText === "string" ? e.previewText.trim() : "";
+  const headline = typeof e.headline === "string" ? e.headline.trim() : "";
+  const body = typeof e.body === "string" ? e.body.trim() : "";
+  const callToAction = typeof e.callToAction === "string" ? e.callToAction.trim() : "";
+  if (
+    subjectLines.length === 0 &&
+    !previewText &&
+    !headline &&
+    !body &&
+    !callToAction
+  ) {
+    return null;
+  }
+  return { subjectLines, previewText, headline, body, callToAction };
 }
 
 /**
