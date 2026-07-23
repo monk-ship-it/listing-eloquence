@@ -365,6 +365,7 @@ export function coerceLegacyOutput(raw: unknown): ListingOutput {
     keyFeatures: Array.isArray(r.keyFeatures)
       ? (r.keyFeatures as unknown[]).filter((x): x is string => typeof x === "string")
       : [],
+    emailBlast: coerceLegacyEmailBlast(r.emailBlast),
     social,
   };
 }
