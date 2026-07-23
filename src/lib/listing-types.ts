@@ -43,14 +43,52 @@ export interface SocialPost {
   hashtags: string[];
 }
 
+/**
+ * Structured Email Blast copy — plain-text campaign copy an agent can paste
+ * into Mailchimp, Outlook, or their CRM. Quill never sends emails, manages
+ * contacts, or invents personal / contact / URL / date details.
+ */
+export interface EmailBlast {
+  /** Exactly 3 unique subject-line options. */
+  subjectLines: string[];
+  /** Short preheader / preview text. */
+  previewText: string;
+  /** Campaign headline (short). */
+  headline: string;
+  /** Plain-text email body, 2–4 short paragraphs. */
+  body: string;
+  /** Short CTA label e.g. "View property details" / "Arrange a viewing". */
+  callToAction: string;
+}
+
 export interface ListingOutput {
   headline: string;
   listing: string;
   summary: string;
   /** Portal/MLS-style bullet points generated strictly from supplied facts. */
   keyFeatures: string[];
+  /** Structured email campaign copy. Null on legacy saved rows only. */
+  emailBlast: EmailBlast | null;
   social: SocialPost[];
 }
+
+// Sensible per-field length caps for the Email Blast.
+const EMAIL_SUBJECT_MAX = 90;
+const EMAIL_PREVIEW_MAX = 160;
+const EMAIL_HEADLINE_MAX = 140;
+const EMAIL_BODY_MAX = 3000;
+const EMAIL_CTA_MAX = 60;
+
+/**
+ * Editable placeholders appended to the copied/rendered Email Blast. Quill
+ * never invents agent contact info, property URLs, availability or dates —
+ * these lines are surfaced verbatim so the user fills them in before sending.
+ */
+export const EMAIL_BLAST_PLACEHOLDERS = [
+  "Property link: [Add property URL]",
+  "Agent contact: [Add name, phone and email]",
+  "Sending note: Add the sender details and unsubscribe controls required by your email platform.",
+] as const;
 
 /**
  * Tolerant normaliser — used for LEGACY saved rows and best-effort parsing.
