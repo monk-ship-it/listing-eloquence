@@ -13,19 +13,26 @@ export async function copyText(text: string): Promise<boolean> {
   } catch {
     // fall through to legacy fallback
   }
+  let ta: HTMLTextAreaElement | null = null;
   try {
-    const ta = document.createElement("textarea");
+    ta = document.createElement("textarea");
     ta.value = text;
     ta.setAttribute("readonly", "");
     ta.style.position = "fixed";
     ta.style.opacity = "0";
     document.body.appendChild(ta);
     ta.select();
-    const ok = document.execCommand("copy");
-    document.body.removeChild(ta);
-    return ok;
+    return document.execCommand("copy");
   } catch {
     return false;
+  } finally {
+    if (ta && ta.parentNode) {
+      try {
+        ta.parentNode.removeChild(ta);
+      } catch {
+        // ignore
+      }
+    }
   }
 }
 
@@ -35,7 +42,10 @@ export function formatKeyFeaturesBlock(features: string[] | undefined): string {
   return ["Key features:", ...features.map((f) => `- ${f}`)].join("\n");
 }
 
-/** Build the full "copy all" text for a generated listing. */
+/**
+ * Build the full "copy all" text for a generated listing.
+ * Order: headline, Key Features, Description, Teaser, Social pack.
+ */
 export function buildCopyAllText(output: {
   headline: string;
   listing: string;
@@ -52,9 +62,8 @@ export function buildCopyAllText(output: {
     .join("\n\n");
   return [
     output.headline,
-    "",
-    output.listing,
     features ? `\n${features}` : "",
+    `\nDescription:\n${output.listing}`,
     output.summary ? `\nTeaser: ${output.summary}` : "",
     social ? `\n--- Social pack ---\n${social}` : "",
   ]
