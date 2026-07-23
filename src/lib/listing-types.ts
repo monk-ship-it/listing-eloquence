@@ -31,7 +31,7 @@ export interface ListingInput {
   yearBuilt: string;
   /** Disclosures / condition notes — only surfaced factually when provided. */
   disclosures: string;
-  /** Showing / access notes — kept out of public remarks; used for buyer emails. */
+  /** Showing / access notes — private-only; never surfaced in generated public copy. */
   showingNotes: string;
   /** Media / photo / floor-plan notes. */
   mediaNotes: string;
