@@ -351,8 +351,8 @@ function Hero({ authed }: { authed: boolean }) {
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             {APP_NAME} helps UK estate agents and US real estate teams remove the slow admin between
             instruction and launch. Speak, type or paste the facts once, choose the brand voice, and
-            generate the Headline, Key Features, listing description, short teaser, Email Blast copy and Instagram,
-            Facebook and X captions from the same source of truth.
+            generate the Headline, Key Features, listing description, short teaser, Email Blast copy
+            and Instagram, Facebook and X captions from the same source of truth.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -825,8 +825,8 @@ function LiveExample() {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Same source of truth, every asset. See how a handful of property facts becomes the
-            listing description, Key Features, short teaser, Email Blast copy and social captions — brand-consistent
-            and ready to review.
+            listing description, Key Features, short teaser, Email Blast copy and social captions —
+            brand-consistent and ready to review.
           </p>
         </Reveal>
 
@@ -1014,7 +1014,9 @@ function LiveExample() {
                   </div>
 
                   <div className="mt-5 rounded-lg border border-dashed border-border/70 bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground">
-                    <p className="mb-1.5 font-semibold text-foreground/80">Fill in before sending</p>
+                    <p className="mb-1.5 font-semibold text-foreground/80">
+                      Fill in before sending
+                    </p>
                     <ul className="space-y-1">
                       {EMAIL_BLAST_PLACEHOLDERS.map((p) => (
                         <li key={p} className="break-words">
@@ -1374,8 +1376,8 @@ function Pricing({ authed }: { authed: boolean }) {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Every plan includes UK and US markets, all four brand voices, voice dictation and the
-            full listing pack — Headline, Key Features, description, teaser, Email Blast copy and Instagram, Facebook
-            and X captions.
+            full listing pack — Headline, Key Features, description, teaser, Email Blast copy and
+            Instagram, Facebook and X captions.
           </p>
           <div className="mt-6 flex justify-center">
             <MarketToggle />
