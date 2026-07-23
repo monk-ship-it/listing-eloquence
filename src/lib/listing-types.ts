@@ -266,6 +266,9 @@ export function validateNewListingOutput(raw: unknown): ListingOutput {
     }
   }
 
+  // Strict Email Blast shape check.
+  const emailBlast = validateNewEmailBlast(r.emailBlast);
+
   // Tolerant normalisation now safe: raw shape already validated.
   const out = normaliseListingOutput(raw);
   if (!out.summary) throw new Error("MALFORMED_AI_OUTPUT");
@@ -289,7 +292,50 @@ export function validateNewListingOutput(raw: unknown): ListingOutput {
     ordered.push(post);
   }
 
-  return { ...out, social: ordered };
+  return { ...out, emailBlast, social: ordered };
+}
+
+/**
+ * Strict validator for NEW AI Email Blast output. Enforces exactly 3 unique
+ * non-empty subject lines and non-empty preview/headline/body/CTA strings,
+ * all within sensible length caps. Rejects malformed output rather than
+ * silently trimming or padding.
+ */
+function validateNewEmailBlast(raw: unknown): EmailBlast {
+  if (!raw || typeof raw !== "object") throw new Error("MALFORMED_AI_OUTPUT");
+  const e = raw as Record<string, unknown>;
+
+  if (!Array.isArray(e.subjectLines) || e.subjectLines.length !== 3) {
+    throw new Error("MALFORMED_AI_OUTPUT");
+  }
+  const seen = new Set<string>();
+  const subjectLines: string[] = [];
+  for (const s of e.subjectLines) {
+    if (typeof s !== "string") throw new Error("MALFORMED_AI_OUTPUT");
+    const cleaned = s.trim();
+    if (!cleaned || cleaned.length > EMAIL_SUBJECT_MAX) {
+      throw new Error("MALFORMED_AI_OUTPUT");
+    }
+    const key = cleaned.toLowerCase();
+    if (seen.has(key)) throw new Error("MALFORMED_AI_OUTPUT");
+    seen.add(key);
+    subjectLines.push(cleaned);
+  }
+
+  const checkStr = (v: unknown, max: number): string => {
+    if (typeof v !== "string") throw new Error("MALFORMED_AI_OUTPUT");
+    const t = v.trim();
+    if (!t || t.length > max) throw new Error("MALFORMED_AI_OUTPUT");
+    return t;
+  };
+
+  return {
+    subjectLines,
+    previewText: checkStr(e.previewText, EMAIL_PREVIEW_MAX),
+    headline: checkStr(e.headline, EMAIL_HEADLINE_MAX),
+    body: checkStr(e.body, EMAIL_BODY_MAX),
+    callToAction: checkStr(e.callToAction, EMAIL_CTA_MAX),
+  };
 }
 
 /**
