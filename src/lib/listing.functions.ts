@@ -231,12 +231,16 @@ export const generateListing = createServerFn({ method: "POST" })
 
     let parsed: ListingOutput;
     try {
-      parsed = JSON.parse(content);
+      const raw = JSON.parse(content);
+      parsed = normaliseListingOutput(raw);
     } catch {
-      // Attempt to salvage JSON from any wrapping text
       const match = content.match(/\{[\s\S]*\}/);
       if (!match) throw new Error("The AI returned an unexpected response. Please try again.");
-      parsed = JSON.parse(match[0]);
+      try {
+        parsed = normaliseListingOutput(JSON.parse(match[0]));
+      } catch {
+        throw new Error("The AI returned an unexpected response. Please try again.");
+      }
     }
 
     // Persist to history
