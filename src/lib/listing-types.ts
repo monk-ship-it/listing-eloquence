@@ -148,12 +148,52 @@ function canonicalisePlatform(raw: string): CanonicalPlatform | null {
 }
 
 /**
- * Strict validator for NEW AI responses. Requires 6–10 clean Key Features and
- * exactly three social posts — one each for Instagram, Facebook and X — with
- * canonical platform labels in that order. Any missing, duplicate or
- * unexpected platform makes the generation invalid so callers can retry.
+ * Strict validator for NEW AI responses. Enforces the raw shape BEFORE tolerant
+ * normalisation would silently trim/dedupe/slice, so a model response with
+ * e.g. 11 keyFeatures or an extra social entry is rejected rather than being
+ * quietly reduced. Requires 6–10 unique cleaned Key Features and exactly
+ * three social posts — one each for Instagram, Facebook and X — with
+ * canonical platform labels in that order.
  */
 export function validateNewListingOutput(raw: unknown): ListingOutput {
+  if (!raw || typeof raw !== "object") throw new Error("MALFORMED_AI_OUTPUT");
+  const r = raw as Record<string, unknown>;
+
+  // Strict raw keyFeatures shape check — count, type, cleaned length, uniqueness.
+  if (!Array.isArray(r.keyFeatures)) throw new Error("MALFORMED_AI_OUTPUT");
+  if (r.keyFeatures.length < 6 || r.keyFeatures.length > 10) {
+    throw new Error("MALFORMED_AI_OUTPUT");
+  }
+  const seenFeatures = new Set<string>();
+  for (const f of r.keyFeatures) {
+    if (typeof f !== "string") throw new Error("MALFORMED_AI_OUTPUT");
+    const cleaned = f
+      .trim()
+      .replace(/^[-•*·\s]+/, "")
+      .replace(/[.!?;,]+$/g, "")
+      .trim();
+    if (!cleaned || cleaned.length > 240) throw new Error("MALFORMED_AI_OUTPUT");
+    const key = cleaned.toLowerCase();
+    if (seenFeatures.has(key)) throw new Error("MALFORMED_AI_OUTPUT");
+    seenFeatures.add(key);
+  }
+
+  // Strict raw social shape check — exactly 3 entries, each a well-formed object.
+  if (!Array.isArray(r.social) || r.social.length !== 3) {
+    throw new Error("MALFORMED_AI_OUTPUT");
+  }
+  for (const p of r.social) {
+    if (!p || typeof p !== "object") throw new Error("MALFORMED_AI_OUTPUT");
+    const post = p as Record<string, unknown>;
+    if (typeof post.platform !== "string" || !post.platform.trim()) {
+      throw new Error("MALFORMED_AI_OUTPUT");
+    }
+    if (typeof post.caption !== "string" || !post.caption.trim()) {
+      throw new Error("MALFORMED_AI_OUTPUT");
+    }
+  }
+
+  // Tolerant normalisation now safe: raw shape already validated.
   const out = normaliseListingOutput(raw);
   if (!out.summary) throw new Error("MALFORMED_AI_OUTPUT");
   if (out.keyFeatures.length < 6 || out.keyFeatures.length > 10) {
@@ -168,6 +208,7 @@ export function validateNewListingOutput(raw: unknown): ListingOutput {
     if (!p.caption) throw new Error("MALFORMED_AI_OUTPUT");
     byPlatform.set(canonical, { ...p, platform: canonical });
   }
+  if (byPlatform.size !== 3) throw new Error("MALFORMED_AI_OUTPUT");
   const ordered: SocialPost[] = [];
   for (const platform of CANONICAL_PLATFORMS) {
     const post = byPlatform.get(platform);

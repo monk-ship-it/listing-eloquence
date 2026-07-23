@@ -293,17 +293,25 @@ export const generateListing = createServerFn({ method: "POST" })
       })
       .select("id")
       .maybeSingle();
-    if (insertError) {
+    if (insertError || !savedGen?.id) {
       throw new Error("Couldn't save your listing. Please try again.");
     }
+    const savedGenId = savedGen.id;
 
     // Record durable usage independently of the deletable history row.
-    // Deleting history must never reduce monthly usage.
-    await supabase.from("generation_usage").insert({
+    // Deleting history must never reduce monthly usage. If this write fails,
+    // best-effort delete the just-created generation so the user isn't left
+    // with a saved listing that didn't consume quota, then surface a
+    // retryable error.
+    const { error: usageError } = await supabase.from("generation_usage").insert({
       user_id: userId,
-      generation_id: savedGen?.id ?? null,
+      generation_id: savedGenId,
       plan: getPlan(sub?.plan).id,
     });
+    if (usageError) {
+      await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
+      throw new Error("Couldn't record listing usage. Please try again.");
+    }
 
     return parsed;
   });
