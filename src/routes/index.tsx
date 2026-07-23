@@ -886,6 +886,9 @@ function LiveExample() {
                   <TabsTrigger value="teaser" className="shrink-0">
                     Teaser
                   </TabsTrigger>
+                  <TabsTrigger value="email" className="shrink-0">
+                    Email Blast
+                  </TabsTrigger>
                   <TabsTrigger value="instagram" className="shrink-0">
                     Instagram
                   </TabsTrigger>
@@ -927,6 +930,99 @@ function LiveExample() {
                     <Megaphone className="h-3.5 w-3.5" /> Short teaser
                   </div>
                   <p className="mt-3 text-sm leading-relaxed text-foreground/90">{demo.summary}</p>
+                </TabsContent>
+
+                <TabsContent value="email" className="mt-4">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                    <Mail className="h-3.5 w-3.5" /> Email Blast
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Database email copy — Quill doesn't send emails or manage contacts.
+                  </p>
+
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Subject line options
+                    </p>
+                    <ol className="mt-2 space-y-2 text-sm">
+                      {demo.emailBlast.subjectLines.map((s, i) => (
+                        <li
+                          key={i}
+                          className="flex items-start gap-2 rounded-md border border-border/60 bg-card/40 p-2.5"
+                        >
+                          <span className="mt-0.5 inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 px-1.5 text-xs font-semibold text-primary">
+                            {i + 1}
+                          </span>
+                          <span className="min-w-0 break-words">{s}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Preview text
+                    </p>
+                    <p className="mt-1 break-words text-sm text-foreground/90">
+                      {demo.emailBlast.previewText}
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Headline
+                    </p>
+                    <p className="mt-1 break-words font-display text-base font-semibold leading-snug">
+                      {demo.emailBlast.headline}
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Body
+                    </p>
+                    <div className="mt-1 space-y-3 text-sm leading-relaxed text-foreground/90">
+                      {demo.emailBlast.body.map((p, i) => (
+                        <p key={i} className="break-words">
+                          {p}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Key features (reused from the pack)
+                    </p>
+                    <ul className="mt-2 grid gap-1.5 text-sm sm:grid-cols-2">
+                      {demo.keyFeatures.map((f) => (
+                        <li key={f} className="flex items-start gap-2">
+                          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                          <span className="break-words">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Call to action
+                    </p>
+                    <p className="mt-1 break-words text-sm font-medium text-primary">
+                      {demo.emailBlast.callToAction}
+                    </p>
+                  </div>
+
+                  <div className="mt-5 rounded-lg border border-dashed border-border/70 bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground">
+                    <p className="mb-1.5 font-semibold text-foreground/80">Fill in before sending</p>
+                    <ul className="space-y-1">
+                      {EMAIL_BLAST_PLACEHOLDERS.map((p) => (
+                        <li key={p} className="break-words">
+                          {p}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </TabsContent>
 
                 <TabsContent value="instagram" className="mt-4">
