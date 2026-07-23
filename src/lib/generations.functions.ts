@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { ListingInput, ListingOutput } from "./listing-types";
+import { coerceLegacyOutput } from "./listing-types";
 
 export interface GenerationRecord {
   id: string;
@@ -28,7 +29,8 @@ export const listMyGenerations = createServerFn({ method: "GET" })
       propertyTitle: row.property_title,
       createdAt: row.created_at,
       inputs: row.inputs as unknown as ListingInput,
-      output: row.output as unknown as ListingOutput,
+      // In-memory coercion only — never rewrites the stored row.
+      output: coerceLegacyOutput(row.output),
     }));
   });
 

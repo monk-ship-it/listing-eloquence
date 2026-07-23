@@ -147,6 +147,7 @@ export const PLANS: Plan[] = [
     features: [
       "15 listings per month",
       "All four brand voices",
+      "Generated Key Features bullets",
       "Social captions with hashtags",
       "Saved listing history",
       "Dedicated voice notes field",
@@ -162,6 +163,7 @@ export const PLANS: Plan[] = [
     features: [
       "50 listings per month",
       "All four brand voices",
+      "Generated Key Features bullets",
       "Social captions with hashtags",
       "Saved listing history",
       "Priority generation",
@@ -179,6 +181,7 @@ export const PLANS: Plan[] = [
     features: [
       "120 listings per month",
       "All four brand voices",
+      "Generated Key Features bullets",
       "Social captions with hashtags",
       "Saved listing history",
       "Priority generation",

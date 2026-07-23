@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { cloneElement, useId, useRef, useState, type ReactElement, type FormEvent } from "react";
+
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -26,10 +27,7 @@ import { Copy, Sparkles, RefreshCw, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app")({
   head: () => ({
-    meta: [
-      { title: `Generator — ${APP_NAME}` },
-      { name: "robots", content: "noindex,follow" },
-    ],
+    meta: [{ title: `Generator — ${APP_NAME}` }, { name: "robots", content: "noindex,follow" }],
   }),
   component: GeneratorPage,
 });
@@ -39,7 +37,6 @@ async function copyToast(text: string, label = "Copied to clipboard.") {
   if (ok) toast.success(label);
   else toast.error("Couldn't copy — please copy manually.");
 }
-
 
 function GeneratorPage() {
   const generate = useServerFn(generateListing);
@@ -61,29 +58,36 @@ function GeneratorPage() {
   const usage = usageQuery.data;
   const outOfListings = !!usage && !usage.unlimited && usage.remaining <= 0;
 
+  function clearOutputIfIdle() {
+    if (!inFlight.current) setOutput(null);
+  }
+
   function set<K extends keyof ListingInput>(key: K, value: ListingInput[K]) {
     setInput((prev) => ({ ...prev, [key]: value }));
+    clearOutputIfIdle();
   }
 
   function appendTo(key: keyof ListingInput) {
-    return (text: string) =>
+    return (text: string) => {
       setInput((prev) => {
         const current = (prev[key] as string) ?? "";
         const next = current.trim() ? `${current.trim()} ${text}` : text;
         return { ...prev, [key]: next };
       });
+      clearOutputIfIdle();
+    };
   }
 
   const market = input.market;
   const isUs = market === "us";
 
   function setMarket(m: MarketId) {
-    // Switching market keeps typed facts but resets to the market default when
-    // the form is still empty, so the correct example/labels apply cleanly.
     setInput((prev) => ({ ...prev, market: m }));
+    clearOutputIfIdle();
   }
 
   function loadExample() {
+    if (inFlight.current) return;
     setInput(isUs ? US_EXAMPLE_INPUT : EXAMPLE_INPUT);
     setOutput(null);
     toast.success("Example property loaded.");
@@ -163,7 +167,6 @@ function GeneratorPage() {
         mediaNotesPh: "Photos + floor plan booked…",
       };
 
-
   async function run() {
     if (inFlight.current) return;
     inFlight.current = true;
@@ -182,7 +185,9 @@ function GeneratorPage() {
       if (msg.includes("SUBSCRIPTION_REQUIRED")) {
         toast.error("Your trial or subscription is required to generate.");
       } else if (msg.includes("LISTING_LIMIT_REACHED")) {
-        toast.error("You've used all your listings this month. Upgrade your plan or wait for next month's renewal.");
+        toast.error(
+          "You've used all your listings this month. Upgrade your plan or wait for next month's renewal.",
+        );
         queryClient.invalidateQueries({ queryKey: ["usage"] });
       } else {
         toast.error(msg);
@@ -193,6 +198,10 @@ function GeneratorPage() {
     }
   }
 
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    void run();
+  }
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-8">
@@ -214,7 +223,7 @@ function GeneratorPage() {
               </p>
             </div>
           )}
-          <Button variant="outline" onClick={loadExample}>
+          <Button type="button" variant="outline" onClick={loadExample} disabled={busy}>
             <Sparkles className="mr-2 h-4 w-4" /> Load example
           </Button>
         </div>
@@ -225,9 +234,7 @@ function GeneratorPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <Lock className="h-5 w-5 text-primary" />
-              <p className="text-sm">
-                Start your free trial to generate listings.
-              </p>
+              <p className="text-sm">Start your free trial to generate listings.</p>
             </div>
             <Button asChild size="sm">
               <Link to="/account">Start free trial</Link>
@@ -243,7 +250,14 @@ function GeneratorPage() {
               <Lock className="h-5 w-5 text-destructive" />
               <p className="text-sm">
                 You've used all {usage?.limit} listings on your {usage?.planName} plan this month.
-                It renews on {usage ? new Date(usage.resetsOn).toLocaleDateString("en-GB", { day: "numeric", month: "long" }) : ""}.
+                It renews on{" "}
+                {usage
+                  ? new Date(usage.resetsOn).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "long",
+                    })
+                  : ""}
+                .
               </p>
             </div>
             <Button asChild size="sm">
@@ -255,169 +269,311 @@ function GeneratorPage() {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         {/* Input */}
-        <div className="space-y-6">
-          <VoiceNotes value={input.voiceNotes} onChange={(v) => set("voiceNotes", v)} />
+        <form onSubmit={handleSubmit} className="space-y-6" aria-busy={busy}>
+          <fieldset disabled={busy} className="space-y-6 disabled:opacity-70">
+            <VoiceNotes value={input.voiceNotes} onChange={(v) => set("voiceNotes", v)} />
 
-          <Card className="p-5 sm:p-6">
-            <h2 className="font-display text-xl font-semibold">Structured property details</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Type or paste exact facts below. These are used alongside your voice notes, and take
-              priority if anything conflicts.
-            </p>
-
-            <div className="mt-5">
-              <Label>Market</Label>
-              <div className="mt-2 inline-flex rounded-lg border border-border/70 p-1">
-                {Object.values(MARKETS).map((m) => (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => setMarket(m.id)}
-                    className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                      market === m.id
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {m.label}
-                  </button>
-                ))}
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">
-                {isUs
-                  ? "US mode writes MLS-ready US English copy and follows Fair Housing language."
-                  : "UK mode writes portal-ready UK English copy following Material Information guidance."}
+            <Card className="p-5 sm:p-6">
+              <h2 className="font-display text-xl font-semibold">Structured property details</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Type or paste exact facts below. These are used alongside your voice notes, and take
+                priority if anything conflicts.
               </p>
-            </div>
 
-            <div className="mt-5">
-              <Label>Brand voice</Label>
-              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {VOICES.map((v) => (
-                  <button
-                    key={v.id}
-                    type="button"
-                    onClick={() => set("voice", v.id as VoiceId)}
-                    className={`rounded-lg border p-3 text-left transition-colors ${
-                      input.voice === v.id
-                        ? "border-primary bg-primary/10"
-                        : "border-border/70 hover:border-primary/50"
-                    }`}
-                  >
-                    <span className="block text-sm font-semibold">{v.name}</span>
-                    <span className="mt-0.5 block text-xs text-muted-foreground">{v.descriptor}</span>
-                  </button>
-                ))}
+              <div className="mt-5">
+                <Label id="market-label">Market</Label>
+                <div
+                  role="radiogroup"
+                  aria-labelledby="market-label"
+                  className="mt-2 inline-flex rounded-lg border border-border/70 p-1"
+                >
+                  {Object.values(MARKETS).map((m) => {
+                    const selected = market === m.id;
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        aria-pressed={selected}
+                        onClick={() => setMarket(m.id)}
+                        className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                          selected
+                            ? "bg-primary text-primary-foreground"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {m.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {isUs
+                    ? "US mode writes MLS-ready US English copy and follows Fair Housing language."
+                    : "UK mode writes portal-ready UK English copy following Material Information guidance."}
+                </p>
               </div>
-            </div>
 
-            <div className="mt-5 grid gap-4">
-              <Field label={L.address}>
-                <Input value={input.address} onChange={(e) => set("address", e.target.value)} placeholder={L.addressPh} />
-              </Field>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label={L.propertyType}>
-                  <Input value={input.propertyType} onChange={(e) => set("propertyType", e.target.value)} placeholder={L.propertyTypePh} />
-                </Field>
-                <Field label={L.yearBuilt}>
-                  <Input value={input.yearBuilt} onChange={(e) => set("yearBuilt", e.target.value)} placeholder={L.yearBuiltPh} />
-                </Field>
+              <div className="mt-5">
+                <Label id="voice-label">Brand voice</Label>
+                <div
+                  role="radiogroup"
+                  aria-labelledby="voice-label"
+                  className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2"
+                >
+                  {VOICES.map((v) => {
+                    const selected = input.voice === v.id;
+                    return (
+                      <button
+                        key={v.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        aria-pressed={selected}
+                        onClick={() => set("voice", v.id as VoiceId)}
+                        className={`rounded-lg border p-3 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                          selected
+                            ? "border-primary bg-primary/10"
+                            : "border-border/70 hover:border-primary/50"
+                        }`}
+                      >
+                        <span className="block text-sm font-semibold">{v.name}</span>
+                        <span className="mt-0.5 block text-xs text-muted-foreground">
+                          {v.descriptor}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="grid grid-cols-3 gap-3">
-                <Field label="Bedrooms">
-                  <Input value={input.bedrooms} onChange={(e) => set("bedrooms", e.target.value)} placeholder="4" />
-                </Field>
-                <Field label="Bathrooms">
-                  <Input value={input.bathrooms} onChange={(e) => set("bathrooms", e.target.value)} placeholder={isUs ? "3.5" : "2"} />
-                </Field>
-                <Field label={isUs ? "Living spaces" : "Receptions"}>
-                  <Input value={input.receptions} onChange={(e) => set("receptions", e.target.value)} placeholder="2" />
-                </Field>
-              </div>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label={L.tenure}>
-                  <Input value={input.tenure} onChange={(e) => set("tenure", e.target.value)} placeholder={L.tenurePh} />
-                </Field>
-                <Field label={L.price}>
-                  <Input value={input.price} onChange={(e) => set("price", e.target.value)} placeholder={L.pricePh} />
-                </Field>
-              </div>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label="Price qualifier">
-                  <Input value={input.priceQualifier} onChange={(e) => set("priceQualifier", e.target.value)} placeholder={isUs ? "e.g. Best offer" : "Guide Price / OIEO"} />
-                </Field>
-                <Field label={L.lease}>
-                  <Input value={input.leaseYears} onChange={(e) => set("leaseYears", e.target.value)} placeholder={L.leasePh} />
-                </Field>
-              </div>
-              <Field label="Key features">
-                <Textarea value={input.keyFeatures} onChange={(e) => set("keyFeatures", e.target.value)} placeholder={isUs ? "Chef's kitchen, quartz counters, heated pool…" : "Open-plan kitchen, log burner, south-facing garden…"} rows={2} />
-              </Field>
-              <Field label={L.dimensions}>
-                <Textarea value={input.dimensions} onChange={(e) => set("dimensions", e.target.value)} placeholder={L.dimensionsPh} rows={2} />
-              </Field>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label={L.epc}>
-                  <Input value={input.epc} onChange={(e) => set("epc", e.target.value)} placeholder={L.epcPh} />
-                </Field>
-                <Field label={L.tax}>
-                  <Input value={input.councilTaxBand} onChange={(e) => set("councilTaxBand", e.target.value)} placeholder={L.taxPh} />
-                </Field>
-              </div>
-              <Field label={L.outside}>
-                <Input value={input.outsideSpace} onChange={(e) => set("outsideSpace", e.target.value)} placeholder={L.outsidePh} />
-              </Field>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <Field label="Parking">
-                  <Input value={input.parking} onChange={(e) => set("parking", e.target.value)} placeholder={isUs ? "Three-car garage, driveway" : "Driveway, garage"} />
-                </Field>
-                <Field label={L.heating}>
-                  <Input value={input.heating} onChange={(e) => set("heating", e.target.value)} placeholder={L.heatingPh} />
-                </Field>
-              </div>
-              <Field label={L.utilities}>
-                <Input value={input.utilities} onChange={(e) => set("utilities", e.target.value)} placeholder={L.utilitiesPh} />
-              </Field>
-              <Field label={L.nearby}>
-                <Textarea value={input.nearby} onChange={(e) => set("nearby", e.target.value)} placeholder={L.nearbyPh} rows={2} />
-              </Field>
-              <Field label={L.periodFeatures}>
-                <Textarea value={input.periodFeatures} onChange={(e) => set("periodFeatures", e.target.value)} placeholder={L.periodFeaturesPh} rows={2} />
-              </Field>
-              <Field label="Area highlights">
-                <Input value={input.areaHighlights} onChange={(e) => set("areaHighlights", e.target.value)} placeholder={isUs ? "Established neighborhood, near dining and parks" : "Vibrant market town, riverside walks"} />
-              </Field>
-              <Field label={L.disclosures}>
-                <Textarea value={input.disclosures} onChange={(e) => set("disclosures", e.target.value)} placeholder={L.disclosuresPh} rows={2} />
-              </Field>
-              <Field label={L.showingNotes}>
-                <Textarea value={input.showingNotes} onChange={(e) => set("showingNotes", e.target.value)} placeholder={L.showingNotesPh} rows={2} />
-              </Field>
-              <Field label={L.mediaNotes}>
-                <Textarea value={input.mediaNotes} onChange={(e) => set("mediaNotes", e.target.value)} placeholder={L.mediaNotesPh} rows={2} />
-              </Field>
-              {!isUs && (
-                <Field label="Target audience">
-                  <Input value={input.targetAudience} onChange={(e) => set("targetAudience", e.target.value)} placeholder="Growing families, professionals" />
-                </Field>
-              )}
 
-            </div>
+              <div className="mt-5 grid gap-4">
+                <Field label={L.address}>
+                  <Input
+                    value={input.address}
+                    onChange={(e) => set("address", e.target.value)}
+                    placeholder={L.addressPh}
+                  />
+                </Field>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <Field label={L.propertyType}>
+                    <Input
+                      value={input.propertyType}
+                      onChange={(e) => set("propertyType", e.target.value)}
+                      placeholder={L.propertyTypePh}
+                    />
+                  </Field>
+                  <Field label={L.yearBuilt}>
+                    <Input
+                      value={input.yearBuilt}
+                      onChange={(e) => set("yearBuilt", e.target.value)}
+                      placeholder={L.yearBuiltPh}
+                    />
+                  </Field>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <Field label="Bedrooms">
+                    <Input
+                      value={input.bedrooms}
+                      onChange={(e) => set("bedrooms", e.target.value)}
+                      placeholder="4"
+                    />
+                  </Field>
+                  <Field label="Bathrooms">
+                    <Input
+                      value={input.bathrooms}
+                      onChange={(e) => set("bathrooms", e.target.value)}
+                      placeholder={isUs ? "3.5" : "2"}
+                    />
+                  </Field>
+                  <Field label={isUs ? "Living spaces" : "Receptions"}>
+                    <Input
+                      value={input.receptions}
+                      onChange={(e) => set("receptions", e.target.value)}
+                      placeholder="2"
+                    />
+                  </Field>
+                </div>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <Field label={L.tenure}>
+                    <Input
+                      value={input.tenure}
+                      onChange={(e) => set("tenure", e.target.value)}
+                      placeholder={L.tenurePh}
+                    />
+                  </Field>
+                  <Field label={L.price}>
+                    <Input
+                      value={input.price}
+                      onChange={(e) => set("price", e.target.value)}
+                      placeholder={L.pricePh}
+                    />
+                  </Field>
+                </div>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <Field label="Price qualifier">
+                    <Input
+                      value={input.priceQualifier}
+                      onChange={(e) => set("priceQualifier", e.target.value)}
+                      placeholder={isUs ? "e.g. Best offer" : "Guide Price / OIEO"}
+                    />
+                  </Field>
+                  <Field label={L.lease}>
+                    <Input
+                      value={input.leaseYears}
+                      onChange={(e) => set("leaseYears", e.target.value)}
+                      placeholder={L.leasePh}
+                    />
+                  </Field>
+                </div>
+                <Field label="Key features">
+                  <Textarea
+                    value={input.keyFeatures}
+                    onChange={(e) => set("keyFeatures", e.target.value)}
+                    placeholder={
+                      isUs
+                        ? "Chef's kitchen, quartz counters, heated pool…"
+                        : "Open-plan kitchen, log burner, south-facing garden…"
+                    }
+                    rows={2}
+                  />
+                </Field>
+                <Field label={L.dimensions}>
+                  <Textarea
+                    value={input.dimensions}
+                    onChange={(e) => set("dimensions", e.target.value)}
+                    placeholder={L.dimensionsPh}
+                    rows={2}
+                  />
+                </Field>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <Field label={L.epc}>
+                    <Input
+                      value={input.epc}
+                      onChange={(e) => set("epc", e.target.value)}
+                      placeholder={L.epcPh}
+                    />
+                  </Field>
+                  <Field label={L.tax}>
+                    <Input
+                      value={input.councilTaxBand}
+                      onChange={(e) => set("councilTaxBand", e.target.value)}
+                      placeholder={L.taxPh}
+                    />
+                  </Field>
+                </div>
+                <Field label={L.outside}>
+                  <Input
+                    value={input.outsideSpace}
+                    onChange={(e) => set("outsideSpace", e.target.value)}
+                    placeholder={L.outsidePh}
+                  />
+                </Field>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <Field label="Parking">
+                    <Input
+                      value={input.parking}
+                      onChange={(e) => set("parking", e.target.value)}
+                      placeholder={isUs ? "Three-car garage, driveway" : "Driveway, garage"}
+                    />
+                  </Field>
+                  <Field label={L.heating}>
+                    <Input
+                      value={input.heating}
+                      onChange={(e) => set("heating", e.target.value)}
+                      placeholder={L.heatingPh}
+                    />
+                  </Field>
+                </div>
+                <Field label={L.utilities}>
+                  <Input
+                    value={input.utilities}
+                    onChange={(e) => set("utilities", e.target.value)}
+                    placeholder={L.utilitiesPh}
+                  />
+                </Field>
+                <Field label={L.nearby}>
+                  <Textarea
+                    value={input.nearby}
+                    onChange={(e) => set("nearby", e.target.value)}
+                    placeholder={L.nearbyPh}
+                    rows={2}
+                  />
+                </Field>
+                <Field label={L.periodFeatures}>
+                  <Textarea
+                    value={input.periodFeatures}
+                    onChange={(e) => set("periodFeatures", e.target.value)}
+                    placeholder={L.periodFeaturesPh}
+                    rows={2}
+                  />
+                </Field>
+                <Field label="Area highlights">
+                  <Input
+                    value={input.areaHighlights}
+                    onChange={(e) => set("areaHighlights", e.target.value)}
+                    placeholder={
+                      isUs
+                        ? "Established neighborhood, near dining and parks"
+                        : "Vibrant market town, riverside walks"
+                    }
+                  />
+                </Field>
+                <Field label={L.disclosures}>
+                  <Textarea
+                    value={input.disclosures}
+                    onChange={(e) => set("disclosures", e.target.value)}
+                    placeholder={L.disclosuresPh}
+                    rows={2}
+                  />
+                </Field>
+                <Field label={L.showingNotes}>
+                  <Textarea
+                    value={input.showingNotes}
+                    onChange={(e) => set("showingNotes", e.target.value)}
+                    placeholder={L.showingNotesPh}
+                    rows={2}
+                  />
+                </Field>
+                <Field label={L.mediaNotes}>
+                  <Textarea
+                    value={input.mediaNotes}
+                    onChange={(e) => set("mediaNotes", e.target.value)}
+                    placeholder={L.mediaNotesPh}
+                    rows={2}
+                  />
+                </Field>
+                {!isUs && (
+                  <Field label="Target audience">
+                    <Input
+                      value={input.targetAudience}
+                      onChange={(e) => set("targetAudience", e.target.value)}
+                      placeholder="Growing families, professionals"
+                    />
+                  </Field>
+                )}
+              </div>
 
-            <Button className="mt-6 w-full" size="lg" onClick={run} disabled={busy || !hasAccess || outOfListings}>
-              {busy ? (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Generating…
-                </>
-              ) : (
-                <>
-                  <Sparkles className="mr-2 h-4 w-4" /> Generate listing
-                </>
-              )}
-            </Button>
-          </Card>
-        </div>
-
+              <Button
+                type="submit"
+                className="mt-6 w-full"
+                size="lg"
+                disabled={busy || !hasAccess || outOfListings}
+              >
+                {busy ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Generating…
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-4 w-4" /> Generate listing
+                  </>
+                )}
+              </Button>
+            </Card>
+          </fieldset>
+        </form>
 
         {/* Output */}
         <div className="space-y-6">
@@ -434,6 +590,7 @@ function GeneratorPage() {
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="font-display text-xl font-semibold">{output.headline}</h2>
                   <Button
+                    type="button"
                     variant="ghost"
                     size="icon"
                     className="h-11 w-11 shrink-0"
@@ -442,11 +599,6 @@ function GeneratorPage() {
                   >
                     <Copy className="h-4 w-4" />
                   </Button>
-                </div>
-                <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
-                  {output.listing.split("\n\n").map((p, i) => (
-                    <p key={i} className="break-words">{p}</p>
-                  ))}
                 </div>
               </Card>
 
@@ -460,7 +612,10 @@ function GeneratorPage() {
                       className="h-11 w-11 shrink-0"
                       aria-label="Copy key features"
                       onClick={() =>
-                        copyToast(formatKeyFeaturesBlock(output.keyFeatures), "Key features copied.")
+                        copyToast(
+                          formatKeyFeaturesBlock(output.keyFeatures),
+                          "Key features copied.",
+                        )
                       }
                     >
                       <Copy className="h-4 w-4" />
@@ -476,6 +631,29 @@ function GeneratorPage() {
                   </ul>
                 </Card>
               )}
+
+              <Card className="p-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-display text-lg font-semibold">Description</h3>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-11 w-11 shrink-0"
+                    aria-label="Copy description"
+                    onClick={() => copyToast(output.listing, "Description copied.")}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                  {output.listing.split("\n\n").map((p, i) => (
+                    <p key={i} className="break-words">
+                      {p}
+                    </p>
+                  ))}
+                </div>
+              </Card>
 
               <Card className="p-6">
                 <div className="flex items-center justify-between">
@@ -515,10 +693,14 @@ function GeneratorPage() {
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      <p className="mt-2 text-sm text-muted-foreground break-words">{post.caption}</p>
+                      <p className="mt-2 text-sm text-muted-foreground break-words">
+                        {post.caption}
+                      </p>
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {post.hashtags.map((h) => (
-                          <span key={h} className="text-xs text-primary">#{h}</span>
+                          <span key={h} className="text-xs text-primary">
+                            #{h}
+                          </span>
                         ))}
                       </div>
                     </div>
@@ -526,8 +708,13 @@ function GeneratorPage() {
                 </div>
               </Card>
 
-
-              <Button variant="outline" className="w-full" onClick={run} disabled={busy}>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={run}
+                disabled={busy}
+              >
                 <RefreshCw className="mr-2 h-4 w-4" /> Regenerate
               </Button>
             </>
@@ -538,18 +725,16 @@ function GeneratorPage() {
   );
 }
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, children }: { label: string; children: ReactElement<{ id?: string }> }) {
+  const autoId = useId();
+  const id = children.props.id ?? autoId;
+  const controlled = cloneElement(children, { id });
   return (
     <div className="space-y-1.5">
-      <Label className="text-xs text-muted-foreground">{label}</Label>
-      {children}
+      <Label htmlFor={id} className="text-xs text-muted-foreground">
+        {label}
+      </Label>
+      {controlled}
     </div>
   );
 }
-

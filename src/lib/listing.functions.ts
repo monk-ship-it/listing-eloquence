@@ -8,33 +8,71 @@ import {
 } from "./master-listing-prompt";
 import { resolveMarketId, type MarketId } from "./config";
 import type { ListingInput, ListingOutput } from "./listing-types";
-import { normaliseListingOutput } from "./listing-types";
+import { validateNewListingOutput } from "./listing-types";
 import { VOICES } from "./voices";
 
 /** Max characters accepted per free-text field to keep payloads sane. */
 const MAX_FIELD_LEN = 4000;
 const MAX_VOICE_NOTES_LEN = 8000;
 
-function clip(v: unknown, max: number): string {
-  if (typeof v !== "string") return "";
+const VALID_MARKETS = new Set(["uk", "us"]);
+const VALID_VOICES = new Set(VOICES.map((v) => v.id));
+
+function clip(v: unknown, max: number, label: string): string {
+  if (v === undefined || v === null || v === "") return "";
+  if (typeof v !== "string") throw new Error(`${label} must be text.`);
+  // eslint-disable-next-line no-control-regex
   const t = v.replace(/\u0000/g, "").trim();
-  return t.length > max ? t.slice(0, max) : t;
+
+  if (t.length > max) {
+    throw new Error(`${label} is too long (max ${max.toLocaleString()} characters).`);
+  }
+  return t;
 }
 
 function normaliseInput(input: ListingInput): ListingInput {
-  const voiceId = VOICES.find((v) => v.id === input.voice)?.id ?? "professional";
-  const market = resolveMarketId(input.market);
-  const out = { ...input, market, voice: voiceId } as ListingInput;
+  if (!VALID_MARKETS.has(input.market)) {
+    throw new Error("Please choose a valid market (UK or US).");
+  }
+  if (!VALID_VOICES.has(input.voice)) {
+    throw new Error("Please choose a valid brand voice.");
+  }
+  const out = { ...input } as ListingInput;
   const stringKeys: (keyof ListingInput)[] = [
-    "voiceNotes","address","areaHighlights","propertyType","tenure","leaseYears",
-    "price","priceQualifier","bedrooms","bathrooms","receptions","keyFeatures",
-    "dimensions","epc","councilTaxBand","outsideSpace","parking","heating",
-    "utilities","nearby","periodFeatures","targetAudience","yearBuilt",
-    "disclosures","showingNotes","mediaNotes",
+    "voiceNotes",
+    "address",
+    "areaHighlights",
+    "propertyType",
+    "tenure",
+    "leaseYears",
+    "price",
+    "priceQualifier",
+    "bedrooms",
+    "bathrooms",
+    "receptions",
+    "keyFeatures",
+    "dimensions",
+    "epc",
+    "councilTaxBand",
+    "outsideSpace",
+    "parking",
+    "heating",
+    "utilities",
+    "nearby",
+    "periodFeatures",
+    "targetAudience",
+    "yearBuilt",
+    "disclosures",
+    "showingNotes",
+    "mediaNotes",
   ];
   for (const k of stringKeys) {
     const max = k === "voiceNotes" ? MAX_VOICE_NOTES_LEN : MAX_FIELD_LEN;
-    (out as unknown as Record<string, string>)[k as string] = clip((input as unknown as Record<string, unknown>)[k as string], max);
+    (out as unknown as Record<string, string>)[k as string] = clip(
+      (input as unknown as Record<string, unknown>)[k as string],
+      max,
+      String(k),
+    );
   }
   return out;
 }
@@ -131,8 +169,8 @@ function buildUserPrompt(input: ListingInput, market: MarketId): string {
     : "- The full listing should be portal-ready (Rightmove / OnTheMarket style): an opening hook, then well-organised paragraphs covering the property, accommodation, outside space and location.";
 
   const factHandlingLine = isUs
-    ? "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. State disclosure/condition facts factually and never speculate. Keep showing/access notes OUT of the public MLS remarks and social captions — use them only in the buyer email where scheduling is appropriate."
-    : "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. Keep viewing/access notes out of the portal description and social captions — use them only in the buyer email.";
+    ? "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. State disclosure/condition facts factually and never speculate. Do NOT include showing/access notes in the public MLS remarks, teaser or social captions — treat those as internal-only."
+    : "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. Do NOT include viewing/access notes in the portal description, teaser or social captions — treat those as internal-only.";
 
   return `Create a ${isUs ? "US real estate" : "UK property"} sales listing from the details below.
 
@@ -194,8 +232,7 @@ export const generateListing = createServerFn({ method: "POST" })
     const { hasActiveAccess, computeUsage } = await import("./subscription.functions");
     const comped = isCompedEmail(sub?.email);
     const status = sub?.status ?? "none";
-    const hasAccess =
-      comped || hasActiveAccess(status, sub?.current_period_end ?? null);
+    const hasAccess = comped || hasActiveAccess(status, sub?.current_period_end ?? null);
     if (!hasAccess) {
       throw new Error("SUBSCRIPTION_REQUIRED");
     }
@@ -232,19 +269,20 @@ export const generateListing = createServerFn({ method: "POST" })
     let parsed: ListingOutput;
     try {
       const raw = JSON.parse(content);
-      parsed = normaliseListingOutput(raw);
+      parsed = validateNewListingOutput(raw);
     } catch {
       const match = content.match(/\{[\s\S]*\}/);
-      if (!match) throw new Error("The AI returned an unexpected response. Please try again.");
+      if (!match) throw new Error("MALFORMED_AI_OUTPUT");
       try {
-        parsed = normaliseListingOutput(JSON.parse(match[0]));
+        parsed = validateNewListingOutput(JSON.parse(match[0]));
       } catch {
-        throw new Error("The AI returned an unexpected response. Please try again.");
+        throw new Error("MALFORMED_AI_OUTPUT");
       }
     }
 
-    // Persist to history
-    const { data: savedGen } = await supabase
+    // Persist to history — abort before recording usage if the save fails,
+    // so the user isn't charged a listing they can't retrieve.
+    const { data: savedGen, error: insertError } = await supabase
       .from("generations")
       .insert({
         user_id: userId,
@@ -255,6 +293,9 @@ export const generateListing = createServerFn({ method: "POST" })
       })
       .select("id")
       .maybeSingle();
+    if (insertError) {
+      throw new Error("Couldn't save your listing. Please try again.");
+    }
 
     // Record durable usage independently of the deletable history row.
     // Deleting history must never reduce monthly usage.

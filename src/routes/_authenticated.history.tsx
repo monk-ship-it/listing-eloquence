@@ -79,22 +79,16 @@ function HistoryPage() {
   async function remove(id: string) {
     if (deletingId) return;
     setDeletingId(id);
-    // Optimistic removal
-    const previous = qc.getQueryData<GenerationRecord[]>(["generations"]);
-    qc.setQueryData<GenerationRecord[]>(["generations"], (prev) =>
-      (prev ?? []).filter((x) => x.id !== id),
-    );
     try {
       const res = await delFn({ data: { id } });
-      if (!res.deleted) {
-        toast.info("That listing was already removed.");
-      } else {
-        toast.success("Listing deleted.");
-      }
+      // Only remove from cache after the server confirms the delete.
+      qc.setQueryData<GenerationRecord[]>(["generations"], (prev) =>
+        (prev ?? []).filter((x) => x.id !== id),
+      );
+      if (!res.deleted) toast.info("That listing was already removed.");
+      else toast.success("Listing deleted.");
       qc.invalidateQueries({ queryKey: ["generations"] });
     } catch (err) {
-      // Roll back optimistic update
-      if (previous) qc.setQueryData(["generations"], previous);
       const msg = err instanceof Error ? err.message : "Could not delete the listing.";
       toast.error(msg);
     } finally {
@@ -193,10 +187,11 @@ function HistoryItem({
     <Card className="overflow-hidden p-0">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 p-3 sm:p-4">
         <button
+          type="button"
           onClick={onToggle}
           aria-expanded={open}
           aria-controls={panelId}
-          className="flex min-w-0 items-center gap-3 rounded-md text-left outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="flex min-h-[44px] min-w-0 items-center gap-3 rounded-md py-1 text-left outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-muted/60 text-muted-foreground">
             {open ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -369,9 +364,7 @@ function HistoryItem({
                         </Button>
                       </div>
                       <p className="mt-2 break-words text-sm">{post.caption}</p>
-                      {tags && (
-                        <p className="mt-2 break-words text-xs text-primary">{tags}</p>
-                      )}
+                      {tags && <p className="mt-2 break-words text-xs text-primary">{tags}</p>}
                     </div>
                   );
                 })}
