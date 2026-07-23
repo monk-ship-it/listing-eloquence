@@ -96,7 +96,6 @@ function HistoryPage() {
     }
   }
 
-
   const items = query.data ?? [];
 
   return (
@@ -194,7 +193,6 @@ function HistoryItem({
           aria-controls={panelId}
           className="flex min-h-[44px] min-w-0 items-center gap-3 rounded-md py-1 text-left outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
-
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-muted/60 text-muted-foreground">
             {open ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </span>
@@ -366,9 +364,7 @@ function HistoryItem({
                         </Button>
                       </div>
                       <p className="mt-2 break-words text-sm">{post.caption}</p>
-                      {tags && (
-                        <p className="mt-2 break-words text-xs text-primary">{tags}</p>
-                      )}
+                      {tags && <p className="mt-2 break-words text-xs text-primary">{tags}</p>}
                     </div>
                   );
                 })}

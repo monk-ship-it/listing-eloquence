@@ -4,13 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetClose,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { amIAdmin } from "@/lib/admin.functions";
@@ -23,7 +17,6 @@ export const Route = createFileRoute("/_authenticated")({
   }),
   component: AuthenticatedLayout,
 });
-
 
 interface NavItem {
   to: string;
@@ -45,7 +38,11 @@ function AuthenticatedLayout() {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const adminFn = useServerFn(amIAdmin);
-  const adminQuery = useQuery({ queryKey: ["am-i-admin"], queryFn: () => adminFn(), enabled: !!user });
+  const adminQuery = useQuery({
+    queryKey: ["am-i-admin"],
+    queryFn: () => adminFn(),
+    enabled: !!user,
+  });
   const isAdmin = adminQuery.data ?? false;
   const [menuOpen, setMenuOpen] = useState(false);
 

@@ -172,7 +172,6 @@ export function coerceLegacyOutput(raw: unknown): ListingOutput {
   };
 }
 
-
 export const EMPTY_INPUT: ListingInput = {
   market: "uk",
   voice: "professional",
@@ -234,7 +233,8 @@ export const EXAMPLE_INPUT: ListingInput = {
     "Burford Primary (Ofsted Good), The Burford School, Charlbury station (London Paddington ~80 mins), A40 for Oxford and Cheltenham",
   periodFeatures:
     "Early 18th-century origins, later Georgian additions, retains much original joinery and fireplaces",
-  targetAudience: "Families and downsizers seeking a characterful country home within a vibrant town",
+  targetAudience:
+    "Families and downsizers seeking a characterful country home within a vibrant town",
   yearBuilt: "",
   disclosures: "",
   showingNotes: "",
@@ -259,20 +259,22 @@ export const US_EXAMPLE_INPUT: ListingInput = {
   receptions: "",
   keyFeatures:
     "Chef's kitchen with quartz countertops, first-floor primary suite, screened lanai, heated saltwater pool, three-car garage",
-  dimensions: "Approx. 3,200 sq ft on a 0.25-acre lot. Great room 22ft x 18ft; Primary suite 18ft x 15ft",
+  dimensions:
+    "Approx. 3,200 sq ft on a 0.25-acre lot. Great room 22ft x 18ft; Primary suite 18ft x 15ft",
   epc: "",
   councilTaxBand: "Approx. $9,000 / year",
   outsideSpace: "Quarter-acre lot, fenced backyard, covered lanai and heated pool",
   parking: "Three-car attached garage plus paver driveway",
   heating: "Central heating and air conditioning",
   utilities: "City water and sewer, fiber internet available",
-  nearby:
-    "Winter Park school district; near Park Avenue, Rollins College and I-4",
+  nearby: "Winter Park school district; near Park Avenue, Rollins College and I-4",
   periodFeatures: "",
   targetAudience: "",
   yearBuilt: "2016",
-  disclosures: "Roof replaced 2021; seller's property disclosure available. No known material defects.",
-  showingNotes: "Showings by appointment via ShowingTime; 24 hours' notice preferred. Pets on site.",
+  disclosures:
+    "Roof replaced 2021; seller's property disclosure available. No known material defects.",
+  showingNotes:
+    "Showings by appointment via ShowingTime; 24 hours' notice preferred. Pets on site.",
   mediaNotes: "Professional photos and drone shots scheduled; interactive floor plan to follow.",
   // US-specific facts surfaced via structured fields:
   // square footage ~3,200 sq ft, HOA ~$90/mo, property taxes ~$9,000/yr, lot 0.25 acre.

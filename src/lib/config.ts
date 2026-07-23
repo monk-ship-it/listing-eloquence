@@ -191,7 +191,6 @@ export const PLANS: Plan[] = [
   },
 ];
 
-
 export const PLAN_MAP: Record<PlanId, Plan> = PLANS.reduce(
   (acc, p) => ({ ...acc, [p.id]: p }),
   {} as Record<PlanId, Plan>,

@@ -37,11 +37,32 @@ function normaliseInput(input: ListingInput): ListingInput {
   }
   const out = { ...input } as ListingInput;
   const stringKeys: (keyof ListingInput)[] = [
-    "voiceNotes","address","areaHighlights","propertyType","tenure","leaseYears",
-    "price","priceQualifier","bedrooms","bathrooms","receptions","keyFeatures",
-    "dimensions","epc","councilTaxBand","outsideSpace","parking","heating",
-    "utilities","nearby","periodFeatures","targetAudience","yearBuilt",
-    "disclosures","showingNotes","mediaNotes",
+    "voiceNotes",
+    "address",
+    "areaHighlights",
+    "propertyType",
+    "tenure",
+    "leaseYears",
+    "price",
+    "priceQualifier",
+    "bedrooms",
+    "bathrooms",
+    "receptions",
+    "keyFeatures",
+    "dimensions",
+    "epc",
+    "councilTaxBand",
+    "outsideSpace",
+    "parking",
+    "heating",
+    "utilities",
+    "nearby",
+    "periodFeatures",
+    "targetAudience",
+    "yearBuilt",
+    "disclosures",
+    "showingNotes",
+    "mediaNotes",
   ];
   for (const k of stringKeys) {
     const max = k === "voiceNotes" ? MAX_VOICE_NOTES_LEN : MAX_FIELD_LEN;
@@ -53,7 +74,6 @@ function normaliseInput(input: ListingInput): ListingInput {
   }
   return out;
 }
-
 
 function field(label: string, value: string) {
   return value && value.trim() ? `- ${label}: ${value.trim()}\n` : "";
@@ -150,7 +170,6 @@ function buildUserPrompt(input: ListingInput, market: MarketId): string {
     ? "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. State disclosure/condition facts factually and never speculate. Do NOT include showing/access notes in the public MLS remarks, teaser or social captions — treat those as internal-only."
     : "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. Do NOT include viewing/access notes in the portal description, teaser or social captions — treat those as internal-only.";
 
-
   return `Create a ${isUs ? "US real estate" : "UK property"} sales listing from the details below.
 
 STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
@@ -211,8 +230,7 @@ export const generateListing = createServerFn({ method: "POST" })
     const { hasActiveAccess, computeUsage } = await import("./subscription.functions");
     const comped = isCompedEmail(sub?.email);
     const status = sub?.status ?? "none";
-    const hasAccess =
-      comped || hasActiveAccess(status, sub?.current_period_end ?? null);
+    const hasAccess = comped || hasActiveAccess(status, sub?.current_period_end ?? null);
     if (!hasAccess) {
       throw new Error("SUBSCRIPTION_REQUIRED");
     }
@@ -284,7 +302,6 @@ export const generateListing = createServerFn({ method: "POST" })
       generation_id: savedGen?.id ?? null,
       plan: getPlan(sub?.plan).id,
     });
-
 
     return parsed;
   });
