@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { cloneElement, useId, useRef, useState, type ReactElement, type FormEvent } from "react";
+
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -61,33 +62,41 @@ function GeneratorPage() {
   const usage = usageQuery.data;
   const outOfListings = !!usage && !usage.unlimited && usage.remaining <= 0;
 
+  function clearOutputIfIdle() {
+    if (!inFlight.current) setOutput(null);
+  }
+
   function set<K extends keyof ListingInput>(key: K, value: ListingInput[K]) {
     setInput((prev) => ({ ...prev, [key]: value }));
+    clearOutputIfIdle();
   }
 
   function appendTo(key: keyof ListingInput) {
-    return (text: string) =>
+    return (text: string) => {
       setInput((prev) => {
         const current = (prev[key] as string) ?? "";
         const next = current.trim() ? `${current.trim()} ${text}` : text;
         return { ...prev, [key]: next };
       });
+      clearOutputIfIdle();
+    };
   }
 
   const market = input.market;
   const isUs = market === "us";
 
   function setMarket(m: MarketId) {
-    // Switching market keeps typed facts but resets to the market default when
-    // the form is still empty, so the correct example/labels apply cleanly.
     setInput((prev) => ({ ...prev, market: m }));
+    clearOutputIfIdle();
   }
 
   function loadExample() {
+    if (inFlight.current) return;
     setInput(isUs ? US_EXAMPLE_INPUT : EXAMPLE_INPUT);
     setOutput(null);
     toast.success("Example property loaded.");
   }
+
 
   const L = isUs
     ? {
@@ -193,6 +202,12 @@ function GeneratorPage() {
     }
   }
 
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    void run();
+  }
+
+
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-8">
@@ -214,9 +229,10 @@ function GeneratorPage() {
               </p>
             </div>
           )}
-          <Button variant="outline" onClick={loadExample}>
+          <Button type="button" variant="outline" onClick={loadExample} disabled={busy}>
             <Sparkles className="mr-2 h-4 w-4" /> Load example
           </Button>
+
         </div>
       </div>
 
@@ -255,7 +271,8 @@ function GeneratorPage() {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         {/* Input */}
-        <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" aria-busy={busy}>
+          <fieldset disabled={busy} className="space-y-6 disabled:opacity-70">
           <VoiceNotes value={input.voiceNotes} onChange={(v) => set("voiceNotes", v)} />
 
           <Card className="p-5 sm:p-6">
@@ -266,22 +283,32 @@ function GeneratorPage() {
             </p>
 
             <div className="mt-5">
-              <Label>Market</Label>
-              <div className="mt-2 inline-flex rounded-lg border border-border/70 p-1">
-                {Object.values(MARKETS).map((m) => (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => setMarket(m.id)}
-                    className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                      market === m.id
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {m.label}
-                  </button>
-                ))}
+              <Label id="market-label">Market</Label>
+              <div
+                role="radiogroup"
+                aria-labelledby="market-label"
+                className="mt-2 inline-flex rounded-lg border border-border/70 p-1"
+              >
+                {Object.values(MARKETS).map((m) => {
+                  const selected = market === m.id;
+                  return (
+                    <button
+                      key={m.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      aria-pressed={selected}
+                      onClick={() => setMarket(m.id)}
+                      className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                        selected
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {m.label}
+                    </button>
+                  );
+                })}
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
                 {isUs
@@ -291,25 +318,36 @@ function GeneratorPage() {
             </div>
 
             <div className="mt-5">
-              <Label>Brand voice</Label>
-              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {VOICES.map((v) => (
-                  <button
-                    key={v.id}
-                    type="button"
-                    onClick={() => set("voice", v.id as VoiceId)}
-                    className={`rounded-lg border p-3 text-left transition-colors ${
-                      input.voice === v.id
-                        ? "border-primary bg-primary/10"
-                        : "border-border/70 hover:border-primary/50"
-                    }`}
-                  >
-                    <span className="block text-sm font-semibold">{v.name}</span>
-                    <span className="mt-0.5 block text-xs text-muted-foreground">{v.descriptor}</span>
-                  </button>
-                ))}
+              <Label id="voice-label">Brand voice</Label>
+              <div
+                role="radiogroup"
+                aria-labelledby="voice-label"
+                className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2"
+              >
+                {VOICES.map((v) => {
+                  const selected = input.voice === v.id;
+                  return (
+                    <button
+                      key={v.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      aria-pressed={selected}
+                      onClick={() => set("voice", v.id as VoiceId)}
+                      className={`rounded-lg border p-3 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                        selected
+                          ? "border-primary bg-primary/10"
+                          : "border-border/70 hover:border-primary/50"
+                      }`}
+                    >
+                      <span className="block text-sm font-semibold">{v.name}</span>
+                      <span className="mt-0.5 block text-xs text-muted-foreground">{v.descriptor}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
+
 
             <div className="mt-5 grid gap-4">
               <Field label={L.address}>
@@ -404,7 +442,7 @@ function GeneratorPage() {
 
             </div>
 
-            <Button className="mt-6 w-full" size="lg" onClick={run} disabled={busy || !hasAccess || outOfListings}>
+            <Button type="submit" className="mt-6 w-full" size="lg" disabled={busy || !hasAccess || outOfListings}>
               {busy ? (
                 <>
                   <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Generating…
@@ -416,7 +454,9 @@ function GeneratorPage() {
               )}
             </Button>
           </Card>
-        </div>
+          </fieldset>
+        </form>
+
 
 
         {/* Output */}
@@ -434,6 +474,7 @@ function GeneratorPage() {
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="font-display text-xl font-semibold">{output.headline}</h2>
                   <Button
+                    type="button"
                     variant="ghost"
                     size="icon"
                     className="h-11 w-11 shrink-0"
@@ -443,12 +484,8 @@ function GeneratorPage() {
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
-                <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
-                  {output.listing.split("\n\n").map((p, i) => (
-                    <p key={i} className="break-words">{p}</p>
-                  ))}
-                </div>
               </Card>
+
 
               {output.keyFeatures && output.keyFeatures.length > 0 && (
                 <Card className="p-6">
@@ -476,6 +513,29 @@ function GeneratorPage() {
                   </ul>
                 </Card>
               )}
+
+              <Card className="p-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-display text-lg font-semibold">Description</h3>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-11 w-11 shrink-0"
+                    aria-label="Copy description"
+                    onClick={() => copyToast(output.listing, "Description copied.")}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                  {output.listing.split("\n\n").map((p, i) => (
+                    <p key={i} className="break-words">{p}</p>
+                  ))}
+                </div>
+              </Card>
+
+
 
               <Card className="p-6">
                 <div className="flex items-center justify-between">
@@ -527,7 +587,7 @@ function GeneratorPage() {
               </Card>
 
 
-              <Button variant="outline" className="w-full" onClick={run} disabled={busy}>
+              <Button type="button" variant="outline" className="w-full" onClick={run} disabled={busy}>
                 <RefreshCw className="mr-2 h-4 w-4" /> Regenerate
               </Button>
             </>
@@ -543,13 +603,19 @@ function Field({
   children,
 }: {
   label: string;
-  children: React.ReactNode;
+  children: ReactElement<{ id?: string }>;
 }) {
+  const autoId = useId();
+  const id = children.props.id ?? autoId;
+  const controlled = cloneElement(children, { id });
   return (
     <div className="space-y-1.5">
-      <Label className="text-xs text-muted-foreground">{label}</Label>
-      {children}
+      <Label htmlFor={id} className="text-xs text-muted-foreground">
+        {label}
+      </Label>
+      {controlled}
     </div>
   );
 }
+
 

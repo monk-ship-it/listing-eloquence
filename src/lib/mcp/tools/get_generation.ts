@@ -35,9 +35,18 @@ export default defineTool({
     if (!data) {
       return { content: [{ type: "text", text: "Listing not found" }], isError: true };
     }
+    // Default missing keyFeatures to [] in memory for legacy rows without
+    // mutating the stored output; hand back the raw row otherwise.
+    const rawOutput = (data.output ?? {}) as Record<string, unknown>;
+    const output = {
+      ...rawOutput,
+      keyFeatures: Array.isArray(rawOutput.keyFeatures) ? rawOutput.keyFeatures : [],
+    };
+    const listing = { ...data, output };
     return {
-      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
-      structuredContent: { listing: data },
+      content: [{ type: "text", text: JSON.stringify(listing, null, 2) }],
+      structuredContent: { listing },
     };
   },
 });
+

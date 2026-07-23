@@ -53,9 +53,10 @@ export interface ListingOutput {
 }
 
 /**
- * Normalise an untrusted parsed AI response into a valid ListingOutput.
- * Throws when required fields are missing/malformed so callers can retry.
- * Backward-compatible: older saved rows without `keyFeatures` become `[]`.
+ * Tolerant normaliser — used for LEGACY saved rows and best-effort parsing.
+ * Never throws on missing keyFeatures/social; older DB rows may lack those.
+ * Strips leading bullet chars and trailing terminal punctuation from
+ * feature phrases and deduplicates hashtags case-insensitively.
  */
 export function normaliseListingOutput(raw: unknown): ListingOutput {
   if (!raw || typeof raw !== "object") throw new Error("MALFORMED_AI_OUTPUT");
@@ -66,14 +67,22 @@ export function normaliseListingOutput(raw: unknown): ListingOutput {
   if (!headline || !listing) throw new Error("MALFORMED_AI_OUTPUT");
 
   const rawFeatures = Array.isArray(r.keyFeatures) ? r.keyFeatures : [];
-  const seen = new Set<string>();
+  const seenF = new Set<string>();
   const keyFeatures = rawFeatures
-    .map((f) => (typeof f === "string" ? f.trim().replace(/^[-•*\s]+/, "") : ""))
+    .map((f) =>
+      typeof f === "string"
+        ? f
+            .trim()
+            .replace(/^[-•*·\s]+/, "")
+            .replace(/[.!?;,]+$/g, "")
+            .trim()
+        : "",
+    )
     .filter((f) => f.length > 0 && f.length <= 240)
     .filter((f) => {
       const k = f.toLowerCase();
-      if (seen.has(k)) return false;
-      seen.add(k);
+      if (seenF.has(k)) return false;
+      seenF.add(k);
       return true;
     })
     .slice(0, 10);
@@ -85,10 +94,17 @@ export function normaliseListingOutput(raw: unknown): ListingOutput {
       const post = p as Record<string, unknown>;
       const platform = typeof post.platform === "string" ? post.platform.trim() : "";
       const caption = typeof post.caption === "string" ? post.caption.trim() : "";
+      const seenH = new Set<string>();
       const hashtags = Array.isArray(post.hashtags)
         ? (post.hashtags as unknown[])
             .map((h) => (typeof h === "string" ? h.replace(/^#/, "").trim() : ""))
             .filter((h) => h.length > 0 && h.length <= 60)
+            .filter((h) => {
+              const k = h.toLowerCase();
+              if (seenH.has(k)) return false;
+              seenH.add(k);
+              return true;
+            })
             .slice(0, 20)
         : [];
       if (!platform || !caption) return null;
@@ -98,6 +114,64 @@ export function normaliseListingOutput(raw: unknown): ListingOutput {
 
   return { headline, listing, summary, keyFeatures, social };
 }
+
+/**
+ * Strict validator for NEW AI responses. Requires 6–10 clean Key Features
+ * and exactly one usable Instagram, Facebook and X post. Throws
+ * MALFORMED_AI_OUTPUT on any failure so callers can retry.
+ */
+export function validateNewListingOutput(raw: unknown): ListingOutput {
+  const out = normaliseListingOutput(raw);
+  if (!out.summary) throw new Error("MALFORMED_AI_OUTPUT");
+  if (out.keyFeatures.length < 6 || out.keyFeatures.length > 10) {
+    throw new Error("MALFORMED_AI_OUTPUT");
+  }
+  const required = ["instagram", "facebook", "x"] as const;
+  const byPlatform = new Map<string, SocialPost>();
+  for (const p of out.social) {
+    const key = p.platform.trim().toLowerCase();
+    // Accept "Twitter/X" or "X (Twitter)" style as X
+    const norm = key === "twitter" || key.includes("x (") || key === "x/twitter" ? "x" : key;
+    if (!byPlatform.has(norm)) byPlatform.set(norm, { ...p, platform: p.platform });
+  }
+  for (const platform of required) {
+    const post = byPlatform.get(platform);
+    if (!post || !post.caption) throw new Error("MALFORMED_AI_OUTPUT");
+  }
+  return out;
+}
+
+/**
+ * Safely coerce a value read from a legacy DB row into a full ListingOutput
+ * shape without throwing, defaulting missing arrays. Does not rewrite the row.
+ */
+export function coerceLegacyOutput(raw: unknown): ListingOutput {
+  const r = (raw ?? {}) as Record<string, unknown>;
+  const rawSocial = Array.isArray(r.social) ? (r.social as unknown[]) : [];
+  const social: SocialPost[] = rawSocial
+    .map((p) => {
+      if (!p || typeof p !== "object") return null;
+      const post = p as Record<string, unknown>;
+      const platform = typeof post.platform === "string" ? post.platform : "";
+      const caption = typeof post.caption === "string" ? post.caption : "";
+      const hashtags = Array.isArray(post.hashtags)
+        ? (post.hashtags as unknown[]).filter((h): h is string => typeof h === "string")
+        : [];
+      if (!platform || !caption) return null;
+      return { platform, caption, hashtags };
+    })
+    .filter((p): p is SocialPost => p !== null);
+  return {
+    headline: typeof r.headline === "string" ? r.headline : "",
+    listing: typeof r.listing === "string" ? r.listing : "",
+    summary: typeof r.summary === "string" ? r.summary : "",
+    keyFeatures: Array.isArray(r.keyFeatures)
+      ? (r.keyFeatures as unknown[]).filter((x): x is string => typeof x === "string")
+      : [],
+    social,
+  };
+}
+
 
 export const EMPTY_INPUT: ListingInput = {
   market: "uk",

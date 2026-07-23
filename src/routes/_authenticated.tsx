@@ -18,8 +18,12 @@ import { toast } from "sonner";
 import { PenLine, History, CreditCard, User, Shield, Menu, LogOut } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
+  head: () => ({
+    meta: [{ name: "robots", content: "noindex,follow" }],
+  }),
   component: AuthenticatedLayout,
 });
+
 
 interface NavItem {
   to: string;
