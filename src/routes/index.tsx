@@ -265,7 +265,19 @@ function Header({ user }: { user: boolean }) {
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
         <Logo withByline />
-        <nav className="flex items-center gap-1.5 sm:gap-2">
+        <nav className="flex items-center gap-1.5 sm:gap-2" aria-label="Primary">
+          <Link
+            to="/uk-property-listing-generator"
+            className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex"
+          >
+            UK
+          </Link>
+          <Link
+            to="/us-real-estate-listing-generator"
+            className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex"
+          >
+            US
+          </Link>
           {user ? (
             <Button asChild>
               <Link to="/app">Open app</Link>
