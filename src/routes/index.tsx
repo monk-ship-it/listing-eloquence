@@ -1039,6 +1039,22 @@ const DEMO_UK: DemoPack = {
   ],
   summary:
     "A five-bedroom Grade II listed detached home in the heart of a Cotswold market town, with an inglenook fireplace, flagstone floors and a private walled garden. Guide price £1,450,000, freehold.",
+  emailBlast: {
+    subjectLines: [
+      "New instruction: Grade II listed rectory in the Cotswolds",
+      "A five-bedroom listed home in the heart of a market town",
+      "Cotswold rectory with walled garden — new to market",
+    ],
+    previewText:
+      "Five bedrooms, three receptions and a private walled garden. Freehold, guide £1,450,000.",
+    headline: "A distinguished Grade II listed rectory, new to market",
+    body: [
+      "We are pleased to bring to market a Grade II listed detached rectory in the heart of a Cotswold market town. Set back behind a gravel driveway and a low honey-stone wall, the house has a quiet confidence and a clear sense of proportion throughout.",
+      "The layout offers three reception rooms anchored by an inglenook fireplace, flagstone floors and exposed beams, with a bespoke shaker kitchen at the heart of the home and a useful cellar below. Five bedrooms and three bathrooms are arranged over the principal floors.",
+      "Beyond, a walled garden of around half an acre includes an orchard and a stone terrace, with a gravel driveway and detached double cart shed to the front. Offered freehold at a guide price of £1,450,000.",
+    ],
+    callToAction: "Arrange a viewing",
+  },
   instagram: {
     caption:
       "A Grade II listed home in the heart of a Cotswold market town — inglenook fireplace, flagstone floors and a private walled garden. Five bedrooms, three receptions. Guide £1,450,000.",
@@ -1076,6 +1092,22 @@ const DEMO_US: DemoPack = {
   ],
   summary:
     "Winter Park single-family home, approximately 3,200 sq ft on a quarter-acre lot. Four bedrooms, 3.5 baths, chef's kitchen, first-floor primary suite, screened lanai and heated pool. Offered at $895,000.",
+  emailBlast: {
+    subjectLines: [
+      "Just listed in Winter Park: 4-bed pool home, $895,000",
+      "New Winter Park listing — chef's kitchen and heated pool",
+      "Winter Park 4/3.5 with first-floor primary, offered at $895,000",
+    ],
+    previewText:
+      "Approximately 3,200 sq ft on a 0.25-acre lot with a first-floor primary and heated pool.",
+    headline: "Just listed in Winter Park",
+    body: [
+      "We're pleased to announce a new listing in Winter Park: a 2016-built single-family home offering approximately 3,200 square feet on a quarter-acre lot, on a tree-lined street close to Park Avenue shops and dining.",
+      "The home features a chef's kitchen with quartz countertops opening to the main living area, a first-floor primary suite for added convenience, and a three-car attached garage with paver driveway. Four bedrooms and three and a half bathrooms are thoughtfully arranged throughout.",
+      "Outside, a screened lanai extends to a heated saltwater pool within a fenced backyard. Offered fee simple at $895,000 with an HOA of $90 per month.",
+    ],
+    callToAction: "Schedule a showing",
+  },
   instagram: {
     caption:
       "Winter Park single-family home — chef's kitchen with quartz counters, first-floor primary suite, screened lanai and a heated pool. 4 bed, 3.5 bath, ~3,200 sq ft. Offered at $895,000.",
