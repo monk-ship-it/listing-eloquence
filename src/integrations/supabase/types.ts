@@ -125,6 +125,8 @@ export type Database = {
           generation_id: string | null
           id: string
           plan: string | null
+          reservation_status: string
+          reserved_until: string | null
           user_id: string
         }
         Insert: {
@@ -132,6 +134,8 @@ export type Database = {
           generation_id?: string | null
           id?: string
           plan?: string | null
+          reservation_status?: string
+          reserved_until?: string | null
           user_id: string
         }
         Update: {
@@ -139,6 +143,8 @@ export type Database = {
           generation_id?: string | null
           id?: string
           plan?: string | null
+          reservation_status?: string
+          reserved_until?: string | null
           user_id?: string
         }
         Relationships: []
@@ -286,6 +292,10 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      finalize_generation_slot: {
+        Args: { generation_id: string; reservation_id: string }
+        Returns: boolean
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -303,6 +313,11 @@ export type Database = {
           read_ct: number
         }[]
       }
+      release_generation_slot: {
+        Args: { reservation_id: string }
+        Returns: boolean
+      }
+      reserve_generation_slot: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
