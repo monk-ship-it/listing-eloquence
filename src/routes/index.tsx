@@ -35,7 +35,9 @@ import {
   Thermometer,
   MapPin,
   Megaphone,
+  Mail,
 } from "lucide-react";
+import { EMAIL_BLAST_PLACEHOLDERS } from "@/lib/listing-types";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -998,11 +1000,20 @@ function SocialBlock({
   );
 }
 
+interface DemoEmailBlast {
+  subjectLines: [string, string, string];
+  previewText: string;
+  headline: string;
+  body: string[];
+  callToAction: string;
+}
+
 interface DemoPack {
   headline: string;
   keyFeatures: string[];
   listing: string[];
   summary: string;
+  emailBlast: DemoEmailBlast;
   instagram: { caption: string; hashtags: string };
   facebook: { caption: string; hashtags: string };
   x: { caption: string; hashtags: string };
