@@ -43,14 +43,52 @@ export interface SocialPost {
   hashtags: string[];
 }
 
+/**
+ * Structured Email Blast copy — plain-text campaign copy an agent can paste
+ * into Mailchimp, Outlook, or their CRM. Quill never sends emails, manages
+ * contacts, or invents personal / contact / URL / date details.
+ */
+export interface EmailBlast {
+  /** Exactly 3 unique subject-line options. */
+  subjectLines: string[];
+  /** Short preheader / preview text. */
+  previewText: string;
+  /** Campaign headline (short). */
+  headline: string;
+  /** Plain-text email body, 2–4 short paragraphs. */
+  body: string;
+  /** Short CTA label e.g. "View property details" / "Arrange a viewing". */
+  callToAction: string;
+}
+
 export interface ListingOutput {
   headline: string;
   listing: string;
   summary: string;
   /** Portal/MLS-style bullet points generated strictly from supplied facts. */
   keyFeatures: string[];
+  /** Structured email campaign copy. Null on legacy saved rows only. */
+  emailBlast: EmailBlast | null;
   social: SocialPost[];
 }
+
+// Sensible per-field length caps for the Email Blast.
+const EMAIL_SUBJECT_MAX = 90;
+const EMAIL_PREVIEW_MAX = 160;
+const EMAIL_HEADLINE_MAX = 140;
+const EMAIL_BODY_MAX = 3000;
+const EMAIL_CTA_MAX = 60;
+
+/**
+ * Editable placeholders appended to the copied/rendered Email Blast. Quill
+ * never invents agent contact info, property URLs, availability or dates —
+ * these lines are surfaced verbatim so the user fills them in before sending.
+ */
+export const EMAIL_BLAST_PLACEHOLDERS = [
+  "Property link: [Add property URL]",
+  "Agent contact: [Add name, phone and email]",
+  "Sending note: Add the sender details and unsubscribe controls required by your email platform.",
+] as const;
 
 /**
  * Tolerant normaliser — used for LEGACY saved rows and best-effort parsing.
@@ -112,7 +150,42 @@ export function normaliseListingOutput(raw: unknown): ListingOutput {
     })
     .filter((p): p is SocialPost => p !== null);
 
-  return { headline, listing, summary, keyFeatures, social };
+  const emailBlast = coerceLegacyEmailBlast(r.emailBlast);
+  return { headline, listing, summary, keyFeatures, emailBlast, social };
+}
+
+/**
+ * Tolerant email-blast coercion for legacy rows or partial payloads. Never
+ * throws. Returns null when the payload is missing or unusable.
+ */
+export function coerceLegacyEmailBlast(raw: unknown): EmailBlast | null {
+  if (!raw || typeof raw !== "object") return null;
+  const e = raw as Record<string, unknown>;
+  const rawSubjects = Array.isArray(e.subjectLines) ? (e.subjectLines as unknown[]) : [];
+  const seenS = new Set<string>();
+  const subjectLines = rawSubjects
+    .map((s) => (typeof s === "string" ? s.trim() : ""))
+    .filter((s) => s.length > 0)
+    .filter((s) => {
+      const k = s.toLowerCase();
+      if (seenS.has(k)) return false;
+      seenS.add(k);
+      return true;
+    });
+  const previewText = typeof e.previewText === "string" ? e.previewText.trim() : "";
+  const headline = typeof e.headline === "string" ? e.headline.trim() : "";
+  const body = typeof e.body === "string" ? e.body.trim() : "";
+  const callToAction = typeof e.callToAction === "string" ? e.callToAction.trim() : "";
+  if (
+    subjectLines.length === 0 &&
+    !previewText &&
+    !headline &&
+    !body &&
+    !callToAction
+  ) {
+    return null;
+  }
+  return { subjectLines, previewText, headline, body, callToAction };
 }
 
 /**
@@ -193,6 +266,9 @@ export function validateNewListingOutput(raw: unknown): ListingOutput {
     }
   }
 
+  // Strict Email Blast shape check.
+  const emailBlast = validateNewEmailBlast(r.emailBlast);
+
   // Tolerant normalisation now safe: raw shape already validated.
   const out = normaliseListingOutput(raw);
   if (!out.summary) throw new Error("MALFORMED_AI_OUTPUT");
@@ -216,7 +292,50 @@ export function validateNewListingOutput(raw: unknown): ListingOutput {
     ordered.push(post);
   }
 
-  return { ...out, social: ordered };
+  return { ...out, emailBlast, social: ordered };
+}
+
+/**
+ * Strict validator for NEW AI Email Blast output. Enforces exactly 3 unique
+ * non-empty subject lines and non-empty preview/headline/body/CTA strings,
+ * all within sensible length caps. Rejects malformed output rather than
+ * silently trimming or padding.
+ */
+function validateNewEmailBlast(raw: unknown): EmailBlast {
+  if (!raw || typeof raw !== "object") throw new Error("MALFORMED_AI_OUTPUT");
+  const e = raw as Record<string, unknown>;
+
+  if (!Array.isArray(e.subjectLines) || e.subjectLines.length !== 3) {
+    throw new Error("MALFORMED_AI_OUTPUT");
+  }
+  const seen = new Set<string>();
+  const subjectLines: string[] = [];
+  for (const s of e.subjectLines) {
+    if (typeof s !== "string") throw new Error("MALFORMED_AI_OUTPUT");
+    const cleaned = s.trim();
+    if (!cleaned || cleaned.length > EMAIL_SUBJECT_MAX) {
+      throw new Error("MALFORMED_AI_OUTPUT");
+    }
+    const key = cleaned.toLowerCase();
+    if (seen.has(key)) throw new Error("MALFORMED_AI_OUTPUT");
+    seen.add(key);
+    subjectLines.push(cleaned);
+  }
+
+  const checkStr = (v: unknown, max: number): string => {
+    if (typeof v !== "string") throw new Error("MALFORMED_AI_OUTPUT");
+    const t = v.trim();
+    if (!t || t.length > max) throw new Error("MALFORMED_AI_OUTPUT");
+    return t;
+  };
+
+  return {
+    subjectLines,
+    previewText: checkStr(e.previewText, EMAIL_PREVIEW_MAX),
+    headline: checkStr(e.headline, EMAIL_HEADLINE_MAX),
+    body: checkStr(e.body, EMAIL_BODY_MAX),
+    callToAction: checkStr(e.callToAction, EMAIL_CTA_MAX),
+  };
 }
 
 /**
@@ -246,6 +365,7 @@ export function coerceLegacyOutput(raw: unknown): ListingOutput {
     keyFeatures: Array.isArray(r.keyFeatures)
       ? (r.keyFeatures as unknown[]).filter((x): x is string => typeof x === "string")
       : [],
+    emailBlast: coerceLegacyEmailBlast(r.emailBlast),
     social,
   };
 }

@@ -192,6 +192,13 @@ ${portalLine}
 ${factHandlingLine}
 - Provide a short punchy teaser summary (1–2 sentences).
 - Provide 6–10 concise, factual, portal/MLS-ready "keyFeatures" bullets drawn STRICTLY from the supplied facts. Each bullet must be a short phrase (no sentences, no trailing full stops), non-duplicative, and safe for compliance. NEVER invent, upgrade or infer facts. Bullets should highlight the property's strongest, most factual selling points (property type, bedrooms/bathrooms, tenure/ownership, key features, outside space, parking, energy/tax band, notable features, location advantages) in the order most useful to a buyer.
+- Provide an "emailBlast" object with:
+    - "subjectLines": exactly 3 unique, concise subject-line options (short strings, no emoji spam, no ALL CAPS);
+    - "previewText": one short preheader / preview text (factual one-liner);
+    - "headline": a short campaign headline;
+    - "body": a plain-text email body of 2–4 short paragraphs, ${isUs ? "US real estate listing announcement" : "UK estate-agent database email"} tone, matching the selected voice, grounded ONLY in the structured facts above;
+    - "callToAction": a short CTA label such as ${isUs ? '"View property details" or "Schedule a showing"' : '"View property details" or "Arrange a viewing"'}.
+    NEVER invent an agent name, phone, email, URL, date, availability, urgency or offer deadline in the email — the user fills those in separately. ${isUs ? "Follow Fair Housing: describe the home, not the ideal buyer; keep private showing/access notes and disclosures out of the campaign copy." : "Keep private viewing/access notes out of the campaign copy."}
 - Provide three social media posts (Instagram, Facebook, X) — each an engaging caption appropriate to that platform, plus a list of relevant hashtags (no '#' symbol in the array, just the words).
 
 Respond ONLY with a JSON object in exactly this shape:
@@ -200,6 +207,13 @@ Respond ONLY with a JSON object in exactly this shape:
   "listing": "string — the full listing body, paragraphs separated by \\n\\n",
   "summary": "string — short teaser",
   "keyFeatures": ["string — short factual bullet", "..."],
+  "emailBlast": {
+    "subjectLines": ["string", "string", "string"],
+    "previewText": "string",
+    "headline": "string",
+    "body": "string",
+    "callToAction": "string"
+  },
   "social": [
     { "platform": "Instagram", "caption": "string", "hashtags": ["string"] },
     { "platform": "Facebook", "caption": "string", "hashtags": ["string"] },

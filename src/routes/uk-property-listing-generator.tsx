@@ -22,7 +22,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "What exactly does one generation produce?",
-    a: "One run returns a Headline, 6–10 Key Features, a portal-ready Listing Description, a Short Teaser and one caption each for Instagram, Facebook and X. Nothing else is generated.",
+    a: "One run returns a Headline, 6–10 Key Features, a portal-ready Listing Description, a Short Teaser, an Email Blast and one caption each for Instagram, Facebook and X. Nothing else is generated.",
   },
   {
     q: "Can I control the tone?",
@@ -41,13 +41,13 @@ export const Route = createFileRoute("/uk-property-listing-generator")({
       {
         name: "description",
         content:
-          "Turn one set of property notes into a portal-ready UK listing pack: Headline, 6–10 Key Features, Rightmove/OnTheMarket-style description, short teaser and Instagram, Facebook and X captions. Material Information aware.",
+          "Turn one set of property notes into a portal-ready UK listing pack: Headline, 6–10 Key Features, Rightmove/OnTheMarket-style description, short teaser, Email Blast copy and Instagram, Facebook and X captions. Material Information aware.",
       },
       { property: "og:title", content: `UK Property Listing Generator — ${APP_NAME}` },
       {
         property: "og:description",
         content:
-          "Headline, Key Features, portal-ready description, teaser and Instagram/Facebook/X captions — written from your facts, in your voice.",
+          "Headline, Key Features, portal-ready description, teaser, Email Blast and Instagram/Facebook/X captions — written from your facts, in your voice.",
       },
       { property: "og:url", content: CANONICAL },
       { property: "og:type", content: "website" },
@@ -56,7 +56,7 @@ export const Route = createFileRoute("/uk-property-listing-generator")({
       {
         name: "twitter:description",
         content:
-          "One set of notes becomes a full UK listing pack: Headline, Key Features, portal description, teaser and Instagram/Facebook/X captions.",
+          "One set of notes becomes a full UK listing pack: Headline, Key Features, portal description, teaser, Email Blast and Instagram/Facebook/X captions.",
       },
     ],
     links: [{ rel: "canonical", href: CANONICAL }],
@@ -109,7 +109,7 @@ function UKPage() {
         <p className="mt-4 text-lg text-muted-foreground">
           Speak or type property notes once. Quill writes a portal-ready description, generates the
           Headline and 6–10 Key Features bullets Rightmove and OnTheMarket expect, and produces a
-          short teaser plus Instagram, Facebook and X captions — all from a single source of truth.
+          short teaser, Email Blast copy plus Instagram, Facebook and X captions — all from a single source of truth.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Button asChild size="lg" className="min-h-[44px]">
@@ -132,7 +132,7 @@ function UKPage() {
               "Headline written for portal search results",
               "6–10 Key Features bullets (Rightmove/OnTheMarket phrasing)",
               "Portal-ready Listing Description",
-              "Short Teaser summary",
+              "Short Teaser summary and Email Blast campaign copy",
               "Instagram, Facebook and X captions",
               "Four brand voices: Professional, Premium, Luxury, Heritage",
             ].map((item) => (
@@ -156,7 +156,7 @@ function UKPage() {
               {
                 icon: Sparkles,
                 title: "2. Generate the pack",
-                body: "Quill returns a Headline, 6–10 Key Features, a portal-ready description, a short teaser and Instagram, Facebook and X captions.",
+                body: "Quill returns a Headline, 6–10 Key Features, a portal-ready description, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
               },
               {
                 icon: Copy,

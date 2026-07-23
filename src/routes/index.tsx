@@ -44,7 +44,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Quill helps UK estate agents and US real estate teams turn one set of property notes into a full listing pack: Headline, 6–10 Key Features, a portal-ready UK description or MLS-ready remarks, a short teaser and Instagram, Facebook and X captions.",
+          "Quill helps UK estate agents and US real estate teams turn one set of property notes into a full listing pack: Headline, 6–10 Key Features, a portal-ready UK description or MLS-ready remarks, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
       },
       {
         property: "og:title",
@@ -53,7 +53,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Turn one set of property notes into a Headline, 6–10 Key Features, a portal or MLS description, a short teaser and Instagram, Facebook and X captions.",
+          "Turn one set of property notes into a Headline, 6–10 Key Features, a portal or MLS description, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://copybymonk.com/" },
@@ -65,7 +65,7 @@ export const Route = createFileRoute("/")({
       {
         name: "twitter:description",
         content:
-          "Turn one set of property notes into a Headline, 6–10 Key Features, a portal or MLS description, a short teaser and Instagram, Facebook and X captions.",
+          "Turn one set of property notes into a Headline, 6–10 Key Features, a portal or MLS description, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
       },
     ],
     links: [{ rel: "canonical", href: "https://copybymonk.com/" }],
@@ -89,7 +89,7 @@ export const Route = createFileRoute("/")({
           name: "Quill",
           url: "https://copybymonk.com/",
           description:
-            "Quill removes repetitive listing admin between instruction and launch — generating a Headline, Key Features, the portal or MLS description, a short teaser and Instagram, Facebook and X captions from one source of truth.",
+            "Quill removes repetitive listing admin between instruction and launch — generating a Headline, Key Features, the portal or MLS description, a short teaser, Email Blast copy and Instagram, Facebook and X captions from one source of truth.",
         }),
       },
       {
@@ -102,7 +102,7 @@ export const Route = createFileRoute("/")({
           operatingSystem: "Web",
           url: "https://copybymonk.com/",
           description:
-            "AI listing pack generator for UK estate agents and US real estate teams. One set of notes becomes a Headline, 6–10 Key Features, a portal-ready UK description or MLS-ready remarks, a short teaser and Instagram, Facebook and X captions.",
+            "AI listing pack generator for UK estate agents and US real estate teams. One set of notes becomes a Headline, 6–10 Key Features, a portal-ready UK description or MLS-ready remarks, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
           offers: [
             {
               "@type": "Offer",
@@ -349,7 +349,7 @@ function Hero({ authed }: { authed: boolean }) {
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             {APP_NAME} helps UK estate agents and US real estate teams remove the slow admin between
             instruction and launch. Speak, type or paste the facts once, choose the brand voice, and
-            generate the Headline, Key Features, listing description, short teaser and Instagram,
+            generate the Headline, Key Features, listing description, short teaser, Email Blast copy and Instagram,
             Facebook and X captions from the same source of truth.
           </p>
 
@@ -530,8 +530,8 @@ function VoiceValue() {
       step: "03",
       title: "Produce the full pack",
       body: isUs
-        ? "Generate MLS-ready remarks, a Headline, 6–10 Key Features, a short teaser and Instagram, Facebook and X captions — all from the same facts."
-        : "Generate the portal description, a Headline, 6–10 Key Features, a short teaser and Instagram, Facebook and X captions — all from the same facts.",
+        ? "Generate MLS-ready remarks, a Headline, 6–10 Key Features, a short teaser, Email Blast copy and Instagram, Facebook and X captions — all from the same facts."
+        : "Generate the portal description, a Headline, 6–10 Key Features, a short teaser, Email Blast copy and Instagram, Facebook and X captions — all from the same facts.",
     },
   ];
   return (
@@ -585,7 +585,7 @@ function HowItWorks() {
     {
       icon: Sparkles,
       title: "Produce the full pack",
-      body: "Headline, 6–10 Key Features, listing description, short teaser and Instagram, Facebook and X captions — drafted together and fully editable before use.",
+      body: "Headline, 6–10 Key Features, listing description, short teaser, Email Blast copy and Instagram, Facebook and X captions — drafted together and fully editable before use.",
     },
   ];
   return (
@@ -656,7 +656,7 @@ const BENEFIT_GROUPS = [
     icon: FileText,
     title: "Reusable outputs",
     items:
-      "One set of notes produces the Headline, Key Features, listing description, short teaser and Instagram, Facebook and X captions — each editable, none written from scratch.",
+      "One set of notes produces the Headline, Key Features, listing description, short teaser, Email Blast copy and Instagram, Facebook and X captions — each editable, none written from scratch.",
   },
 ];
 
@@ -823,7 +823,7 @@ function LiveExample() {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Same source of truth, every asset. See how a handful of property facts becomes the
-            listing description, Key Features, short teaser and social captions — brand-consistent
+            listing description, Key Features, short teaser, Email Blast copy and social captions — brand-consistent
             and ready to review.
           </p>
         </Reveal>
@@ -1235,7 +1235,7 @@ function Pricing({ authed }: { authed: boolean }) {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Every plan includes UK and US markets, all four brand voices, voice dictation and the
-            full listing pack — Headline, Key Features, description, teaser and Instagram, Facebook
+            full listing pack — Headline, Key Features, description, teaser, Email Blast copy and Instagram, Facebook
             and X captions.
           </p>
           <div className="mt-6 flex justify-center">

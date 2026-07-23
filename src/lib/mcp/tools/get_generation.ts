@@ -14,7 +14,7 @@ export default defineTool({
   name: "get_generation",
   title: "Get a listing",
   description:
-    "Fetch the full content of a previously generated Quill listing by its id. Returns the inputs used and the full generated output (headline, listing body, key features bullets, teaser summary, and social posts). The output.keyFeatures array holds 6–10 factual portal/MLS-style highlights drawn from the supplied facts.",
+    "Fetch the full content of a previously generated Quill listing by its id. Returns the inputs used and the full generated output (headline, listing body, 6–10 key features bullets, teaser summary, structured emailBlast copy — subjectLines, previewText, headline, body, callToAction — and Instagram, Facebook and X social posts). emailBlast is null on legacy rows saved before the Email Blast feature.",
   inputSchema: {
     id: z.string().uuid().describe("The listing id returned by list_generations."),
   },
@@ -35,12 +35,16 @@ export default defineTool({
     if (!data) {
       return { content: [{ type: "text", text: "Listing not found" }], isError: true };
     }
-    // Default missing keyFeatures to [] in memory for legacy rows without
-    // mutating the stored output; hand back the raw row otherwise.
+    // Default missing keyFeatures to [] and missing emailBlast to null in
+    // memory for legacy rows without mutating the stored output.
     const rawOutput = (data.output ?? {}) as Record<string, unknown>;
     const output = {
       ...rawOutput,
       keyFeatures: Array.isArray(rawOutput.keyFeatures) ? rawOutput.keyFeatures : [],
+      emailBlast:
+        rawOutput.emailBlast && typeof rawOutput.emailBlast === "object"
+          ? rawOutput.emailBlast
+          : null,
     };
     const listing = { ...data, output };
     return {

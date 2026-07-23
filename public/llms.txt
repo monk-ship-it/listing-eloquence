@@ -1,6 +1,6 @@
 # Quill
 
-> Quill turns one set of property notes into a complete listing pack for UK estate agents and US real estate teams. Speak or type the facts once and generate a portal-ready description (or MLS-ready remarks), 6–10 generated Key Features bullets, a short teaser summary and social captions for Instagram, Facebook and X.
+> Quill turns one set of property notes into a complete listing pack for UK estate agents and US real estate teams. Speak or type the facts once and generate a portal-ready description (or MLS-ready remarks), 6–10 generated Key Features bullets, a short teaser summary, an Email Blast (database email campaign copy — Quill doesn't send emails) and social captions for Instagram, Facebook and X.
 
 ## Pages
 

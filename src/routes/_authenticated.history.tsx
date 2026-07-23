@@ -24,6 +24,7 @@ import {
   type GenerationRecord,
 } from "@/lib/generations.functions";
 import { copyText, buildCopyAllText, formatKeyFeaturesBlock } from "@/lib/clipboard";
+import { EmailBlastCard } from "@/components/EmailBlastCard";
 import {
   Copy,
   Trash2,
@@ -334,6 +335,16 @@ function HistoryItem({
               <p className="mt-1 break-words rounded-lg bg-muted/50 p-3 text-sm">
                 {item.output.summary}
               </p>
+            </div>
+          )}
+
+          {item.output.emailBlast && (
+            <div className="mt-5">
+              <EmailBlastCard
+                emailBlast={item.output.emailBlast}
+                keyFeatures={features}
+                onCopy={(text) => doCopy(text, "Email Blast copied.")}
+              />
             </div>
           )}
 

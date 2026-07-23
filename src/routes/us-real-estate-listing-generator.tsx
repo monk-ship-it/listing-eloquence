@@ -22,7 +22,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "What exactly does one generation produce?",
-    a: "One run returns a Headline, 6–10 Key Features, MLS-ready remarks, a Short Teaser and one caption each for Instagram, Facebook and X. Nothing else is generated.",
+    a: "One run returns a Headline, 6–10 Key Features, MLS-ready remarks, a Short Teaser, an Email Blast and one caption each for Instagram, Facebook and X. Nothing else is generated.",
   },
   {
     q: "Where do private showing notes go?",
@@ -41,13 +41,13 @@ export const Route = createFileRoute("/us-real-estate-listing-generator")({
       {
         name: "description",
         content:
-          "Turn one set of property notes into an MLS-ready US listing pack: Headline, 6–10 Key Features, MLS remarks, short teaser and Instagram, Facebook and X captions. Fair Housing aware.",
+          "Turn one set of property notes into an MLS-ready US listing pack: Headline, 6–10 Key Features, MLS remarks, short teaser, Email Blast copy and Instagram, Facebook and X captions. Fair Housing aware.",
       },
       { property: "og:title", content: `US Real Estate Listing Generator — ${APP_NAME}` },
       {
         property: "og:description",
         content:
-          "Headline, Key Features, MLS-ready remarks, teaser and Instagram/Facebook/X captions — written from your facts, in your voice.",
+          "Headline, Key Features, MLS-ready remarks, teaser, Email Blast and Instagram/Facebook/X captions — written from your facts, in your voice.",
       },
       { property: "og:url", content: CANONICAL },
       { property: "og:type", content: "website" },
@@ -56,7 +56,7 @@ export const Route = createFileRoute("/us-real-estate-listing-generator")({
       {
         name: "twitter:description",
         content:
-          "One set of notes becomes a full US listing pack: Headline, Key Features, MLS remarks, teaser and Instagram/Facebook/X captions.",
+          "One set of notes becomes a full US listing pack: Headline, Key Features, MLS remarks, teaser, Email Blast and Instagram/Facebook/X captions.",
       },
     ],
     links: [{ rel: "canonical", href: CANONICAL }],
@@ -108,7 +108,7 @@ function USPage() {
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">
           Dictate or paste the facts once. Quill writes MLS-ready remarks, generates the Headline
-          and 6–10 Key Features highlights, and produces a short teaser plus Instagram, Facebook and
+          and 6–10 Key Features highlights, and produces a short teaser, Email Blast copy plus Instagram, Facebook and
           X captions — all in US English, all from a single source of truth.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
@@ -132,7 +132,7 @@ function USPage() {
               "Headline written for MLS and search results",
               "6–10 Key Features highlights",
               "MLS-ready public remarks",
-              "Short Teaser summary",
+              "Short Teaser summary and Email Blast campaign copy",
               "Instagram, Facebook and X captions",
               "Four brand voices tuned to US real estate",
             ].map((item) => (
@@ -156,7 +156,7 @@ function USPage() {
               {
                 icon: Sparkles,
                 title: "2. Generate the pack",
-                body: "Quill returns a Headline, 6–10 Key Features, MLS-ready remarks, a short teaser and Instagram, Facebook and X captions.",
+                body: "Quill returns a Headline, 6–10 Key Features, MLS-ready remarks, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
               },
               {
                 icon: Copy,
