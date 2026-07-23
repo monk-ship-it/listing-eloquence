@@ -21,7 +21,9 @@ const VALID_VOICES = new Set(VOICES.map((v) => v.id));
 function clip(v: unknown, max: number, label: string): string {
   if (v === undefined || v === null || v === "") return "";
   if (typeof v !== "string") throw new Error(`${label} must be text.`);
+  // eslint-disable-next-line no-control-regex
   const t = v.replace(/\u0000/g, "").trim();
+
   if (t.length > max) {
     throw new Error(`${label} is too long (max ${max.toLocaleString()} characters).`);
   }
