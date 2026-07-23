@@ -349,8 +349,8 @@ function Hero({ authed }: { authed: boolean }) {
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             {APP_NAME} helps UK estate agents and US real estate teams remove the slow admin between
             instruction and launch. Speak, type or paste the facts once, choose the brand voice, and
-            generate the listing description, short copy, captions and buyer email from the same
-            source of truth.
+            generate the Headline, Key Features, listing description, short teaser and Instagram,
+            Facebook and X captions from the same source of truth.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -534,8 +534,8 @@ function VoiceValue() {
       step: "03",
       title: "Produce the full pack",
       body: isUs
-        ? "Generate MLS public remarks, a short description, social captions, buyer email and review notes — all from the same facts."
-        : "Generate the portal description, a teaser, social captions, buyer email and review notes — all from the same facts.",
+        ? "Generate MLS-ready remarks, a Headline, 6–10 Key Features, a short teaser and Instagram, Facebook and X captions — all from the same facts."
+        : "Generate the portal description, a Headline, 6–10 Key Features, a short teaser and Instagram, Facebook and X captions — all from the same facts.",
     },
   ];
   return (
@@ -587,7 +587,7 @@ function HowItWorks() {
     {
       icon: Sparkles,
       title: "Produce the full pack",
-      body: "Listing description, short copy, social captions, buyer email and review notes — drafted together and fully editable before use.",
+      body: "Headline, 6–10 Key Features, listing description, short teaser and Instagram, Facebook and X captions — drafted together and fully editable before use.",
     },
   ];
   return (
@@ -654,7 +654,7 @@ const BENEFIT_GROUPS = [
   {
     icon: FileText,
     title: "Reusable outputs",
-    items: "One set of notes produces the listing description, short copy, social captions and buyer email — each editable, none written from scratch.",
+    items: "One set of notes produces the Headline, Key Features, listing description, short teaser and Instagram, Facebook and X captions — each editable, none written from scratch.",
   },
 ];
 
@@ -824,7 +824,7 @@ function LiveExample() {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Same source of truth, every asset. See how a handful of property facts becomes the
-            listing description, social captions and a buyer email — brand-consistent and ready to review.
+            listing description, Key Features, short teaser and social captions — brand-consistent and ready to review.
           </p>
         </Reveal>
 
@@ -1183,7 +1183,7 @@ function Pricing({ authed }: { authed: boolean }) {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Every plan includes UK and US markets, all four brand voices, voice dictation and the
-            full listing pack — description, teaser, social captions and buyer email.
+            full listing pack — Headline, Key Features, description, teaser and Instagram, Facebook and X captions.
           </p>
           <div className="mt-6 flex justify-center">
             <MarketToggle />
