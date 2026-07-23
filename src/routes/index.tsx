@@ -46,7 +46,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Quill helps UK estate agents and US real estate teams turn one set of property notes into a full listing pack — portal or MLS description, teaser, social caption and buyer email. Less listing admin between instruction and launch.",
+          "Quill helps UK estate agents and US real estate teams turn one set of property notes into a full listing pack: Headline, 6–10 Key Features, a portal-ready UK description or MLS-ready remarks, a short teaser and Instagram, Facebook and X captions.",
       },
       {
         property: "og:title",
@@ -55,9 +55,20 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Turn one set of property notes into a portal or MLS description, teaser, social caption and buyer email. Built for UK estate agents and US real estate teams.",
+          "Turn one set of property notes into a Headline, 6–10 Key Features, a portal or MLS description, a short teaser and Instagram, Facebook and X captions.",
       },
+      { property: "og:type", content: "website" },
       { property: "og:url", content: "https://copybymonk.com/" },
+      { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:title",
+        content: "Quill — One Set of Notes, a Complete Listing Pack",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Turn one set of property notes into a Headline, 6–10 Key Features, a portal or MLS description, a short teaser and Instagram, Facebook and X captions.",
+      },
     ],
     links: [{ rel: "canonical", href: "https://copybymonk.com/" }],
     scripts: [
@@ -80,7 +91,70 @@ export const Route = createFileRoute("/")({
           name: "Quill",
           url: "https://copybymonk.com/",
           description:
-            "Quill removes repetitive listing admin between instruction and launch — generating the portal or MLS description, teaser, social caption and buyer email from one source of truth.",
+            "Quill removes repetitive listing admin between instruction and launch — generating a Headline, Key Features, the portal or MLS description, a short teaser and Instagram, Facebook and X captions from one source of truth.",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "Quill",
+          applicationCategory: "BusinessApplication",
+          operatingSystem: "Web",
+          url: "https://copybymonk.com/",
+          description:
+            "AI listing pack generator for UK estate agents and US real estate teams. One set of notes becomes a Headline, 6–10 Key Features, a portal-ready UK description or MLS-ready remarks, a short teaser and Instagram, Facebook and X captions.",
+          offers: [
+            {
+              "@type": "Offer",
+              name: "Starter (UK)",
+              price: "39",
+              priceCurrency: "GBP",
+              category: "subscription",
+              url: "https://copybymonk.com/uk-property-listing-generator",
+            },
+            {
+              "@type": "Offer",
+              name: "Pro (UK)",
+              price: "79",
+              priceCurrency: "GBP",
+              category: "subscription",
+              url: "https://copybymonk.com/uk-property-listing-generator",
+            },
+            {
+              "@type": "Offer",
+              name: "Growth (UK)",
+              price: "149",
+              priceCurrency: "GBP",
+              category: "subscription",
+              url: "https://copybymonk.com/uk-property-listing-generator",
+            },
+            {
+              "@type": "Offer",
+              name: "Starter (US)",
+              price: "49",
+              priceCurrency: "USD",
+              category: "subscription",
+              url: "https://copybymonk.com/us-real-estate-listing-generator",
+            },
+            {
+              "@type": "Offer",
+              name: "Pro (US)",
+              price: "99",
+              priceCurrency: "USD",
+              category: "subscription",
+              url: "https://copybymonk.com/us-real-estate-listing-generator",
+            },
+            {
+              "@type": "Offer",
+              name: "Growth (US)",
+              price: "199",
+              priceCurrency: "USD",
+              category: "subscription",
+              url: "https://copybymonk.com/us-real-estate-listing-generator",
+            },
+          ],
         }),
       },
     ],
