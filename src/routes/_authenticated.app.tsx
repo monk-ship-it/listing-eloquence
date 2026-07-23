@@ -165,14 +165,19 @@ function GeneratorPage() {
 
 
   async function run() {
+    if (inFlight.current) return;
+    inFlight.current = true;
+    const myId = ++requestId.current;
     setBusy(true);
     try {
       const result = await generate({ data: input });
+      if (myId !== requestId.current) return; // stale response — ignore
       setOutput(result);
       queryClient.invalidateQueries({ queryKey: ["generations"] });
       queryClient.invalidateQueries({ queryKey: ["usage"] });
       toast.success("Listing generated.");
     } catch (err) {
+      if (myId !== requestId.current) return;
       const msg = err instanceof Error ? err.message : "Generation failed.";
       if (msg.includes("SUBSCRIPTION_REQUIRED")) {
         toast.error("Your trial or subscription is required to generate.");
@@ -183,7 +188,8 @@ function GeneratorPage() {
         toast.error(msg);
       }
     } finally {
-      setBusy(false);
+      if (myId === requestId.current) setBusy(false);
+      inFlight.current = false;
     }
   }
 
