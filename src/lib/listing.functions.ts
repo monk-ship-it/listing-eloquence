@@ -8,6 +8,36 @@ import {
 } from "./master-listing-prompt";
 import { resolveMarketId, type MarketId } from "./config";
 import type { ListingInput, ListingOutput } from "./listing-types";
+import { normaliseListingOutput } from "./listing-types";
+import { VOICES } from "./voices";
+
+/** Max characters accepted per free-text field to keep payloads sane. */
+const MAX_FIELD_LEN = 4000;
+const MAX_VOICE_NOTES_LEN = 8000;
+
+function clip(v: unknown, max: number): string {
+  if (typeof v !== "string") return "";
+  const t = v.replace(/\u0000/g, "").trim();
+  return t.length > max ? t.slice(0, max) : t;
+}
+
+function normaliseInput(input: ListingInput): ListingInput {
+  const voiceId = VOICES.find((v) => v.id === input.voice)?.id ?? "professional";
+  const market = resolveMarketId(input.market);
+  const out = { ...input, market, voice: voiceId } as ListingInput;
+  const stringKeys: (keyof ListingInput)[] = [
+    "voiceNotes","address","areaHighlights","propertyType","tenure","leaseYears",
+    "price","priceQualifier","bedrooms","bathrooms","receptions","keyFeatures",
+    "dimensions","epc","councilTaxBand","outsideSpace","parking","heating",
+    "utilities","nearby","periodFeatures","targetAudience","yearBuilt",
+    "disclosures","showingNotes","mediaNotes",
+  ];
+  for (const k of stringKeys) {
+    const max = k === "voiceNotes" ? MAX_VOICE_NOTES_LEN : MAX_FIELD_LEN;
+    (out as unknown as Record<string, string>)[k as string] = clip((input as unknown as Record<string, unknown>)[k as string], max);
+  }
+  return out;
+}
 
 function field(label: string, value: string) {
   return value && value.trim() ? `- ${label}: ${value.trim()}\n` : "";
@@ -123,6 +153,7 @@ ${materialLine}
 ${portalLine}
 ${factHandlingLine}
 - Provide a short punchy teaser summary (1–2 sentences).
+- Provide 6–10 concise, factual, portal/MLS-ready "keyFeatures" bullets drawn STRICTLY from the supplied facts. Each bullet must be a short phrase (no sentences, no trailing full stops), non-duplicative, and safe for compliance. NEVER invent, upgrade or infer facts. Bullets should highlight the property's strongest, most factual selling points (property type, bedrooms/bathrooms, tenure/ownership, key features, outside space, parking, energy/tax band, notable features, location advantages) in the order most useful to a buyer.
 - Provide three social media posts (Instagram, Facebook, X) — each an engaging caption appropriate to that platform, plus a list of relevant hashtags (no '#' symbol in the array, just the words).
 
 Respond ONLY with a JSON object in exactly this shape:
@@ -130,6 +161,7 @@ Respond ONLY with a JSON object in exactly this shape:
   "headline": "string — a compelling listing headline",
   "listing": "string — the full listing body, paragraphs separated by \\n\\n",
   "summary": "string — short teaser",
+  "keyFeatures": ["string — short factual bullet", "..."],
   "social": [
     { "platform": "Instagram", "caption": "string", "hashtags": ["string"] },
     { "platform": "Facebook", "caption": "string", "hashtags": ["string"] },
@@ -142,10 +174,11 @@ export const generateListing = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: ListingInput) => {
     if (!input || typeof input !== "object") throw new Error("Invalid input");
-    if (!input.address?.trim() && !input.propertyType?.trim() && !input.keyFeatures?.trim()) {
+    const cleaned = normaliseInput(input);
+    if (!cleaned.address?.trim() && !cleaned.propertyType?.trim() && !cleaned.keyFeatures?.trim()) {
       throw new Error("Please provide some property details before generating.");
     }
-    return input;
+    return cleaned;
   })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
@@ -198,12 +231,16 @@ export const generateListing = createServerFn({ method: "POST" })
 
     let parsed: ListingOutput;
     try {
-      parsed = JSON.parse(content);
+      const raw = JSON.parse(content);
+      parsed = normaliseListingOutput(raw);
     } catch {
-      // Attempt to salvage JSON from any wrapping text
       const match = content.match(/\{[\s\S]*\}/);
       if (!match) throw new Error("The AI returned an unexpected response. Please try again.");
-      parsed = JSON.parse(match[0]);
+      try {
+        parsed = normaliseListingOutput(JSON.parse(match[0]));
+      } catch {
+        throw new Error("The AI returned an unexpected response. Please try again.");
+      }
     }
 
     // Persist to history

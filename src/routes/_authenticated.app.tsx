@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,6 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { VOICES, type VoiceId } from "@/lib/voices";
@@ -22,17 +21,25 @@ import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME, MARKETS, type MarketId } from "@/lib/config";
 import { VoiceNotes } from "@/components/VoiceNotes";
+import { copyText, buildCopyAllText, formatKeyFeaturesBlock } from "@/lib/clipboard";
 import { Copy, Sparkles, RefreshCw, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app")({
-  head: () => ({ meta: [{ title: `Generator — ${APP_NAME}` }] }),
+  head: () => ({
+    meta: [
+      { title: `Generator — ${APP_NAME}` },
+      { name: "robots", content: "noindex,follow" },
+    ],
+  }),
   component: GeneratorPage,
 });
 
-function copy(text: string) {
-  navigator.clipboard.writeText(text);
-  toast.success("Copied to clipboard.");
+async function copyToast(text: string, label = "Copied to clipboard.") {
+  const ok = await copyText(text);
+  if (ok) toast.success(label);
+  else toast.error("Couldn't copy — please copy manually.");
 }
+
 
 function GeneratorPage() {
   const generate = useServerFn(generateListing);
@@ -42,10 +49,13 @@ function GeneratorPage() {
   const usageQuery = useQuery({ queryKey: ["usage"], queryFn: () => usageFn() });
   const queryClient = useQueryClient();
 
-
   const [input, setInput] = useState<ListingInput>(EMPTY_INPUT);
   const [output, setOutput] = useState<ListingOutput | null>(null);
   const [busy, setBusy] = useState(false);
+  // Immediate lock so rapid double-submits can't race the disabled UI state.
+  const inFlight = useRef(false);
+  // Bumped on every request; late responses whose id doesn't match are ignored.
+  const requestId = useRef(0);
 
   const hasAccess = subQuery.data?.hasAccess ?? false;
   const usage = usageQuery.data;
@@ -155,14 +165,19 @@ function GeneratorPage() {
 
 
   async function run() {
+    if (inFlight.current) return;
+    inFlight.current = true;
+    const myId = ++requestId.current;
     setBusy(true);
     try {
       const result = await generate({ data: input });
+      if (myId !== requestId.current) return; // stale response — ignore
       setOutput(result);
       queryClient.invalidateQueries({ queryKey: ["generations"] });
       queryClient.invalidateQueries({ queryKey: ["usage"] });
       toast.success("Listing generated.");
     } catch (err) {
+      if (myId !== requestId.current) return;
       const msg = err instanceof Error ? err.message : "Generation failed.";
       if (msg.includes("SUBSCRIPTION_REQUIRED")) {
         toast.error("Your trial or subscription is required to generate.");
@@ -173,7 +188,8 @@ function GeneratorPage() {
         toast.error(msg);
       }
     } finally {
-      setBusy(false);
+      if (myId === requestId.current) setBusy(false);
+      inFlight.current = false;
     }
   }
 
@@ -417,21 +433,60 @@ function GeneratorPage() {
               <Card className="p-6">
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="font-display text-xl font-semibold">{output.headline}</h2>
-                  <Button variant="ghost" size="icon" aria-label="Copy listing" onClick={() => copy(`${output.headline}\n\n${output.listing}`)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-11 w-11 shrink-0"
+                    aria-label="Copy full listing pack"
+                    onClick={() => copyToast(buildCopyAllText(output), "Full pack copied.")}
+                  >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
                 <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
                   {output.listing.split("\n\n").map((p, i) => (
-                    <p key={i}>{p}</p>
+                    <p key={i} className="break-words">{p}</p>
                   ))}
                 </div>
               </Card>
 
+              {output.keyFeatures && output.keyFeatures.length > 0 && (
+                <Card className="p-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-display text-lg font-semibold">Key features</h3>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-11 w-11 shrink-0"
+                      aria-label="Copy key features"
+                      onClick={() =>
+                        copyToast(formatKeyFeaturesBlock(output.keyFeatures), "Key features copied.")
+                      }
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <ul className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+                    {output.keyFeatures.map((f, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                        <span className="break-words">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              )}
+
               <Card className="p-6">
                 <div className="flex items-center justify-between">
                   <h3 className="font-display text-lg font-semibold">Teaser</h3>
-                  <Button variant="ghost" size="icon" aria-label="Copy teaser" onClick={() => copy(output.summary)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-11 w-11 shrink-0"
+                    aria-label="Copy teaser"
+                    onClick={() => copyToast(output.summary, "Teaser copied.")}
+                  >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
@@ -448,13 +503,19 @@ function GeneratorPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          aria-label="Copy social post"
-                          onClick={() => copy(`${post.caption}\n\n${post.hashtags.map((h) => `#${h}`).join(" ")}`)}
+                          className="h-11 w-11 shrink-0"
+                          aria-label={`Copy ${post.platform} post`}
+                          onClick={() =>
+                            copyToast(
+                              `${post.caption}\n\n${post.hashtags.map((h) => `#${h}`).join(" ")}`,
+                              "Post copied.",
+                            )
+                          }
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      <p className="mt-2 text-sm text-muted-foreground">{post.caption}</p>
+                      <p className="mt-2 text-sm text-muted-foreground break-words">{post.caption}</p>
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {post.hashtags.map((h) => (
                           <span key={h} className="text-xs text-primary">#{h}</span>
@@ -464,6 +525,7 @@ function GeneratorPage() {
                   ))}
                 </div>
               </Card>
+
 
               <Button variant="outline" className="w-full" onClick={run} disabled={busy}>
                 <RefreshCw className="mr-2 h-4 w-4" /> Regenerate

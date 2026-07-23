@@ -79,43 +79,49 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Quill — AI Property Listing Generator for UK Estate Agents" },
+      { title: "Quill — AI Listing Pack for UK Estate Agents & US Real Estate Teams" },
       {
         name: "description",
         content:
-          "Quill writes polished UK property listings in four distinct brand voices, plus social captions with hashtags. 14-day free trial.",
+          "Quill turns one set of property notes into a complete listing pack — portal-ready UK description or MLS remarks, Key Features bullets, teaser, social captions and buyer email. 14-day free trial.",
       },
       { name: "author", content: "Quill" },
       {
         property: "og:title",
-        content: "Quill — AI Property Listing Generator for UK Estate Agents",
+        content: "Quill — AI Listing Pack for UK Estate Agents & US Real Estate Teams",
       },
       {
         property: "og:description",
         content:
-          "Polished UK property listings in four brand voices, plus ready-to-post social captions.",
+          "One set of notes becomes a full listing pack: portal or MLS description, Key Features, teaser, social captions and buyer email.",
       },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { property: "og:site_name", content: "Quill" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:title",
-        content: "Quill — AI Property Listing Generator for UK Estate Agents",
+        content: "Quill — AI Listing Pack for UK Estate Agents & US Real Estate Teams",
       },
       {
         name: "twitter:description",
         content:
-          "Polished UK property listings in four brand voices, plus ready-to-post social captions.",
+          "One set of notes becomes a full listing pack: portal or MLS description, Key Features, teaser, social captions and buyer email.",
       },
       {
         property: "og:image",
         content:
           "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781872351657-CopyByMonk_Stripe_white_bg_circle_icon_512x512.webp",
       },
+      { property: "og:image:type", content: "image/webp" },
+      { property: "og:image:width", content: "512" },
+      { property: "og:image:height", content: "512" },
+      { property: "og:image:alt", content: "Quill — AI listing pack generator" },
       {
         name: "twitter:image",
         content:
           "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781872351657-CopyByMonk_Stripe_white_bg_circle_icon_512x512.webp",
       },
+      { name: "twitter:image:alt", content: "Quill — AI listing pack generator" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

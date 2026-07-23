@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UsRealEstateListingGeneratorRouteImport } from './routes/us-real-estate-listing-generator'
+import { Route as UkPropertyListingGeneratorRouteImport } from './routes/uk-property-listing-generator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -30,6 +32,18 @@ import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lova
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 
+const UsRealEstateListingGeneratorRoute =
+  UsRealEstateListingGeneratorRouteImport.update({
+    id: '/us-real-estate-listing-generator',
+    path: '/us-real-estate-listing-generator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const UkPropertyListingGeneratorRoute =
+  UkPropertyListingGeneratorRouteImport.update({
+    id: '/uk-property-listing-generator',
+    path: '/uk-property-listing-generator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -142,6 +156,8 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/uk-property-listing-generator': typeof UkPropertyListingGeneratorRoute
+  '/us-real-estate-listing-generator': typeof UsRealEstateListingGeneratorRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/account': typeof AuthenticatedAccountRoute
@@ -163,6 +179,8 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/uk-property-listing-generator': typeof UkPropertyListingGeneratorRoute
+  '/us-real-estate-listing-generator': typeof UsRealEstateListingGeneratorRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/account': typeof AuthenticatedAccountRoute
@@ -186,6 +204,8 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/uk-property-listing-generator': typeof UkPropertyListingGeneratorRoute
+  '/us-real-estate-listing-generator': typeof UsRealEstateListingGeneratorRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/account': typeof AuthenticatedAccountRoute
@@ -209,6 +229,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/mcp'
     | '/sitemap.xml'
+    | '/uk-property-listing-generator'
+    | '/us-real-estate-listing-generator'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/account'
@@ -230,6 +252,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/mcp'
     | '/sitemap.xml'
+    | '/uk-property-listing-generator'
+    | '/us-real-estate-listing-generator'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/account'
@@ -252,6 +276,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/mcp'
     | '/sitemap.xml'
+    | '/uk-property-listing-generator'
+    | '/us-real-estate-listing-generator'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/account'
@@ -275,6 +301,8 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   McpRoute: typeof McpRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  UkPropertyListingGeneratorRoute: typeof UkPropertyListingGeneratorRoute
+  UsRealEstateListingGeneratorRoute: typeof UsRealEstateListingGeneratorRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
@@ -289,6 +317,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/us-real-estate-listing-generator': {
+      id: '/us-real-estate-listing-generator'
+      path: '/us-real-estate-listing-generator'
+      fullPath: '/us-real-estate-listing-generator'
+      preLoaderRoute: typeof UsRealEstateListingGeneratorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/uk-property-listing-generator': {
+      id: '/uk-property-listing-generator'
+      path: '/uk-property-listing-generator'
+      fullPath: '/uk-property-listing-generator'
+      preLoaderRoute: typeof UkPropertyListingGeneratorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -458,6 +500,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   McpRoute: McpRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  UkPropertyListingGeneratorRoute: UkPropertyListingGeneratorRoute,
+  UsRealEstateListingGeneratorRoute: UsRealEstateListingGeneratorRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,

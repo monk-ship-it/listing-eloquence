@@ -47,7 +47,56 @@ export interface ListingOutput {
   headline: string;
   listing: string;
   summary: string;
+  /** Portal/MLS-style bullet points generated strictly from supplied facts. */
+  keyFeatures: string[];
   social: SocialPost[];
+}
+
+/**
+ * Normalise an untrusted parsed AI response into a valid ListingOutput.
+ * Throws when required fields are missing/malformed so callers can retry.
+ * Backward-compatible: older saved rows without `keyFeatures` become `[]`.
+ */
+export function normaliseListingOutput(raw: unknown): ListingOutput {
+  if (!raw || typeof raw !== "object") throw new Error("MALFORMED_AI_OUTPUT");
+  const r = raw as Record<string, unknown>;
+  const headline = typeof r.headline === "string" ? r.headline.trim() : "";
+  const listing = typeof r.listing === "string" ? r.listing.trim() : "";
+  const summary = typeof r.summary === "string" ? r.summary.trim() : "";
+  if (!headline || !listing) throw new Error("MALFORMED_AI_OUTPUT");
+
+  const rawFeatures = Array.isArray(r.keyFeatures) ? r.keyFeatures : [];
+  const seen = new Set<string>();
+  const keyFeatures = rawFeatures
+    .map((f) => (typeof f === "string" ? f.trim().replace(/^[-•*\s]+/, "") : ""))
+    .filter((f) => f.length > 0 && f.length <= 240)
+    .filter((f) => {
+      const k = f.toLowerCase();
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    })
+    .slice(0, 10);
+
+  const rawSocial = Array.isArray(r.social) ? r.social : [];
+  const social: SocialPost[] = rawSocial
+    .map((p) => {
+      if (!p || typeof p !== "object") return null;
+      const post = p as Record<string, unknown>;
+      const platform = typeof post.platform === "string" ? post.platform.trim() : "";
+      const caption = typeof post.caption === "string" ? post.caption.trim() : "";
+      const hashtags = Array.isArray(post.hashtags)
+        ? (post.hashtags as unknown[])
+            .map((h) => (typeof h === "string" ? h.replace(/^#/, "").trim() : ""))
+            .filter((h) => h.length > 0 && h.length <= 60)
+            .slice(0, 20)
+        : [];
+      if (!platform || !caption) return null;
+      return { platform, caption, hashtags } as SocialPost;
+    })
+    .filter((p): p is SocialPost => p !== null);
+
+  return { headline, listing, summary, keyFeatures, social };
 }
 
 export const EMPTY_INPUT: ListingInput = {

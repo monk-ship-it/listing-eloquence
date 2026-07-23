@@ -13,7 +13,7 @@ export default defineTool({
   name: "list_generations",
   title: "List my listings",
   description:
-    "List the signed-in Quill user's most recent AI-generated property listings (up to 50). Returns id, property title, voice, and creation time.",
+    "List the signed-in Quill user's most recent AI-generated property listings (up to 50). Returns id, property title, voice, and creation time. Use get_generation to fetch the full listing pack (headline, listing body, key features bullets, teaser summary and social posts).",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async (_input, ctx) => {

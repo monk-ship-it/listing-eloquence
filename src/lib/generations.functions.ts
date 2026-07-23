@@ -32,19 +32,23 @@ export const listMyGenerations = createServerFn({ method: "GET" })
     }));
   });
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export const deleteGeneration = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { id: string }) => {
-    if (!input?.id) throw new Error("Missing listing id.");
-    return { id: input.id };
+    const id = typeof input?.id === "string" ? input.id.trim() : "";
+    if (!id || !UUID_RE.test(id)) throw new Error("Invalid listing id.");
+    return { id };
   })
-  .handler(async ({ data, context }): Promise<{ ok: true }> => {
+  .handler(async ({ data, context }): Promise<{ ok: true; deleted: boolean }> => {
     const { supabase, userId } = context;
-    const { error } = await supabase
+    const { data: rows, error } = await supabase
       .from("generations")
       .delete()
       .eq("id", data.id)
-      .eq("user_id", userId);
+      .eq("user_id", userId)
+      .select("id");
     if (error) throw new Error(error.message);
-    return { ok: true };
+    return { ok: true, deleted: (rows?.length ?? 0) > 0 };
   });
