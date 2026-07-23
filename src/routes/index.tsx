@@ -35,7 +35,9 @@ import {
   Thermometer,
   MapPin,
   Megaphone,
+  Mail,
 } from "lucide-react";
+import { EMAIL_BLAST_PLACEHOLDERS } from "@/lib/listing-types";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -349,8 +351,8 @@ function Hero({ authed }: { authed: boolean }) {
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             {APP_NAME} helps UK estate agents and US real estate teams remove the slow admin between
             instruction and launch. Speak, type or paste the facts once, choose the brand voice, and
-            generate the Headline, Key Features, listing description, short teaser, Email Blast copy and Instagram,
-            Facebook and X captions from the same source of truth.
+            generate the Headline, Key Features, listing description, short teaser, Email Blast copy
+            and Instagram, Facebook and X captions from the same source of truth.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -823,8 +825,8 @@ function LiveExample() {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Same source of truth, every asset. See how a handful of property facts becomes the
-            listing description, Key Features, short teaser, Email Blast copy and social captions — brand-consistent
-            and ready to review.
+            listing description, Key Features, short teaser, Email Blast copy and social captions —
+            brand-consistent and ready to review.
           </p>
         </Reveal>
 
@@ -884,6 +886,9 @@ function LiveExample() {
                   <TabsTrigger value="teaser" className="shrink-0">
                     Teaser
                   </TabsTrigger>
+                  <TabsTrigger value="email" className="shrink-0">
+                    Email Blast
+                  </TabsTrigger>
                   <TabsTrigger value="instagram" className="shrink-0">
                     Instagram
                   </TabsTrigger>
@@ -925,6 +930,101 @@ function LiveExample() {
                     <Megaphone className="h-3.5 w-3.5" /> Short teaser
                   </div>
                   <p className="mt-3 text-sm leading-relaxed text-foreground/90">{demo.summary}</p>
+                </TabsContent>
+
+                <TabsContent value="email" className="mt-4">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                    <Mail className="h-3.5 w-3.5" /> Email Blast
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Database email copy — Quill doesn't send emails or manage contacts.
+                  </p>
+
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Subject line options
+                    </p>
+                    <ol className="mt-2 space-y-2 text-sm">
+                      {demo.emailBlast.subjectLines.map((s, i) => (
+                        <li
+                          key={i}
+                          className="flex items-start gap-2 rounded-md border border-border/60 bg-card/40 p-2.5"
+                        >
+                          <span className="mt-0.5 inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 px-1.5 text-xs font-semibold text-primary">
+                            {i + 1}
+                          </span>
+                          <span className="min-w-0 break-words">{s}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Preview text
+                    </p>
+                    <p className="mt-1 break-words text-sm text-foreground/90">
+                      {demo.emailBlast.previewText}
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Headline
+                    </p>
+                    <p className="mt-1 break-words font-display text-base font-semibold leading-snug">
+                      {demo.emailBlast.headline}
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Body
+                    </p>
+                    <div className="mt-1 space-y-3 text-sm leading-relaxed text-foreground/90">
+                      {demo.emailBlast.body.map((p, i) => (
+                        <p key={i} className="break-words">
+                          {p}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Key features (reused from the pack)
+                    </p>
+                    <ul className="mt-2 grid gap-1.5 text-sm sm:grid-cols-2">
+                      {demo.keyFeatures.map((f) => (
+                        <li key={f} className="flex items-start gap-2">
+                          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                          <span className="break-words">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Call to action
+                    </p>
+                    <p className="mt-1 break-words text-sm font-medium text-primary">
+                      {demo.emailBlast.callToAction}
+                    </p>
+                  </div>
+
+                  <div className="mt-5 rounded-lg border border-dashed border-border/70 bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground">
+                    <p className="mb-1.5 font-semibold text-foreground/80">
+                      Fill in before sending
+                    </p>
+                    <ul className="space-y-1">
+                      {EMAIL_BLAST_PLACEHOLDERS.map((p) => (
+                        <li key={p} className="break-words">
+                          {p}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </TabsContent>
 
                 <TabsContent value="instagram" className="mt-4">
@@ -998,11 +1098,20 @@ function SocialBlock({
   );
 }
 
+interface DemoEmailBlast {
+  subjectLines: [string, string, string];
+  previewText: string;
+  headline: string;
+  body: string[];
+  callToAction: string;
+}
+
 interface DemoPack {
   headline: string;
   keyFeatures: string[];
   listing: string[];
   summary: string;
+  emailBlast: DemoEmailBlast;
   instagram: { caption: string; hashtags: string };
   facebook: { caption: string; hashtags: string };
   x: { caption: string; hashtags: string };
@@ -1028,6 +1137,22 @@ const DEMO_UK: DemoPack = {
   ],
   summary:
     "A five-bedroom Grade II listed detached home in the heart of a Cotswold market town, with an inglenook fireplace, flagstone floors and a private walled garden. Guide price £1,450,000, freehold.",
+  emailBlast: {
+    subjectLines: [
+      "New instruction: Grade II listed rectory in the Cotswolds",
+      "A five-bedroom listed home in the heart of a market town",
+      "Cotswold rectory with walled garden — new to market",
+    ],
+    previewText:
+      "Five bedrooms, three receptions and a private walled garden. Freehold, guide £1,450,000.",
+    headline: "A distinguished Grade II listed rectory, new to market",
+    body: [
+      "We are pleased to bring to market a Grade II listed detached rectory in the heart of a Cotswold market town. Set back behind a gravel driveway and a low honey-stone wall, the house has a quiet confidence and a clear sense of proportion throughout.",
+      "The layout offers three reception rooms anchored by an inglenook fireplace, flagstone floors and exposed beams, with a bespoke shaker kitchen at the heart of the home and a useful cellar below. Five bedrooms and three bathrooms are arranged over the principal floors.",
+      "Beyond, a walled garden of around half an acre includes an orchard and a stone terrace, with a gravel driveway and detached double cart shed to the front. Offered freehold at a guide price of £1,450,000.",
+    ],
+    callToAction: "Arrange a viewing",
+  },
   instagram: {
     caption:
       "A Grade II listed home in the heart of a Cotswold market town — inglenook fireplace, flagstone floors and a private walled garden. Five bedrooms, three receptions. Guide £1,450,000.",
@@ -1065,6 +1190,22 @@ const DEMO_US: DemoPack = {
   ],
   summary:
     "Winter Park single-family home, approximately 3,200 sq ft on a quarter-acre lot. Four bedrooms, 3.5 baths, chef's kitchen, first-floor primary suite, screened lanai and heated pool. Offered at $895,000.",
+  emailBlast: {
+    subjectLines: [
+      "Just listed in Winter Park: 4-bed pool home, $895,000",
+      "New Winter Park listing — chef's kitchen and heated pool",
+      "Winter Park 4/3.5 with first-floor primary, offered at $895,000",
+    ],
+    previewText:
+      "Approximately 3,200 sq ft on a 0.25-acre lot with a first-floor primary and heated pool.",
+    headline: "Just listed in Winter Park",
+    body: [
+      "We're pleased to announce a new listing in Winter Park: a 2016-built single-family home offering approximately 3,200 square feet on a quarter-acre lot, on a tree-lined street close to Park Avenue shops and dining.",
+      "The home features a chef's kitchen with quartz countertops opening to the main living area, a first-floor primary suite for added convenience, and a three-car attached garage with paver driveway. Four bedrooms and three and a half bathrooms are thoughtfully arranged throughout.",
+      "Outside, a screened lanai extends to a heated saltwater pool within a fenced backyard. Offered fee simple at $895,000 with an HOA of $90 per month.",
+    ],
+    callToAction: "Schedule a showing",
+  },
   instagram: {
     caption:
       "Winter Park single-family home — chef's kitchen with quartz counters, first-floor primary suite, screened lanai and a heated pool. 4 bed, 3.5 bath, ~3,200 sq ft. Offered at $895,000.",
@@ -1235,8 +1376,8 @@ function Pricing({ authed }: { authed: boolean }) {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Every plan includes UK and US markets, all four brand voices, voice dictation and the
-            full listing pack — Headline, Key Features, description, teaser, Email Blast copy and Instagram, Facebook
-            and X captions.
+            full listing pack — Headline, Key Features, description, teaser, Email Blast copy and
+            Instagram, Facebook and X captions.
           </p>
           <div className="mt-6 flex justify-center">
             <MarketToggle />
