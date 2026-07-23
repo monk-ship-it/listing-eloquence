@@ -243,7 +243,7 @@ export const generateListing = createServerFn({ method: "POST" })
       .maybeSingle();
 
     const { isCompedEmail, getPlan } = await import("./config");
-    const { hasActiveAccess, computeUsage } = await import("./subscription.functions");
+    const { hasActiveAccess } = await import("./subscription.functions");
     const comped = isCompedEmail(sub?.email);
     const status = sub?.status ?? "none";
     const hasAccess = comped || hasActiveAccess(status, sub?.current_period_end ?? null);
@@ -251,81 +251,118 @@ export const generateListing = createServerFn({ method: "POST" })
       throw new Error("SUBSCRIPTION_REQUIRED");
     }
 
-    // Monthly listing allowance (per calendar month). Comped accounts are unlimited.
+    // Atomic monthly-quota reservation for paid/trial users. Comped accounts
+    // stay unlimited and skip reservation entirely.
+    let reservationId: string | null = null;
     if (!comped) {
-      const usage = await computeUsage(supabase, userId, getPlan(sub?.plan).id, comped);
-      if (usage.remaining <= 0) {
-        throw new Error("LISTING_LIMIT_REACHED");
+      const { data: reserved, error: reserveError } = await supabase.rpc("reserve_generation_slot");
+      if (reserveError) {
+        const msg = (reserveError.message ?? "").toString();
+        if (msg.includes("LISTING_LIMIT_REACHED")) {
+          throw new Error("LISTING_LIMIT_REACHED");
+        }
+        throw new Error("Couldn't reserve a listing slot. Please try again.");
+      }
+      reservationId = (reserved as string | null) ?? null;
+      if (!reservationId) {
+        throw new Error("Couldn't reserve a listing slot. Please try again.");
       }
     }
 
-    const market = resolveMarketId(data.market);
-    const voice = (data.voice ?? "professional") as VoiceId;
-    const voicePrompt = VOICE_PROMPTS[voice] ?? VOICE_PROMPTS.professional;
-    const masterPrompt =
-      market === "us" ? US_MASTER_LISTING_SYSTEM_PROMPT : MASTER_LISTING_SYSTEM_PROMPT;
-
-    // The brand-voice prompts are written for UK English; in US mode the master
-    // prompt's US English + vocabulary rules take precedence over any UK phrasing.
-    const languageOverride =
-      market === "us"
-        ? "\n\nLANGUAGE OVERRIDE FOR THIS LISTING: Ignore any instruction in the brand voice to use British English. Write in US English with US real estate vocabulary and follow the US Fair Housing rules above."
-        : "";
-
-    const content = await callLovableAiJson([
-      {
-        role: "system",
-        content: `${masterPrompt}\n\nBRAND VOICE FOR THIS LISTING:\n${voicePrompt}${languageOverride}`,
-      },
-      { role: "user", content: buildUserPrompt(data, market) },
-    ]);
-
-    let parsed: ListingOutput;
-    try {
-      const raw = JSON.parse(content);
-      parsed = validateNewListingOutput(raw);
-    } catch {
-      const match = content.match(/\{[\s\S]*\}/);
-      if (!match) throw new Error("MALFORMED_AI_OUTPUT");
+    const releaseReservation = async () => {
+      if (!reservationId) return;
       try {
-        parsed = validateNewListingOutput(JSON.parse(match[0]));
-      } catch {
-        throw new Error("MALFORMED_AI_OUTPUT");
+        await supabase.rpc("release_generation_slot", {
+          reservation_id: reservationId,
+        });
+      } catch (err) {
+        console.error("release_generation_slot failed", err);
       }
-    }
+    };
 
-    // Persist to history — abort before recording usage if the save fails,
-    // so the user isn't charged a listing they can't retrieve.
-    const { data: savedGen, error: insertError } = await supabase
-      .from("generations")
-      .insert({
-        user_id: userId,
-        voice,
-        property_title: data.address || data.propertyType || "Untitled property",
-        inputs: JSON.parse(JSON.stringify(data)),
-        output: JSON.parse(JSON.stringify(parsed)),
-      })
-      .select("id")
-      .maybeSingle();
-    if (insertError || !savedGen?.id) {
-      throw new Error("Couldn't save your listing. Please try again.");
-    }
-    const savedGenId = savedGen.id;
+    try {
+      const market = resolveMarketId(data.market);
+      const voice = (data.voice ?? "professional") as VoiceId;
+      const voicePrompt = VOICE_PROMPTS[voice] ?? VOICE_PROMPTS.professional;
+      const masterPrompt =
+        market === "us" ? US_MASTER_LISTING_SYSTEM_PROMPT : MASTER_LISTING_SYSTEM_PROMPT;
 
-    // Record durable usage independently of the deletable history row.
-    // Deleting history must never reduce monthly usage. If this write fails,
-    // best-effort delete the just-created generation so the user isn't left
-    // with a saved listing that didn't consume quota, then surface a
-    // retryable error.
-    const { error: usageError } = await supabase.from("generation_usage").insert({
-      user_id: userId,
-      generation_id: savedGenId,
-      plan: getPlan(sub?.plan).id,
-    });
-    if (usageError) {
-      await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
-      throw new Error("Couldn't record listing usage. Please try again.");
-    }
+      const languageOverride =
+        market === "us"
+          ? "\n\nLANGUAGE OVERRIDE FOR THIS LISTING: Ignore any instruction in the brand voice to use British English. Write in US English with US real estate vocabulary and follow the US Fair Housing rules above."
+          : "";
 
-    return parsed;
+      const content = await callLovableAiJson([
+        {
+          role: "system",
+          content: `${masterPrompt}\n\nBRAND VOICE FOR THIS LISTING:\n${voicePrompt}${languageOverride}`,
+        },
+        { role: "user", content: buildUserPrompt(data, market) },
+      ]);
+
+      let parsed: ListingOutput;
+      try {
+        const raw = JSON.parse(content);
+        parsed = validateNewListingOutput(raw);
+      } catch {
+        const match = content.match(/\{[\s\S]*\}/);
+        if (!match) throw new Error("MALFORMED_AI_OUTPUT");
+        try {
+          parsed = validateNewListingOutput(JSON.parse(match[0]));
+        } catch {
+          throw new Error("MALFORMED_AI_OUTPUT");
+        }
+      }
+
+      // Persist to history.
+      const { data: savedGen, error: insertError } = await supabase
+        .from("generations")
+        .insert({
+          user_id: userId,
+          voice,
+          property_title: data.address || data.propertyType || "Untitled property",
+          inputs: JSON.parse(JSON.stringify(data)),
+          output: JSON.parse(JSON.stringify(parsed)),
+        })
+        .select("id")
+        .maybeSingle();
+      if (insertError || !savedGen?.id) {
+        throw new Error("Couldn't save your listing. Please try again.");
+      }
+      const savedGenId = savedGen.id as string;
+
+      if (reservationId) {
+        // Finalize the reservation atomically — attach it to the generation.
+        const { data: finalizedOk, error: finalizeError } = await supabase.rpc(
+          "finalize_generation_slot",
+          { reservation_id: reservationId, generation_id: savedGenId },
+        );
+        if (finalizeError || finalizedOk !== true) {
+          // Compensate: remove the just-created generation, then release the
+          // reservation so history and quota can't diverge.
+          await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
+          reservationId = null; // finalize failed but reservation still exists
+          throw new Error("Couldn't record listing usage. Please try again.");
+        }
+        // Reservation is now completed; do not release on any later error.
+        reservationId = null;
+      } else if (comped) {
+        // Comped accounts keep durable usage analytics via the direct insert
+        // path. If it fails, roll back history so the two views stay aligned.
+        const { error: usageError } = await supabase.from("generation_usage").insert({
+          user_id: userId,
+          generation_id: savedGenId,
+          plan: getPlan(sub?.plan).id,
+        });
+        if (usageError) {
+          await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
+          throw new Error("Couldn't record listing usage. Please try again.");
+        }
+      }
+
+      return parsed;
+    } catch (err) {
+      await releaseReservation();
+      throw err;
+    }
   });

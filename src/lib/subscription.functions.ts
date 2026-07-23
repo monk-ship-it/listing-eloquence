@@ -31,14 +31,16 @@ export interface UsageInfo {
   resetsOn: string;
 }
 
-function toInfo(row: {
-  status: string;
-  plan?: string | null;
-  cancel_at_period_end: boolean;
-  trial_end: string | null;
-  current_period_end: string | null;
-  email: string | null;
-} | null): SubscriptionInfo {
+function toInfo(
+  row: {
+    status: string;
+    plan?: string | null;
+    cancel_at_period_end: boolean;
+    trial_end: string | null;
+    current_period_end: string | null;
+    email: string | null;
+  } | null,
+): SubscriptionInfo {
   const rawStatus = row?.status ?? "none";
   const comped = isCompedEmail(row?.email);
   return {
@@ -73,10 +75,7 @@ function startOfNextMonthIso(): string {
  * payment_failed, none) restrict access. Access is always driven by the
  * database record, never by the post-checkout redirect URL.
  */
-export function hasActiveAccess(
-  status: string,
-  _currentPeriodEnd: string | null,
-): boolean {
+export function hasActiveAccess(status: string, _currentPeriodEnd: string | null): boolean {
   return status === "active" || status === "trialing";
 }
 
@@ -103,13 +102,26 @@ export async function computeUsage(
   comped: boolean,
 ): Promise<UsageInfo> {
   const planMeta = getPlan(plan);
-  const { count } = await supabase
-    .from("generation_usage")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", userId)
-    .gte("created_at", startOfMonthIso());
+  const nowIso = new Date().toISOString();
+  // Count durable (completed) usage plus any unexpired reservations so
+  // in-flight generations are reflected until they finalize or expire.
+  const [{ count: completedCount }, { count: reservedCount }] = await Promise.all([
+    supabase
+      .from("generation_usage")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("reservation_status", "completed")
+      .gte("created_at", startOfMonthIso()),
+    supabase
+      .from("generation_usage")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("reservation_status", "reserved")
+      .gte("created_at", startOfMonthIso())
+      .gte("reserved_until", nowIso),
+  ]);
 
-  const used = count ?? 0;
+  const used = (completedCount ?? 0) + (reservedCount ?? 0);
   const limit = planMeta.monthlyListings;
   return {
     plan: planMeta.id,
@@ -149,9 +161,8 @@ export const cancelMySubscription = createServerFn({ method: "POST" })
       throw new Error("No active subscription found to cancel.");
     }
 
-    const { setSubscriptionCancelAtPeriodEnd, getStripeSubscription } = await import(
-      "./stripe.server"
-    );
+    const { setSubscriptionCancelAtPeriodEnd, getStripeSubscription } =
+      await import("./stripe.server");
 
     const current = await getStripeSubscription(row.stripe_subscription_id);
     if (current?.status === "canceled") {
@@ -188,9 +199,8 @@ export const resumeMySubscription = createServerFn({ method: "POST" })
       throw new Error("No subscription found.");
     }
 
-    const { setSubscriptionCancelAtPeriodEnd, getStripeSubscription } = await import(
-      "./stripe.server"
-    );
+    const { setSubscriptionCancelAtPeriodEnd, getStripeSubscription } =
+      await import("./stripe.server");
 
     // A fully canceled Stripe subscription can't be updated/resumed — the user
     // must re-subscribe via checkout. Detect that and surface a clear message.
@@ -265,18 +275,18 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       .eq("user_id", userId)
       .maybeSingle();
 
-    const email =
-      (claims as { email?: string } | undefined)?.email ?? row?.email ?? "";
+    const email = (claims as { email?: string } | undefined)?.email ?? row?.email ?? "";
 
-    if (isCompedEmail(email) || hasActiveAccess(row?.status ?? "none", row?.current_period_end ?? null)) {
+    if (
+      isCompedEmail(email) ||
+      hasActiveAccess(row?.status ?? "none", row?.current_period_end ?? null)
+    ) {
       throw new Error(
         "You already have subscription access. Manage billing or contact support to change plan.",
       );
     }
 
-    const { resolvePriceId, createSubscriptionCheckoutSession } = await import(
-      "./stripe.server"
-    );
+    const { resolvePriceId, createSubscriptionCheckoutSession } = await import("./stripe.server");
     const { getAppUrl } = await import("./config.server");
     const priceId = await resolvePriceId(plan, market);
 
@@ -328,8 +338,7 @@ export const verifyCheckoutSession = createServerFn({ method: "POST" })
       let belongs = false;
       try {
         const session = await getCheckoutSession(data.sessionId);
-        const sessionUser =
-          session?.metadata?.user_id ?? session?.client_reference_id ?? null;
+        const sessionUser = session?.metadata?.user_id ?? session?.client_reference_id ?? null;
         belongs = sessionUser === userId;
       } catch (err) {
         console.error("verifyCheckoutSession: failed to retrieve session", err);
