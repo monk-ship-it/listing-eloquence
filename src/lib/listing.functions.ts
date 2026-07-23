@@ -255,9 +255,7 @@ export const generateListing = createServerFn({ method: "POST" })
     // stay unlimited and skip reservation entirely.
     let reservationId: string | null = null;
     if (!comped) {
-      const { data: reserved, error: reserveError } = await supabase.rpc(
-        "reserve_generation_slot",
-      );
+      const { data: reserved, error: reserveError } = await supabase.rpc("reserve_generation_slot");
       if (reserveError) {
         const msg = (reserveError.message ?? "").toString();
         if (msg.includes("LISTING_LIMIT_REACHED")) {
@@ -342,11 +340,7 @@ export const generateListing = createServerFn({ method: "POST" })
         if (finalizeError || finalizedOk !== true) {
           // Compensate: remove the just-created generation, then release the
           // reservation so history and quota can't diverge.
-          await supabase
-            .from("generations")
-            .delete()
-            .eq("id", savedGenId)
-            .eq("user_id", userId);
+          await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
           reservationId = null; // finalize failed but reservation still exists
           throw new Error("Couldn't record listing usage. Please try again.");
         }
@@ -361,11 +355,7 @@ export const generateListing = createServerFn({ method: "POST" })
           plan: getPlan(sub?.plan).id,
         });
         if (usageError) {
-          await supabase
-            .from("generations")
-            .delete()
-            .eq("id", savedGenId)
-            .eq("user_id", userId);
+          await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
           throw new Error("Couldn't record listing usage. Please try again.");
         }
       }
@@ -376,4 +366,3 @@ export const generateListing = createServerFn({ method: "POST" })
       throw err;
     }
   });
-
