@@ -1,4 +1,16 @@
 User-agent: *
 Allow: /
+Disallow: /app
+Disallow: /account
+Disallow: /admin
+Disallow: /subscription
+Disallow: /history
+Disallow: /auth
+Disallow: /api/
+Disallow: /.mcp/
+Disallow: /.lovable/
+Disallow: /.well-known/
+Disallow: /lovable/
+Disallow: /email/
 
 Sitemap: https://copybymonk.com/sitemap.xml

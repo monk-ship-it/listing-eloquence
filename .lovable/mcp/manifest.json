@@ -19,7 +19,7 @@
       {
         "name": "list_generations",
         "title": "List my listings",
-        "description": "List the signed-in Quill user's most recent AI-generated property listings (up to 50). Returns id, property title, voice, and creation time.",
+        "description": "List the signed-in Quill user's most recent AI-generated property listings (up to 50). Returns id, property title, voice, and creation time. Use get_generation to fetch the full listing pack (headline, listing body, key features bullets, teaser summary and social posts).",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -35,7 +35,7 @@
       {
         "name": "get_generation",
         "title": "Get a listing",
-        "description": "Fetch the full content of a previously generated Quill listing by its id. Returns the inputs used and the full generated output (headline, listing body, summary, social posts).",
+        "description": "Fetch the full content of a previously generated Quill listing by its id. Returns the inputs used and the full generated output (headline, listing body, key features bullets, teaser summary, and social posts). The output.keyFeatures array holds 6–10 factual portal/MLS-style highlights drawn from the supplied facts.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,

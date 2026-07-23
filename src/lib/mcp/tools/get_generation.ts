@@ -14,7 +14,7 @@ export default defineTool({
   name: "get_generation",
   title: "Get a listing",
   description:
-    "Fetch the full content of a previously generated Quill listing by its id. Returns the inputs used and the full generated output (headline, listing body, summary, social posts).",
+    "Fetch the full content of a previously generated Quill listing by its id. Returns the inputs used and the full generated output (headline, listing body, key features bullets, teaser summary, and social posts). The output.keyFeatures array holds 6–10 factual portal/MLS-style highlights drawn from the supplied facts.",
   inputSchema: {
     id: z.string().uuid().describe("The listing id returned by list_generations."),
   },
