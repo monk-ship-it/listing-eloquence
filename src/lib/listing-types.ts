@@ -116,9 +116,42 @@ export function normaliseListingOutput(raw: unknown): ListingOutput {
 }
 
 /**
- * Strict validator for NEW AI responses. Requires 6–10 clean Key Features
- * and exactly one usable Instagram, Facebook and X post. Throws
- * MALFORMED_AI_OUTPUT on any failure so callers can retry.
+ * Canonical platform labels emitted by strict validation.
+ * Order here IS the order returned to callers.
+ */
+const CANONICAL_PLATFORMS = ["Instagram", "Facebook", "X"] as const;
+type CanonicalPlatform = (typeof CANONICAL_PLATFORMS)[number];
+
+/**
+ * Map a raw platform string from the model to a canonical platform.
+ * Accepts common aliases (IG/Instagram, FB/Facebook, X/Twitter/Twitter-X in
+ * either order/case). Returns null for anything unrecognised — the caller
+ * treats unexpected platforms as invalid rather than silently dropping them.
+ */
+function canonicalisePlatform(raw: string): CanonicalPlatform | null {
+  const k = raw.trim().toLowerCase().replace(/\s+/g, " ");
+  if (k === "instagram" || k === "ig" || k === "insta") return "Instagram";
+  if (k === "facebook" || k === "fb" || k === "meta") return "Facebook";
+  if (
+    k === "x" ||
+    k === "twitter" ||
+    k === "x (twitter)" ||
+    k === "twitter (x)" ||
+    k === "x/twitter" ||
+    k === "twitter/x" ||
+    k === "twitter-x" ||
+    k === "x-twitter"
+  ) {
+    return "X";
+  }
+  return null;
+}
+
+/**
+ * Strict validator for NEW AI responses. Requires 6–10 clean Key Features and
+ * exactly three social posts — one each for Instagram, Facebook and X — with
+ * canonical platform labels in that order. Any missing, duplicate or
+ * unexpected platform makes the generation invalid so callers can retry.
  */
 export function validateNewListingOutput(raw: unknown): ListingOutput {
   const out = normaliseListingOutput(raw);
@@ -126,19 +159,23 @@ export function validateNewListingOutput(raw: unknown): ListingOutput {
   if (out.keyFeatures.length < 6 || out.keyFeatures.length > 10) {
     throw new Error("MALFORMED_AI_OUTPUT");
   }
-  const required = ["instagram", "facebook", "x"] as const;
-  const byPlatform = new Map<string, SocialPost>();
+
+  const byPlatform = new Map<CanonicalPlatform, SocialPost>();
   for (const p of out.social) {
-    const key = p.platform.trim().toLowerCase();
-    // Accept "Twitter/X" or "X (Twitter)" style as X
-    const norm = key === "twitter" || key.includes("x (") || key === "x/twitter" ? "x" : key;
-    if (!byPlatform.has(norm)) byPlatform.set(norm, { ...p, platform: p.platform });
+    const canonical = canonicalisePlatform(p.platform);
+    if (!canonical) throw new Error("MALFORMED_AI_OUTPUT"); // unexpected platform
+    if (byPlatform.has(canonical)) throw new Error("MALFORMED_AI_OUTPUT"); // duplicate
+    if (!p.caption) throw new Error("MALFORMED_AI_OUTPUT");
+    byPlatform.set(canonical, { ...p, platform: canonical });
   }
-  for (const platform of required) {
+  const ordered: SocialPost[] = [];
+  for (const platform of CANONICAL_PLATFORMS) {
     const post = byPlatform.get(platform);
-    if (!post || !post.caption) throw new Error("MALFORMED_AI_OUTPUT");
+    if (!post) throw new Error("MALFORMED_AI_OUTPUT");
+    ordered.push(post);
   }
-  return out;
+
+  return { ...out, social: ordered };
 }
 
 /**
