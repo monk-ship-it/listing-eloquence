@@ -26,8 +26,6 @@ import {
   FileText,
   Instagram,
   Facebook,
-  Mail,
-  Music2,
   Building2,
   AudioLines,
   ClipboardPaste,
