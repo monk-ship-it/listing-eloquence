@@ -336,7 +336,9 @@ function Hero({ authed }: { authed: boolean }) {
           </div>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
             Switching adapts terminology, pricing, listing fields and compliance guidance —
-            {isUs ? " US mode writes MLS-ready remarks." : " UK mode writes portal-ready descriptions."}
+            {isUs
+              ? " US mode writes MLS-ready remarks."
+              : " UK mode writes portal-ready descriptions."}
           </p>
 
           <h1 className="mt-5 text-balance font-display text-[clamp(2rem,8vw,2.6rem)] font-semibold leading-[1.12] sm:mt-6 sm:text-5xl lg:text-[3.6rem]">
@@ -374,8 +376,6 @@ function Hero({ authed }: { authed: boolean }) {
             Switch between UK and US markets any time before checkout.
           </p>
 
-
-
           <div className="mt-7 flex flex-wrap gap-2.5">
             {heroChips(market).map((chip) => (
               <span
@@ -387,7 +387,6 @@ function Hero({ authed }: { authed: boolean }) {
             ))}
           </div>
         </div>
-
 
         {/* Right — product mockup */}
         <Reveal delay={120} className="relative min-w-0">
@@ -508,7 +507,6 @@ function HeroMockup() {
 
 const WAVE_HEIGHTS = [40, 70, 95, 60, 85, 50, 75, 100, 55, 80, 45, 90, 60, 70, 40];
 
-
 /* ------------------------------ Voice value -------------------------------- */
 
 function VoiceValue() {
@@ -544,8 +542,8 @@ function VoiceValue() {
           Built to remove listing admin, not to replace agents.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Quill sits between instruction and launch. Capture the property once and hand your team
-          a consistent, {isUs ? "MLS-ready" : "portal-ready"} pack instead of copy-and-paste work.
+          Quill sits between instruction and launch. Capture the property once and hand your team a
+          consistent, {isUs ? "MLS-ready" : "portal-ready"} pack instead of copy-and-paste work.
         </p>
       </Reveal>
       <div className="mt-12 grid gap-4 md:grid-cols-3">
@@ -559,7 +557,9 @@ function VoiceValue() {
                 <c.icon className="h-5 w-5" />
               </span>
               <h3 className="relative mt-5 text-lg font-semibold">{c.title}</h3>
-              <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">{c.body}</p>
+              <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">
+                {c.body}
+              </p>
             </div>
           </Reveal>
         ))}
@@ -597,8 +597,8 @@ function HowItWorks() {
             One workflow for the whole team.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Practical for negotiators, admins and branch managers — the same source of truth
-            drives every asset your listing needs.
+            Practical for negotiators, admins and branch managers — the same source of truth drives
+            every asset your listing needs.
           </p>
         </Reveal>
         <div className="relative mt-14 grid gap-8 md:grid-cols-3 md:gap-5">
@@ -625,34 +625,38 @@ function HowItWorks() {
   );
 }
 
-
 /* ----------------------------- Listing detail ------------------------------ */
 
 const BENEFIT_GROUPS = [
   {
     icon: Mic,
     title: "Generate from one set of notes",
-    items: "Speak, type or paste the property facts once. Quill turns them into the listing pack instead of making the team re-key details across formats.",
+    items:
+      "Speak, type or paste the property facts once. Quill turns them into the listing pack instead of making the team re-key details across formats.",
   },
   {
     icon: ShieldCheck,
     title: "Built-in review prompts",
-    items: "Missing details are flagged before launch, so admins and agents know what needs checking without rebuilding the copy manually.",
+    items:
+      "Missing details are flagged before launch, so admins and agents know what needs checking without rebuilding the copy manually.",
   },
   {
     icon: Building2,
     title: "Brand voice packs",
-    items: "Professional, Premium, Luxury and Heritage voices keep every listing on-brand without rewriting from scratch.",
+    items:
+      "Professional, Premium, Luxury and Heritage voices keep every listing on-brand without rewriting from scratch.",
   },
   {
     icon: ArrowLeftRight,
     title: "UK / US market-aware copy",
-    items: "Descriptions and remarks adapt to UK portal or US MLS conventions from the same facts, so the team doesn't retype the same property twice.",
+    items:
+      "Descriptions and remarks adapt to UK portal or US MLS conventions from the same facts, so the team doesn't retype the same property twice.",
   },
   {
     icon: FileText,
     title: "Reusable outputs",
-    items: "One set of notes produces the Headline, Key Features, listing description, short teaser and Instagram, Facebook and X captions — each editable, none written from scratch.",
+    items:
+      "One set of notes produces the Headline, Key Features, listing description, short teaser and Instagram, Facebook and X captions — each editable, none written from scratch.",
   },
 ];
 
@@ -696,7 +700,6 @@ function ListingDetail() {
   );
 }
 
-
 /* --------------------------------- Voices ---------------------------------- */
 
 const VOICE_CARDS = [
@@ -737,8 +740,8 @@ function Voices() {
           Four brand voices for a consistent agency tone.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Pick the voice that fits the property and the agency — every asset in the pack is
-          drafted in the same tone, so brand consistency doesn't rely on the person on the keyboard.
+          Pick the voice that fits the property and the agency — every asset in the pack is drafted
+          in the same tone, so brand consistency doesn't rely on the person on the keyboard.
         </p>
       </Reveal>
       <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -763,7 +766,6 @@ function Voices() {
           </Reveal>
         ))}
       </div>
-
     </section>
   );
 }
@@ -811,7 +813,6 @@ function LiveExample() {
     : "“Five bedrooms, Grade II listed, walled garden, original beams, inglenook fireplace, near the high street…”";
   const demo = isUs ? DEMO_US : DEMO_UK;
 
-
   return (
     <section id="example" className="panel-ivory border-y border-border py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
@@ -822,7 +823,8 @@ function LiveExample() {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Same source of truth, every asset. See how a handful of property facts becomes the
-            listing description, Key Features, short teaser and social captions — brand-consistent and ready to review.
+            listing description, Key Features, short teaser and social captions — brand-consistent
+            and ready to review.
           </p>
         </Reveal>
 
@@ -830,7 +832,6 @@ function LiveExample() {
           {/* In */}
           <Reveal className="min-w-0">
             <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-[0_20px_50px_-30px] shadow-black/40">
-
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm font-semibold text-primary">
                   <FileText className="h-4 w-4" /> Details in
@@ -874,16 +875,30 @@ function LiveExample() {
 
               <Tabs defaultValue="listing" className="mt-4 w-full min-w-0">
                 <TabsList className="-mx-1 flex h-auto w-[calc(100%+0.5rem)] max-w-[calc(100%+0.5rem)] flex-nowrap justify-start gap-1 overflow-x-auto bg-secondary p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:w-full sm:max-w-full sm:flex-wrap">
-                  <TabsTrigger value="listing" className="shrink-0">Description</TabsTrigger>
-                  <TabsTrigger value="features" className="shrink-0">Key Features</TabsTrigger>
-                  <TabsTrigger value="teaser" className="shrink-0">Teaser</TabsTrigger>
-                  <TabsTrigger value="instagram" className="shrink-0">Instagram</TabsTrigger>
-                  <TabsTrigger value="facebook" className="shrink-0">Facebook</TabsTrigger>
-                  <TabsTrigger value="x" className="shrink-0">X</TabsTrigger>
+                  <TabsTrigger value="listing" className="shrink-0">
+                    Description
+                  </TabsTrigger>
+                  <TabsTrigger value="features" className="shrink-0">
+                    Key Features
+                  </TabsTrigger>
+                  <TabsTrigger value="teaser" className="shrink-0">
+                    Teaser
+                  </TabsTrigger>
+                  <TabsTrigger value="instagram" className="shrink-0">
+                    Instagram
+                  </TabsTrigger>
+                  <TabsTrigger value="facebook" className="shrink-0">
+                    Facebook
+                  </TabsTrigger>
+                  <TabsTrigger value="x" className="shrink-0">
+                    X
+                  </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="listing" className="mt-4">
-                  <h3 className="font-display text-lg font-semibold leading-snug">{demo.headline}</h3>
+                  <h3 className="font-display text-lg font-semibold leading-snug">
+                    {demo.headline}
+                  </h3>
                   <div className="mt-3 space-y-3 text-sm leading-relaxed text-foreground/90">
                     {demo.listing.map((p, i) => (
                       <p key={i}>{p}</p>
@@ -1067,7 +1082,6 @@ const DEMO_US: DemoPack = {
   },
 };
 
-
 /* ----------------------------- Voice dictation ----------------------------- */
 
 const DICTATION_EXAMPLES_UK = [
@@ -1207,8 +1221,6 @@ function VoiceDictation({ authed }: { authed: boolean }) {
   );
 }
 
-
-
 /* --------------------------------- Pricing --------------------------------- */
 
 function Pricing({ authed }: { authed: boolean }) {
@@ -1223,13 +1235,13 @@ function Pricing({ authed }: { authed: boolean }) {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Every plan includes UK and US markets, all four brand voices, voice dictation and the
-            full listing pack — Headline, Key Features, description, teaser and Instagram, Facebook and X captions.
+            full listing pack — Headline, Key Features, description, teaser and Instagram, Facebook
+            and X captions.
           </p>
           <div className="mt-6 flex justify-center">
             <MarketToggle />
           </div>
         </Reveal>
-
 
         <div className="mt-12 grid items-stretch gap-6 md:grid-cols-3">
           {PLANS.map((plan, i) => (
@@ -1262,7 +1274,6 @@ function Pricing({ authed }: { authed: boolean }) {
                     : "Cancel anytime"}
                 </p>
 
-
                 <div className="rule my-6" />
                 <ul className="flex-1 space-y-3 text-sm">
                   {orderedFeatures(plan.features).map((f, idx) => (
@@ -1287,7 +1298,6 @@ function Pricing({ authed }: { authed: boolean }) {
                 >
                   {plan.id === "starter" ? "Start free trial" : "Get started"}
                 </CtaButton>
-
               </div>
             </Reveal>
           ))}
@@ -1295,11 +1305,10 @@ function Pricing({ authed }: { authed: boolean }) {
 
         <Reveal className="mt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            {TRIAL_DAYS}-day Starter trial at secure checkout · card required · cancel anytime before
-            renewal.
+            {TRIAL_DAYS}-day Starter trial at secure checkout · card required · cancel anytime
+            before renewal.
           </p>
         </Reveal>
-
       </div>
     </section>
   );
@@ -1362,7 +1371,6 @@ function FinalCta({ authed }: { authed: boolean }) {
   );
 }
 
-
 /* --------------------------------- Footer --------------------------------- */
 
 function Footer() {
@@ -1403,4 +1411,3 @@ function Footer() {
     </footer>
   );
 }
-
