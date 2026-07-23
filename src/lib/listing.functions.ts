@@ -8,6 +8,36 @@ import {
 } from "./master-listing-prompt";
 import { resolveMarketId, type MarketId } from "./config";
 import type { ListingInput, ListingOutput } from "./listing-types";
+import { normaliseListingOutput } from "./listing-types";
+import { VOICES } from "./voices";
+
+/** Max characters accepted per free-text field to keep payloads sane. */
+const MAX_FIELD_LEN = 4000;
+const MAX_VOICE_NOTES_LEN = 8000;
+
+function clip(v: unknown, max: number): string {
+  if (typeof v !== "string") return "";
+  const t = v.replace(/\u0000/g, "").trim();
+  return t.length > max ? t.slice(0, max) : t;
+}
+
+function normaliseInput(input: ListingInput): ListingInput {
+  const voiceId = VOICES.find((v) => v.id === input.voice)?.id ?? "professional";
+  const market = resolveMarketId(input.market);
+  const out = { ...input, market, voice: voiceId } as ListingInput;
+  const stringKeys: (keyof ListingInput)[] = [
+    "voiceNotes","address","areaHighlights","propertyType","tenure","leaseYears",
+    "price","priceQualifier","bedrooms","bathrooms","receptions","keyFeatures",
+    "dimensions","epc","councilTaxBand","outsideSpace","parking","heating",
+    "utilities","nearby","periodFeatures","targetAudience","yearBuilt",
+    "disclosures","showingNotes","mediaNotes",
+  ];
+  for (const k of stringKeys) {
+    const max = k === "voiceNotes" ? MAX_VOICE_NOTES_LEN : MAX_FIELD_LEN;
+    (out as Record<string, string>)[k as string] = clip((input as unknown as Record<string, unknown>)[k as string], max);
+  }
+  return out;
+}
 
 function field(label: string, value: string) {
   return value && value.trim() ? `- ${label}: ${value.trim()}\n` : "";
