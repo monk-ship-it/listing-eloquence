@@ -103,13 +103,26 @@ export async function computeUsage(
   comped: boolean,
 ): Promise<UsageInfo> {
   const planMeta = getPlan(plan);
-  const { count } = await supabase
-    .from("generation_usage")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", userId)
-    .gte("created_at", startOfMonthIso());
+  const nowIso = new Date().toISOString();
+  // Count durable (completed) usage plus any unexpired reservations so
+  // in-flight generations are reflected until they finalize or expire.
+  const [{ count: completedCount }, { count: reservedCount }] = await Promise.all([
+    supabase
+      .from("generation_usage")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("reservation_status", "completed")
+      .gte("created_at", startOfMonthIso()),
+    supabase
+      .from("generation_usage")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("reservation_status", "reserved")
+      .gte("created_at", startOfMonthIso())
+      .gte("reserved_until", nowIso),
+  ]);
 
-  const used = count ?? 0;
+  const used = (completedCount ?? 0) + (reservedCount ?? 0);
   const limit = planMeta.monthlyListings;
   return {
     plan: planMeta.id,
