@@ -22,6 +22,7 @@ import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME, MARKETS, type MarketId } from "@/lib/config";
 import { VoiceNotes } from "@/components/VoiceNotes";
+import { EmailBlastCard } from "@/components/EmailBlastCard";
 import { copyText, buildCopyAllText, formatKeyFeaturesBlock } from "@/lib/clipboard";
 import { Copy, Sparkles, RefreshCw, Lock } from "lucide-react";
 
@@ -670,6 +671,14 @@ function GeneratorPage() {
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">{output.summary}</p>
               </Card>
+
+              {output.emailBlast && (
+                <EmailBlastCard
+                  emailBlast={output.emailBlast}
+                  keyFeatures={output.keyFeatures}
+                  onCopy={(text) => copyToast(text, "Email Blast copied.")}
+                />
+              )}
 
               <Card className="p-6">
                 <h3 className="font-display text-lg font-semibold">Social pack</h3>
