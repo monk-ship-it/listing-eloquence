@@ -174,10 +174,11 @@ export const generateListing = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: ListingInput) => {
     if (!input || typeof input !== "object") throw new Error("Invalid input");
-    if (!input.address?.trim() && !input.propertyType?.trim() && !input.keyFeatures?.trim()) {
+    const cleaned = normaliseInput(input);
+    if (!cleaned.address?.trim() && !cleaned.propertyType?.trim() && !cleaned.keyFeatures?.trim()) {
       throw new Error("Please provide some property details before generating.");
     }
-    return input;
+    return cleaned;
   })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
