@@ -123,6 +123,7 @@ ${materialLine}
 ${portalLine}
 ${factHandlingLine}
 - Provide a short punchy teaser summary (1–2 sentences).
+- Provide 6–10 concise, factual, portal/MLS-ready "keyFeatures" bullets drawn STRICTLY from the supplied facts. Each bullet must be a short phrase (no sentences, no trailing full stops), non-duplicative, and safe for compliance. NEVER invent, upgrade or infer facts. Bullets should highlight the property's strongest, most factual selling points (property type, bedrooms/bathrooms, tenure/ownership, key features, outside space, parking, energy/tax band, notable features, location advantages) in the order most useful to a buyer.
 - Provide three social media posts (Instagram, Facebook, X) — each an engaging caption appropriate to that platform, plus a list of relevant hashtags (no '#' symbol in the array, just the words).
 
 Respond ONLY with a JSON object in exactly this shape:
@@ -130,6 +131,7 @@ Respond ONLY with a JSON object in exactly this shape:
   "headline": "string — a compelling listing headline",
   "listing": "string — the full listing body, paragraphs separated by \\n\\n",
   "summary": "string — short teaser",
+  "keyFeatures": ["string — short factual bullet", "..."],
   "social": [
     { "platform": "Instagram", "caption": "string", "hashtags": ["string"] },
     { "platform": "Facebook", "caption": "string", "hashtags": ["string"] },
