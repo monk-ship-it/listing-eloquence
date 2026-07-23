@@ -971,67 +971,87 @@ function SocialBlock({
   );
 }
 
-const DEMO_UK = {
+interface DemoPack {
+  headline: string;
+  keyFeatures: string[];
+  listing: string[];
+  summary: string;
+  instagram: { caption: string; hashtags: string };
+  facebook: { caption: string; hashtags: string };
+  x: { caption: string; hashtags: string };
+}
+
+const DEMO_UK: DemoPack = {
   headline: "A Distinguished Grade II Listed Home in the Heart of a Cotswold Market Town",
+  keyFeatures: [
+    "Grade II listed detached period rectory",
+    "Five bedrooms and three bathrooms",
+    "Three reception rooms including a drawing room of 6.8m x 5.1m",
+    "Inglenook fireplace and flagstone floors",
+    "Exposed beams and original sash windows",
+    "Bespoke shaker kitchen with cellar below",
+    "Walled garden of around half an acre with an orchard",
+    "Gravel driveway and detached double cart shed",
+    "Freehold, guide price £1,450,000",
+  ],
   listing: [
     "Set back behind a gravel driveway and a low honey-stone wall, this Grade II listed home carries the quiet confidence of a house that has watched over its market town for generations. The layout unfolds in sequence, with rooms of generous proportion and a clear sense of purpose.",
     "Inside, flagstone floors lead between reception rooms anchored by an inglenook fireplace. Exposed beams and original sash windows bring warmth and controlled light, while a bespoke kitchen sits at the heart of the home, opening onto the garden.",
     "Five bedrooms, three bathrooms and three reception rooms are arranged over the principal floors, with a cellar below for useful storage. Beyond, a walled garden with mature borders, an orchard and a stone terrace offers a sheltered setting for outdoor dining and entertaining.",
   ],
+  summary:
+    "A five-bedroom Grade II listed detached home in the heart of a Cotswold market town, with an inglenook fireplace, flagstone floors and a private walled garden. Guide price £1,450,000, freehold.",
   instagram: {
     caption:
       "A Grade II listed home in the heart of a Cotswold market town — inglenook fireplace, flagstone floors and a private walled garden. Five bedrooms, three receptions. Guide £1,450,000.",
     hashtags: "#CotswoldHomes #GradeIIListed #CountryLiving #PropertyForSale #CotswoldProperty",
-  },
-  tiktok: {
-    caption:
-      "Walk through this Grade II listed Cotswold home — original beams, an inglenook fireplace and a private walled garden. Five bedrooms, three receptions. Guide £1,450,000.",
-    hashtags: "#PropertyTok #CotswoldHome #HouseTour #GradeIIListed #EstateAgent",
   },
   facebook: {
     caption:
       "New to market — a five-bedroom Grade II listed home in the heart of a Cotswold market town. Three reception rooms, a bespoke kitchen and a private walled garden. Guide price £1,450,000. Viewings are available by appointment.",
     hashtags: "#CotswoldsProperty #GradeIIListed #ForSale",
   },
-  email: {
-    subject: "A five-bedroom Grade II listed home in the heart of a Cotswold market town",
-    body: [
-      "Hi there,",
-      "We have brought to market a five-bedroom Grade II listed detached home in the heart of a Cotswold market town. The property features an inglenook fireplace, exposed beams, original sash windows and a private walled garden, all within walking distance of the high street.",
-      "Guide price is £1,450,000. Viewings are available by appointment; please reply with the times that suit you and we will arrange access.",
-    ],
+  x: {
+    caption:
+      "New to market: a five-bedroom Grade II listed Cotswold home with an inglenook fireplace, flagstone floors and a private walled garden. Guide £1,450,000.",
+    hashtags: "#CotswoldHomes #GradeIIListed #ForSale",
   },
 };
 
-const DEMO_US = {
+const DEMO_US: DemoPack = {
   headline: "Refined 4-Bedroom Winter Park Home with Heated Pool and Chef's Kitchen",
+  keyFeatures: [
+    "Single-family home built in 2016",
+    "Approximately 3,200 sq ft on a 0.25-acre lot",
+    "Four bedrooms and three and a half bathrooms",
+    "Chef's kitchen with quartz countertops",
+    "First-floor primary suite",
+    "Screened lanai and heated saltwater pool",
+    "Fenced backyard on a tree-lined street",
+    "Three-car attached garage with paver driveway",
+    "Fee simple ownership, HOA $90/month",
+  ],
   listing: [
     "Set on a quarter-acre lot on a tree-lined street in Winter Park, this 2016-built single-family home offers approximately 3,200 square feet of well-proportioned living space with a layout arranged for everyday comfort and entertaining.",
     "The chef's kitchen features quartz countertops and opens to the main living area, while the first-floor primary suite adds convenience and privacy. A screened lanai extends the living space outdoors to a heated pool set within a fenced backyard.",
     "Four bedrooms, three and a half bathrooms and a three-car attached garage complete the home. Offered fee simple with an HOA of $90 per month, close to Park Avenue shops and dining.",
   ],
+  summary:
+    "Winter Park single-family home, approximately 3,200 sq ft on a quarter-acre lot. Four bedrooms, 3.5 baths, chef's kitchen, first-floor primary suite, screened lanai and heated pool. Offered at $895,000.",
   instagram: {
     caption:
       "Winter Park single-family home — chef's kitchen with quartz counters, first-floor primary suite, screened lanai and a heated pool. 4 bed, 3.5 bath, ~3,200 sq ft. Offered at $895,000.",
     hashtags: "#WinterParkFL #FloridaRealEstate #JustListed #HomeForSale #PoolHome",
-  },
-  tiktok: {
-    caption:
-      "Tour this Winter Park home — quartz kitchen, first-floor primary suite, screened lanai and a heated pool on a quarter-acre lot. 4 bed, 3.5 bath. Offered at $895,000.",
-    hashtags: "#RealEstateTok #HomeTour #WinterPark #FloridaHomes #JustListed",
   },
   facebook: {
     caption:
       "Just listed in Winter Park — a 4-bedroom, 3.5-bath single-family home of about 3,200 sq ft on a quarter-acre lot. Chef's kitchen, first-floor primary suite, screened lanai and a heated pool. Offered at $895,000. Showings by appointment.",
     hashtags: "#WinterParkHomes #FloridaRealEstate #ForSale",
   },
-  email: {
-    subject: "Just listed: 4-bedroom Winter Park home with a heated pool — $895,000",
-    body: [
-      "Hi there,",
-      "I've just listed a 4-bedroom, 3.5-bath single-family home in Winter Park — approximately 3,200 square feet on a quarter-acre lot, built in 2016. It features a chef's kitchen with quartz countertops, a first-floor primary suite, a screened lanai and a heated pool, with a three-car garage.",
-      "It's offered at $895,000 (HOA $90/month). Showings are by appointment via ShowingTime — reply with a few times that work and I'll get you in.",
-    ],
+  x: {
+    caption:
+      "Just listed in Winter Park: 4 bed, 3.5 bath, ~3,200 sq ft on a quarter-acre lot. Chef's kitchen, first-floor primary suite, screened lanai and heated pool. $895,000.",
+    hashtags: "#WinterParkFL #FloridaRealEstate #JustListed",
   },
 };
 
