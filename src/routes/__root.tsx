@@ -83,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Quill turns one set of property notes into a complete listing pack — portal-ready UK description or MLS remarks, Key Features bullets, teaser, social captions and buyer email. 14-day free trial.",
+          "Quill turns one set of property notes into a complete listing pack — a portal-ready UK description or MLS-ready remarks, a Headline, 6–10 Key Features bullets, a short teaser and Instagram, Facebook and X captions.",
       },
       { name: "author", content: "Quill" },
       {
@@ -93,7 +93,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         property: "og:description",
         content:
-          "One set of notes becomes a full listing pack: portal or MLS description, Key Features, teaser, social captions and buyer email.",
+          "One set of notes becomes a full listing pack: portal or MLS description, Headline, Key Features, short teaser and Instagram, Facebook and X captions.",
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Quill" },
@@ -105,7 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "twitter:description",
         content:
-          "One set of notes becomes a full listing pack: portal or MLS description, Key Features, teaser, social captions and buyer email.",
+          "One set of notes becomes a full listing pack: portal or MLS description, Headline, Key Features, short teaser and Instagram, Facebook and X captions.",
       },
       {
         property: "og:image",

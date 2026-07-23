@@ -26,8 +26,6 @@ import {
   FileText,
   Instagram,
   Facebook,
-  Mail,
-  Music2,
   Building2,
   AudioLines,
   ClipboardPaste,
@@ -46,7 +44,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Quill helps UK estate agents and US real estate teams turn one set of property notes into a full listing pack — portal or MLS description, teaser, social caption and buyer email. Less listing admin between instruction and launch.",
+          "Quill helps UK estate agents and US real estate teams turn one set of property notes into a full listing pack: Headline, 6–10 Key Features, a portal-ready UK description or MLS-ready remarks, a short teaser and Instagram, Facebook and X captions.",
       },
       {
         property: "og:title",
@@ -55,9 +53,20 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Turn one set of property notes into a portal or MLS description, teaser, social caption and buyer email. Built for UK estate agents and US real estate teams.",
+          "Turn one set of property notes into a Headline, 6–10 Key Features, a portal or MLS description, a short teaser and Instagram, Facebook and X captions.",
       },
+      { property: "og:type", content: "website" },
       { property: "og:url", content: "https://copybymonk.com/" },
+      { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:title",
+        content: "Quill — One Set of Notes, a Complete Listing Pack",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Turn one set of property notes into a Headline, 6–10 Key Features, a portal or MLS description, a short teaser and Instagram, Facebook and X captions.",
+      },
     ],
     links: [{ rel: "canonical", href: "https://copybymonk.com/" }],
     scripts: [
@@ -80,7 +89,70 @@ export const Route = createFileRoute("/")({
           name: "Quill",
           url: "https://copybymonk.com/",
           description:
-            "Quill removes repetitive listing admin between instruction and launch — generating the portal or MLS description, teaser, social caption and buyer email from one source of truth.",
+            "Quill removes repetitive listing admin between instruction and launch — generating a Headline, Key Features, the portal or MLS description, a short teaser and Instagram, Facebook and X captions from one source of truth.",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "Quill",
+          applicationCategory: "BusinessApplication",
+          operatingSystem: "Web",
+          url: "https://copybymonk.com/",
+          description:
+            "AI listing pack generator for UK estate agents and US real estate teams. One set of notes becomes a Headline, 6–10 Key Features, a portal-ready UK description or MLS-ready remarks, a short teaser and Instagram, Facebook and X captions.",
+          offers: [
+            {
+              "@type": "Offer",
+              name: "Starter (UK)",
+              price: "39",
+              priceCurrency: "GBP",
+              category: "subscription",
+              url: "https://copybymonk.com/uk-property-listing-generator",
+            },
+            {
+              "@type": "Offer",
+              name: "Pro (UK)",
+              price: "79",
+              priceCurrency: "GBP",
+              category: "subscription",
+              url: "https://copybymonk.com/uk-property-listing-generator",
+            },
+            {
+              "@type": "Offer",
+              name: "Growth (UK)",
+              price: "149",
+              priceCurrency: "GBP",
+              category: "subscription",
+              url: "https://copybymonk.com/uk-property-listing-generator",
+            },
+            {
+              "@type": "Offer",
+              name: "Starter (US)",
+              price: "49",
+              priceCurrency: "USD",
+              category: "subscription",
+              url: "https://copybymonk.com/us-real-estate-listing-generator",
+            },
+            {
+              "@type": "Offer",
+              name: "Pro (US)",
+              price: "99",
+              priceCurrency: "USD",
+              category: "subscription",
+              url: "https://copybymonk.com/us-real-estate-listing-generator",
+            },
+            {
+              "@type": "Offer",
+              name: "Growth (US)",
+              price: "199",
+              priceCurrency: "USD",
+              category: "subscription",
+              url: "https://copybymonk.com/us-real-estate-listing-generator",
+            },
+          ],
         }),
       },
     ],
@@ -191,7 +263,19 @@ function Header({ user }: { user: boolean }) {
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
         <Logo withByline />
-        <nav className="flex items-center gap-1.5 sm:gap-2">
+        <nav className="flex items-center gap-1.5 sm:gap-2" aria-label="Primary">
+          <Link
+            to="/uk-property-listing-generator"
+            className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex"
+          >
+            UK
+          </Link>
+          <Link
+            to="/us-real-estate-listing-generator"
+            className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex"
+          >
+            US
+          </Link>
           {user ? (
             <Button asChild>
               <Link to="/app">Open app</Link>
@@ -252,7 +336,9 @@ function Hero({ authed }: { authed: boolean }) {
           </div>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
             Switching adapts terminology, pricing, listing fields and compliance guidance —
-            {isUs ? " US mode writes MLS-ready remarks." : " UK mode writes portal-ready descriptions."}
+            {isUs
+              ? " US mode writes MLS-ready remarks."
+              : " UK mode writes portal-ready descriptions."}
           </p>
 
           <h1 className="mt-5 text-balance font-display text-[clamp(2rem,8vw,2.6rem)] font-semibold leading-[1.12] sm:mt-6 sm:text-5xl lg:text-[3.6rem]">
@@ -263,8 +349,8 @@ function Hero({ authed }: { authed: boolean }) {
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             {APP_NAME} helps UK estate agents and US real estate teams remove the slow admin between
             instruction and launch. Speak, type or paste the facts once, choose the brand voice, and
-            generate the listing description, short copy, captions and buyer email from the same
-            source of truth.
+            generate the Headline, Key Features, listing description, short teaser and Instagram,
+            Facebook and X captions from the same source of truth.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -290,8 +376,6 @@ function Hero({ authed }: { authed: boolean }) {
             Switch between UK and US markets any time before checkout.
           </p>
 
-
-
           <div className="mt-7 flex flex-wrap gap-2.5">
             {heroChips(market).map((chip) => (
               <span
@@ -303,7 +387,6 @@ function Hero({ authed }: { authed: boolean }) {
             ))}
           </div>
         </div>
-
 
         {/* Right — product mockup */}
         <Reveal delay={120} className="relative min-w-0">
@@ -424,7 +507,6 @@ function HeroMockup() {
 
 const WAVE_HEIGHTS = [40, 70, 95, 60, 85, 50, 75, 100, 55, 80, 45, 90, 60, 70, 40];
 
-
 /* ------------------------------ Voice value -------------------------------- */
 
 function VoiceValue() {
@@ -448,8 +530,8 @@ function VoiceValue() {
       step: "03",
       title: "Produce the full pack",
       body: isUs
-        ? "Generate MLS public remarks, a short description, social captions, buyer email and review notes — all from the same facts."
-        : "Generate the portal description, a teaser, social captions, buyer email and review notes — all from the same facts.",
+        ? "Generate MLS-ready remarks, a Headline, 6–10 Key Features, a short teaser and Instagram, Facebook and X captions — all from the same facts."
+        : "Generate the portal description, a Headline, 6–10 Key Features, a short teaser and Instagram, Facebook and X captions — all from the same facts.",
     },
   ];
   return (
@@ -460,8 +542,8 @@ function VoiceValue() {
           Built to remove listing admin, not to replace agents.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Quill sits between instruction and launch. Capture the property once and hand your team
-          a consistent, {isUs ? "MLS-ready" : "portal-ready"} pack instead of copy-and-paste work.
+          Quill sits between instruction and launch. Capture the property once and hand your team a
+          consistent, {isUs ? "MLS-ready" : "portal-ready"} pack instead of copy-and-paste work.
         </p>
       </Reveal>
       <div className="mt-12 grid gap-4 md:grid-cols-3">
@@ -475,7 +557,9 @@ function VoiceValue() {
                 <c.icon className="h-5 w-5" />
               </span>
               <h3 className="relative mt-5 text-lg font-semibold">{c.title}</h3>
-              <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">{c.body}</p>
+              <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">
+                {c.body}
+              </p>
             </div>
           </Reveal>
         ))}
@@ -501,7 +585,7 @@ function HowItWorks() {
     {
       icon: Sparkles,
       title: "Produce the full pack",
-      body: "Listing description, short copy, social captions, buyer email and review notes — drafted together and fully editable before use.",
+      body: "Headline, 6–10 Key Features, listing description, short teaser and Instagram, Facebook and X captions — drafted together and fully editable before use.",
     },
   ];
   return (
@@ -513,8 +597,8 @@ function HowItWorks() {
             One workflow for the whole team.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Practical for negotiators, admins and branch managers — the same source of truth
-            drives every asset your listing needs.
+            Practical for negotiators, admins and branch managers — the same source of truth drives
+            every asset your listing needs.
           </p>
         </Reveal>
         <div className="relative mt-14 grid gap-8 md:grid-cols-3 md:gap-5">
@@ -541,34 +625,38 @@ function HowItWorks() {
   );
 }
 
-
 /* ----------------------------- Listing detail ------------------------------ */
 
 const BENEFIT_GROUPS = [
   {
     icon: Mic,
     title: "Generate from one set of notes",
-    items: "Speak, type or paste the property facts once. Quill turns them into the listing pack instead of making the team re-key details across formats.",
+    items:
+      "Speak, type or paste the property facts once. Quill turns them into the listing pack instead of making the team re-key details across formats.",
   },
   {
     icon: ShieldCheck,
     title: "Built-in review prompts",
-    items: "Missing details are flagged before launch, so admins and agents know what needs checking without rebuilding the copy manually.",
+    items:
+      "Missing details are flagged before launch, so admins and agents know what needs checking without rebuilding the copy manually.",
   },
   {
     icon: Building2,
     title: "Brand voice packs",
-    items: "Professional, Premium, Luxury and Heritage voices keep every listing on-brand without rewriting from scratch.",
+    items:
+      "Professional, Premium, Luxury and Heritage voices keep every listing on-brand without rewriting from scratch.",
   },
   {
     icon: ArrowLeftRight,
     title: "UK / US market-aware copy",
-    items: "Descriptions and remarks adapt to UK portal or US MLS conventions from the same facts, so the team doesn't retype the same property twice.",
+    items:
+      "Descriptions and remarks adapt to UK portal or US MLS conventions from the same facts, so the team doesn't retype the same property twice.",
   },
   {
     icon: FileText,
     title: "Reusable outputs",
-    items: "One set of notes produces the listing description, short copy, social captions and buyer email — each editable, none written from scratch.",
+    items:
+      "One set of notes produces the Headline, Key Features, listing description, short teaser and Instagram, Facebook and X captions — each editable, none written from scratch.",
   },
 ];
 
@@ -612,7 +700,6 @@ function ListingDetail() {
   );
 }
 
-
 /* --------------------------------- Voices ---------------------------------- */
 
 const VOICE_CARDS = [
@@ -653,8 +740,8 @@ function Voices() {
           Four brand voices for a consistent agency tone.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Pick the voice that fits the property and the agency — every asset in the pack is
-          drafted in the same tone, so brand consistency doesn't rely on the person on the keyboard.
+          Pick the voice that fits the property and the agency — every asset in the pack is drafted
+          in the same tone, so brand consistency doesn't rely on the person on the keyboard.
         </p>
       </Reveal>
       <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -679,7 +766,6 @@ function Voices() {
           </Reveal>
         ))}
       </div>
-
     </section>
   );
 }
@@ -727,7 +813,6 @@ function LiveExample() {
     : "“Five bedrooms, Grade II listed, walled garden, original beams, inglenook fireplace, near the high street…”";
   const demo = isUs ? DEMO_US : DEMO_UK;
 
-
   return (
     <section id="example" className="panel-ivory border-y border-border py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
@@ -738,7 +823,8 @@ function LiveExample() {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Same source of truth, every asset. See how a handful of property facts becomes the
-            listing description, social captions and a buyer email — brand-consistent and ready to review.
+            listing description, Key Features, short teaser and social captions — brand-consistent
+            and ready to review.
           </p>
         </Reveal>
 
@@ -746,7 +832,6 @@ function LiveExample() {
           {/* In */}
           <Reveal className="min-w-0">
             <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-[0_20px_50px_-30px] shadow-black/40">
-
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm font-semibold text-primary">
                   <FileText className="h-4 w-4" /> Details in
@@ -790,22 +875,56 @@ function LiveExample() {
 
               <Tabs defaultValue="listing" className="mt-4 w-full min-w-0">
                 <TabsList className="-mx-1 flex h-auto w-[calc(100%+0.5rem)] max-w-[calc(100%+0.5rem)] flex-nowrap justify-start gap-1 overflow-x-auto bg-secondary p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:w-full sm:max-w-full sm:flex-wrap">
-                  <TabsTrigger value="listing" className="shrink-0">Listing</TabsTrigger>
-                  <TabsTrigger value="instagram" className="shrink-0">Instagram</TabsTrigger>
-                  <TabsTrigger value="tiktok" className="shrink-0">TikTok</TabsTrigger>
-                  <TabsTrigger value="facebook" className="shrink-0">Facebook</TabsTrigger>
-                  <TabsTrigger value="email" className="shrink-0">Buyer email</TabsTrigger>
+                  <TabsTrigger value="listing" className="shrink-0">
+                    Description
+                  </TabsTrigger>
+                  <TabsTrigger value="features" className="shrink-0">
+                    Key Features
+                  </TabsTrigger>
+                  <TabsTrigger value="teaser" className="shrink-0">
+                    Teaser
+                  </TabsTrigger>
+                  <TabsTrigger value="instagram" className="shrink-0">
+                    Instagram
+                  </TabsTrigger>
+                  <TabsTrigger value="facebook" className="shrink-0">
+                    Facebook
+                  </TabsTrigger>
+                  <TabsTrigger value="x" className="shrink-0">
+                    X
+                  </TabsTrigger>
                 </TabsList>
 
-
-
                 <TabsContent value="listing" className="mt-4">
-                  <h3 className="font-display text-lg font-semibold leading-snug">{demo.headline}</h3>
+                  <h3 className="font-display text-lg font-semibold leading-snug">
+                    {demo.headline}
+                  </h3>
                   <div className="mt-3 space-y-3 text-sm leading-relaxed text-foreground/90">
                     {demo.listing.map((p, i) => (
                       <p key={i}>{p}</p>
                     ))}
                   </div>
+                </TabsContent>
+
+                <TabsContent value="features" className="mt-4">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                    <Sparkles className="h-3.5 w-3.5" /> Key Features
+                  </div>
+                  <ul className="mt-3 space-y-2 text-sm leading-relaxed text-foreground/90">
+                    {demo.keyFeatures.map((f) => (
+                      <li key={f} className="flex items-start gap-2">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </TabsContent>
+
+                <TabsContent value="teaser" className="mt-4">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                    <Megaphone className="h-3.5 w-3.5" /> Short teaser
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-foreground/90">{demo.summary}</p>
                 </TabsContent>
 
                 <TabsContent value="instagram" className="mt-4">
@@ -814,15 +933,6 @@ function LiveExample() {
                     label="Instagram"
                     caption={demo.instagram.caption}
                     hashtags={demo.instagram.hashtags}
-                  />
-                </TabsContent>
-
-                <TabsContent value="tiktok" className="mt-4">
-                  <SocialBlock
-                    icon={Music2}
-                    label="TikTok"
-                    caption={demo.tiktok.caption}
-                    hashtags={demo.tiktok.hashtags}
                   />
                 </TabsContent>
 
@@ -835,16 +945,13 @@ function LiveExample() {
                   />
                 </TabsContent>
 
-                <TabsContent value="email" className="mt-4">
-                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
-                    <Mail className="h-3.5 w-3.5" /> Buyer email
-                  </div>
-                  <p className="mt-3 text-sm font-medium text-foreground">{demo.email.subject}</p>
-                  <div className="mt-2 space-y-2.5 text-sm leading-relaxed text-foreground/90">
-                    {demo.email.body.map((p, i) => (
-                      <p key={i}>{p}</p>
-                    ))}
-                  </div>
+                <TabsContent value="x" className="mt-4">
+                  <SocialBlock
+                    icon={XIcon}
+                    label="X"
+                    caption={demo.x.caption}
+                    hashtags={demo.x.hashtags}
+                  />
                 </TabsContent>
               </Tabs>
             </div>
@@ -852,6 +959,20 @@ function LiveExample() {
         </div>
       </div>
     </section>
+  );
+}
+
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+      className={className}
+      fill="currentColor"
+    >
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.5 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
   );
 }
 
@@ -877,70 +998,89 @@ function SocialBlock({
   );
 }
 
-const DEMO_UK = {
+interface DemoPack {
+  headline: string;
+  keyFeatures: string[];
+  listing: string[];
+  summary: string;
+  instagram: { caption: string; hashtags: string };
+  facebook: { caption: string; hashtags: string };
+  x: { caption: string; hashtags: string };
+}
+
+const DEMO_UK: DemoPack = {
   headline: "A Distinguished Grade II Listed Home in the Heart of a Cotswold Market Town",
+  keyFeatures: [
+    "Grade II listed detached period rectory",
+    "Five bedrooms and three bathrooms",
+    "Three reception rooms including a drawing room of 6.8m x 5.1m",
+    "Inglenook fireplace and flagstone floors",
+    "Exposed beams and original sash windows",
+    "Bespoke shaker kitchen with cellar below",
+    "Walled garden of around half an acre with an orchard",
+    "Gravel driveway and detached double cart shed",
+    "Freehold, guide price £1,450,000",
+  ],
   listing: [
     "Set back behind a gravel driveway and a low honey-stone wall, this Grade II listed home carries the quiet confidence of a house that has watched over its market town for generations. The layout unfolds in sequence, with rooms of generous proportion and a clear sense of purpose.",
     "Inside, flagstone floors lead between reception rooms anchored by an inglenook fireplace. Exposed beams and original sash windows bring warmth and controlled light, while a bespoke kitchen sits at the heart of the home, opening onto the garden.",
     "Five bedrooms, three bathrooms and three reception rooms are arranged over the principal floors, with a cellar below for useful storage. Beyond, a walled garden with mature borders, an orchard and a stone terrace offers a sheltered setting for outdoor dining and entertaining.",
   ],
+  summary:
+    "A five-bedroom Grade II listed detached home in the heart of a Cotswold market town, with an inglenook fireplace, flagstone floors and a private walled garden. Guide price £1,450,000, freehold.",
   instagram: {
     caption:
       "A Grade II listed home in the heart of a Cotswold market town — inglenook fireplace, flagstone floors and a private walled garden. Five bedrooms, three receptions. Guide £1,450,000.",
     hashtags: "#CotswoldHomes #GradeIIListed #CountryLiving #PropertyForSale #CotswoldProperty",
-  },
-  tiktok: {
-    caption:
-      "Walk through this Grade II listed Cotswold home — original beams, an inglenook fireplace and a private walled garden. Five bedrooms, three receptions. Guide £1,450,000.",
-    hashtags: "#PropertyTok #CotswoldHome #HouseTour #GradeIIListed #EstateAgent",
   },
   facebook: {
     caption:
       "New to market — a five-bedroom Grade II listed home in the heart of a Cotswold market town. Three reception rooms, a bespoke kitchen and a private walled garden. Guide price £1,450,000. Viewings are available by appointment.",
     hashtags: "#CotswoldsProperty #GradeIIListed #ForSale",
   },
-  email: {
-    subject: "A five-bedroom Grade II listed home in the heart of a Cotswold market town",
-    body: [
-      "Hi there,",
-      "We have brought to market a five-bedroom Grade II listed detached home in the heart of a Cotswold market town. The property features an inglenook fireplace, exposed beams, original sash windows and a private walled garden, all within walking distance of the high street.",
-      "Guide price is £1,450,000. Viewings are available by appointment; please reply with the times that suit you and we will arrange access.",
-    ],
+  x: {
+    caption:
+      "New to market: a five-bedroom Grade II listed Cotswold home with an inglenook fireplace, flagstone floors and a private walled garden. Guide £1,450,000.",
+    hashtags: "#CotswoldHomes #GradeIIListed #ForSale",
   },
 };
 
-const DEMO_US = {
+const DEMO_US: DemoPack = {
   headline: "Refined 4-Bedroom Winter Park Home with Heated Pool and Chef's Kitchen",
+  keyFeatures: [
+    "Single-family home built in 2016",
+    "Approximately 3,200 sq ft on a 0.25-acre lot",
+    "Four bedrooms and three and a half bathrooms",
+    "Chef's kitchen with quartz countertops",
+    "First-floor primary suite",
+    "Screened lanai and heated saltwater pool",
+    "Fenced backyard on a tree-lined street",
+    "Three-car attached garage with paver driveway",
+    "Fee simple ownership, HOA $90/month",
+  ],
   listing: [
     "Set on a quarter-acre lot on a tree-lined street in Winter Park, this 2016-built single-family home offers approximately 3,200 square feet of well-proportioned living space with a layout arranged for everyday comfort and entertaining.",
     "The chef's kitchen features quartz countertops and opens to the main living area, while the first-floor primary suite adds convenience and privacy. A screened lanai extends the living space outdoors to a heated pool set within a fenced backyard.",
     "Four bedrooms, three and a half bathrooms and a three-car attached garage complete the home. Offered fee simple with an HOA of $90 per month, close to Park Avenue shops and dining.",
   ],
+  summary:
+    "Winter Park single-family home, approximately 3,200 sq ft on a quarter-acre lot. Four bedrooms, 3.5 baths, chef's kitchen, first-floor primary suite, screened lanai and heated pool. Offered at $895,000.",
   instagram: {
     caption:
       "Winter Park single-family home — chef's kitchen with quartz counters, first-floor primary suite, screened lanai and a heated pool. 4 bed, 3.5 bath, ~3,200 sq ft. Offered at $895,000.",
     hashtags: "#WinterParkFL #FloridaRealEstate #JustListed #HomeForSale #PoolHome",
-  },
-  tiktok: {
-    caption:
-      "Tour this Winter Park home — quartz kitchen, first-floor primary suite, screened lanai and a heated pool on a quarter-acre lot. 4 bed, 3.5 bath. Offered at $895,000.",
-    hashtags: "#RealEstateTok #HomeTour #WinterPark #FloridaHomes #JustListed",
   },
   facebook: {
     caption:
       "Just listed in Winter Park — a 4-bedroom, 3.5-bath single-family home of about 3,200 sq ft on a quarter-acre lot. Chef's kitchen, first-floor primary suite, screened lanai and a heated pool. Offered at $895,000. Showings by appointment.",
     hashtags: "#WinterParkHomes #FloridaRealEstate #ForSale",
   },
-  email: {
-    subject: "Just listed: 4-bedroom Winter Park home with a heated pool — $895,000",
-    body: [
-      "Hi there,",
-      "I've just listed a 4-bedroom, 3.5-bath single-family home in Winter Park — approximately 3,200 square feet on a quarter-acre lot, built in 2016. It features a chef's kitchen with quartz countertops, a first-floor primary suite, a screened lanai and a heated pool, with a three-car garage.",
-      "It's offered at $895,000 (HOA $90/month). Showings are by appointment via ShowingTime — reply with a few times that work and I'll get you in.",
-    ],
+  x: {
+    caption:
+      "Just listed in Winter Park: 4 bed, 3.5 bath, ~3,200 sq ft on a quarter-acre lot. Chef's kitchen, first-floor primary suite, screened lanai and heated pool. $895,000.",
+    hashtags: "#WinterParkFL #FloridaRealEstate #JustListed",
   },
 };
-
 
 /* ----------------------------- Voice dictation ----------------------------- */
 
@@ -1081,8 +1221,6 @@ function VoiceDictation({ authed }: { authed: boolean }) {
   );
 }
 
-
-
 /* --------------------------------- Pricing --------------------------------- */
 
 function Pricing({ authed }: { authed: boolean }) {
@@ -1097,13 +1235,13 @@ function Pricing({ authed }: { authed: boolean }) {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Every plan includes UK and US markets, all four brand voices, voice dictation and the
-            full listing pack — description, teaser, social captions and buyer email.
+            full listing pack — Headline, Key Features, description, teaser and Instagram, Facebook
+            and X captions.
           </p>
           <div className="mt-6 flex justify-center">
             <MarketToggle />
           </div>
         </Reveal>
-
 
         <div className="mt-12 grid items-stretch gap-6 md:grid-cols-3">
           {PLANS.map((plan, i) => (
@@ -1136,7 +1274,6 @@ function Pricing({ authed }: { authed: boolean }) {
                     : "Cancel anytime"}
                 </p>
 
-
                 <div className="rule my-6" />
                 <ul className="flex-1 space-y-3 text-sm">
                   {orderedFeatures(plan.features).map((f, idx) => (
@@ -1161,7 +1298,6 @@ function Pricing({ authed }: { authed: boolean }) {
                 >
                   {plan.id === "starter" ? "Start free trial" : "Get started"}
                 </CtaButton>
-
               </div>
             </Reveal>
           ))}
@@ -1169,11 +1305,10 @@ function Pricing({ authed }: { authed: boolean }) {
 
         <Reveal className="mt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            {TRIAL_DAYS}-day Starter trial at secure checkout · card required · cancel anytime before
-            renewal.
+            {TRIAL_DAYS}-day Starter trial at secure checkout · card required · cancel anytime
+            before renewal.
           </p>
         </Reveal>
-
       </div>
     </section>
   );
@@ -1236,7 +1371,6 @@ function FinalCta({ authed }: { authed: boolean }) {
   );
 }
 
-
 /* --------------------------------- Footer --------------------------------- */
 
 function Footer() {
@@ -1245,6 +1379,23 @@ function Footer() {
       <div className="mx-auto max-w-6xl px-5">
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row sm:gap-4">
           <Logo withByline />
+          <nav
+            aria-label="Markets"
+            className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm"
+          >
+            <Link
+              to="/uk-property-listing-generator"
+              className="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              UK property listing generator
+            </Link>
+            <Link
+              to="/us-real-estate-listing-generator"
+              className="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              US real estate listing generator
+            </Link>
+          </nav>
           <a
             href={`mailto:${CONTACT_EMAIL}`}
             className="break-all text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -1260,4 +1411,3 @@ function Footer() {
     </footer>
   );
 }
-
