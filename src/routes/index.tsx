@@ -876,14 +876,13 @@ function LiveExample() {
 
               <Tabs defaultValue="listing" className="mt-4 w-full min-w-0">
                 <TabsList className="-mx-1 flex h-auto w-[calc(100%+0.5rem)] max-w-[calc(100%+0.5rem)] flex-nowrap justify-start gap-1 overflow-x-auto bg-secondary p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:w-full sm:max-w-full sm:flex-wrap">
-                  <TabsTrigger value="listing" className="shrink-0">Listing</TabsTrigger>
+                  <TabsTrigger value="listing" className="shrink-0">Description</TabsTrigger>
+                  <TabsTrigger value="features" className="shrink-0">Key Features</TabsTrigger>
+                  <TabsTrigger value="teaser" className="shrink-0">Teaser</TabsTrigger>
                   <TabsTrigger value="instagram" className="shrink-0">Instagram</TabsTrigger>
-                  <TabsTrigger value="tiktok" className="shrink-0">TikTok</TabsTrigger>
                   <TabsTrigger value="facebook" className="shrink-0">Facebook</TabsTrigger>
-                  <TabsTrigger value="email" className="shrink-0">Buyer email</TabsTrigger>
+                  <TabsTrigger value="x" className="shrink-0">X</TabsTrigger>
                 </TabsList>
-
-
 
                 <TabsContent value="listing" className="mt-4">
                   <h3 className="font-display text-lg font-semibold leading-snug">{demo.headline}</h3>
@@ -894,21 +893,33 @@ function LiveExample() {
                   </div>
                 </TabsContent>
 
+                <TabsContent value="features" className="mt-4">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                    <Sparkles className="h-3.5 w-3.5" /> Key Features
+                  </div>
+                  <ul className="mt-3 space-y-2 text-sm leading-relaxed text-foreground/90">
+                    {demo.keyFeatures.map((f) => (
+                      <li key={f} className="flex items-start gap-2">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </TabsContent>
+
+                <TabsContent value="teaser" className="mt-4">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                    <Megaphone className="h-3.5 w-3.5" /> Short teaser
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-foreground/90">{demo.summary}</p>
+                </TabsContent>
+
                 <TabsContent value="instagram" className="mt-4">
                   <SocialBlock
                     icon={Instagram}
                     label="Instagram"
                     caption={demo.instagram.caption}
                     hashtags={demo.instagram.hashtags}
-                  />
-                </TabsContent>
-
-                <TabsContent value="tiktok" className="mt-4">
-                  <SocialBlock
-                    icon={Music2}
-                    label="TikTok"
-                    caption={demo.tiktok.caption}
-                    hashtags={demo.tiktok.hashtags}
                   />
                 </TabsContent>
 
@@ -921,16 +932,13 @@ function LiveExample() {
                   />
                 </TabsContent>
 
-                <TabsContent value="email" className="mt-4">
-                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
-                    <Mail className="h-3.5 w-3.5" /> Buyer email
-                  </div>
-                  <p className="mt-3 text-sm font-medium text-foreground">{demo.email.subject}</p>
-                  <div className="mt-2 space-y-2.5 text-sm leading-relaxed text-foreground/90">
-                    {demo.email.body.map((p, i) => (
-                      <p key={i}>{p}</p>
-                    ))}
-                  </div>
+                <TabsContent value="x" className="mt-4">
+                  <SocialBlock
+                    icon={XIcon}
+                    label="X"
+                    caption={demo.x.caption}
+                    hashtags={demo.x.hashtags}
+                  />
                 </TabsContent>
               </Tabs>
             </div>
