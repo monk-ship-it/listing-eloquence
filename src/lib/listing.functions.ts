@@ -309,11 +309,7 @@ export const generateListing = createServerFn({ method: "POST" })
       plan: getPlan(sub?.plan).id,
     });
     if (usageError) {
-      await supabase
-        .from("generations")
-        .delete()
-        .eq("id", savedGenId)
-        .eq("user_id", userId);
+      await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
       throw new Error("Couldn't record listing usage. Please try again.");
     }
 
