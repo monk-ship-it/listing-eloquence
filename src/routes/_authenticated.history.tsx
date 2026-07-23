@@ -24,6 +24,7 @@ import {
   type GenerationRecord,
 } from "@/lib/generations.functions";
 import { copyText, buildCopyAllText, formatKeyFeaturesBlock } from "@/lib/clipboard";
+import { EmailBlastCard } from "@/components/EmailBlastCard";
 import {
   Copy,
   Trash2,
