@@ -877,25 +877,46 @@ function LiveExample() {
 
               <Tabs defaultValue="listing" className="mt-4 w-full min-w-0">
                 <TabsList className="-mx-1 flex h-auto w-[calc(100%+0.5rem)] max-w-[calc(100%+0.5rem)] flex-nowrap items-center justify-start gap-1 overflow-x-auto bg-secondary p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:w-full sm:max-w-full">
-                  <TabsTrigger value="listing" className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm">
+                  <TabsTrigger
+                    value="listing"
+                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                  >
                     Description
                   </TabsTrigger>
-                  <TabsTrigger value="features" className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm">
+                  <TabsTrigger
+                    value="features"
+                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                  >
                     Key Features
                   </TabsTrigger>
-                  <TabsTrigger value="teaser" className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm">
+                  <TabsTrigger
+                    value="teaser"
+                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                  >
                     Teaser
                   </TabsTrigger>
-                  <TabsTrigger value="email" className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm">
+                  <TabsTrigger
+                    value="email"
+                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                  >
                     Email Blast
                   </TabsTrigger>
-                  <TabsTrigger value="instagram" className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm">
+                  <TabsTrigger
+                    value="instagram"
+                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                  >
                     Instagram
                   </TabsTrigger>
-                  <TabsTrigger value="facebook" className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm">
+                  <TabsTrigger
+                    value="facebook"
+                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                  >
                     Facebook
                   </TabsTrigger>
-                  <TabsTrigger value="x" className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm">
+                  <TabsTrigger
+                    value="x"
+                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                  >
                     X
                   </TabsTrigger>
                 </TabsList>
