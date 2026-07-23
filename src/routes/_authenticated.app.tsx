@@ -433,21 +433,60 @@ function GeneratorPage() {
               <Card className="p-6">
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="font-display text-xl font-semibold">{output.headline}</h2>
-                  <Button variant="ghost" size="icon" aria-label="Copy listing" onClick={() => copy(`${output.headline}\n\n${output.listing}`)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-11 w-11 shrink-0"
+                    aria-label="Copy full listing pack"
+                    onClick={() => copyToast(buildCopyAllText(output), "Full pack copied.")}
+                  >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
                 <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
                   {output.listing.split("\n\n").map((p, i) => (
-                    <p key={i}>{p}</p>
+                    <p key={i} className="break-words">{p}</p>
                   ))}
                 </div>
               </Card>
 
+              {output.keyFeatures && output.keyFeatures.length > 0 && (
+                <Card className="p-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-display text-lg font-semibold">Key features</h3>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-11 w-11 shrink-0"
+                      aria-label="Copy key features"
+                      onClick={() =>
+                        copyToast(formatKeyFeaturesBlock(output.keyFeatures), "Key features copied.")
+                      }
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <ul className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+                    {output.keyFeatures.map((f, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                        <span className="break-words">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              )}
+
               <Card className="p-6">
                 <div className="flex items-center justify-between">
                   <h3 className="font-display text-lg font-semibold">Teaser</h3>
-                  <Button variant="ghost" size="icon" aria-label="Copy teaser" onClick={() => copy(output.summary)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-11 w-11 shrink-0"
+                    aria-label="Copy teaser"
+                    onClick={() => copyToast(output.summary, "Teaser copied.")}
+                  >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
@@ -464,13 +503,19 @@ function GeneratorPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          aria-label="Copy social post"
-                          onClick={() => copy(`${post.caption}\n\n${post.hashtags.map((h) => `#${h}`).join(" ")}`)}
+                          className="h-11 w-11 shrink-0"
+                          aria-label={`Copy ${post.platform} post`}
+                          onClick={() =>
+                            copyToast(
+                              `${post.caption}\n\n${post.hashtags.map((h) => `#${h}`).join(" ")}`,
+                              "Post copied.",
+                            )
+                          }
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      <p className="mt-2 text-sm text-muted-foreground">{post.caption}</p>
+                      <p className="mt-2 text-sm text-muted-foreground break-words">{post.caption}</p>
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {post.hashtags.map((h) => (
                           <span key={h} className="text-xs text-primary">#{h}</span>
@@ -480,6 +525,7 @@ function GeneratorPage() {
                   ))}
                 </div>
               </Card>
+
 
               <Button variant="outline" className="w-full" onClick={run} disabled={busy}>
                 <RefreshCw className="mr-2 h-4 w-4" /> Regenerate
