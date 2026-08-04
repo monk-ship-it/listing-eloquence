@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as UsRealEstateListingGeneratorRouteImport } from './routes/us-real-estate-listing-generator'
 import { Route as UkPropertyListingGeneratorRouteImport } from './routes/uk-property-listing-generator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -49,6 +50,11 @@ const UkPropertyListingGeneratorRoute =
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const McpRoute = McpRouteImport.update({
@@ -167,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/uk-property-listing-generator': typeof UkPropertyListingGeneratorRoute
   '/us-real-estate-listing-generator': typeof UsRealEstateListingGeneratorRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/uk-property-listing-generator': typeof UkPropertyListingGeneratorRoute
   '/us-real-estate-listing-generator': typeof UsRealEstateListingGeneratorRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/uk-property-listing-generator': typeof UkPropertyListingGeneratorRoute
   '/us-real-estate-listing-generator': typeof UsRealEstateListingGeneratorRoute
@@ -246,6 +255,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/mcp'
+    | '/rss.xml'
     | '/sitemap.xml'
     | '/uk-property-listing-generator'
     | '/us-real-estate-listing-generator'
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/mcp'
+    | '/rss.xml'
     | '/sitemap.xml'
     | '/uk-property-listing-generator'
     | '/us-real-estate-listing-generator'
@@ -297,6 +308,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/mcp'
+    | '/rss.xml'
     | '/sitemap.xml'
     | '/uk-property-listing-generator'
     | '/us-real-estate-listing-generator'
@@ -324,6 +336,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
   McpRoute: typeof McpRoute
+  RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   UkPropertyListingGeneratorRoute: typeof UkPropertyListingGeneratorRoute
   UsRealEstateListingGeneratorRoute: typeof UsRealEstateListingGeneratorRoute
@@ -362,6 +375,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -539,6 +559,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
   McpRoute: McpRoute,
+  RssDotxmlRoute: RssDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   UkPropertyListingGeneratorRoute: UkPropertyListingGeneratorRoute,
   UsRealEstateListingGeneratorRoute: UsRealEstateListingGeneratorRoute,
