@@ -36,9 +36,7 @@ export const Route = createFileRoute("/api/public/opinly-webhook")({
         }
 
         const paths = Array.isArray(payload.data?.paths) ? payload.data.paths : [];
-        const { invalidateOpinlyCache, clearOpinlyCache } = await import(
-          "@/lib/opinly/api.server"
-        );
+        const { invalidateOpinlyCache, clearOpinlyCache } = await import("@/lib/opinly/api.server");
 
         if (paths.length === 0) {
           clearOpinlyCache();
@@ -46,7 +44,8 @@ export const Route = createFileRoute("/api/public/opinly-webhook")({
           const prefixes = new Set<string>();
           for (const path of paths) {
             if (path === "/blog" || path === "/") prefixes.add("/content/posts");
-            else if (path === "/sitemap" || path === "/sitemap.xml") prefixes.add("/content/routes");
+            else if (path === "/sitemap" || path === "/sitemap.xml")
+              prefixes.add("/content/routes");
             else if (path.startsWith("/blog/")) {
               // A single post changed: drop its detail cache plus every listing.
               prefixes.add("/content/post?");
