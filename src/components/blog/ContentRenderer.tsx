@@ -21,7 +21,11 @@ function attrString(node: OpinlyContentNode, key: string): string | undefined {
   return typeof v === "string" && v.length > 0 ? v : undefined;
 }
 
-function applyMarks(text: ReactNode, marks: OpinlyContentMark[] | undefined, key: string): ReactNode {
+function applyMarks(
+  text: ReactNode,
+  marks: OpinlyContentMark[] | undefined,
+  key: string,
+): ReactNode {
   if (!marks?.length) return text;
   return marks.reduce<ReactNode>((acc, mark, i) => {
     const k = `${key}-m${i}`;

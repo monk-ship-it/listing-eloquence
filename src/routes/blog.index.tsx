@@ -161,9 +161,7 @@ function BlogIndex() {
             <Button
               className="min-h-11"
               disabled={!data.has_more || !data.next_cursor || isFetching}
-              onClick={() =>
-                setCursors((c) => (data.next_cursor ? [...c, data.next_cursor] : c))
-              }
+              onClick={() => setCursors((c) => (data.next_cursor ? [...c, data.next_cursor] : c))}
             >
               Next
             </Button>

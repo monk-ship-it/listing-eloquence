@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { BlogShell } from "@/components/blog/BlogShell";
 import { ContentRenderer } from "@/components/blog/ContentRenderer";
 import { getBlogPost } from "@/lib/opinly.functions";
+import type { OpinlyFullPost } from "@/lib/opinly/types";
 import { formatPostDate, postImageUrl, SITE_URL, opinlyImageUrl } from "@/lib/opinly/shared";
 
 export const Route = createFileRoute("/blog/$slug")({
@@ -53,9 +54,7 @@ export const Route = createFileRoute("/blog/$slug")({
             ...(hero ? { image: [hero] } : {}),
             ...(post.author ? { author: { "@type": "Person", name: post.author.name } } : {}),
             publisher: { "@type": "Organization", name: "Quill" },
-            ...(post.faqs?.length
-              ? {}
-              : {}),
+            ...(post.faqs?.length ? {} : {}),
           }),
         },
         {
@@ -107,7 +106,7 @@ export const Route = createFileRoute("/blog/$slug")({
 });
 
 function PostPage() {
-  const { post } = Route.useLoaderData();
+  const { post } = Route.useLoaderData() as { post: OpinlyFullPost };
   const hero = postImageUrl(post.titleFile);
   const authorImage = opinlyImageUrl(post.author?.fileKey ?? null);
 

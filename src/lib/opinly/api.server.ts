@@ -162,7 +162,10 @@ async function opinlyPost<T>(path: string, body: unknown) {
   if (!res.ok) {
     const text = await res.text();
     console.error(`Opinly POST ${path} failed [${res.status}]: ${text.slice(0, 500)}`);
-    throw new OpinlyApiError(res.status, text.slice(0, 500) || `Opinly event failed (${res.status})`);
+    throw new OpinlyApiError(
+      res.status,
+      text.slice(0, 500) || `Opinly event failed (${res.status})`,
+    );
   }
   return (await res.json()) as T;
 }

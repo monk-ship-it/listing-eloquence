@@ -57,8 +57,7 @@ export function opinlyPageView(path: string) {
 export const OpinlyEvents = {
   signUp: (properties?: Record<string, unknown>) => opinlyTrack("sign_up", properties),
   login: (properties?: Record<string, unknown>) => opinlyTrack("login", properties),
-  generateLead: (properties?: Record<string, unknown>) =>
-    opinlyTrack("generate_lead", properties),
+  generateLead: (properties?: Record<string, unknown>) => opinlyTrack("generate_lead", properties),
   startTrial: (properties?: Record<string, unknown>) => opinlyTrack("start_trial", properties),
   beginCheckout: (properties?: Record<string, unknown>) =>
     opinlyTrack("begin_checkout", properties),
