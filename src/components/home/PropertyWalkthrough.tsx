@@ -115,7 +115,6 @@ export function PropertyWalkthrough({
           {intro && <p className="mt-4 text-lg text-muted-foreground">{intro}</p>}
         </div>
 
-
         <div
           className="mt-12 grid gap-6 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-10"
           onMouseEnter={() => setPaused(true)}

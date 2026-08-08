@@ -553,7 +553,6 @@ function Workflow() {
   );
 }
 
-
 /* ----------------------------- Editorial band ------------------------------ */
 
 /** Image-backed band that breaks up the long page with warm property light. */
