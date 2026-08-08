@@ -11,7 +11,6 @@ import heroExterior from "@/assets/guides-hero-exterior.jpg";
 import ukTerrace from "@/assets/guides-uk-terrace.jpg";
 import usHome from "@/assets/guides-us-home.jpg";
 
-
 const TITLE = "Property Listing Copy Guides for UK & US Agents";
 const DOC_TITLE = "Listing Copy Guides for UK & US Agents | CopyByMonk";
 const DESCRIPTION =
@@ -145,7 +144,6 @@ function WalkaroundPanel() {
   );
 }
 
-
 /** Secondary enhancement: renders only if the external feed responds with posts. */
 function LatestArticles() {
   const fetchPosts = useServerFn(listBlogPosts);
@@ -233,10 +231,7 @@ function MarketSection({
             {icon}
             {market === "uk" ? "United Kingdom" : "United States"}
           </p>
-          <h2
-            id={id}
-            className="mt-3 font-serif text-2xl font-semibold tracking-tight sm:text-3xl"
-          >
+          <h2 id={id} className="mt-3 font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
             {title}
           </h2>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">{intro}</p>
@@ -331,4 +326,3 @@ function BlogHub() {
     </BlogShell>
   );
 }
-

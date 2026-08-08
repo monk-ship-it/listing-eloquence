@@ -40,7 +40,6 @@ export function BlogShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-
       <main id="blog-main" className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
         {children}
       </main>
