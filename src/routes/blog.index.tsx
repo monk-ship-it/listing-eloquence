@@ -1,22 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
 import { BlogShell } from "@/components/blog/BlogShell";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ArrowRight, BookOpen, Building2, Home } from "lucide-react";
 import { listBlogPosts } from "@/lib/opinly.functions";
-import { formatPostDate, imageAlt, listImageUrl, SITE_URL } from "@/lib/opinly/shared";
-import type { OpinlyPost } from "@/lib/opinly/types";
+import { formatPostDate, listImageUrl, imageAlt, SITE_URL } from "@/lib/opinly/shared";
+import { GUIDES } from "@/lib/guides";
 
-const TITLE = "Quill Blog — Listing copy, portals and MLS marketing";
+const TITLE = "Property Listing Copy Guides for UK & US Agents";
 const DESCRIPTION =
-  "Practical writing and marketing guides for UK estate agents and US real estate teams: listing descriptions, key features, teasers, email blasts and social captions.";
+  "Practical listing copy guides for UK estate agents and US real estate professionals: description examples, portal templates, MLS remarks and reusable checklists.";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
-      { title: TITLE },
+      { title: `${TITLE} — Quill by CopyByMonk` },
       { name: "description", content: DESCRIPTION },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
@@ -35,139 +35,188 @@ export const Route = createFileRoute("/blog/")({
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "Blog",
-          name: "Quill Blog",
+          "@type": "CollectionPage",
+          name: TITLE,
           url: `${SITE_URL}/blog`,
           description: DESCRIPTION,
         }),
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+            { "@type": "ListItem", position: 2, name: "Guides", item: `${SITE_URL}/blog` },
+          ],
+        }),
+      },
     ],
   }),
-  component: BlogIndex,
+  component: BlogHub,
 });
 
-function PostCard({ post }: { post: OpinlyPost }) {
-  const src = listImageUrl(post.image);
+function GuideCards({ market }: { market: "uk" | "us" }) {
   return (
-    <article className="group overflow-hidden rounded-2xl border border-border bg-card transition-colors hover:border-primary/50">
-      <Link
-        to="/blog/$slug"
-        params={{ slug: post.slug }}
-        className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        {src ? (
-          <img
-            src={src}
-            alt={imageAlt(post.image, post.title)}
-            loading="lazy"
-            decoding="async"
-            className="aspect-[16/9] w-full object-cover"
-          />
-        ) : null}
-        <div className="p-5">
-          {post.category ? (
-            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-primary">
-              {post.category.name}
-            </p>
-          ) : null}
-          <h2 className="font-serif text-xl font-semibold leading-snug tracking-tight">
-            {post.title}
-          </h2>
-          <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{post.description}</p>
-          <p className="mt-4 text-xs text-muted-foreground">
-            {post.author ? <span>{post.author.name} · </span> : null}
-            <time dateTime={post.firstPublishedAt}>{formatPostDate(post.firstPublishedAt)}</time>
-          </p>
-        </div>
-      </Link>
-    </article>
+    <ul className="mt-5 grid gap-4 sm:grid-cols-2">
+      {GUIDES.filter((g) => g.market === market).map((g) => (
+        <li key={g.path}>
+          <Link
+            to={g.path}
+            className="group block h-full rounded-2xl border border-border bg-card p-5 transition-colors hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <h3 className="font-serif text-lg font-semibold leading-snug tracking-tight">
+              {g.title}
+            </h3>
+            <p className="mt-2 text-sm text-muted-foreground">{g.blurb}</p>
+            <span className="mt-4 inline-flex items-center text-sm font-medium text-primary">
+              Read the guide
+              <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </span>
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }
 
-function BlogIndex() {
+/** Secondary enhancement: renders only if the external feed responds with posts. */
+function LatestArticles() {
   const fetchPosts = useServerFn(listBlogPosts);
-  const [cursors, setCursors] = useState<(string | undefined)[]>([undefined]);
-  const cursor = cursors[cursors.length - 1];
-
-  const { data, isPending, isError, error, refetch, isFetching } = useQuery({
-    queryKey: ["opinly", "posts", cursor ?? "start"],
-    queryFn: () => fetchPosts({ data: { limit: 12, sort: "newest" as const, cursor } }),
+  const { data } = useQuery({
+    queryKey: ["opinly", "posts", "hub"],
+    queryFn: () => fetchPosts({ data: { limit: 6, sort: "newest" as const } }),
     staleTime: 60_000,
+    retry: false,
   });
 
-  const page = cursors.length;
+  if (!data || data.data.length === 0) return null;
 
   return (
+    <section className="mt-14" aria-labelledby="latest-articles">
+      <h2 id="latest-articles" className="font-serif text-2xl font-semibold tracking-tight">
+        Latest articles
+      </h2>
+      <ul className="mt-5 grid gap-4 sm:grid-cols-2">
+        {data.data.map((post) => {
+          const src = listImageUrl(post.image);
+          return (
+            <li key={post.slug}>
+              <Link
+                to="/blog/$slug"
+                params={{ slug: post.slug }}
+                className="block h-full overflow-hidden rounded-2xl border border-border bg-card transition-colors hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {src ? (
+                  <img
+                    src={src}
+                    alt={imageAlt(post.image, post.title)}
+                    loading="lazy"
+                    decoding="async"
+                    className="aspect-[16/9] w-full object-cover"
+                  />
+                ) : null}
+                <div className="p-5">
+                  <h3 className="font-serif text-lg font-semibold leading-snug tracking-tight">
+                    {post.title}
+                  </h3>
+                  <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+                    {post.description}
+                  </p>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    <time dateTime={post.firstPublishedAt}>
+                      {formatPostDate(post.firstPublishedAt)}
+                    </time>
+                  </p>
+                </div>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
+function BlogHub() {
+  return (
     <BlogShell>
-      <header className="mb-10">
-        <h1 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">Blog</h1>
-        <p className="mt-3 max-w-2xl text-muted-foreground">{DESCRIPTION}</p>
+      <header className="mx-auto max-w-3xl">
+        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-primary">
+          <BookOpen className="h-4 w-4" /> Guides
+        </p>
+        <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+          Property listing copy guides
+        </h1>
+        <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+          Worked examples, templates and checklists for writing listing copy that reads well on
+          property portals and in the MLS. Written for UK estate agents and US real estate
+          professionals, with a bias towards specifics over adjectives.
+        </p>
       </header>
 
-      {isPending ? (
-        <div className="grid gap-6 sm:grid-cols-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-2xl border border-border p-5">
-              <Skeleton className="mb-4 aspect-[16/9] w-full rounded-lg" />
-              <Skeleton className="mb-2 h-5 w-3/4" />
-              <Skeleton className="h-4 w-full" />
-            </div>
-          ))}
-        </div>
-      ) : isError ? (
-        <div role="alert" className="rounded-2xl border border-destructive/40 bg-destructive/5 p-6">
-          <h2 className="font-semibold">We couldn't load the articles</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {error instanceof Error ? error.message : "Please try again in a moment."}
-          </p>
-          <Button className="mt-4 min-h-11" onClick={() => refetch()}>
-            Try again
+      <section className="mt-12" aria-labelledby="uk-guides">
+        <h2
+          id="uk-guides"
+          className="flex items-center gap-2 font-serif text-2xl font-semibold tracking-tight"
+        >
+          <Home className="h-5 w-5 text-primary" /> UK estate agents
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Portal-style descriptions, key features and Material Information habits.
+        </p>
+        <GuideCards market="uk" />
+        <p className="mt-4 text-sm">
+          <Link
+            to="/uk-property-listing-generator"
+            className="font-medium text-primary underline-offset-4 hover:underline"
+          >
+            UK property listing generator →
+          </Link>
+        </p>
+      </section>
+
+      <section className="mt-14" aria-labelledby="us-guides">
+        <h2
+          id="us-guides"
+          className="flex items-center gap-2 font-serif text-2xl font-semibold tracking-tight"
+        >
+          <Building2 className="h-5 w-5 text-primary" /> US real estate professionals
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          MLS remarks, longer-form listing descriptions and fair-housing-conscious wording.
+        </p>
+        <GuideCards market="us" />
+        <p className="mt-4 text-sm">
+          <Link
+            to="/us-real-estate-listing-generator"
+            className="font-medium text-primary underline-offset-4 hover:underline"
+          >
+            US real estate listing generator →
+          </Link>
+        </p>
+      </section>
+
+      <LatestArticles />
+
+      <section className="mt-14 rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center sm:p-8">
+        <h2 className="font-serif text-2xl font-semibold tracking-tight">
+          Stop writing listing copy from scratch
+        </h2>
+        <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+          Quill turns one set of property notes into a Headline, 6–10 Key Features, a portal or MLS
+          description, a short teaser, Email Blast copy and Instagram, Facebook and X captions.
+        </p>
+        <div className="mt-5 flex flex-wrap justify-center gap-3">
+          <Button asChild size="lg" className="min-h-[44px]">
+            <Link to="/uk-property-listing-generator">For UK agents</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="min-h-[44px]">
+            <Link to="/us-real-estate-listing-generator">For US agents</Link>
           </Button>
         </div>
-      ) : data.data.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-card p-8 text-center">
-          <h2 className="font-serif text-xl font-semibold">No articles published yet</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            New guides for estate agents and real estate teams will appear here.
-          </p>
-          <Link
-            to="/"
-            className="mt-5 inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Back to Quill
-          </Link>
-        </div>
-      ) : (
-        <>
-          <div className="grid gap-6 sm:grid-cols-2">
-            {data.data.map((post) => (
-              <PostCard key={post.slug} post={post} />
-            ))}
-          </div>
-
-          <nav
-            aria-label="Pagination"
-            className="mt-10 flex items-center justify-between gap-3 border-t border-border pt-6"
-          >
-            <Button
-              variant="outline"
-              className="min-h-11"
-              disabled={page === 1 || isFetching}
-              onClick={() => setCursors((c) => c.slice(0, -1))}
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-muted-foreground">Page {page}</span>
-            <Button
-              className="min-h-11"
-              disabled={!data.has_more || !data.next_cursor || isFetching}
-              onClick={() => setCursors((c) => (data.next_cursor ? [...c, data.next_cursor] : c))}
-            >
-              Next
-            </Button>
-          </nav>
-        </>
-      )}
+      </section>
     </BlogShell>
   );
 }

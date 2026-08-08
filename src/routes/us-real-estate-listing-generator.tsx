@@ -41,8 +41,9 @@ export const Route = createFileRoute("/us-real-estate-listing-generator")({
       {
         name: "description",
         content:
-          "Turn one set of property notes into an MLS-ready US listing pack: Headline, 6–10 Key Features, MLS remarks, short teaser, Email Blast copy and Instagram, Facebook and X captions. Fair Housing aware.",
+          "Turn one set of property notes into an MLS-ready listing pack: headline, 6–10 key features, remarks, teaser, email blast and social captions.",
       },
+
       { property: "og:title", content: `US Real Estate Listing Generator — ${APP_NAME}` },
       {
         property: "og:description",
@@ -59,7 +60,21 @@ export const Route = createFileRoute("/us-real-estate-listing-generator")({
           "One set of notes becomes a full US listing pack: Headline, Key Features, MLS remarks, teaser, Email Blast and Instagram/Facebook/X captions.",
       },
     ],
-    links: [{ rel: "canonical", href: CANONICAL }],
+    links: [
+      { rel: "canonical", href: CANONICAL },
+      { rel: "alternate", hrefLang: "en-US", href: CANONICAL },
+      {
+        rel: "alternate",
+        hrefLang: "en-GB",
+        href: "https://copybymonk.com/uk-property-listing-generator",
+      },
+      {
+        rel: "alternate",
+        hrefLang: "x-default",
+        href: "https://copybymonk.com/uk-property-listing-generator",
+      },
+    ],
+
     scripts: [
       {
         type: "application/ld+json",
@@ -108,8 +123,8 @@ function USPage() {
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">
           Dictate or paste the facts once. Quill writes MLS-ready remarks, generates the Headline
-          and 6–10 Key Features highlights, and produces a short teaser, Email Blast copy plus Instagram, Facebook and
-          X captions — all in US English, all from a single source of truth.
+          and 6–10 Key Features highlights, and produces a short teaser, Email Blast copy plus
+          Instagram, Facebook and X captions — all in US English, all from a single source of truth.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Button asChild size="lg" className="min-h-[44px]">
@@ -294,6 +309,36 @@ function USPage() {
               Back to {APP_NAME} home
             </Link>
           </p>
+        </section>
+
+        <section className="mt-14">
+          <h2 className="font-display text-2xl font-semibold">US listing copy guides</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Examples and templates for MLS remarks and longer-form listing descriptions.
+          </p>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li>
+              <Link
+                to="/mls-remarks-examples"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                MLS remarks examples and templates
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/real-estate-listing-description-examples"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                Real estate listing description examples by home type
+              </Link>
+            </li>
+            <li>
+              <Link to="/blog" className="text-primary underline-offset-4 hover:underline">
+                All property listing copy guides
+              </Link>
+            </li>
+          </ul>
         </section>
       </main>
     </div>

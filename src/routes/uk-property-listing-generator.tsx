@@ -41,8 +41,9 @@ export const Route = createFileRoute("/uk-property-listing-generator")({
       {
         name: "description",
         content:
-          "Turn one set of property notes into a portal-ready UK listing pack: Headline, 6–10 Key Features, Rightmove/OnTheMarket-style description, short teaser, Email Blast copy and Instagram, Facebook and X captions. Material Information aware.",
+          "Turn one set of property notes into a portal-ready UK listing pack: headline, 6–10 key features, description, teaser, email blast and social captions.",
       },
+
       { property: "og:title", content: `UK Property Listing Generator — ${APP_NAME}` },
       {
         property: "og:description",
@@ -59,7 +60,17 @@ export const Route = createFileRoute("/uk-property-listing-generator")({
           "One set of notes becomes a full UK listing pack: Headline, Key Features, portal description, teaser, Email Blast and Instagram/Facebook/X captions.",
       },
     ],
-    links: [{ rel: "canonical", href: CANONICAL }],
+    links: [
+      { rel: "canonical", href: CANONICAL },
+      { rel: "alternate", hrefLang: "en-GB", href: CANONICAL },
+      {
+        rel: "alternate",
+        hrefLang: "en-US",
+        href: "https://copybymonk.com/us-real-estate-listing-generator",
+      },
+      { rel: "alternate", hrefLang: "x-default", href: CANONICAL },
+    ],
+
     scripts: [
       {
         type: "application/ld+json",
@@ -109,7 +120,8 @@ function UKPage() {
         <p className="mt-4 text-lg text-muted-foreground">
           Speak or type property notes once. Quill writes a portal-ready description, generates the
           Headline and 6–10 Key Features bullets Rightmove and OnTheMarket expect, and produces a
-          short teaser, Email Blast copy plus Instagram, Facebook and X captions — all from a single source of truth.
+          short teaser, Email Blast copy plus Instagram, Facebook and X captions — all from a single
+          source of truth.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Button asChild size="lg" className="min-h-[44px]">
@@ -295,6 +307,36 @@ function UKPage() {
               Back to {APP_NAME} home
             </Link>
           </p>
+        </section>
+
+        <section className="mt-14">
+          <h2 className="font-display text-2xl font-semibold">UK listing copy guides</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Worked examples and templates you can use before you generate anything.
+          </p>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li>
+              <Link
+                to="/property-description-examples"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                Property description examples for UK estate agents
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/rightmove-property-description-template"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                Rightmove-style property description template &amp; checklist
+              </Link>
+            </li>
+            <li>
+              <Link to="/blog" className="text-primary underline-offset-4 hover:underline">
+                All property listing copy guides
+              </Link>
+            </li>
+          </ul>
         </section>
       </main>
     </div>

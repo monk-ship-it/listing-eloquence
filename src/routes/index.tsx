@@ -46,8 +46,9 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Quill helps UK estate agents and US real estate teams turn one set of property notes into a full listing pack: Headline, 6–10 Key Features, a portal-ready UK description or MLS-ready remarks, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
+          "Turn one set of property notes into a full listing pack: headline, 6–10 key features, a portal or MLS description, teaser, email blast and social captions.",
       },
+
       {
         property: "og:title",
         content: "Quill — One Set of Notes, a Complete Listing Pack",
@@ -278,6 +279,13 @@ function Header({ user }: { user: boolean }) {
           >
             US
           </Link>
+          <Link
+            to="/blog"
+            className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex"
+          >
+            Guides
+          </Link>
+
           {user ? (
             <Button asChild>
               <Link to="/app">Open app</Link>
@@ -1542,7 +1550,7 @@ function Footer() {
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row sm:gap-4">
           <Logo withByline />
           <nav
-            aria-label="Markets"
+            aria-label="Markets and guides"
             className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm"
           >
             <Link
@@ -1557,7 +1565,26 @@ function Footer() {
             >
               US real estate listing generator
             </Link>
+            <Link
+              to="/blog"
+              className="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              Guides
+            </Link>
+            <Link
+              to="/property-description-examples"
+              className="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              UK description examples
+            </Link>
+            <Link
+              to="/mls-remarks-examples"
+              className="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              MLS remarks examples
+            </Link>
           </nav>
+
           <a
             href={`mailto:${CONTACT_EMAIL}`}
             className="break-all text-sm text-muted-foreground transition-colors hover:text-foreground"
