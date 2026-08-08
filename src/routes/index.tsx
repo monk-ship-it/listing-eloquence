@@ -538,66 +538,21 @@ function HeroMockup() {
 
 const WAVE_HEIGHTS = [40, 70, 95, 60, 85, 50, 75, 100, 55, 80, 45, 90, 60, 70, 40];
 
-/* ------------------------------ Voice value -------------------------------- */
+/* ------------------------- Workflow (animated) ----------------------------- */
 
-function VoiceValue() {
+/** Heading + intro for the animated walkthrough, which owns the #workflow anchor. */
+function Workflow() {
   const { market } = useMarket();
   const isUs = market === "us";
-  const cards = [
-    {
-      icon: Mic,
-      step: "01",
-      title: "Capture the instruction once",
-      body: "Speak, type or paste rough notes from the valuation or viewing. One source of truth for every asset that follows.",
-    },
-    {
-      icon: ShieldCheck,
-      step: "02",
-      title: "Separate facts from copy",
-      body: "Quill extracts the structured facts, then drafts copy from them — so accuracy and tone are handled independently.",
-    },
-    {
-      icon: Sparkles,
-      step: "03",
-      title: "Produce the full pack",
-      body: isUs
-        ? "Generate MLS-ready remarks, a Headline, 6–10 Key Features, a short teaser, Email Blast copy and Instagram, Facebook and X captions — all from the same facts."
-        : "Generate the portal description, a Headline, 6–10 Key Features, a short teaser, Email Blast copy and Instagram, Facebook and X captions — all from the same facts.",
-    },
-  ];
   return (
-    <section id="workflow" className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
-      <Reveal className="mx-auto max-w-2xl text-center">
-        <Eyebrow>The workflow</Eyebrow>
-        <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-          Built to remove listing admin, not to replace agents.
-        </h2>
-        <p className="mt-4 text-lg text-muted-foreground">
-          Quill sits between instruction and launch. Capture the property once and hand your team a
-          consistent, {isUs ? "MLS-ready" : "portal-ready"} pack instead of copy-and-paste work.
-        </p>
-      </Reveal>
-      <div className="mt-12 grid gap-4 md:grid-cols-3">
-        {cards.map((c, i) => (
-          <Reveal key={c.title} delay={i * 90} className="h-full">
-            <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/60 p-7 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card">
-              <span className="absolute right-4 top-4 inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-2.5 py-1 text-xs font-semibold tracking-wide text-primary transition-colors duration-300 group-hover:border-gold/60 group-hover:bg-gold/10 group-hover:text-gold">
-                {c.step}
-              </span>
-              <span className="relative grid h-12 w-12 place-items-center rounded-xl border border-primary/20 bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
-                <c.icon className="h-5 w-5" />
-              </span>
-              <h3 className="relative mt-5 text-lg font-semibold">{c.title}</h3>
-              <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">
-                {c.body}
-              </p>
-            </div>
-          </Reveal>
-        ))}
-      </div>
-    </section>
+    <PropertyWalkthrough
+      eyebrow="The workflow"
+      heading="Built to remove listing admin, not to replace agents."
+      intro={`Quill sits between instruction and launch. Capture the property once and hand your team a consistent, ${isUs ? "MLS-ready" : "portal-ready"} pack instead of copy-and-paste work.`}
+    />
   );
 }
+
 
 /* ----------------------------- Editorial band ------------------------------ */
 
