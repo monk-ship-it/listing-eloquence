@@ -72,23 +72,53 @@ function startOfNextMonthIso(): string {
  * Determines whether a subscription grants paid access.
  * Only `active` and `trialing` grant access. All other statuses
  * (past_due, unpaid, canceled, incomplete, incomplete_expired,
- * payment_failed, none) restrict access. Access is always driven by the
- * database record, never by the post-checkout redirect URL.
+ * payment_failed, none) restrict access. In addition, a non-comped paid or
+ * trial subscription must carry a non-null `current_period_end` in the
+ * future — a missing or expired period never grants access, even if Stripe is
+ * temporarily unreachable. Access is always driven by the database record,
+ * never by the post-checkout redirect URL.
  */
-export function hasActiveAccess(status: string, _currentPeriodEnd: string | null): boolean {
-  return status === "active" || status === "trialing";
+export function hasActiveAccess(status: string, currentPeriodEnd: string | null): boolean {
+  if (status !== "active" && status !== "trialing") return false;
+  if (!currentPeriodEnd) return false;
+  const end = Date.parse(currentPeriodEnd);
+  if (Number.isNaN(end)) return false;
+  return end > Date.now();
+}
+
+const SUBSCRIBER_COLUMNS =
+  "user_id, status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_customer_id, stripe_subscription_id, stripe_price_id";
+
+/**
+ * Reads the caller's subscriber row and reconciles it against Stripe before
+ * any access decision. Comped emails skip Stripe entirely (unlimited access,
+ * no subscription required).
+ */
+export async function readReconciledSubscriber(
+  supabase: { from: (t: string) => any },
+  userId: string,
+) {
+  const { data } = await supabase
+    .from("subscribers")
+    .select(SUBSCRIBER_COLUMNS)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (isCompedEmail(data?.email)) return data ?? null;
+
+  const { reconcileSubscriberRow } = await import("./billing-sync.server");
+  const { row } = await reconcileSubscriberRow(
+    data ? { ...data, user_id: data.user_id ?? userId } : null,
+  );
+  return row as typeof data;
 }
 
 export const getMySubscription = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<SubscriptionInfo> => {
     const { supabase, userId } = context;
-    const { data } = await supabase
-      .from("subscribers")
-      .select("status, plan, cancel_at_period_end, trial_end, current_period_end, email")
-      .eq("user_id", userId)
-      .maybeSingle();
-    return toInfo(data);
+    const row = await readReconciledSubscriber(supabase, userId);
+    return toInfo(row);
   });
 
 /**
