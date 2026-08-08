@@ -204,76 +204,122 @@ function LatestArticles() {
   );
 }
 
+function MarketSection({
+  id,
+  market,
+  icon,
+  title,
+  intro,
+  image,
+  imageAlt: alt,
+  generatorTo,
+  generatorLabel,
+}: {
+  id: string;
+  market: "uk" | "us";
+  icon: React.ReactNode;
+  title: string;
+  intro: string;
+  image: string;
+  imageAlt: string;
+  generatorTo: string;
+  generatorLabel: string;
+}) {
+  return (
+    <section className="mt-16 sm:mt-20" aria-labelledby={id}>
+      <div className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_11rem] sm:items-start sm:gap-8">
+        <div>
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+            {icon}
+            {market === "uk" ? "United Kingdom" : "United States"}
+          </p>
+          <h2
+            id={id}
+            className="mt-3 font-serif text-2xl font-semibold tracking-tight sm:text-3xl"
+          >
+            {title}
+          </h2>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">{intro}</p>
+        </div>
+        <img
+          src={image}
+          alt={alt}
+          width={1280}
+          height={853}
+          loading="lazy"
+          decoding="async"
+          className="hidden aspect-[4/3] w-full rounded-2xl object-cover opacity-90 ring-1 ring-border/60 sm:block"
+        />
+      </div>
+
+      <GuideCards market={market} />
+
+      <p className="mt-6 text-sm">
+        <Link
+          to={generatorTo}
+          className="inline-flex min-h-11 items-center font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          {generatorLabel} →
+        </Link>
+      </p>
+    </section>
+  );
+}
+
 function BlogHub() {
   return (
     <BlogShell>
       <header className="mx-auto max-w-3xl">
-        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-primary">
+        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
           <BookOpen className="h-4 w-4" /> Guides
         </p>
-        <h1 className="mt-3 font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+        <h1 className="mt-4 font-serif text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
           Property listing copy guides
         </h1>
-        <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+        <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
           Worked examples, templates and checklists for writing listing copy that reads well on
           property portals and in the MLS. Written for UK estate agents and US real estate
           professionals, with a bias towards specifics over adjectives.
         </p>
       </header>
 
-      <section className="mt-12" aria-labelledby="uk-guides">
-        <h2
-          id="uk-guides"
-          className="flex items-center gap-2 font-serif text-2xl font-semibold tracking-tight"
-        >
-          <Home className="h-5 w-5 text-primary" /> UK estate agents
-        </h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Portal-style descriptions, key features and Material Information habits.
-        </p>
-        <GuideCards market="uk" />
-        <p className="mt-4 text-sm">
-          <Link
-            to="/uk-property-listing-generator"
-            className="font-medium text-primary underline-offset-4 hover:underline"
-          >
-            UK property listing generator →
-          </Link>
-        </p>
-      </section>
+      <WalkaroundPanel />
 
-      <section className="mt-14" aria-labelledby="us-guides">
-        <h2
-          id="us-guides"
-          className="flex items-center gap-2 font-serif text-2xl font-semibold tracking-tight"
-        >
-          <Building2 className="h-5 w-5 text-primary" /> US real estate professionals
-        </h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          MLS remarks, longer-form listing descriptions and fair-housing-conscious wording.
-        </p>
-        <GuideCards market="us" />
-        <p className="mt-4 text-sm">
-          <Link
-            to="/us-real-estate-listing-generator"
-            className="font-medium text-primary underline-offset-4 hover:underline"
-          >
-            US real estate listing generator →
-          </Link>
-        </p>
-      </section>
+      <MarketSection
+        id="uk-guides"
+        market="uk"
+        icon={<Home className="h-4 w-4" />}
+        title="UK estate agents"
+        intro="Portal-style descriptions, key features and Material Information habits."
+        image={ukTerrace}
+        imageAlt="Victorian terraced house with a black front door, bay window and red brick facade"
+        generatorTo="/uk-property-listing-generator"
+        generatorLabel="UK property listing generator"
+      />
+
+      <MarketSection
+        id="us-guides"
+        market="us"
+        icon={<Building2 className="h-4 w-4" />}
+        title="US real estate professionals"
+        intro="MLS remarks, longer-form listing descriptions and fair-housing-conscious wording."
+        image={usHome}
+        imageAlt="Craftsman-style suburban home with a covered front porch and lit entrance at dusk"
+        generatorTo="/us-real-estate-listing-generator"
+        generatorLabel="US real estate listing generator"
+      />
 
       <LatestArticles />
 
-      <section className="mt-14 rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center sm:p-8">
-        <h2 className="font-serif text-2xl font-semibold tracking-tight">
+      <section className="mt-16 rounded-3xl bg-card/70 p-7 text-center ring-1 ring-primary/20 sm:mt-20 sm:p-10">
+        <h2 className="font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
           Stop writing listing copy from scratch
         </h2>
-        <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+        <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
           Quill turns one set of property notes into a Headline, 6–10 Key Features, a portal or MLS
           description, a short teaser, Email Blast copy and Instagram, Facebook and X captions.
         </p>
-        <div className="mt-5 flex flex-wrap justify-center gap-3">
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Button asChild size="lg" className="min-h-[44px]">
             <Link to="/uk-property-listing-generator">For UK agents</Link>
           </Button>
@@ -285,3 +331,4 @@ function BlogHub() {
     </BlogShell>
   );
 }
+
