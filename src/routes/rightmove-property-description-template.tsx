@@ -43,7 +43,7 @@ function Page() {
       meta={META}
       standfirst="Use this template as a repeatable structure for UK portal listings: an opening hook, a room-by-room walkthrough, outside space, location, then the factual close. Fill in the bracketed prompts from your property notes, then run the pre-publish checklist at the end."
     >
-      <GuideP className="sr-only">Template and checklist</GuideP>
+      
       <div className="mt-6 rounded-xl border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
         CopyByMonk is an independent tool. It is not affiliated with, endorsed by or connected to
         Rightmove, OnTheMarket or Zoopla. “Rightmove-style” here describes a widely used UK portal
