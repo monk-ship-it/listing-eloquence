@@ -60,7 +60,21 @@ export const Route = createFileRoute("/us-real-estate-listing-generator")({
           "One set of notes becomes a full US listing pack: Headline, Key Features, MLS remarks, teaser, Email Blast and Instagram/Facebook/X captions.",
       },
     ],
-    links: [{ rel: "canonical", href: CANONICAL }],
+    links: [
+      { rel: "canonical", href: CANONICAL },
+      { rel: "alternate", hrefLang: "en-US", href: CANONICAL },
+      {
+        rel: "alternate",
+        hrefLang: "en-GB",
+        href: "https://copybymonk.com/uk-property-listing-generator",
+      },
+      {
+        rel: "alternate",
+        hrefLang: "x-default",
+        href: "https://copybymonk.com/uk-property-listing-generator",
+      },
+    ],
+
     scripts: [
       {
         type: "application/ld+json",
