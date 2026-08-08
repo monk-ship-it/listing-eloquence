@@ -168,11 +168,7 @@ export const getMyUsage = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<UsageInfo> => {
     const { supabase, userId } = context;
-    const { data } = await supabase
-      .from("subscribers")
-      .select("plan, email")
-      .eq("user_id", userId)
-      .maybeSingle();
+    const data = await readReconciledSubscriber(supabase, userId);
     const comped = isCompedEmail(data?.email);
     return computeUsage(supabase, userId, getPlan(data?.plan).id, comped);
   });
