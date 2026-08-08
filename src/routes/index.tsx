@@ -632,7 +632,6 @@ function EditorialBand() {
             </p>
           </div>
         </div>
-
       </div>
     </section>
   );
