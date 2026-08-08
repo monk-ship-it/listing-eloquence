@@ -14,6 +14,7 @@ import { Route as UkPropertyListingGeneratorRouteImport } from './routes/uk-prop
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as RightmovePropertyDescriptionTemplateRouteImport } from './routes/rightmove-property-description-template'
+import { Route as RealEstateListingDescriptionExamplesRouteImport } from './routes/real-estate-listing-description-examples'
 import { Route as PropertyDescriptionExamplesRouteImport } from './routes/property-description-examples'
 import { Route as MlsRemarksExamplesRouteImport } from './routes/mls-remarks-examples'
 import { Route as McpRouteImport } from './routes/mcp'
@@ -65,6 +66,12 @@ const RightmovePropertyDescriptionTemplateRoute =
   RightmovePropertyDescriptionTemplateRouteImport.update({
     id: '/rightmove-property-description-template',
     path: '/rightmove-property-description-template',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const RealEstateListingDescriptionExamplesRoute =
+  RealEstateListingDescriptionExamplesRouteImport.update({
+    id: '/real-estate-listing-description-examples',
+    path: '/real-estate-listing-description-examples',
     getParentRoute: () => rootRouteImport,
   } as any)
 const PropertyDescriptionExamplesRoute =
@@ -201,6 +208,7 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/mls-remarks-examples': typeof MlsRemarksExamplesRoute
   '/property-description-examples': typeof PropertyDescriptionExamplesRoute
+  '/real-estate-listing-description-examples': typeof RealEstateListingDescriptionExamplesRoute
   '/rightmove-property-description-template': typeof RightmovePropertyDescriptionTemplateRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -231,6 +239,7 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/mls-remarks-examples': typeof MlsRemarksExamplesRoute
   '/property-description-examples': typeof PropertyDescriptionExamplesRoute
+  '/real-estate-listing-description-examples': typeof RealEstateListingDescriptionExamplesRoute
   '/rightmove-property-description-template': typeof RightmovePropertyDescriptionTemplateRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -263,6 +272,7 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/mls-remarks-examples': typeof MlsRemarksExamplesRoute
   '/property-description-examples': typeof PropertyDescriptionExamplesRoute
+  '/real-estate-listing-description-examples': typeof RealEstateListingDescriptionExamplesRoute
   '/rightmove-property-description-template': typeof RightmovePropertyDescriptionTemplateRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -295,6 +305,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/mls-remarks-examples'
     | '/property-description-examples'
+    | '/real-estate-listing-description-examples'
     | '/rightmove-property-description-template'
     | '/rss.xml'
     | '/sitemap.xml'
@@ -325,6 +336,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/mls-remarks-examples'
     | '/property-description-examples'
+    | '/real-estate-listing-description-examples'
     | '/rightmove-property-description-template'
     | '/rss.xml'
     | '/sitemap.xml'
@@ -356,6 +368,7 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/mls-remarks-examples'
     | '/property-description-examples'
+    | '/real-estate-listing-description-examples'
     | '/rightmove-property-description-template'
     | '/rss.xml'
     | '/sitemap.xml'
@@ -388,6 +401,7 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   MlsRemarksExamplesRoute: typeof MlsRemarksExamplesRoute
   PropertyDescriptionExamplesRoute: typeof PropertyDescriptionExamplesRoute
+  RealEstateListingDescriptionExamplesRoute: typeof RealEstateListingDescriptionExamplesRoute
   RightmovePropertyDescriptionTemplateRoute: typeof RightmovePropertyDescriptionTemplateRoute
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -443,6 +457,13 @@ declare module '@tanstack/react-router' {
       path: '/rightmove-property-description-template'
       fullPath: '/rightmove-property-description-template'
       preLoaderRoute: typeof RightmovePropertyDescriptionTemplateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/real-estate-listing-description-examples': {
+      id: '/real-estate-listing-description-examples'
+      path: '/real-estate-listing-description-examples'
+      fullPath: '/real-estate-listing-description-examples'
+      preLoaderRoute: typeof RealEstateListingDescriptionExamplesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/property-description-examples': {
@@ -643,6 +664,8 @@ const rootRouteChildren: RootRouteChildren = {
   McpRoute: McpRoute,
   MlsRemarksExamplesRoute: MlsRemarksExamplesRoute,
   PropertyDescriptionExamplesRoute: PropertyDescriptionExamplesRoute,
+  RealEstateListingDescriptionExamplesRoute:
+    RealEstateListingDescriptionExamplesRoute,
   RightmovePropertyDescriptionTemplateRoute:
     RightmovePropertyDescriptionTemplateRoute,
   RssDotxmlRoute: RssDotxmlRoute,
