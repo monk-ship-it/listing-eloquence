@@ -15,6 +15,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as RightmovePropertyDescriptionTemplateRouteImport } from './routes/rightmove-property-description-template'
 import { Route as PropertyDescriptionExamplesRouteImport } from './routes/property-description-examples'
+import { Route as MlsRemarksExamplesRouteImport } from './routes/mls-remarks-examples'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -72,6 +73,11 @@ const PropertyDescriptionExamplesRoute =
     path: '/property-description-examples',
     getParentRoute: () => rootRouteImport,
   } as any)
+const MlsRemarksExamplesRoute = MlsRemarksExamplesRouteImport.update({
+  id: '/mls-remarks-examples',
+  path: '/mls-remarks-examples',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/mls-remarks-examples': typeof MlsRemarksExamplesRoute
   '/property-description-examples': typeof PropertyDescriptionExamplesRoute
   '/rightmove-property-description-template': typeof RightmovePropertyDescriptionTemplateRoute
   '/rss.xml': typeof RssDotxmlRoute
@@ -222,6 +229,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/mls-remarks-examples': typeof MlsRemarksExamplesRoute
   '/property-description-examples': typeof PropertyDescriptionExamplesRoute
   '/rightmove-property-description-template': typeof RightmovePropertyDescriptionTemplateRoute
   '/rss.xml': typeof RssDotxmlRoute
@@ -253,6 +261,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/mls-remarks-examples': typeof MlsRemarksExamplesRoute
   '/property-description-examples': typeof PropertyDescriptionExamplesRoute
   '/rightmove-property-description-template': typeof RightmovePropertyDescriptionTemplateRoute
   '/rss.xml': typeof RssDotxmlRoute
@@ -284,6 +293,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/mcp'
+    | '/mls-remarks-examples'
     | '/property-description-examples'
     | '/rightmove-property-description-template'
     | '/rss.xml'
@@ -313,6 +323,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/mcp'
+    | '/mls-remarks-examples'
     | '/property-description-examples'
     | '/rightmove-property-description-template'
     | '/rss.xml'
@@ -343,6 +354,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/mcp'
+    | '/mls-remarks-examples'
     | '/property-description-examples'
     | '/rightmove-property-description-template'
     | '/rss.xml'
@@ -374,6 +386,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
   McpRoute: typeof McpRoute
+  MlsRemarksExamplesRoute: typeof MlsRemarksExamplesRoute
   PropertyDescriptionExamplesRoute: typeof PropertyDescriptionExamplesRoute
   RightmovePropertyDescriptionTemplateRoute: typeof RightmovePropertyDescriptionTemplateRoute
   RssDotxmlRoute: typeof RssDotxmlRoute
@@ -437,6 +450,13 @@ declare module '@tanstack/react-router' {
       path: '/property-description-examples'
       fullPath: '/property-description-examples'
       preLoaderRoute: typeof PropertyDescriptionExamplesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mls-remarks-examples': {
+      id: '/mls-remarks-examples'
+      path: '/mls-remarks-examples'
+      fullPath: '/mls-remarks-examples'
+      preLoaderRoute: typeof MlsRemarksExamplesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -621,6 +641,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
   McpRoute: McpRoute,
+  MlsRemarksExamplesRoute: MlsRemarksExamplesRoute,
   PropertyDescriptionExamplesRoute: PropertyDescriptionExamplesRoute,
   RightmovePropertyDescriptionTemplateRoute:
     RightmovePropertyDescriptionTemplateRoute,
