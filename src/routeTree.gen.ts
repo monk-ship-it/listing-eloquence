@@ -13,6 +13,7 @@ import { Route as UsRealEstateListingGeneratorRouteImport } from './routes/us-re
 import { Route as UkPropertyListingGeneratorRouteImport } from './routes/uk-property-listing-generator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
+import { Route as RightmovePropertyDescriptionTemplateRouteImport } from './routes/rightmove-property-description-template'
 import { Route as PropertyDescriptionExamplesRouteImport } from './routes/property-description-examples'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -59,6 +60,12 @@ const RssDotxmlRoute = RssDotxmlRouteImport.update({
   path: '/rss.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RightmovePropertyDescriptionTemplateRoute =
+  RightmovePropertyDescriptionTemplateRouteImport.update({
+    id: '/rightmove-property-description-template',
+    path: '/rightmove-property-description-template',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const PropertyDescriptionExamplesRoute =
   PropertyDescriptionExamplesRouteImport.update({
     id: '/property-description-examples',
@@ -187,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
   '/property-description-examples': typeof PropertyDescriptionExamplesRoute
+  '/rightmove-property-description-template': typeof RightmovePropertyDescriptionTemplateRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/uk-property-listing-generator': typeof UkPropertyListingGeneratorRoute
@@ -215,6 +223,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
   '/property-description-examples': typeof PropertyDescriptionExamplesRoute
+  '/rightmove-property-description-template': typeof RightmovePropertyDescriptionTemplateRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/uk-property-listing-generator': typeof UkPropertyListingGeneratorRoute
@@ -245,6 +254,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
   '/property-description-examples': typeof PropertyDescriptionExamplesRoute
+  '/rightmove-property-description-template': typeof RightmovePropertyDescriptionTemplateRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/uk-property-listing-generator': typeof UkPropertyListingGeneratorRoute
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/mcp'
     | '/property-description-examples'
+    | '/rightmove-property-description-template'
     | '/rss.xml'
     | '/sitemap.xml'
     | '/uk-property-listing-generator'
@@ -303,6 +314,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/mcp'
     | '/property-description-examples'
+    | '/rightmove-property-description-template'
     | '/rss.xml'
     | '/sitemap.xml'
     | '/uk-property-listing-generator'
@@ -332,6 +344,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/mcp'
     | '/property-description-examples'
+    | '/rightmove-property-description-template'
     | '/rss.xml'
     | '/sitemap.xml'
     | '/uk-property-listing-generator'
@@ -362,6 +375,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   McpRoute: typeof McpRoute
   PropertyDescriptionExamplesRoute: typeof PropertyDescriptionExamplesRoute
+  RightmovePropertyDescriptionTemplateRoute: typeof RightmovePropertyDescriptionTemplateRoute
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   UkPropertyListingGeneratorRoute: typeof UkPropertyListingGeneratorRoute
@@ -409,6 +423,13 @@ declare module '@tanstack/react-router' {
       path: '/rss.xml'
       fullPath: '/rss.xml'
       preLoaderRoute: typeof RssDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rightmove-property-description-template': {
+      id: '/rightmove-property-description-template'
+      path: '/rightmove-property-description-template'
+      fullPath: '/rightmove-property-description-template'
+      preLoaderRoute: typeof RightmovePropertyDescriptionTemplateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/property-description-examples': {
@@ -601,6 +622,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   McpRoute: McpRoute,
   PropertyDescriptionExamplesRoute: PropertyDescriptionExamplesRoute,
+  RightmovePropertyDescriptionTemplateRoute:
+    RightmovePropertyDescriptionTemplateRoute,
   RssDotxmlRoute: RssDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   UkPropertyListingGeneratorRoute: UkPropertyListingGeneratorRoute,
