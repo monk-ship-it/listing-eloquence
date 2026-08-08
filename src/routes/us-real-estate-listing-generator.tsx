@@ -41,8 +41,9 @@ export const Route = createFileRoute("/us-real-estate-listing-generator")({
       {
         name: "description",
         content:
-          "Turn one set of property notes into an MLS-ready US listing pack: Headline, 6–10 Key Features, MLS remarks, short teaser, Email Blast copy and Instagram, Facebook and X captions. Fair Housing aware.",
+          "Turn one set of property notes into an MLS-ready listing pack: headline, 6–10 key features, remarks, teaser, email blast and social captions.",
       },
+
       { property: "og:title", content: `US Real Estate Listing Generator — ${APP_NAME}` },
       {
         property: "og:description",
