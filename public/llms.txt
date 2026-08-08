@@ -7,3 +7,12 @@
 - [Home](/): Product overview, UK/US markets, brand voices, workflow and pricing.
 - [UK property listing generator](/uk-property-listing-generator): Deep dive on the UK workflow — Material Information, Rightmove/OnTheMarket-style descriptions, generated Key Features bullets and compliance.
 - [US real estate listing generator](/us-real-estate-listing-generator): Deep dive on the US workflow — MLS remarks, generated Key Features highlights, Fair Housing guidance and disclosures.
+
+## Guides
+
+- [Property listing copy guides](/blog): Hub of evergreen listing-copy guides for UK and US agents.
+- [Property description examples (UK)](/property-description-examples): Worked UK property descriptions across flats, terraces, semis and country homes, annotated.
+- [Rightmove-style description template (UK)](/rightmove-property-description-template): Paragraph-by-paragraph UK template plus a pre-publish checklist. Not affiliated with Rightmove.
+- [MLS remarks examples (US)](/mls-remarks-examples): US public-remarks examples, a reusable template and fair-housing-conscious wording habits.
+- [Real estate listing description examples (US)](/real-estate-listing-description-examples): Longer-form US listing descriptions by home type, shown in three tones.
+
