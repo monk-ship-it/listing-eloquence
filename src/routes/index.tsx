@@ -46,8 +46,9 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Quill helps UK estate agents and US real estate teams turn one set of property notes into a full listing pack: Headline, 6–10 Key Features, a portal-ready UK description or MLS-ready remarks, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
+          "Turn one set of property notes into a full listing pack: headline, 6–10 key features, a portal or MLS description, teaser, email blast and social captions.",
       },
+
       {
         property: "og:title",
         content: "Quill — One Set of Notes, a Complete Listing Pack",
