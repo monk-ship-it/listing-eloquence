@@ -310,6 +310,37 @@ function USPage() {
             </Link>
           </p>
         </section>
+
+        <section className="mt-14">
+          <h2 className="font-display text-2xl font-semibold">US listing copy guides</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Examples and templates for MLS remarks and longer-form listing descriptions.
+          </p>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li>
+              <Link
+                to="/mls-remarks-examples"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                MLS remarks examples and templates
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/real-estate-listing-description-examples"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                Real estate listing description examples by home type
+              </Link>
+            </li>
+            <li>
+              <Link to="/blog" className="text-primary underline-offset-4 hover:underline">
+                All property listing copy guides
+              </Link>
+            </li>
+          </ul>
+        </section>
+
       </main>
     </div>
   );
