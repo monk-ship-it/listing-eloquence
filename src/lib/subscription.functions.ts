@@ -295,11 +295,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const market = resolveMarketId(data.market);
     const currency = MARKETS[market].currency;
 
-    const { data: row } = await supabase
-      .from("subscribers")
-      .select("stripe_customer_id, email, status, current_period_end")
-      .eq("user_id", userId)
-      .maybeSingle();
+    const row = await readReconciledSubscriber(supabase, userId);
 
     const email = (claims as { email?: string } | undefined)?.email ?? row?.email ?? "";
 
