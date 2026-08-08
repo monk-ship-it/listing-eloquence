@@ -2,12 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { BlogShell } from "@/components/blog/BlogShell";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, Building2, Home } from "lucide-react";
 import { listBlogPosts } from "@/lib/opinly.functions";
 import { formatPostDate, listImageUrl, imageAlt, SITE_URL } from "@/lib/opinly/shared";
 import { GUIDES } from "@/lib/guides";
+import heroExterior from "@/assets/guides-hero-exterior.jpg";
+import ukTerrace from "@/assets/guides-uk-terrace.jpg";
+import usHome from "@/assets/guides-us-home.jpg";
+
 
 const TITLE = "Property Listing Copy Guides for UK & US Agents";
 const DOC_TITLE = "Listing Copy Guides for UK & US Agents | CopyByMonk";
