@@ -182,7 +182,7 @@ function Landing() {
 
   return (
     <MarketContext.Provider value={{ market, setMarket }}>
-      <div className="min-h-screen overflow-x-hidden">
+      <div className="public-daylight min-h-screen overflow-x-hidden">
         <Header user={authed} />
         <Hero authed={authed} />
         <Workflow />
@@ -342,13 +342,13 @@ function Hero({ authed }: { authed: boolean }) {
           alt=""
           aria-hidden="true"
           width={1600}
-          height={912}
+          height={1008}
           loading="eager"
           decoding="async"
-          className="h-full w-full object-cover opacity-[0.4]"
+          className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/45 via-background/80 to-background" />
-        <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_75%_15%,color-mix(in_oklab,var(--gold)_12%,transparent),transparent_70%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/88 to-background" />
+        <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_75%_15%,color-mix(in_oklab,var(--gold)_10%,transparent),transparent_70%)]" />
       </div>
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-20" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] bg-radial-glow opacity-60" />
@@ -431,7 +431,7 @@ function Hero({ authed }: { authed: boolean }) {
 
 function HeroMockup() {
   return (
-    <div className="glow-primary mx-auto w-full max-w-md rounded-[1.75rem] border border-border/80 bg-card/95 p-3 shadow-2xl shadow-black/30 backdrop-blur-sm sm:p-3.5">
+    <div className="glow-primary mx-auto w-full max-w-md rounded-[1.75rem] border border-border/80 bg-card/95 p-3 shadow-2xl shadow-primary/10 backdrop-blur-sm sm:p-3.5">
       {/* Window chrome */}
       <div className="flex items-center justify-between px-1.5 pb-3 pt-1">
         <div className="flex items-center gap-1.5">
@@ -565,15 +565,15 @@ function EditorialBand() {
         <div className="relative isolate overflow-hidden rounded-3xl border border-border/70">
           <img
             src={bandKitchen}
-            alt="Warmly lit kitchen and living space in a premium home at dusk"
+            alt="Bright kitchen and living space with a marble island and sunlight through tall windows"
             width={1600}
-            height={912}
+            height={1008}
             loading="lazy"
             decoding="async"
             className="absolute inset-0 -z-10 h-full w-full object-cover"
           />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/90 to-background/45" />
-          <div className="absolute inset-0 -z-10 bg-[radial-gradient(60%_80%_at_85%_50%,color-mix(in_oklab,var(--gold)_14%,transparent),transparent_70%)]" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/92 to-background/35" />
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(60%_80%_at_85%_50%,color-mix(in_oklab,var(--gold)_10%,transparent),transparent_70%)]" />
           <div className="max-w-xl px-6 py-12 sm:px-10 sm:py-16 lg:py-20">
             <span className="eyebrow inline-block">Written from the facts</span>
             <h2 className="mt-3 font-display text-2xl font-semibold sm:text-3xl">
@@ -630,7 +630,7 @@ function ListingDetail() {
   const { market } = useMarket();
   const isUs = market === "us";
   return (
-    <section className="border-y border-border bg-card/30 py-16 sm:py-24">
+    <section className="surface-sky border-y border-border py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <Reveal className="mx-auto max-w-2xl text-center">
           <Eyebrow>WHAT QUILL TAKES OFF THE ADMIN DESK</Eyebrow>
@@ -797,7 +797,7 @@ function LiveExample() {
         <div className="mt-12 grid items-start gap-5 lg:grid-cols-[0.85fr_1.15fr]">
           {/* In */}
           <Reveal className="min-w-0">
-            <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-[0_20px_50px_-30px] shadow-black/40">
+            <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-[0_20px_50px_-30px] shadow-primary/20">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm font-semibold text-primary">
                   <FileText className="h-4 w-4" /> Details in
@@ -1288,7 +1288,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
 
         <Reveal delay={120} className="relative">
           <div className="pointer-events-none absolute -inset-8 -z-10 rounded-[3rem] bg-radial-glow opacity-60 blur-2xl" />
-          <div className="glow-primary rounded-3xl border border-border/80 bg-card p-4 shadow-2xl shadow-black/25 sm:p-5">
+          <div className="glow-primary rounded-3xl border border-border/80 bg-card p-4 shadow-2xl shadow-primary/10 sm:p-5">
             {/* Live capture bar */}
             <div className="flex items-center gap-3 rounded-2xl border border-primary/25 bg-primary/[0.06] p-3.5">
               <span className="mic-pulse grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_0_6px] shadow-primary/15">
@@ -1352,7 +1352,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
 function Pricing({ authed }: { authed: boolean }) {
   const { market } = useMarket();
   return (
-    <section id="pricing" className="border-y border-border bg-card/30 py-16 sm:py-24">
+    <section id="pricing" className="surface-sand border-y border-border py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <Reveal className="mx-auto max-w-2xl text-center">
           <Eyebrow>Pricing</Eyebrow>
@@ -1501,7 +1501,7 @@ function FinalCta({ authed }: { authed: boolean }) {
 
 function Footer() {
   return (
-    <footer className="border-t border-border/70 bg-card/30 py-12">
+    <footer className="panel-navy border-t border-border/70 py-12">
       <div className="mx-auto max-w-6xl px-5">
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row sm:gap-4">
           <Logo withByline />

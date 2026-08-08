@@ -5,7 +5,7 @@ import { Logo } from "@/components/Logo";
 /** Shared public chrome for every blog page. */
 export function BlogShell({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="public-daylight min-h-screen bg-background text-foreground">
       <a
         href="#blog-main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
@@ -44,7 +44,7 @@ export function BlogShell({ children }: { children: ReactNode }) {
         {children}
       </main>
 
-      <footer className="border-t border-border/70 py-10">
+      <footer className="panel-navy border-t border-border/70 py-10">
         <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <p>© {new Date().getFullYear()} Quill by CopyByMonk</p>
           <nav aria-label="Footer" className="flex flex-wrap gap-x-4 gap-y-2">

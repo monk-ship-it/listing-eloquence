@@ -91,7 +91,7 @@ export const Route = createFileRoute("/uk-property-listing-generator")({
 
 function UKPage() {
   return (
-    <div className="min-h-screen">
+    <div className="public-daylight min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-xl">
         <div className="mx-auto grid max-w-5xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-5 py-3 sm:flex sm:justify-between">
           <div className="min-w-0">
