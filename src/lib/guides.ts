@@ -133,7 +133,7 @@ export function guideHead(meta: GuideMeta, faqs?: { q: string; a: string }[]) {
 
   return {
     meta: [
-      { title: `${meta.title} — Quill by CopyByMonk` },
+      { title: `${meta.label} | CopyByMonk` },
       { name: "description", content: meta.description },
       { property: "og:title", content: meta.title },
       { property: "og:description", content: meta.description },

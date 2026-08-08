@@ -10,13 +10,15 @@ import { formatPostDate, listImageUrl, imageAlt, SITE_URL } from "@/lib/opinly/s
 import { GUIDES } from "@/lib/guides";
 
 const TITLE = "Property Listing Copy Guides for UK & US Agents";
+const DOC_TITLE = "Listing Copy Guides for UK & US Agents | CopyByMonk";
 const DESCRIPTION =
-  "Practical listing copy guides for UK estate agents and US real estate professionals: description examples, portal templates, MLS remarks and reusable checklists.";
+  "Practical listing copy guides for UK estate agents and US real estate pros: description examples, portal templates, MLS remarks and checklists.";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
-      { title: `${TITLE} — Quill by CopyByMonk` },
+      { title: DOC_TITLE },
+
       { name: "description", content: DESCRIPTION },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
