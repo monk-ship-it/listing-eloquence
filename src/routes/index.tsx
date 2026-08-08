@@ -345,9 +345,9 @@ function Hero({ authed }: { authed: boolean }) {
           height={912}
           loading="eager"
           decoding="async"
-          className="h-full w-full object-cover opacity-[0.22]"
+          className="h-full w-full object-cover opacity-[0.4]"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/85 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/45 via-background/80 to-background" />
         <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_75%_15%,color-mix(in_oklab,var(--gold)_12%,transparent),transparent_70%)]" />
       </div>
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-20" />
