@@ -120,7 +120,8 @@ function UKPage() {
         <p className="mt-4 text-lg text-muted-foreground">
           Speak or type property notes once. Quill writes a portal-ready description, generates the
           Headline and 6–10 Key Features bullets Rightmove and OnTheMarket expect, and produces a
-          short teaser, Email Blast copy plus Instagram, Facebook and X captions — all from a single source of truth.
+          short teaser, Email Blast copy plus Instagram, Facebook and X captions — all from a single
+          source of truth.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Button asChild size="lg" className="min-h-[44px]">
@@ -337,7 +338,6 @@ function UKPage() {
             </li>
           </ul>
         </section>
-
       </main>
     </div>
   );

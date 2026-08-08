@@ -45,9 +45,9 @@ function Page() {
     >
       <GuideH2 id="framework">A framework you can reuse on any home</GuideH2>
       <GuideP>
-        Buyers read listing descriptions with two questions: does this fit my life, and what is wrong
-        with it? Good copy answers the first quickly and treats the second honestly. The shape below
-        holds up across price points.
+        Buyers read listing descriptions with two questions: does this fit my life, and what is
+        wrong with it? Good copy answers the first quickly and treats the second honestly. The shape
+        below holds up across price points.
       </GuideP>
       <GuideList
         items={[
@@ -63,16 +63,16 @@ function Page() {
       <GuideExample title="Listing description">
         <p>
           A one-bedroom, one-bath condo on the top floor of a well-kept four-unit building, five
-          blocks from the light rail. It is the kind of first home that does not need a project list:
-          the kitchen was replaced in 2023, the windows in 2021, and the building reroofed the year
-          before that.
+          blocks from the light rail. It is the kind of first home that does not need a project
+          list: the kitchen was replaced in 2023, the windows in 2021, and the building reroofed the
+          year before that.
         </p>
         <p>
           The living room takes the front of the unit, with two south-facing windows and enough wall
-          for a sofa and a desk. The kitchen sits behind it with quartz counters, a slide-in electric
-          range and a dishwasher, plus a peninsula that seats two. The bedroom holds a queen bed with
-          side tables and has a reach-in closet with a double rod. The bath has a tub-shower and a new
-          vanity.
+          for a sofa and a desk. The kitchen sits behind it with quartz counters, a slide-in
+          electric range and a dishwasher, plus a peninsula that seats two. The bedroom holds a
+          queen bed with side tables and has a reach-in closet with a double rod. The bath has a
+          tub-shower and a new vanity.
         </p>
         <p>
           Storage is the surprise: a deeded basement locker plus a hall closet that fits a bike. One
@@ -81,8 +81,8 @@ function Page() {
         </p>
         <p>
           HOA is $210/month and covers water, sewer, trash, exterior maintenance and the shared
-          laundry. Approx. 640 sq ft. Cats and dogs permitted under 40 lbs. No rental cap currently in
-          place — confirm with the association before writing an offer.
+          laundry. Approx. 640 sq ft. Cats and dogs permitted under 40 lbs. No rental cap currently
+          in place — confirm with the association before writing an offer.
         </p>
       </GuideExample>
       <GuideH3>Why it works</GuideH3>
@@ -115,10 +115,10 @@ function Page() {
           counter.
         </p>
         <p>
-          The rear yard is graded and seeded with a 12x20 patio poured off the great room; fencing is
-          not installed. Systems are new throughout, with a 96% efficiency furnace, a heat-pump water
-          heater and a builder warranty transferring to the buyer. HOA $600/year covers the entrance
-          and stormwater basin. Taxes will be reassessed after closing.
+          The rear yard is graded and seeded with a 12x20 patio poured off the great room; fencing
+          is not installed. Systems are new throughout, with a 96% efficiency furnace, a heat-pump
+          water heater and a builder warranty transferring to the buyer. HOA $600/year covers the
+          entrance and stormwater basin. Taxes will be reassessed after closing.
         </p>
       </GuideExample>
       <GuideH3>Why it works</GuideH3>
@@ -134,14 +134,14 @@ function Page() {
       <GuideH2 id="ranch">Example 3 — Single-level ranch on acreage</GuideH2>
       <GuideExample title="Listing description">
         <p>
-          A three-bedroom, two-bath ranch on 2.4 acres, set back from the road with a gravel circular
-          drive and a detached 24x30 shop with 220V power.
+          A three-bedroom, two-bath ranch on 2.4 acres, set back from the road with a gravel
+          circular drive and a detached 24x30 shop with 220V power.
         </p>
         <p>
-          Inside, the floor plan is single level with no interior steps and a zero-step entry from the
-          garage. The living room has a wood stove on a brick hearth and a picture window facing the
-          tree line. The kitchen was updated in 2021 with butcher-block counters, a farmhouse sink and
-          a gas range, and opens to a dining space with room for eight.
+          Inside, the floor plan is single level with no interior steps and a zero-step entry from
+          the garage. The living room has a wood stove on a brick hearth and a picture window facing
+          the tree line. The kitchen was updated in 2021 with butcher-block counters, a farmhouse
+          sink and a gas range, and opens to a dining space with room for eight.
         </p>
         <p>
           The primary bedroom is at the quiet end of the house with an en-suite bath and a curbless
@@ -159,8 +159,8 @@ function Page() {
       <GuideH2 id="luxury">Example 4 — Higher-price listing</GuideH2>
       <GuideExample title="Listing description">
         <p>
-          A five-bedroom waterfront home on 0.9 acres with 140 feet of frontage, a private dock and a
-          first-floor primary suite. Approx. 4,600 sq ft, rebuilt to the studs in 2019.
+          A five-bedroom waterfront home on 0.9 acres with 140 feet of frontage, a private dock and
+          a first-floor primary suite. Approx. 4,600 sq ft, rebuilt to the studs in 2019.
         </p>
         <p>
           The rear of the house is glass from the great room through the kitchen, so the water is
@@ -183,15 +183,15 @@ function Page() {
 
       <GuideH2 id="tones">The same home in three tones</GuideH2>
       <GuideP>
-        Tone should change the sentence rhythm and the vocabulary, never the facts. All three versions
-        below describe the same 1,620 sq ft ranch with a 2023 kitchen and a screened porch.
+        Tone should change the sentence rhythm and the vocabulary, never the facts. All three
+        versions below describe the same 1,620 sq ft ranch with a 2023 kitchen and a screened porch.
       </GuideP>
       <GuideExample title="Warm and conversational">
         <p>
           Three bedrooms, two baths, one level, and a screened porch you will use from April to
-          October. The 2023 kitchen has quartz counters and a pantry wall that finally fits a week of
-          groceries, and the refinished hardwood runs through the living and dining rooms. Detached
-          two-car garage, level 0.31-acre lot, no HOA. Approx. 1,620 sq ft.
+          October. The 2023 kitchen has quartz counters and a pantry wall that finally fits a week
+          of groceries, and the refinished hardwood runs through the living and dining rooms.
+          Detached two-car garage, level 0.31-acre lot, no HOA. Approx. 1,620 sq ft.
         </p>
       </GuideExample>
       <GuideExample title="Precise and factual">
@@ -206,8 +206,9 @@ function Page() {
         <p>
           A quietly updated ranch on a level third of an acre, arranged on a single floor. The 2023
           kitchen keeps to quartz and painted shaker cabinetry; the hardwood, refinished the same
-          year, carries through the main rooms. A screened porch faces the rear lawn, with a detached
-          two-car garage beyond it. Approx. 1,620 sq ft. Roof 2018, mechanicals 2020. No HOA.
+          year, carries through the main rooms. A screened porch faces the rear lawn, with a
+          detached two-car garage beyond it. Approx. 1,620 sq ft. Roof 2018, mechanicals 2020. No
+          HOA.
         </p>
       </GuideExample>
       <GuideP>
@@ -234,7 +235,10 @@ function Page() {
 
       <GuideP>
         Writing for the MLS field specifically? See{" "}
-        <Link to="/mls-remarks-examples" className="underline underline-offset-4 hover:text-foreground">
+        <Link
+          to="/mls-remarks-examples"
+          className="underline underline-offset-4 hover:text-foreground"
+        >
           MLS remarks examples and templates
         </Link>
         , or browse the{" "}

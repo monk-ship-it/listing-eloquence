@@ -157,7 +157,10 @@ function BlogHub() {
       </header>
 
       <section className="mt-12" aria-labelledby="uk-guides">
-        <h2 id="uk-guides" className="flex items-center gap-2 font-serif text-2xl font-semibold tracking-tight">
+        <h2
+          id="uk-guides"
+          className="flex items-center gap-2 font-serif text-2xl font-semibold tracking-tight"
+        >
           <Home className="h-5 w-5 text-primary" /> UK estate agents
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -175,7 +178,10 @@ function BlogHub() {
       </section>
 
       <section className="mt-14" aria-labelledby="us-guides">
-        <h2 id="us-guides" className="flex items-center gap-2 font-serif text-2xl font-semibold tracking-tight">
+        <h2
+          id="us-guides"
+          className="flex items-center gap-2 font-serif text-2xl font-semibold tracking-tight"
+        >
           <Building2 className="h-5 w-5 text-primary" /> US real estate professionals
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">

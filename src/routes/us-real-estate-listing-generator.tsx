@@ -123,8 +123,8 @@ function USPage() {
         </h1>
         <p className="mt-4 text-lg text-muted-foreground">
           Dictate or paste the facts once. Quill writes MLS-ready remarks, generates the Headline
-          and 6–10 Key Features highlights, and produces a short teaser, Email Blast copy plus Instagram, Facebook and
-          X captions — all in US English, all from a single source of truth.
+          and 6–10 Key Features highlights, and produces a short teaser, Email Blast copy plus
+          Instagram, Facebook and X captions — all in US English, all from a single source of truth.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Button asChild size="lg" className="min-h-[44px]">
@@ -340,7 +340,6 @@ function USPage() {
             </li>
           </ul>
         </section>
-
       </main>
     </div>
   );

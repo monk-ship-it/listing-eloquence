@@ -67,8 +67,8 @@ function Page() {
       <GuideExample title="Public remarks">
         <p>
           Four-bedroom, 2.5-bath colonial on a quarter-acre corner lot with a first-floor office and
-          a fenced backyard. The two-story foyer opens to a formal dining room and a family room with
-          a gas fireplace and built-in shelving.
+          a fenced backyard. The two-story foyer opens to a formal dining room and a family room
+          with a gas fireplace and built-in shelving.
         </p>
         <p>
           The kitchen was renovated in 2022 with quartz counters, a gas range, a vented hood and a
@@ -102,7 +102,8 @@ function Page() {
         <p>
           The kitchen has stainless appliances, a gas cooktop and a peninsula island seating three.
           The primary bedroom has an en-suite bath with a double vanity; the second bedroom has a
-          closet and adjacent full bath, workable as a guest room or office. In-unit washer and dryer.
+          closet and adjacent full bath, workable as a guest room or office. In-unit washer and
+          dryer.
         </p>
         <p>
           Building amenities include a 24-hour desk, fitness room, package room and a roof deck. HOA
@@ -154,10 +155,10 @@ function Page() {
           three-car garage and a heated pool. Approx. 4,150 sq ft across two levels.
         </p>
         <p>
-          The entry opens to a study with built-ins and a dining room with wainscoting. The great room
-          has a 20-foot ceiling, a stone fireplace and a wall of glass to the rear terrace. The
-          kitchen has a 48-inch range, two dishwashers, a butler's pantry and a marble-topped island;
-          a scullery sits behind it.
+          The entry opens to a study with built-ins and a dining room with wainscoting. The great
+          room has a 20-foot ceiling, a stone fireplace and a wall of glass to the rear terrace. The
+          kitchen has a 48-inch range, two dishwashers, a butler's pantry and a marble-topped
+          island; a scullery sits behind it.
         </p>
         <p>
           The first-floor primary suite has dual closets and a bath with a freestanding tub and a
@@ -165,17 +166,17 @@ function Page() {
           unfinished with rough-in plumbing.
         </p>
         <p>
-          Grounds include a heated saltwater pool with an automatic cover, a paver patio and irrigated
-          lawn. Well and septic; generator hookup installed 2021. HOA $1,200/year covers road
-          maintenance.
+          Grounds include a heated saltwater pool with an automatic cover, a paver patio and
+          irrigated lawn. Well and septic; generator hookup installed 2021. HOA $1,200/year covers
+          road maintenance.
         </p>
       </GuideExample>
 
       <GuideH2 id="fair-housing">Fair-housing-conscious wording habits</GuideH2>
       <GuideP>
         This is marketing guidance, not legal advice — your broker and local MLS rules govern. That
-        said, the practical writing discipline is consistent: describe the property, its features and
-        its measurable facts, and avoid language that describes, targets or excludes a type of
+        said, the practical writing discipline is consistent: describe the property, its features
+        and its measurable facts, and avoid language that describes, targets or excludes a type of
         person.
       </GuideP>
       <GuideList
@@ -208,7 +209,9 @@ function Page() {
           Outside: [outdoor structures, yard, fencing]. Systems: [roof year, HVAC year, water heater
           year]. Utilities: [public / well / septic].
         </p>
-        <p>Approx. [sq ft]. [HOA amount and what it covers, or “No HOA”.] [Rental policy if condo.]</p>
+        <p>
+          Approx. [sq ft]. [HOA amount and what it covers, or “No HOA”.] [Rental policy if condo.]
+        </p>
       </GuideExample>
 
       <GuideH2 id="faqs">FAQs</GuideH2>

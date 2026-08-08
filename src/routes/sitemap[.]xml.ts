@@ -19,7 +19,11 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/us-real-estate-listing-generator", changefreq: "monthly", priority: "0.8" },
           { path: "/blog", changefreq: "weekly", priority: "0.7" },
           { path: "/property-description-examples", changefreq: "monthly", priority: "0.7" },
-          { path: "/rightmove-property-description-template", changefreq: "monthly", priority: "0.7" },
+          {
+            path: "/rightmove-property-description-template",
+            changefreq: "monthly",
+            priority: "0.7",
+          },
           { path: "/mls-remarks-examples", changefreq: "monthly", priority: "0.7" },
           {
             path: "/real-estate-listing-description-examples",
@@ -27,7 +31,6 @@ export const Route = createFileRoute("/sitemap.xml")({
             priority: "0.7",
           },
         ];
-
 
         const urls = entries.map((e) =>
           [
