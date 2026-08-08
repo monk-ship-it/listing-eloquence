@@ -38,6 +38,10 @@ import {
   Mail,
 } from "lucide-react";
 import { EMAIL_BLAST_PLACEHOLDERS } from "@/lib/listing-types";
+import { PropertyWalkthrough } from "@/components/home/PropertyWalkthrough";
+import heroExterior from "@/assets/home-walk-exterior.jpg";
+import bandKitchen from "@/assets/home-walk-kitchen.jpg";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -183,10 +187,12 @@ function Landing() {
         <Header user={authed} />
         <Hero authed={authed} />
         <VoiceValue />
-        <HowItWorks />
+        <PropertyWalkthrough />
         <ListingDetail />
         <Voices />
         <LiveExample />
+        <EditorialBand />
+
         <VoiceDictation authed={authed} />
         <Pricing authed={authed} />
         <FinalCta authed={authed} />
@@ -329,9 +335,26 @@ function Hero({ authed }: { authed: boolean }) {
   const isUs = market === "us";
   return (
     <section className="relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 bg-grid opacity-25" />
+      {/* Cinematic property backdrop — decorative, fixed to the section box so it
+          cannot shift layout or push the CTA down. */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] overflow-hidden lg:h-[42rem]">
+        <img
+          src={heroExterior}
+          alt=""
+          aria-hidden="true"
+          width={1600}
+          height={912}
+          loading="eager"
+          decoding="async"
+          className="h-full w-full object-cover opacity-[0.22]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/85 to-background" />
+        <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_75%_15%,color-mix(in_oklab,var(--gold)_12%,transparent),transparent_70%)]" />
+      </div>
+      <div className="pointer-events-none absolute inset-0 bg-grid opacity-20" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] bg-radial-glow opacity-60" />
       <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 pb-16 pt-10 sm:pt-14 lg:grid-cols-[1.05fr_1fr] lg:gap-12 lg:pb-28 lg:pt-20">
+
         {/* Left — critical above-the-fold content renders immediately (no reveal). */}
         <div className="min-w-0">
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
@@ -578,62 +601,47 @@ function VoiceValue() {
   );
 }
 
-/* ------------------------------ How it works ------------------------------- */
+/* ----------------------------- Editorial band ------------------------------ */
 
-function HowItWorks() {
-  const steps = [
-    {
-      icon: Mic,
-      title: "Capture the instruction once",
-      body: "Speak, type or paste rough notes from the valuation or viewing. One source of truth for every asset that follows.",
-    },
-    {
-      icon: ShieldCheck,
-      title: "Separate facts from copy",
-      body: "Quill extracts structured facts, then drafts copy from them — so accuracy and tone are handled independently.",
-    },
-    {
-      icon: Sparkles,
-      title: "Produce the full pack",
-      body: "Headline, 6–10 Key Features, listing description, short teaser, Email Blast copy and Instagram, Facebook and X captions — drafted together and fully editable before use.",
-    },
-  ];
+/** Image-backed band that breaks up the long page with warm property light. */
+function EditorialBand() {
+  const { market } = useMarket();
+  const isUs = market === "us";
   return (
-    <section className="border-y border-border bg-card/30 py-16 sm:py-24">
-      <div className="mx-auto max-w-6xl px-5">
-        <Reveal className="mx-auto max-w-2xl text-center">
-          <Eyebrow>How it works</Eyebrow>
-          <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            One workflow for the whole team.
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Practical for negotiators, admins and branch managers — the same source of truth drives
-            every asset your listing needs.
-          </p>
-        </Reveal>
-        <div className="relative mt-14 grid gap-8 md:grid-cols-3 md:gap-5">
-          <div className="pointer-events-none absolute left-[16%] right-[16%] top-[2.4rem] hidden h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent md:block" />
-          {steps.map((s, i) => (
-            <Reveal key={s.title} delay={i * 110} className="relative">
-              <div className="flex flex-col items-center text-center">
-                <span className="relative z-10 grid h-[4.75rem] w-[4.75rem] place-items-center rounded-2xl border border-primary/25 bg-background text-primary shadow-[0_12px_30px_-16px] shadow-primary/40">
-                  <s.icon className="h-6 w-6" />
-                  <span className="absolute -right-2 -top-2 grid h-6 w-6 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                    {i + 1}
-                  </span>
-                </span>
-                <h3 className="mt-5 text-lg font-semibold">{s.title}</h3>
-                <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
-                  {s.body}
-                </p>
-              </div>
-            </Reveal>
-          ))}
+    <section aria-label="Why one source of truth" className="relative">
+      <div className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
+        <div className="relative overflow-hidden rounded-3xl border border-border/70">
+          <img
+            src={bandKitchen}
+            alt="Warmly lit kitchen and living space in a premium home at dusk"
+            width={1600}
+            height={912}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/40" />
+          <div className="absolute inset-0 bg-[radial-gradient(60%_80%_at_85%_50%,color-mix(in_oklab,var(--gold)_14%,transparent),transparent_70%)]" />
+          <div className="absolute inset-0 flex items-center">
+            <div className="max-w-xl px-6 py-6 sm:px-10">
+              <span className="eyebrow inline-block">Written from the facts</span>
+              <h2 className="mt-3 font-display text-2xl font-semibold sm:text-3xl">
+                The detail that sells the room, in every asset.
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-foreground/85 sm:text-base">
+                Describe the space once. Quill keeps the same facts across the{" "}
+                {isUs ? "MLS remarks" : "portal description"}, the teaser, the Email Blast copy and
+                every caption — so nothing drifts between channels.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
+
+
 
 /* ----------------------------- Listing detail ------------------------------ */
 
