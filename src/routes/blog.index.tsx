@@ -100,7 +100,7 @@ function WalkaroundPanel() {
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/20"
+          className="absolute inset-0 bg-gradient-to-t from-background via-background/45 to-background/10"
         />
         <div
           aria-hidden="true"
