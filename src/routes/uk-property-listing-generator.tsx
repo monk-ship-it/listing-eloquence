@@ -307,6 +307,37 @@ function UKPage() {
             </Link>
           </p>
         </section>
+
+        <section className="mt-14">
+          <h2 className="font-display text-2xl font-semibold">UK listing copy guides</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Worked examples and templates you can use before you generate anything.
+          </p>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li>
+              <Link
+                to="/property-description-examples"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                Property description examples for UK estate agents
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/rightmove-property-description-template"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                Rightmove-style property description template &amp; checklist
+              </Link>
+            </li>
+            <li>
+              <Link to="/blog" className="text-primary underline-offset-4 hover:underline">
+                All property listing copy guides
+              </Link>
+            </li>
+          </ul>
+        </section>
+
       </main>
     </div>
   );
