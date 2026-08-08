@@ -608,7 +608,7 @@ function EditorialBand() {
   return (
     <section aria-label="Why one source of truth" className="relative">
       <div className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
-        <div className="relative overflow-hidden rounded-3xl border border-border/70">
+        <div className="relative isolate overflow-hidden rounded-3xl border border-border/70">
           <img
             src={bandKitchen}
             alt="Warmly lit kitchen and living space in a premium home at dusk"
@@ -616,24 +616,23 @@ function EditorialBand() {
             height={912}
             loading="lazy"
             decoding="async"
-            className="h-full w-full object-cover"
+            className="absolute inset-0 -z-10 h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/40" />
-          <div className="absolute inset-0 bg-[radial-gradient(60%_80%_at_85%_50%,color-mix(in_oklab,var(--gold)_14%,transparent),transparent_70%)]" />
-          <div className="absolute inset-0 flex items-center">
-            <div className="max-w-xl px-6 py-6 sm:px-10">
-              <span className="eyebrow inline-block">Written from the facts</span>
-              <h2 className="mt-3 font-display text-2xl font-semibold sm:text-3xl">
-                The detail that sells the room, in every asset.
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-foreground/85 sm:text-base">
-                Describe the space once. Quill keeps the same facts across the{" "}
-                {isUs ? "MLS remarks" : "portal description"}, the teaser, the Email Blast copy and
-                every caption — so nothing drifts between channels.
-              </p>
-            </div>
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-background via-background/90 to-background/45" />
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(60%_80%_at_85%_50%,color-mix(in_oklab,var(--gold)_14%,transparent),transparent_70%)]" />
+          <div className="max-w-xl px-6 py-12 sm:px-10 sm:py-16 lg:py-20">
+            <span className="eyebrow inline-block">Written from the facts</span>
+            <h2 className="mt-3 font-display text-2xl font-semibold sm:text-3xl">
+              The detail that sells the room, in every asset.
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-foreground/85 sm:text-base">
+              Describe the space once. Quill keeps the same facts across the{" "}
+              {isUs ? "MLS remarks" : "portal description"}, the teaser, the Email Blast copy and
+              every caption — so nothing drifts between channels.
+            </p>
           </div>
         </div>
+
       </div>
     </section>
   );
