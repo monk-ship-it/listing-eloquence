@@ -92,7 +92,7 @@ function WalkaroundPanel() {
       <div className="relative aspect-[16/9] w-full overflow-hidden sm:aspect-[21/9]">
         <img
           src={heroExterior}
-          alt="Georgian townhouse exterior at dusk with warm lights in the sash windows"
+          alt="Georgian townhouse exterior in bright daylight with sash windows and a black front door"
           width={1920}
           height={1088}
           decoding="async"
@@ -100,7 +100,7 @@ function WalkaroundPanel() {
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-background via-background/45 to-background/10"
+          className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/30 to-transparent"
         />
         <div
           aria-hidden="true"
@@ -243,7 +243,7 @@ function MarketSection({
           height={853}
           loading="lazy"
           decoding="async"
-          className="hidden aspect-[4/3] w-full rounded-2xl object-cover opacity-90 ring-1 ring-border/60 sm:block"
+          className="hidden aspect-[4/3] w-full rounded-2xl object-cover ring-1 ring-border/60 sm:block"
         />
       </div>
 
@@ -306,7 +306,7 @@ function BlogHub() {
 
       <LatestArticles />
 
-      <section className="mt-16 rounded-3xl bg-card/70 p-7 text-center ring-1 ring-primary/20 sm:mt-20 sm:p-10">
+      <section className="mt-16 rounded-3xl surface-sand p-7 text-center ring-1 ring-primary/20 sm:mt-20 sm:p-10">
         <h2 className="font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
           Stop writing listing copy from scratch
         </h2>

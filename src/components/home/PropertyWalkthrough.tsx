@@ -22,7 +22,7 @@ const STEPS: Step[] = [
     title: "Capture the instruction once",
     body: "Speak, type or paste rough notes from the valuation or viewing — kerb appeal, room by room, the outside space. One source of truth for every asset that follows.",
     image: exteriorImg,
-    alt: "Detached stone home at dusk with a gravel driveway and warm light in the windows",
+    alt: "Sunlit detached stone home with a gravel driveway, green lawn and clear blue sky",
     icon: Camera,
     chips: ["Dictate on site", "Type or paste", "No CRM migration"],
   },
@@ -32,7 +32,7 @@ const STEPS: Step[] = [
     title: "Separate facts from copy",
     body: "Quill extracts the structured facts first — beds, receptions, tenure, outside space — then drafts copy from them, so accuracy and tone are handled independently.",
     image: kitchenImg,
-    alt: "Interior of a premium kitchen and living space with a marble island and warm pendant lighting",
+    alt: "Bright kitchen and living space with a marble island and daylight through tall windows",
     icon: ShieldCheck,
     chips: ["5 bedrooms", "3 receptions", "Walled garden", "Freehold"],
   },
@@ -42,7 +42,7 @@ const STEPS: Step[] = [
     title: "Produce the full pack",
     body: "Headline, 6–10 Key Features, the listing description, a short teaser, Email Blast copy and Instagram, Facebook and X captions — drafted together and fully editable before use.",
     image: gardenImg,
-    alt: "Private walled garden at dusk with a lit lawn and mature planting behind an elegant home",
+    alt: "Private walled garden on a sunny day with a striped lawn and mature planting behind an elegant home",
     icon: Sparkles,
     chips: ["Headline", "Key Features", "Description", "Email Blast", "Captions"],
   },
@@ -123,7 +123,7 @@ export function PropertyWalkthrough({
           onBlurCapture={() => setPaused(false)}
         >
           {/* Visual */}
-          <div className="relative min-w-0 overflow-hidden rounded-3xl border border-border/70 bg-card/40 shadow-2xl shadow-black/40">
+          <div className="relative min-w-0 overflow-hidden rounded-3xl border border-border/70 bg-card shadow-xl shadow-primary/10">
             <div className="relative aspect-[16/10] w-full">
               {STEPS.map((s, i) => (
                 <img
@@ -139,17 +139,17 @@ export function PropertyWalkthrough({
                   } ${i === index && !reduced ? "walkaround-img" : ""}`}
                 />
               ))}
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/45 to-background/10" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/95 via-background/35 to-transparent" />
 
               <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6">
-                <span className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-background/70 px-3 py-1 text-xs font-semibold text-primary backdrop-blur">
+                <span className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-card/85 px-3 py-1 text-xs font-semibold text-primary backdrop-blur">
                   <active.icon className="h-3.5 w-3.5" /> Step {index + 1} · {active.label}
                 </span>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {active.chips.map((c) => (
                     <span
                       key={c}
-                      className="rounded-md border border-border/80 bg-background/70 px-2 py-0.5 text-[0.7rem] font-medium text-foreground/90 backdrop-blur"
+                      className="rounded-md border border-border/80 bg-card/85 px-2 py-0.5 text-[0.7rem] font-medium text-foreground backdrop-blur"
                     >
                       {c}
                     </span>
@@ -173,7 +173,7 @@ export function PropertyWalkthrough({
                       className={`flex w-full min-h-11 items-start gap-3.5 rounded-2xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                         isActive
                           ? "border-primary/45 bg-primary/[0.08]"
-                          : "border-border/60 bg-card/40 hover:bg-card/70"
+                          : "border-border bg-card hover:border-primary/40"
                       }`}
                     >
                       <span
@@ -202,7 +202,7 @@ export function PropertyWalkthrough({
                 <button
                   type="button"
                   onClick={() => setPlaying((p) => !p)}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-card/60 px-4 text-sm font-medium text-foreground/90 transition-colors hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-medium text-foreground/90 transition-colors hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                   {playing ? "Pause walkthrough" : "Play walkthrough"}

@@ -797,7 +797,7 @@ function LiveExample() {
         <div className="mt-12 grid items-start gap-5 lg:grid-cols-[0.85fr_1.15fr]">
           {/* In */}
           <Reveal className="min-w-0">
-            <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-[0_20px_50px_-30px] shadow-black/40">
+            <div className="h-full rounded-2xl border border-border bg-card p-6 shadow-[0_20px_50px_-30px] shadow-primary/20">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm font-semibold text-primary">
                   <FileText className="h-4 w-4" /> Details in
@@ -1288,7 +1288,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
 
         <Reveal delay={120} className="relative">
           <div className="pointer-events-none absolute -inset-8 -z-10 rounded-[3rem] bg-radial-glow opacity-60 blur-2xl" />
-          <div className="glow-primary rounded-3xl border border-border/80 bg-card p-4 shadow-2xl shadow-black/25 sm:p-5">
+          <div className="glow-primary rounded-3xl border border-border/80 bg-card p-4 shadow-2xl shadow-primary/10 sm:p-5">
             {/* Live capture bar */}
             <div className="flex items-center gap-3 rounded-2xl border border-primary/25 bg-primary/[0.06] p-3.5">
               <span className="mic-pulse grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground shadow-[0_0_0_6px] shadow-primary/15">
