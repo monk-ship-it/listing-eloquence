@@ -99,7 +99,7 @@ export function PropertyWalkthrough({
     <section
       id="workflow"
       aria-labelledby="walkthrough-heading"
-      className="relative overflow-hidden border-y border-border/70 py-16 sm:py-24"
+      className="relative scroll-mt-20 overflow-hidden border-y border-border/70 py-16 sm:py-24"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_20%_0%,color-mix(in_oklab,var(--primary)_14%,transparent),transparent_70%),radial-gradient(50%_50%_at_90%_100%,color-mix(in_oklab,var(--gold)_10%,transparent),transparent_70%)]" />
 
