@@ -13,6 +13,7 @@ import { Route as UsRealEstateListingGeneratorRouteImport } from './routes/us-re
 import { Route as UkPropertyListingGeneratorRouteImport } from './routes/uk-property-listing-generator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
+import { Route as PropertyDescriptionExamplesRouteImport } from './routes/property-description-examples'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -58,6 +59,12 @@ const RssDotxmlRoute = RssDotxmlRouteImport.update({
   path: '/rss.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PropertyDescriptionExamplesRoute =
+  PropertyDescriptionExamplesRouteImport.update({
+    id: '/property-description-examples',
+    path: '/property-description-examples',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
@@ -179,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/property-description-examples': typeof PropertyDescriptionExamplesRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/uk-property-listing-generator': typeof UkPropertyListingGeneratorRoute
@@ -206,6 +214,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/property-description-examples': typeof PropertyDescriptionExamplesRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/uk-property-listing-generator': typeof UkPropertyListingGeneratorRoute
@@ -235,6 +244,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
   '/mcp': typeof McpRoute
+  '/property-description-examples': typeof PropertyDescriptionExamplesRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/uk-property-listing-generator': typeof UkPropertyListingGeneratorRoute
@@ -264,6 +274,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/mcp'
+    | '/property-description-examples'
     | '/rss.xml'
     | '/sitemap.xml'
     | '/uk-property-listing-generator'
@@ -291,6 +302,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/mcp'
+    | '/property-description-examples'
     | '/rss.xml'
     | '/sitemap.xml'
     | '/uk-property-listing-generator'
@@ -319,6 +331,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/mcp'
+    | '/property-description-examples'
     | '/rss.xml'
     | '/sitemap.xml'
     | '/uk-property-listing-generator'
@@ -348,6 +361,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
   McpRoute: typeof McpRoute
+  PropertyDescriptionExamplesRoute: typeof PropertyDescriptionExamplesRoute
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   UkPropertyListingGeneratorRoute: typeof UkPropertyListingGeneratorRoute
@@ -395,6 +409,13 @@ declare module '@tanstack/react-router' {
       path: '/rss.xml'
       fullPath: '/rss.xml'
       preLoaderRoute: typeof RssDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/property-description-examples': {
+      id: '/property-description-examples'
+      path: '/property-description-examples'
+      fullPath: '/property-description-examples'
+      preLoaderRoute: typeof PropertyDescriptionExamplesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -579,6 +600,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
   McpRoute: McpRoute,
+  PropertyDescriptionExamplesRoute: PropertyDescriptionExamplesRoute,
   RssDotxmlRoute: RssDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   UkPropertyListingGeneratorRoute: UkPropertyListingGeneratorRoute,
