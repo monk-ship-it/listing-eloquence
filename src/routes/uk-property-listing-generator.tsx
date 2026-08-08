@@ -41,8 +41,9 @@ export const Route = createFileRoute("/uk-property-listing-generator")({
       {
         name: "description",
         content:
-          "Turn one set of property notes into a portal-ready UK listing pack: Headline, 6–10 Key Features, Rightmove/OnTheMarket-style description, short teaser, Email Blast copy and Instagram, Facebook and X captions. Material Information aware.",
+          "Turn one set of property notes into a portal-ready UK listing pack: headline, 6–10 key features, description, teaser, email blast and social captions.",
       },
+
       { property: "og:title", content: `UK Property Listing Generator — ${APP_NAME}` },
       {
         property: "og:description",
