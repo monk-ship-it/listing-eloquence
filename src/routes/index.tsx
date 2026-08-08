@@ -42,7 +42,6 @@ import { PropertyWalkthrough } from "@/components/home/PropertyWalkthrough";
 import heroExterior from "@/assets/home-walk-exterior.jpg";
 import bandKitchen from "@/assets/home-walk-kitchen.jpg";
 
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -354,7 +353,6 @@ function Hero({ authed }: { authed: boolean }) {
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-20" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] bg-radial-glow opacity-60" />
       <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-5 pb-16 pt-10 sm:pt-14 lg:grid-cols-[1.05fr_1fr] lg:gap-12 lg:pb-28 lg:pt-20">
-
         {/* Left — critical above-the-fold content renders immediately (no reveal). */}
         <div className="min-w-0">
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
@@ -640,8 +638,6 @@ function EditorialBand() {
     </section>
   );
 }
-
-
 
 /* ----------------------------- Listing detail ------------------------------ */
 
