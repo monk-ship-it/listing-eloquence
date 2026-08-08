@@ -278,6 +278,13 @@ function Header({ user }: { user: boolean }) {
           >
             US
           </Link>
+          <Link
+            to="/blog"
+            className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex"
+          >
+            Guides
+          </Link>
+
           {user ? (
             <Button asChild>
               <Link to="/app">Open app</Link>
