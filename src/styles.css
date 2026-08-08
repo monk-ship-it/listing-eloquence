@@ -168,7 +168,10 @@
   }
 
   /* Clean sans-serif by default (Apple-style); serif reserved for emotional headlines via .font-display */
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-sans);
     letter-spacing: -0.02em;
     line-height: 1.15;
@@ -181,7 +184,8 @@
   }
 
   /* Interactive labels: tighten just enough for a crafted feel, keep tap-friendly leading. */
-  button, [role="button"] {
+  button,
+  [role="button"] {
     line-height: 1.2;
     letter-spacing: -0.005em;
   }
@@ -206,7 +210,10 @@
     line-height: 1.65;
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     line-height: 1.2;
     letter-spacing: -0.015em;
   }
@@ -217,20 +224,25 @@
   }
 }
 
-
 @utility text-balance {
   text-wrap: balance;
 }
 
 .bg-grid {
-  background-image:
-    radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--primary) 12%, transparent) 1px, transparent 0);
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    color-mix(in oklab, var(--primary) 12%, transparent) 1px,
+    transparent 0
+  );
   background-size: 30px 30px;
 }
 
 .bg-radial-glow {
-  background:
-    radial-gradient(60% 50% at 50% 0%, color-mix(in oklab, var(--primary) 16%, transparent), transparent 70%);
+  background: radial-gradient(
+    60% 50% at 50% 0%,
+    color-mix(in oklab, var(--primary) 16%, transparent),
+    transparent 70%
+  );
 }
 
 /* Premium glass surface */
@@ -248,12 +260,17 @@
 
 /* Soft blue glow accents */
 .glow-primary {
-  box-shadow: 0 0 0 1px color-mix(in oklab, var(--primary) 22%, transparent),
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--primary) 22%, transparent),
     0 24px 60px -28px color-mix(in oklab, var(--primary) 60%, transparent);
 }
 
 .text-gradient {
-  background: linear-gradient(180deg, var(--foreground), color-mix(in oklab, var(--foreground) 62%, var(--primary)));
+  background: linear-gradient(
+    180deg,
+    var(--foreground),
+    color-mix(in oklab, var(--foreground) 62%, var(--primary))
+  );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -304,12 +321,13 @@
   color: color-mix(in oklab, var(--foreground) 55%, var(--primary));
 }
 
-
 /* Scroll reveal */
 .reveal {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
 }
 .reveal.is-visible {
@@ -318,14 +336,25 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .reveal { opacity: 1; transform: none; transition: none; }
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 /* Waveform pulse for voice mockups */
 @keyframes wave {
-  0%, 100% { transform: scaleY(0.35); }
-  50% { transform: scaleY(1); }
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
 }
 .wave-bar {
   animation: wave 1s ease-in-out infinite;
@@ -333,7 +362,60 @@
 }
 
 @keyframes soft-pulse {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.06); }
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
 }
-.mic-pulse { animation: soft-pulse 1.8s ease-in-out infinite; }
+.mic-pulse {
+  animation: soft-pulse 1.8s ease-in-out infinite;
+}
+
+/* Guides hub: slow cinematic walkaround pan/zoom + orbit cue */
+@keyframes walkaround-pan {
+  0% {
+    transform: scale(1.08) translate3d(-1.5%, 0.6%, 0);
+  }
+  50% {
+    transform: scale(1.14) translate3d(1.5%, -0.6%, 0);
+  }
+  100% {
+    transform: scale(1.08) translate3d(-1.5%, 0.6%, 0);
+  }
+}
+.walkaround-img {
+  animation: walkaround-pan 36s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes orbit-dot {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.orbit-spin {
+  animation: orbit-dot 14s linear infinite;
+}
+@keyframes orbit-dash {
+  to {
+    stroke-dashoffset: -64;
+  }
+}
+.orbit-dash {
+  animation: orbit-dash 6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .walkaround-img,
+  .orbit-spin,
+  .orbit-dash {
+    animation: none !important;
+  }
+}

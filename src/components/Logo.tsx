@@ -15,8 +15,12 @@ export function Logo({
       <img
         src={LOGO_URL}
         alt={`${APP_NAME} logo`}
-        className="h-8 w-8 rounded-xl object-cover ring-1 ring-primary/40 sm:h-9 sm:w-9"
+        width={72}
+        height={72}
+        decoding="async"
+        className="h-8 w-8 shrink-0 rounded-xl object-cover ring-1 ring-primary/40 sm:h-9 sm:w-9"
       />
+
       {showText && (
         <span className="flex min-w-0 flex-col leading-none">
           <span className="font-display text-lg font-semibold tracking-tight sm:text-xl">
