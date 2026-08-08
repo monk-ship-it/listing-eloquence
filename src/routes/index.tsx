@@ -185,8 +185,8 @@ function Landing() {
       <div className="min-h-screen overflow-x-hidden">
         <Header user={authed} />
         <Hero authed={authed} />
-        <VoiceValue />
-        <PropertyWalkthrough />
+        <Workflow />
+
         <ListingDetail />
         <Voices />
         <LiveExample />
