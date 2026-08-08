@@ -55,7 +55,15 @@ const INTERVAL_MS = 6000;
  * visible step cue and manual controls. Pauses on hover/focus and stops
  * entirely under prefers-reduced-motion. Fixed aspect ratios: no layout shift.
  */
-export function PropertyWalkthrough() {
+export function PropertyWalkthrough({
+  eyebrow = "The workflow",
+  heading = "Built to remove listing admin, not to replace agents.",
+  intro,
+}: {
+  eyebrow?: string;
+  heading?: string;
+  intro?: string;
+}) {
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [paused, setPaused] = useState(false);
@@ -89,25 +97,22 @@ export function PropertyWalkthrough() {
 
   return (
     <section
-      id="walkthrough"
+      id="workflow"
       aria-labelledby="walkthrough-heading"
-      className="relative overflow-hidden border-y border-border/70 py-16 sm:py-24"
+      className="relative scroll-mt-20 overflow-hidden border-y border-border/70 py-16 sm:py-24"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_20%_0%,color-mix(in_oklab,var(--primary)_14%,transparent),transparent_70%),radial-gradient(50%_50%_at_90%_100%,color-mix(in_oklab,var(--gold)_10%,transparent),transparent_70%)]" />
 
       <div className="relative mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="eyebrow inline-block">Property to pack</span>
+          <span className="eyebrow inline-block">{eyebrow}</span>
           <h2
             id="walkthrough-heading"
             className="mt-4 font-display text-3xl font-semibold sm:text-4xl"
           >
-            One workflow for the whole team.
+            {heading}
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Practical for negotiators, admins and branch managers — walk the property once, and the
-            same source of truth drives every asset your listing needs.
-          </p>
+          {intro && <p className="mt-4 text-lg text-muted-foreground">{intro}</p>}
         </div>
 
         <div
