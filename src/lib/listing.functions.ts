@@ -235,15 +235,12 @@ export const generateListing = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    // Subscription gate (server-side enforcement)
-    const { data: sub } = await supabase
-      .from("subscribers")
-      .select("status, email, plan, current_period_end")
-      .eq("user_id", userId)
-      .maybeSingle();
-
+    // Subscription gate (server-side enforcement). The row is reconciled
+    // against Stripe first so a subscription cancelled in Stripe can never
+    // keep granting access from a stale database status.
     const { isCompedEmail, getPlan } = await import("./config");
-    const { hasActiveAccess } = await import("./subscription.functions");
+    const { hasActiveAccess, readReconciledSubscriber } = await import("./subscription.functions");
+    const sub = await readReconciledSubscriber(supabase, userId);
     const comped = isCompedEmail(sub?.email);
     const status = sub?.status ?? "none";
     const hasAccess = comped || hasActiveAccess(status, sub?.current_period_end ?? null);
