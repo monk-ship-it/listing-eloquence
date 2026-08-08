@@ -13,15 +13,14 @@ export function BlogShell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
 
-      <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur">
-        <div className="mx-auto flex min-h-[60px] max-w-5xl items-center justify-between gap-3 px-4 py-2 sm:px-6">
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
+        <div className="mx-auto flex min-h-[64px] max-w-5xl items-center justify-between gap-2 px-4 py-2 sm:px-6">
           <Link
             to="/"
-            className="flex min-h-11 items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex min-h-11 items-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Quill home"
           >
-            <Logo className="h-7 w-7" />
-            <span className="font-serif text-lg font-semibold tracking-tight">Quill</span>
+            <Logo />
           </Link>
 
           <nav aria-label="Blog navigation" className="flex items-center gap-1 sm:gap-2">
@@ -33,13 +32,14 @@ export function BlogShell({ children }: { children: ReactNode }) {
             </Link>
             <Link
               to="/app"
-              className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="inline-flex min-h-11 items-center rounded-md bg-primary px-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4"
             >
               Create first pack
             </Link>
           </nav>
         </div>
       </header>
+
 
       <main id="blog-main" className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
         {children}
