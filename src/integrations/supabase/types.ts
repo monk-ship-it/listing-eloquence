@@ -293,7 +293,11 @@ export type Database = {
         Returns: number
       }
       finalize_generation_slot: {
-        Args: { generation_id: string; reservation_id: string }
+        Args: {
+          _user_id: string
+          generation_id: string
+          reservation_id: string
+        }
         Returns: boolean
       }
       move_to_dlq: {
@@ -314,10 +318,10 @@ export type Database = {
         }[]
       }
       release_generation_slot: {
-        Args: { reservation_id: string }
+        Args: { _user_id: string; reservation_id: string }
         Returns: boolean
       }
-      reserve_generation_slot: { Args: never; Returns: string }
+      reserve_generation_slot: { Args: { _user_id: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never

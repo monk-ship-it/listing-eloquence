@@ -238,7 +238,7 @@ export const generateListing = createServerFn({ method: "POST" })
     // Subscription gate (server-side enforcement). The row is reconciled
     // against Stripe first so a subscription cancelled in Stripe can never
     // keep granting access from a stale database status.
-    const { isCompedEmail, getPlan } = await import("./config");
+    const { isCompedEmail } = await import("./config");
     const { hasActiveAccess, readReconciledSubscriber } = await import("./subscription.functions");
     const sub = await readReconciledSubscriber(supabase, userId);
     const comped = isCompedEmail(sub?.email);
@@ -249,10 +249,16 @@ export const generateListing = createServerFn({ method: "POST" })
     }
 
     // Atomic monthly-quota reservation for paid/trial users. Comped accounts
-    // stay unlimited and skip reservation entirely.
+    // stay unlimited and skip reservation entirely. The quota RPCs are
+    // service-role only (not callable by signed-in users); the user id passed
+    // in comes from the verified auth middleware, never from the client.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let reservationId: string | null = null;
     if (!comped) {
-      const { data: reserved, error: reserveError } = await supabase.rpc("reserve_generation_slot");
+      const { data: reserved, error: reserveError } = await supabaseAdmin.rpc(
+        "reserve_generation_slot",
+        { _user_id: userId },
+      );
       if (reserveError) {
         const msg = (reserveError.message ?? "").toString();
         if (msg.includes("LISTING_LIMIT_REACHED")) {
@@ -269,13 +275,15 @@ export const generateListing = createServerFn({ method: "POST" })
     const releaseReservation = async () => {
       if (!reservationId) return;
       try {
-        await supabase.rpc("release_generation_slot", {
+        await supabaseAdmin.rpc("release_generation_slot", {
+          _user_id: userId,
           reservation_id: reservationId,
         });
       } catch (err) {
         console.error("release_generation_slot failed", err);
       }
     };
+
 
     try {
       const market = resolveMarketId(data.market);
@@ -330,10 +338,11 @@ export const generateListing = createServerFn({ method: "POST" })
 
       if (reservationId) {
         // Finalize the reservation atomically — attach it to the generation.
-        const { data: finalizedOk, error: finalizeError } = await supabase.rpc(
+        const { data: finalizedOk, error: finalizeError } = await supabaseAdmin.rpc(
           "finalize_generation_slot",
-          { reservation_id: reservationId, generation_id: savedGenId },
+          { _user_id: userId, reservation_id: reservationId, generation_id: savedGenId },
         );
+
         if (finalizeError || finalizedOk !== true) {
           // Compensate: remove the just-created generation, then release the
           // reservation so history and quota can't diverge.
@@ -346,11 +355,14 @@ export const generateListing = createServerFn({ method: "POST" })
       } else if (comped) {
         // Comped accounts keep durable usage analytics via the direct insert
         // path. If it fails, roll back history so the two views stay aligned.
+        // `plan` mirrors the stored subscription plan only — the RLS policy
+        // rejects any self-reported plan that differs from the real one.
         const { error: usageError } = await supabase.from("generation_usage").insert({
           user_id: userId,
           generation_id: savedGenId,
-          plan: getPlan(sub?.plan).id,
+          plan: sub?.plan ?? null,
         });
+
         if (usageError) {
           await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
           throw new Error("Couldn't record listing usage. Please try again.");
