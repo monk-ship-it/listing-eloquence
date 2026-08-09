@@ -238,7 +238,7 @@ export const generateListing = createServerFn({ method: "POST" })
     // Subscription gate (server-side enforcement). The row is reconciled
     // against Stripe first so a subscription cancelled in Stripe can never
     // keep granting access from a stale database status.
-    const { isCompedEmail, getPlan } = await import("./config");
+    const { isCompedEmail } = await import("./config");
     const { hasActiveAccess, readReconciledSubscriber } = await import("./subscription.functions");
     const sub = await readReconciledSubscriber(supabase, userId);
     const comped = isCompedEmail(sub?.email);
