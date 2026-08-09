@@ -249,10 +249,16 @@ export const generateListing = createServerFn({ method: "POST" })
     }
 
     // Atomic monthly-quota reservation for paid/trial users. Comped accounts
-    // stay unlimited and skip reservation entirely.
+    // stay unlimited and skip reservation entirely. The quota RPCs are
+    // service-role only (not callable by signed-in users); the user id passed
+    // in comes from the verified auth middleware, never from the client.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let reservationId: string | null = null;
     if (!comped) {
-      const { data: reserved, error: reserveError } = await supabase.rpc("reserve_generation_slot");
+      const { data: reserved, error: reserveError } = await supabaseAdmin.rpc(
+        "reserve_generation_slot",
+        { _user_id: userId },
+      );
       if (reserveError) {
         const msg = (reserveError.message ?? "").toString();
         if (msg.includes("LISTING_LIMIT_REACHED")) {
@@ -269,13 +275,15 @@ export const generateListing = createServerFn({ method: "POST" })
     const releaseReservation = async () => {
       if (!reservationId) return;
       try {
-        await supabase.rpc("release_generation_slot", {
+        await supabaseAdmin.rpc("release_generation_slot", {
+          _user_id: userId,
           reservation_id: reservationId,
         });
       } catch (err) {
         console.error("release_generation_slot failed", err);
       }
     };
+
 
     try {
       const market = resolveMarketId(data.market);
