@@ -338,10 +338,11 @@ export const generateListing = createServerFn({ method: "POST" })
 
       if (reservationId) {
         // Finalize the reservation atomically — attach it to the generation.
-        const { data: finalizedOk, error: finalizeError } = await supabase.rpc(
+        const { data: finalizedOk, error: finalizeError } = await supabaseAdmin.rpc(
           "finalize_generation_slot",
-          { reservation_id: reservationId, generation_id: savedGenId },
+          { _user_id: userId, reservation_id: reservationId, generation_id: savedGenId },
         );
+
         if (finalizeError || finalizedOk !== true) {
           // Compensate: remove the just-created generation, then release the
           // reservation so history and quota can't diverge.
