@@ -355,11 +355,14 @@ export const generateListing = createServerFn({ method: "POST" })
       } else if (comped) {
         // Comped accounts keep durable usage analytics via the direct insert
         // path. If it fails, roll back history so the two views stay aligned.
+        // `plan` mirrors the stored subscription plan only — the RLS policy
+        // rejects any self-reported plan that differs from the real one.
         const { error: usageError } = await supabase.from("generation_usage").insert({
           user_id: userId,
           generation_id: savedGenId,
-          plan: getPlan(sub?.plan).id,
+          plan: sub?.plan ?? null,
         });
+
         if (usageError) {
           await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
           throw new Error("Couldn't record listing usage. Please try again.");
