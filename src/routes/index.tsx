@@ -1543,7 +1543,7 @@ function Footer() {
 
           <a
             href={`mailto:${CONTACT_EMAIL}`}
-            className="break-all text-sm text-muted-foreground transition-colors hover:text-foreground"
+            className="shrink-0 whitespace-nowrap text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             {CONTACT_EMAIL}
           </a>
