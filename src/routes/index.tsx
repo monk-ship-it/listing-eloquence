@@ -41,128 +41,56 @@ import {
 } from "lucide-react";
 import { EMAIL_BLAST_PLACEHOLDERS } from "@/lib/listing-types";
 import { PropertyWalkthrough } from "@/components/home/PropertyWalkthrough";
-import heroExterior from "@/assets/home-walk-exterior.jpg";
-import bandKitchen from "@/assets/home-walk-kitchen.jpg";
+import { IMG } from "@/lib/images";
+import {
+  SITE,
+  socialMeta,
+  MARKET_ALTERNATES,
+  jsonLd,
+  ORGANIZATION_NODE,
+  WEBSITE_NODE,
+  softwareAppNode,
+} from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Quill — One Set of Notes, a Complete Listing Pack" },
-      {
-        name: "description",
-        content:
-          "Turn one set of property notes into a full listing pack: headline, 6–10 key features, a portal or MLS description, teaser, email blast and social captions.",
-      },
-
-      {
-        property: "og:title",
-        content: "Quill — One Set of Notes, a Complete Listing Pack",
-      },
-      {
-        property: "og:description",
-        content:
-          "Turn one set of property notes into a Headline, 6–10 Key Features, a portal or MLS description, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
-      },
+      { title: "AI Listing Description Generator | Quill by CopyByMonk" },
+      { name: "description", content: "AI listing descriptions for UK estate agents and US agents. One set of notes becomes a portal description or MLS remarks, key features, email and social copy." },
+      { property: "og:title", content: "AI Listing Description Generator | Quill by CopyByMonk" },
+      { property: "og:description", content: "AI listing descriptions for UK estate agents and US agents. One set of notes becomes a portal description or MLS remarks, key features, email and social copy." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://copybymonk.com/" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: `${SITE}/` },
+      ...socialMeta({ title: "AI Listing Description Generator | Quill by CopyByMonk", description: "AI listing descriptions for UK estate agents and US agents. One set of notes becomes a portal description or MLS remarks, key features, email and social copy.", locale: "en_GB" }),
+    ],
+    links: [
+      { rel: "canonical", href: `${SITE}/` },
+      ...MARKET_ALTERNATES,
       {
-        name: "twitter:title",
-        content: "Quill — One Set of Notes, a Complete Listing Pack",
-      },
-      {
-        name: "twitter:description",
-        content:
-          "Turn one set of property notes into a Headline, 6–10 Key Features, a portal or MLS description, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
+        rel: "preload",
+        as: "image",
+        type: "image/webp",
+        imageSrcSet: IMG.walkExterior.srcSet,
+        imageSizes: "100vw",
+        fetchPriority: "high",
       },
     ],
-    links: [{ rel: "canonical", href: "https://copybymonk.com/" }],
     scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          name: "Quill",
-          url: "https://copybymonk.com/",
+      jsonLd(ORGANIZATION_NODE),
+      jsonLd(WEBSITE_NODE),
+      jsonLd(
+        softwareAppNode({
+          url: `${SITE}/`,
           description:
-            "Quill turns one set of property notes into a complete listing pack for UK estate agents and US real estate teams.",
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "Quill",
-          url: "https://copybymonk.com/",
-          description:
-            "Quill removes repetitive listing admin between instruction and launch — generating a Headline, Key Features, the portal or MLS description, a short teaser, Email Blast copy and Instagram, Facebook and X captions from one source of truth.",
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "SoftwareApplication",
-          name: "Quill",
-          applicationCategory: "BusinessApplication",
-          operatingSystem: "Web",
-          url: "https://copybymonk.com/",
-          description:
-            "AI listing pack generator for UK estate agents and US real estate teams. One set of notes becomes a Headline, 6–10 Key Features, a portal-ready UK description or MLS-ready remarks, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
-          offers: [
-            {
-              "@type": "Offer",
-              name: "Starter (UK)",
-              price: "39",
-              priceCurrency: "GBP",
-              category: "subscription",
-              url: "https://copybymonk.com/uk-property-listing-generator",
-            },
-            {
-              "@type": "Offer",
-              name: "Pro (UK)",
-              price: "79",
-              priceCurrency: "GBP",
-              category: "subscription",
-              url: "https://copybymonk.com/uk-property-listing-generator",
-            },
-            {
-              "@type": "Offer",
-              name: "Growth (UK)",
-              price: "149",
-              priceCurrency: "GBP",
-              category: "subscription",
-              url: "https://copybymonk.com/uk-property-listing-generator",
-            },
-            {
-              "@type": "Offer",
-              name: "Starter (US)",
-              price: "49",
-              priceCurrency: "USD",
-              category: "subscription",
-              url: "https://copybymonk.com/us-real-estate-listing-generator",
-            },
-            {
-              "@type": "Offer",
-              name: "Pro (US)",
-              price: "99",
-              priceCurrency: "USD",
-              category: "subscription",
-              url: "https://copybymonk.com/us-real-estate-listing-generator",
-            },
-            {
-              "@type": "Offer",
-              name: "Growth (US)",
-              price: "199",
-              priceCurrency: "USD",
-              category: "subscription",
-              url: "https://copybymonk.com/us-real-estate-listing-generator",
-            },
+            "AI listing pack generator for UK estate agents and US real estate agents. One set of notes becomes a Headline, 6–10 Key Features, a portal-ready UK description or MLS-ready remarks, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
+          currency: "GBP",
+          prices: [
+            { name: "Starter (UK)", price: 39 },
+            { name: "Pro (UK)", price: 79 },
+            { name: "Growth (UK)", price: 149 },
           ],
         }),
-      },
+      ),
     ],
   }),
   component: Landing,
@@ -351,12 +279,15 @@ function Hero({ authed }: { authed: boolean }) {
           cannot shift layout or push the CTA down. */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] overflow-hidden lg:h-[42rem]">
         <img
-          src={heroExterior}
+          src={IMG.walkExterior.src}
+          srcSet={IMG.walkExterior.srcSet}
+          sizes="100vw"
           alt=""
           aria-hidden="true"
-          width={1600}
-          height={1008}
+          width={IMG.walkExterior.width}
+          height={IMG.walkExterior.height}
           loading="eager"
+          fetchPriority="high"
           decoding="async"
           className="h-full w-full object-cover"
         />
@@ -577,10 +508,12 @@ function EditorialBand() {
       <div className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
         <div className="relative isolate overflow-hidden rounded-3xl border border-border/70">
           <img
-            src={bandKitchen}
+            src={IMG.walkKitchen.src}
+            srcSet={IMG.walkKitchen.srcSet}
+            sizes="(min-width: 1152px) 1104px, 100vw"
             alt="Bright kitchen and living space with a marble island and sunlight through tall windows"
-            width={1600}
-            height={1008}
+            width={IMG.walkKitchen.width}
+            height={IMG.walkKitchen.height}
             loading="lazy"
             decoding="async"
             className="absolute inset-0 -z-10 h-full w-full object-cover"
@@ -1556,6 +1489,18 @@ function Footer() {
               className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               MLS remarks examples
+            </Link>
+            <Link
+              to="/rightmove-property-description-template"
+              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              Rightmove-style template
+            </Link>
+            <Link
+              to="/real-estate-listing-description-examples"
+              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              US listing description examples
             </Link>
           </nav>
 
