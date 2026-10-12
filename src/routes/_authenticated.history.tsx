@@ -160,7 +160,7 @@ function HistoryPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="max-sm:min-h-11"
+                className="min-h-11 sm:min-h-0"
                 disabled={query.isFetching}
                 onClick={() => setLimit((l) => l + PAGE)}
               >

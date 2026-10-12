@@ -164,11 +164,11 @@ function AuthPage() {
         </div>
         <Card className="border-border/70 bg-card/80 p-7 backdrop-blur">
           <Tabs value={mode} onValueChange={(v) => setMode(v as "login" | "signup")}>
-            <TabsList className="grid w-full grid-cols-2 max-sm:h-auto">
-              <TabsTrigger value="signup" className="max-sm:min-h-11">
+            <TabsList className="grid w-full grid-cols-2 h-auto sm:h-9">
+              <TabsTrigger value="signup" className="min-h-11 sm:min-h-0">
                 Start free trial
               </TabsTrigger>
-              <TabsTrigger value="login" className="max-sm:min-h-11">
+              <TabsTrigger value="login" className="min-h-11 sm:min-h-0">
                 Log in
               </TabsTrigger>
             </TabsList>
@@ -244,7 +244,7 @@ function AuthPage() {
                     placeholder="At least 6 characters"
                   />
                 </div>
-                <Button type="submit" className="w-full max-sm:min-h-11" size="lg" disabled={busy}>
+                <Button type="submit" className="w-full min-h-11 sm:min-h-0" size="lg" disabled={busy}>
                   {busy ? "Please wait…" : mode === "signup" ? "Create account" : "Log in"}
                 </Button>
                 {mode === "login" && (
@@ -252,7 +252,7 @@ function AuthPage() {
                     type="button"
                     onClick={handleForgot}
                     disabled={busy}
-                    className="w-full text-center text-sm text-muted-foreground max-sm:min-h-11 underline-offset-4 hover:text-foreground hover:underline"
+                    className="w-full text-center text-sm text-muted-foreground min-h-11 sm:min-h-0 underline-offset-4 hover:text-foreground hover:underline"
                   >
                     Forgot password?
                   </button>

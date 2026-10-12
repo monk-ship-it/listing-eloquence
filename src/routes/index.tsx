@@ -232,7 +232,7 @@ function MarketToggle({ className = "" }: { className?: string }) {
           role="tab"
           aria-selected={market === m.id}
           onClick={() => setMarket(m.id)}
-          className={`rounded-full px-4 py-1.5 text-xs font-medium transition-colors max-sm:min-h-11 sm:text-sm ${
+          className={`rounded-full px-4 py-1.5 text-xs font-medium transition-colors min-h-11 sm:min-h-0 sm:text-sm ${
             market === m.id
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground"
@@ -264,7 +264,7 @@ function CtaButton({
 }) {
   const { market } = useMarket();
   return (
-    <Button asChild {...rest} className={`max-sm:min-h-11 ${rest.className ?? ""}`}>
+    <Button asChild {...rest} className={`min-h-11 sm:min-h-0 ${rest.className ?? ""}`}>
       <Link to={authed ? "/subscription" : "/auth"} search={{ plan, market }}>
         {children}
       </Link>
@@ -307,7 +307,7 @@ function Header({ user }: { user: boolean }) {
           </Link>
 
           {user ? (
-            <Button asChild className="max-sm:min-h-11">
+            <Button asChild className="min-h-11 sm:min-h-0">
               <Link to="/app">Open app</Link>
             </Button>
           ) : (
@@ -318,7 +318,7 @@ function Header({ user }: { user: boolean }) {
               <Button asChild variant="ghost" size="sm" className="min-h-11 px-3 sm:hidden">
                 <Link to="/auth">Log in</Link>
               </Button>
-              <Button asChild className="max-sm:min-h-11">
+              <Button asChild className="min-h-11 sm:min-h-0">
                 <Link to="/auth" search={{ plan: "starter", market }}>
                   Start free trial
                 </Link>
@@ -405,7 +405,7 @@ function Hero({ authed }: { authed: boolean }) {
               asChild
               size="lg"
               variant="outline"
-              className="w-full border-border bg-card/60 hover:bg-card max-sm:min-h-11 sm:w-auto"
+              className="w-full border-border bg-card/60 hover:bg-card min-h-11 sm:min-h-0 sm:w-auto"
             >
               <a href="#workflow">See the workflow</a>
             </Button>
@@ -861,43 +861,43 @@ function LiveExample() {
                 <TabsList className="-mx-1 flex h-auto w-[calc(100%+0.5rem)] max-w-[calc(100%+0.5rem)] flex-nowrap items-center justify-start gap-1 overflow-x-auto bg-secondary p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:w-full sm:max-w-full">
                   <TabsTrigger
                     value="listing"
-                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs min-h-11 sm:min-h-0 sm:px-2.5 sm:text-sm"
                   >
                     Description
                   </TabsTrigger>
                   <TabsTrigger
                     value="features"
-                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs min-h-11 sm:min-h-0 sm:px-2.5 sm:text-sm"
                   >
                     Key Features
                   </TabsTrigger>
                   <TabsTrigger
                     value="teaser"
-                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs min-h-11 sm:min-h-0 sm:px-2.5 sm:text-sm"
                   >
                     Teaser
                   </TabsTrigger>
                   <TabsTrigger
                     value="email"
-                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs min-h-11 sm:min-h-0 sm:px-2.5 sm:text-sm"
                   >
                     Email Blast
                   </TabsTrigger>
                   <TabsTrigger
                     value="instagram"
-                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs min-h-11 sm:min-h-0 sm:px-2.5 sm:text-sm"
                   >
                     Instagram
                   </TabsTrigger>
                   <TabsTrigger
                     value="facebook"
-                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs min-h-11 sm:min-h-0 sm:px-2.5 sm:text-sm"
                   >
                     Facebook
                   </TabsTrigger>
                   <TabsTrigger
                     value="x"
-                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs min-h-11 sm:min-h-0 sm:px-2.5 sm:text-sm"
                   >
                     X
                   </TabsTrigger>
@@ -1499,7 +1499,7 @@ function FinalCta({ authed }: { authed: boolean }) {
                 asChild
                 size="lg"
                 variant="outline"
-                className="w-full border-border bg-card/60 hover:bg-card max-sm:min-h-11 sm:w-auto"
+                className="w-full border-border bg-card/60 hover:bg-card min-h-11 sm:min-h-0 sm:w-auto"
               >
                 <a href="#example">See a worked example</a>
               </Button>
@@ -1529,31 +1529,31 @@ function Footer() {
           >
             <Link
               to="/uk-property-listing-generator"
-              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground max-sm:min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               UK property listing generator
             </Link>
             <Link
               to="/us-real-estate-listing-generator"
-              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground max-sm:min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               US real estate listing generator
             </Link>
             <Link
               to="/blog"
-              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground max-sm:min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               Guides
             </Link>
             <Link
               to="/property-description-examples"
-              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground max-sm:min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               UK description examples
             </Link>
             <Link
               to="/mls-remarks-examples"
-              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground max-sm:min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               MLS remarks examples
             </Link>
@@ -1561,7 +1561,7 @@ function Footer() {
 
           <a
             href={`mailto:${CONTACT_EMAIL}`}
-            className="inline-flex shrink-0 items-center whitespace-nowrap text-sm max-sm:min-h-11 text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex shrink-0 items-center whitespace-nowrap text-sm min-h-11 sm:min-h-0 text-muted-foreground transition-colors hover:text-foreground"
           >
             {CONTACT_EMAIL}
           </a>
