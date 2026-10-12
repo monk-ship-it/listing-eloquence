@@ -48,19 +48,19 @@ export function BlogShell({ children }: { children: ReactNode }) {
         <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <p>© {new Date().getFullYear()} Quill by CopyByMonk</p>
           <nav aria-label="Footer" className="flex flex-wrap gap-x-4 gap-y-2">
-            <Link to="/" className="hover:text-foreground">
+            <Link to="/" className="inline-flex items-center hover:text-foreground max-sm:min-h-11">
               Home
             </Link>
-            <Link to="/blog" className="hover:text-foreground">
+            <Link to="/blog" className="inline-flex items-center hover:text-foreground max-sm:min-h-11">
               Blog
             </Link>
-            <Link to="/uk-property-listing-generator" className="hover:text-foreground">
+            <Link to="/uk-property-listing-generator" className="inline-flex items-center hover:text-foreground max-sm:min-h-11">
               UK listing generator
             </Link>
-            <Link to="/us-real-estate-listing-generator" className="hover:text-foreground">
+            <Link to="/us-real-estate-listing-generator" className="inline-flex items-center hover:text-foreground max-sm:min-h-11">
               US listing generator
             </Link>
-            <a href="/rss.xml" className="hover:text-foreground">
+            <a href="/rss.xml" className="inline-flex items-center hover:text-foreground max-sm:min-h-11">
               RSS
             </a>
           </nav>
