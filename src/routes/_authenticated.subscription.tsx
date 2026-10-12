@@ -49,7 +49,6 @@ import {
   Crown,
   CreditCard,
   ArrowLeft,
-  
   Clock,
 } from "lucide-react";
 
@@ -84,7 +83,11 @@ function daysLeft(iso: string | null): number | null {
 
 const STATUS_META: Record<
   string,
-  { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ReactNode }
+  {
+    label: string;
+    variant: "default" | "secondary" | "destructive" | "outline";
+    icon: React.ReactNode;
+  }
 > = {
   trialing: {
     label: "Free trial",
@@ -244,7 +247,9 @@ function SubscriptionPage() {
       window.history.replaceState(window.history.state, "", `/subscription?market=${market}`);
       window.location.href = url;
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not start checkout. Please try again.");
+      toast.error(
+        err instanceof Error ? err.message : "Could not start checkout. Please try again.",
+      );
       setCheckoutBusy(null);
     }
   }
@@ -262,9 +267,6 @@ function SubscriptionPage() {
     startCheckout(planParam);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, user, planParam, hasAccess, isComped]);
-
-
-
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-10">
@@ -360,7 +362,9 @@ function SubscriptionPage() {
                     <span className="text-sm">
                       {fmtDate(sub?.trialEnd ?? null)}
                       {remaining !== null && (
-                        <span className="ml-2 text-xs text-muted-foreground">({remaining} days left)</span>
+                        <span className="ml-2 text-xs text-muted-foreground">
+                          ({remaining} days left)
+                        </span>
                       )}
                     </span>
                   }
@@ -413,7 +417,8 @@ function SubscriptionPage() {
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Listings renew at the start of each month. The {TRIAL_DAYS}-day free trial on the
-                Starter plan begins at secure checkout — card required, cancel anytime before renewal.
+                Starter plan begins at secure checkout — card required, cancel anytime before
+                renewal.
               </p>
               {hasAccess && (
                 <p className="mt-2 text-sm text-muted-foreground">
@@ -429,7 +434,7 @@ function SubscriptionPage() {
               )}
               {!hasAccess && (
                 <div className="mt-4 inline-flex rounded-lg border border-border/70 p-1">
-                  {(Object.values(MARKETS)).map((m) => (
+                  {Object.values(MARKETS).map((m) => (
                     <button
                       key={m.id}
                       type="button"
@@ -446,7 +451,6 @@ function SubscriptionPage() {
                 </div>
               )}
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
-
                 {PLANS.map((plan) => {
                   const isCurrent = hasAccess && plan.id === currentPlan.id;
                   return (
@@ -465,7 +469,9 @@ function SubscriptionPage() {
 
                         <span className="text-xs font-normal text-muted-foreground">/mo</span>
                       </p>
-                      <p className="mt-1 text-xs text-primary">{plan.monthlyListings} listings / month</p>
+                      <p className="mt-1 text-xs text-primary">
+                        {plan.monthlyListings} listings / month
+                      </p>
                       {hasAccess ? (
                         isCurrent ? (
                           <Button className="mt-4 w-full" size="sm" variant="outline" disabled>
@@ -474,7 +480,9 @@ function SubscriptionPage() {
                           </Button>
                         ) : (
                           <Button className="mt-4 w-full" size="sm" variant="outline" asChild>
-                            <a href={`mailto:${CONTACT_EMAIL}?subject=Change%20to%20${plan.name}%20plan`}>
+                            <a
+                              href={`mailto:${CONTACT_EMAIL}?subject=Change%20to%20${plan.name}%20plan`}
+                            >
                               Contact support
                             </a>
                           </Button>
@@ -501,7 +509,6 @@ function SubscriptionPage() {
               </div>
             </Card>
           )}
-
 
           {hasAccess && !sub?.isComped && (status === "active" || status === "trialing") && (
             <Card className="p-6">
@@ -530,8 +537,9 @@ function SubscriptionPage() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Cancel your subscription?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          You'll keep full access until {fmtDate(sub?.currentPeriodEnd ?? null)}. After
-                          that your subscription won't renew. You can resume any time before then.
+                          You'll keep full access until {fmtDate(sub?.currentPeriodEnd ?? null)}.
+                          After that your subscription won't renew. You can resume any time before
+                          then.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>

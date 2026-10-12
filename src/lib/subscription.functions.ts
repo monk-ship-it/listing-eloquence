@@ -224,7 +224,9 @@ export const cancelMySubscription = createServerFn({ method: "POST" })
         status: updated.status,
       })
       .eq("user_id", userId)
-      .select("status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_price_id")
+      .select(
+        "status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_price_id",
+      )
       .maybeSingle();
 
     return toInfo(saved);
@@ -266,7 +268,9 @@ export const resumeMySubscription = createServerFn({ method: "POST" })
         status: updated.status,
       })
       .eq("user_id", userId)
-      .select("status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_price_id")
+      .select(
+        "status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_price_id",
+      )
       .maybeSingle();
 
     return toInfo(saved);
@@ -387,7 +391,9 @@ export const verifyCheckoutSession = createServerFn({ method: "POST" })
 
       const { data: dbRow } = await supabase
         .from("subscribers")
-        .select("status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_price_id")
+        .select(
+          "status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_price_id",
+        )
         .eq("user_id", userId)
         .maybeSingle();
 

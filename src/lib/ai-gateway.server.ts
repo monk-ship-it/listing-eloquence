@@ -25,10 +25,7 @@ export async function getConfiguredClaudeModel(): Promise<string> {
  * The prompt asks for JSON, so callers parse the returned string as JSON.
  * When `model` is omitted, the model configured in app_settings is used.
  */
-export async function callLovableAiJson(
-  messages: ChatMessage[],
-  model?: string,
-): Promise<string> {
+export async function callLovableAiJson(messages: ChatMessage[], model?: string): Promise<string> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error("Missing ANTHROPIC_API_KEY");
 

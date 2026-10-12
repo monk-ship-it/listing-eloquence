@@ -176,13 +176,7 @@ export function coerceLegacyEmailBlast(raw: unknown): EmailBlast | null {
   const headline = typeof e.headline === "string" ? e.headline.trim() : "";
   const body = typeof e.body === "string" ? e.body.trim() : "";
   const callToAction = typeof e.callToAction === "string" ? e.callToAction.trim() : "";
-  if (
-    subjectLines.length === 0 &&
-    !previewText &&
-    !headline &&
-    !body &&
-    !callToAction
-  ) {
+  if (subjectLines.length === 0 && !previewText && !headline && !body && !callToAction) {
     return null;
   }
   return { subjectLines, previewText, headline, body, callToAction };

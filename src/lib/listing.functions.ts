@@ -284,7 +284,6 @@ export const generateListing = createServerFn({ method: "POST" })
       }
     };
 
-
     try {
       const market = resolveMarketId(data.market);
       const voice = (data.voice ?? "professional") as VoiceId;

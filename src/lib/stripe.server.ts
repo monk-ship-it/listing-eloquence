@@ -33,10 +33,7 @@ export function getStripeSubscription(subscriptionId: string) {
 }
 
 export function getCheckoutSession(sessionId: string) {
-  return stripeRequest(
-    `/checkout/sessions/${sessionId}?expand[]=subscription`,
-    "GET",
-  );
+  return stripeRequest(`/checkout/sessions/${sessionId}?expand[]=subscription`, "GET");
 }
 
 let _priceCache: { at: number; map: Record<string, string> } | undefined;
@@ -50,13 +47,9 @@ let _priceCache: { at: number; map: Record<string, string> } | undefined;
  * 2. Fall back to matching an active recurring MONTHLY price in the market's
  *    currency at the exact plan amount only if the constant is somehow missing.
  */
-export async function resolvePriceId(
-  plan: string,
-  market: MarketId = "uk",
-): Promise<string> {
+export async function resolvePriceId(plan: string, market: MarketId = "uk"): Promise<string> {
   const marketPricing = PLAN_PRICING[market] ?? PLAN_PRICING.uk;
-  const planPricing =
-    marketPricing[plan as PlanId] ?? marketPricing.starter;
+  const planPricing = marketPricing[plan as PlanId] ?? marketPricing.starter;
 
   const known = planPricing.priceId;
   if (known) return known;
@@ -96,7 +89,6 @@ export async function resolvePriceId(
   return priceId;
 }
 
-
 export interface CheckoutParams {
   plan: string;
   priceId: string;
@@ -134,7 +126,6 @@ export async function createSubscriptionCheckoutSession(params: CheckoutParams) 
     payment_method_collection: "always",
   };
 
-
   if (params.customerId) {
     form.customer = params.customerId;
   } else if (params.email) {
@@ -148,10 +139,7 @@ export async function createSubscriptionCheckoutSession(params: CheckoutParams) 
   return stripeRequest("/checkout/sessions", "POST", form);
 }
 
-export function setSubscriptionCancelAtPeriodEnd(
-  subscriptionId: string,
-  cancel: boolean,
-) {
+export function setSubscriptionCancelAtPeriodEnd(subscriptionId: string, cancel: boolean) {
   return stripeRequest(`/subscriptions/${subscriptionId}`, "POST", {
     cancel_at_period_end: cancel ? "true" : "false",
   });
