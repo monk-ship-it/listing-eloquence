@@ -3,6 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
 import { APP_NAME } from "@/lib/config";
+import {
+  SITE,
+  socialMeta,
+  MARKET_ALTERNATES,
+  jsonLd,
+  breadcrumbNode,
+  softwareAppNode,
+} from "@/lib/seo";
 import { Check, ArrowRight, ShieldCheck, Mic, Sparkles, Copy } from "lucide-react";
 
 const CANONICAL = "https://copybymonk.com/uk-property-listing-generator";
@@ -37,41 +45,49 @@ const FAQS: { q: string; a: string }[] = [
 export const Route = createFileRoute("/uk-property-listing-generator")({
   head: () => ({
     meta: [
-      { title: `UK Property Listing Generator — ${APP_NAME}` },
+      { title: "Estate Agent Property Description Generator (UK) | Quill" },
       {
         name: "description",
         content:
-          "Turn one set of property notes into a portal-ready UK listing pack: headline, 6–10 key features, description, teaser, email blast and social captions.",
+          "AI property description generator for UK estate agents: portal-ready descriptions, 6–10 key features, teaser, email blast and social captions from your notes.",
       },
-
-      { property: "og:title", content: `UK Property Listing Generator — ${APP_NAME}` },
+      { property: "og:title", content: "Estate Agent Property Description Generator (UK) | Quill" },
       {
         property: "og:description",
         content:
-          "Headline, Key Features, portal-ready description, teaser, Email Blast and Instagram/Facebook/X captions — written from your facts, in your voice.",
+          "AI property description generator for UK estate agents: portal-ready descriptions, 6–10 key features, teaser, email blast and social captions from your notes.",
       },
       { property: "og:url", content: CANONICAL },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: `UK Property Listing Generator — ${APP_NAME}` },
-      {
-        name: "twitter:description",
-        content:
-          "One set of notes becomes a full UK listing pack: Headline, Key Features, portal description, teaser, Email Blast and Instagram/Facebook/X captions.",
-      },
+      ...socialMeta({
+        title: "Estate Agent Property Description Generator (UK) | Quill",
+        description:
+          "AI property description generator for UK estate agents: portal-ready descriptions, 6–10 key features, teaser, email blast and social captions from your notes.",
+        locale: "en_GB",
+      }),
     ],
-    links: [
-      { rel: "canonical", href: CANONICAL },
-      { rel: "alternate", hrefLang: "en-GB", href: CANONICAL },
-      {
-        rel: "alternate",
-        hrefLang: "en-US",
-        href: "https://copybymonk.com/us-real-estate-listing-generator",
-      },
-      { rel: "alternate", hrefLang: "x-default", href: CANONICAL },
-    ],
+    links: [{ rel: "canonical", href: CANONICAL }, ...MARKET_ALTERNATES],
 
     scripts: [
+      jsonLd(
+        breadcrumbNode([
+          { name: "Home", url: `${SITE}/` },
+          { name: "UK property listing generator", url: CANONICAL },
+        ]),
+      ),
+      jsonLd(
+        softwareAppNode({
+          url: CANONICAL,
+          description:
+            "AI property description generator for UK estate agents: portal-ready descriptions, Key Features, teaser, Email Blast and social captions from one set of notes.",
+          currency: "GBP",
+          prices: [
+            { name: "Starter (UK)", price: 39 },
+            { name: "Pro (UK)", price: 79 },
+            { name: "Growth (UK)", price: 149 },
+          ],
+        }),
+      ),
       {
         type: "application/ld+json",
         children: JSON.stringify({

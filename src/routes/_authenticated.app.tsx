@@ -28,7 +28,7 @@ import { Copy, Sparkles, RefreshCw, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app")({
   head: () => ({
-    meta: [{ title: `Generator — ${APP_NAME}` }, { name: "robots", content: "noindex,follow" }],
+    meta: [{ title: `Generator — ${APP_NAME}` }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: GeneratorPage,
 });

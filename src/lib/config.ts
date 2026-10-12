@@ -1,8 +1,11 @@
-import logoAsset from "@/assets/quill-logo.png.asset.json";
+import logo72 from "@/assets/quill-logo-72.webp";
+import logo144 from "@/assets/quill-logo-144.webp";
 
 export const APP_NAME = "Quill";
 export const APP_TAGLINE = "AI listing copy for UK estate agents";
-export const LOGO_URL = logoAsset.url;
+/** Small WebP exports of the brand mark (1x/2x for the ~36px header logo). */
+export const LOGO_URL = logo72;
+export const LOGO_SRCSET = `${logo72} 1x, ${logo144} 2x`;
 
 export const TRIAL_DAYS = 14;
 export const CONTACT_EMAIL = "domenico@copybymonk.com";

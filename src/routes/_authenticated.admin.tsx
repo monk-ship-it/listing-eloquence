@@ -12,7 +12,9 @@ import { amIAdmin, getClaudeModelSetting, saveClaudeModelSetting } from "@/lib/a
 import { ShieldCheck, RefreshCw, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: `Admin — ${APP_NAME}` }] }),
+  head: () => ({
+    meta: [{ title: `Admin — ${APP_NAME}` }, { name: "robots", content: "noindex, nofollow" }],
+  }),
   component: AdminPage,
 });
 

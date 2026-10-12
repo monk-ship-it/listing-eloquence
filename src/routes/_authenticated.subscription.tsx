@@ -62,7 +62,12 @@ export const Route = createFileRoute("/_authenticated/subscription")({
     if (search.market === "us" || search.market === "uk") out.market = search.market as MarketId;
     return out;
   },
-  head: () => ({ meta: [{ title: `Subscription — ${APP_NAME}` }] }),
+  head: () => ({
+    meta: [
+      { title: `Subscription — ${APP_NAME}` },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: SubscriptionPage,
 });
 
