@@ -14,14 +14,18 @@ export interface GenerationRecord {
 
 export const listMyGenerations = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }): Promise<GenerationRecord[]> => {
+  .inputValidator((input: { limit?: number } | undefined) => {
+    const n = Number(input?.limit ?? 100);
+    return { limit: Number.isFinite(n) ? Math.min(Math.max(Math.floor(n), 1), 2000) : 100 };
+  })
+  .handler(async ({ context, data: params }): Promise<GenerationRecord[]> => {
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("generations")
       .select("id, voice, property_title, created_at, inputs, output")
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
-      .limit(100);
+      .limit(params.limit);
     if (error) throw new Error(error.message);
     return (data ?? []).map((row) => ({
       id: row.id,
