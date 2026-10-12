@@ -58,6 +58,21 @@ export function resolveMarketId(market: string | null | undefined): MarketId {
   return market === "us" ? "us" : "uk";
 }
 
+const MARKET_STORAGE_KEY = "quill-market";
+
+/** Read the visitor's saved market choice (browser only; call from effects). */
+export function readSavedMarket(): MarketId | null {
+  if (typeof window === "undefined") return null;
+  const v = window.localStorage.getItem(MARKET_STORAGE_KEY);
+  return v === "us" || v === "uk" ? v : null;
+}
+
+/** Persist the visitor's market choice (browser only). */
+export function saveMarketChoice(market: MarketId): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(MARKET_STORAGE_KEY, market);
+}
+
 /**
  * Authoritative, hard-coded Stripe price identifiers per market and plan.
  * Amounts are in the currency's minor unit (pence / cents). These are the

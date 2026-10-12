@@ -35,6 +35,8 @@ import {
   CONTACT_EMAIL,
   MARKETS,
   resolveMarketId,
+  readSavedMarket,
+  saveMarketChoice,
   planPriceDisplay,
   type PlanId,
   type MarketId,
@@ -119,7 +121,11 @@ const STATUS_META: Record<
 function SubscriptionPage() {
   const { user } = useAuth();
   const { plan: planParam, market: marketParam } = Route.useSearch();
-  const [market, setMarket] = useState<MarketId>(resolveMarketId(marketParam));
+  const [market, setMarketState] = useState<MarketId>(resolveMarketId(marketParam));
+  const setMarket = (m: MarketId) => {
+    setMarketState(m);
+    saveMarketChoice(m);
+  };
   const checkoutFn = useServerFn(createCheckoutSession);
   const subFn = useServerFn(getMySubscription);
   const usageFn = useServerFn(getMyUsage);
@@ -199,6 +205,19 @@ function SubscriptionPage() {
   const currentPlan = getPlan(sub?.plan);
 
   const isComped = sub?.isComped ?? false;
+  // Subscribers see prices in their billing market; others use ?market= or
+  // their saved choice (default UK).
+  const hasBillingMarket = !!sub && rawStatus !== "none";
+  useEffect(() => {
+    if (!sub) return;
+    if (hasBillingMarket) setMarketState(sub.market);
+    else if (!marketParam) {
+      const saved = readSavedMarket();
+      if (saved) setMarketState(saved);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sub, hasBillingMarket, marketParam]);
+  const displayMarket: MarketId = hasBillingMarket && sub ? sub.market : market;
 
   async function startCheckout(planId: PlanId = currentPlan.id) {
     if (!user) {
@@ -221,6 +240,8 @@ function SubscriptionPage() {
       const { url } = await checkoutFn({
         data: { plan: planId, origin: window.location.origin, market },
       });
+      // Drop ?plan= so pressing Back from Stripe doesn't re-open checkout.
+      window.history.replaceState(window.history.state, "", `/subscription?market=${market}`);
       window.location.href = url;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not start checkout. Please try again.");
@@ -316,7 +337,7 @@ function SubscriptionPage() {
               {!sub?.isComped && (
                 <Row
                   label="Plan"
-                  value={`${currentPlan.name} — ${currentPlan.price} / month`}
+                  value={`${currentPlan.name} — ${planPriceDisplay(currentPlan.id, displayMarket)} / month`}
                 />
               )}
               {!sub?.isComped && usage && (
