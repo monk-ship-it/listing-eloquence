@@ -1,11 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /app
-Disallow: /account
-Disallow: /admin
-Disallow: /subscription
-Disallow: /history
-Disallow: /auth
 Disallow: /api/
 Disallow: /.mcp/
 Disallow: /.lovable/

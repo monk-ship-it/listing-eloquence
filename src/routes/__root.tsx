@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -13,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { htmlLangFor } from "@/lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -79,58 +81,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Quill — AI Listing Pack for UK Estate Agents & US Real Estate Teams" },
+      { title: "Quill by CopyByMonk — AI Listing Packs for Agents" },
       {
         name: "description",
         content:
-          "Quill turns one set of property notes into a complete listing pack — a portal-ready UK description or MLS-ready remarks, a Headline, 6–10 Key Features bullets, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
+          "Quill turns one set of property notes into a complete AI listing pack for UK estate agents and US real estate agents.",
       },
-      { name: "author", content: "Quill" },
-      {
-        property: "og:title",
-        content: "Quill — AI Listing Pack for UK Estate Agents & US Real Estate Teams",
-      },
-      {
-        property: "og:description",
-        content:
-          "One set of notes becomes a full listing pack: portal or MLS description, Headline, Key Features, short teaser, Email Blast copy and Instagram, Facebook and X captions.",
-      },
+      { name: "author", content: "CopyByMonk" },
+      { name: "theme-color", content: "#f7f3ea" },
       { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "Quill" },
-      { name: "twitter:card", content: "summary_large_image" },
-      {
-        name: "twitter:title",
-        content: "Quill — AI Listing Pack for UK Estate Agents & US Real Estate Teams",
-      },
-      {
-        name: "twitter:description",
-        content:
-          "One set of notes becomes a full listing pack: portal or MLS description, Headline, Key Features, short teaser, Email Blast copy and Instagram, Facebook and X captions.",
-      },
-      {
-        property: "og:image",
-        content:
-          "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781872351657-CopyByMonk_Stripe_white_bg_circle_icon_512x512.webp",
-      },
-      { property: "og:image:type", content: "image/webp" },
-      { property: "og:image:width", content: "512" },
-      { property: "og:image:height", content: "512" },
-      { property: "og:image:alt", content: "Quill — AI listing pack generator" },
-      {
-        name: "twitter:image",
-        content:
-          "https://storage.googleapis.com/gpt-engineer-file-uploads/Arc8NWQRnIhpr018jtdA4m4FLhY2/social-images/social-1781872351657-CopyByMonk_Stripe_white_bg_circle_icon_512x512.webp",
-      },
-      { name: "twitter:image:alt", content: "Quill — AI listing pack generator" },
+      { property: "og:site_name", content: "Quill by CopyByMonk" },
     ],
     links: [
-      { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap",
       },
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png" },
+      { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+      { rel: "manifest", href: "/site.webmanifest" },
     ],
     scripts: [
       {
@@ -148,8 +121,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <html lang="en" className="dark">
+    <html lang={htmlLangFor(pathname)} className="dark">
       <head>
         <HeadContent />
       </head>
