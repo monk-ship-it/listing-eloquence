@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { Reveal } from "@/components/Reveal";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,8 @@ import {
   MARKETS,
   DEFAULT_MARKET,
   planPriceDisplay,
+  readSavedMarket,
+  saveMarketChoice,
   type PlanId,
   type MarketId,
 } from "@/lib/config";
@@ -850,47 +852,52 @@ function LiveExample() {
                 </span>
               </div>
 
-              <Tabs defaultValue="listing" className="mt-4 w-full min-w-0">
+              <Tabs defaultValue="listing" className="relative mt-4 w-full min-w-0">
+                {/* Right-edge fade hints that more tabs scroll into view on mobile. */}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute right-0 top-0 z-10 h-[3.25rem] w-8 rounded-r-md bg-gradient-to-l from-secondary to-transparent sm:hidden"
+                />
                 <TabsList className="-mx-1 flex h-auto w-[calc(100%+0.5rem)] max-w-[calc(100%+0.5rem)] flex-nowrap items-center justify-start gap-1 overflow-x-auto bg-secondary p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:w-full sm:max-w-full">
                   <TabsTrigger
                     value="listing"
-                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
                   >
                     Description
                   </TabsTrigger>
                   <TabsTrigger
                     value="features"
-                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
                   >
                     Key Features
                   </TabsTrigger>
                   <TabsTrigger
                     value="teaser"
-                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
                   >
                     Teaser
                   </TabsTrigger>
                   <TabsTrigger
                     value="email"
-                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
                   >
                     Email Blast
                   </TabsTrigger>
                   <TabsTrigger
                     value="instagram"
-                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
                   >
                     Instagram
                   </TabsTrigger>
                   <TabsTrigger
                     value="facebook"
-                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
                   >
                     Facebook
                   </TabsTrigger>
                   <TabsTrigger
                     value="x"
-                    className="shrink-0 px-2 py-1 text-xs sm:px-2.5 sm:text-sm"
+                    className="shrink-0 px-2 py-1 text-xs max-sm:min-h-11 sm:px-2.5 sm:text-sm"
                   >
                     X
                   </TabsTrigger>
@@ -1522,31 +1529,31 @@ function Footer() {
           >
             <Link
               to="/uk-property-listing-generator"
-              className="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground max-sm:min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               UK property listing generator
             </Link>
             <Link
               to="/us-real-estate-listing-generator"
-              className="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground max-sm:min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               US real estate listing generator
             </Link>
             <Link
               to="/blog"
-              className="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground max-sm:min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               Guides
             </Link>
             <Link
               to="/property-description-examples"
-              className="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground max-sm:min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               UK description examples
             </Link>
             <Link
               to="/mls-remarks-examples"
-              className="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground max-sm:min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               MLS remarks examples
             </Link>
@@ -1554,7 +1561,7 @@ function Footer() {
 
           <a
             href={`mailto:${CONTACT_EMAIL}`}
-            className="shrink-0 whitespace-nowrap text-sm text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex shrink-0 items-center whitespace-nowrap text-sm max-sm:min-h-11 text-muted-foreground transition-colors hover:text-foreground"
           >
             {CONTACT_EMAIL}
           </a>
