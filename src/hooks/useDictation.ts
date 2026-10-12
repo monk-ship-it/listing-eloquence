@@ -57,7 +57,8 @@ function canUseLiveSpeech() {
   if (typeof navigator === "undefined" || !getRecognitionCtor()) return false;
   const ua = navigator.userAgent;
   const iOS =
-    /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    /iPad|iPhone|iPod/.test(ua) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const inApp = /; wv\)|FBAN|FBAV|Instagram|LinkedInApp|GSA\//.test(ua);
   const touch = navigator.maxTouchPoints > 0 || /Android|Mobi/i.test(ua);
   const chromium = /Chrome\/|Edg\//.test(ua) && !/OPR\/|Firefox/.test(ua);
@@ -139,7 +140,8 @@ export function useDictation(onResult: (text: string) => void, lang?: string) {
       (stream) => {
         streamRef.current = stream;
         const mimeType = MIME_CANDIDATES.find(
-          (m) => typeof MediaRecorder.isTypeSupported === "function" && MediaRecorder.isTypeSupported(m),
+          (m) =>
+            typeof MediaRecorder.isTypeSupported === "function" && MediaRecorder.isTypeSupported(m),
         );
         let rec: MediaRecorder;
         try {

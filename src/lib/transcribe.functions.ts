@@ -58,8 +58,15 @@ export const transcribeAudio = createServerFn({ method: "POST" })
     }
 
     // MediaRecorder sometimes labels audio-only output as video/*.
-    const audioType = data.type.startsWith("video/") ? data.type.replace("video/", "audio/") : data.type;
-    const ext = audioType.includes("mp4") || audioType.includes("aac") ? "m4a" : audioType.includes("ogg") ? "ogg" : "webm";
+    const audioType = data.type.startsWith("video/")
+      ? data.type.replace("video/", "audio/")
+      : data.type;
+    const ext =
+      audioType.includes("mp4") || audioType.includes("aac")
+        ? "m4a"
+        : audioType.includes("ogg")
+          ? "ogg"
+          : "webm";
     const blob = new Blob([await data.file.arrayBuffer()], { type: audioType });
     const iso = data.lang.split("-")[0];
 
