@@ -16,6 +16,7 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MlsRemarksExamplesRouteImport } from './routes/mls-remarks-examples'
 import { Route as PropertyDescriptionExamplesRouteImport } from './routes/property-description-examples'
 import { Route as RealEstateListingDescriptionExamplesRouteImport } from './routes/real-estate-listing-description-examples'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RightmovePropertyDescriptionTemplateRouteImport } from './routes/rightmove-property-description-template'
 import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -76,6 +77,11 @@ const RealEstateListingDescriptionExamplesRoute =
     path: '/real-estate-listing-description-examples',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RightmovePropertyDescriptionTemplateRoute =
   RightmovePropertyDescriptionTemplateRouteImport.update({
     id: '/rightmove-property-description-template',
@@ -209,6 +215,7 @@ export interface FileRoutesByFullPath {
   '/mls-remarks-examples': typeof MlsRemarksExamplesRoute
   '/property-description-examples': typeof PropertyDescriptionExamplesRoute
   '/real-estate-listing-description-examples': typeof RealEstateListingDescriptionExamplesRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/rightmove-property-description-template': typeof RightmovePropertyDescriptionTemplateRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -240,6 +247,7 @@ export interface FileRoutesByTo {
   '/mls-remarks-examples': typeof MlsRemarksExamplesRoute
   '/property-description-examples': typeof PropertyDescriptionExamplesRoute
   '/real-estate-listing-description-examples': typeof RealEstateListingDescriptionExamplesRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/rightmove-property-description-template': typeof RightmovePropertyDescriptionTemplateRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -273,6 +281,7 @@ export interface FileRoutesById {
   '/mls-remarks-examples': typeof MlsRemarksExamplesRoute
   '/property-description-examples': typeof PropertyDescriptionExamplesRoute
   '/real-estate-listing-description-examples': typeof RealEstateListingDescriptionExamplesRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/rightmove-property-description-template': typeof RightmovePropertyDescriptionTemplateRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -306,6 +315,7 @@ export interface FileRouteTypes {
     | '/mls-remarks-examples'
     | '/property-description-examples'
     | '/real-estate-listing-description-examples'
+    | '/reset-password'
     | '/rightmove-property-description-template'
     | '/rss.xml'
     | '/sitemap.xml'
@@ -337,6 +347,7 @@ export interface FileRouteTypes {
     | '/mls-remarks-examples'
     | '/property-description-examples'
     | '/real-estate-listing-description-examples'
+    | '/reset-password'
     | '/rightmove-property-description-template'
     | '/rss.xml'
     | '/sitemap.xml'
@@ -369,6 +380,7 @@ export interface FileRouteTypes {
     | '/mls-remarks-examples'
     | '/property-description-examples'
     | '/real-estate-listing-description-examples'
+    | '/reset-password'
     | '/rightmove-property-description-template'
     | '/rss.xml'
     | '/sitemap.xml'
@@ -402,6 +414,7 @@ export interface RootRouteChildren {
   MlsRemarksExamplesRoute: typeof MlsRemarksExamplesRoute
   PropertyDescriptionExamplesRoute: typeof PropertyDescriptionExamplesRoute
   RealEstateListingDescriptionExamplesRoute: typeof RealEstateListingDescriptionExamplesRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   RightmovePropertyDescriptionTemplateRoute: typeof RightmovePropertyDescriptionTemplateRoute
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -471,6 +484,13 @@ declare module '@tanstack/react-router' {
       path: '/real-estate-listing-description-examples'
       fullPath: '/real-estate-listing-description-examples'
       preLoaderRoute: typeof RealEstateListingDescriptionExamplesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rightmove-property-description-template': {
@@ -666,6 +686,7 @@ const rootRouteChildren: RootRouteChildren = {
   PropertyDescriptionExamplesRoute: PropertyDescriptionExamplesRoute,
   RealEstateListingDescriptionExamplesRoute:
     RealEstateListingDescriptionExamplesRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   RightmovePropertyDescriptionTemplateRoute:
     RightmovePropertyDescriptionTemplateRoute,
   RssDotxmlRoute: RssDotxmlRoute,
