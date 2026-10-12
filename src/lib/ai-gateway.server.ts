@@ -40,34 +40,57 @@ export async function callLovableAiJson(messages: ChatMessage[], model?: string)
     .filter((m) => m.role !== "system")
     .map((m) => ({ role: m.role, content: m.content }));
 
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 60_000);
+  let res: Response;
+  try {
+    res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
       model: resolvedModel,
       max_tokens: 4096,
       system: systemPrompt || undefined,
       messages: conversation,
-    }),
-  });
-
-  if (res.status === 429) {
-    throw new Error("RATE_LIMIT");
-  }
-  if (res.status === 401 || res.status === 403) {
-    throw new Error("The Claude API key was rejected. Please check the key and try again.");
-  }
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Claude API error ${res.status}: ${text}`);
+      }),
+    });
+  } catch (err) {
+    clearTimeout(timer);
+    if (err instanceof Error && err.name === "AbortError") {
+      throw new Error("AI_TIMEOUT");
+    }
+    console.error("Claude request failed", err);
+    throw new Error("AI_UNAVAILABLE");
   }
 
-  const data = await res.json();
-  const blocks = Array.isArray(data?.content) ? data.content : [];
+  try {
+    if (res.status === 429) {
+      throw new Error("RATE_LIMIT");
+    }
+    if (!res.ok) {
+      // Raw provider body stays in server logs only.
+      const text = await res.text().catch(() => "");
+      console.error("Claude API error", res.status, text);
+      throw new Error("AI_UNAVAILABLE");
+    }
+    const data = await res.json();
+    return extractText(data);
+  } catch (err) {
+    if (err instanceof Error && err.name === "AbortError") throw new Error("AI_TIMEOUT");
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function extractText(data: unknown): string {
+  const d = data as { content?: unknown };
+  const blocks = Array.isArray(d?.content) ? d.content : [];
   return blocks
     .filter((b: { type?: string }) => b?.type === "text")
     .map((b: { text?: string }) => b.text ?? "")
@@ -107,6 +130,7 @@ export async function validateClaudeModel(model: string): Promise<string | null>
   if (res.status === 429) {
     return "Rate limited while validating. Please try again in a moment.";
   }
-  const text = await res.text();
-  return `Validation failed (${res.status}): ${text}`;
+  const text = await res.text().catch(() => "");
+  console.error("Claude model validation failed", res.status, text);
+  return `Validation failed (${res.status}). Please check the model id and try again.`;
 }
