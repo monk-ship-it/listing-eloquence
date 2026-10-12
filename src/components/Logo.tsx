@@ -1,4 +1,4 @@
-import { LOGO_URL, APP_NAME } from "@/lib/config";
+import { LOGO_URL, LOGO_SRCSET, APP_NAME } from "@/lib/config";
 import { cn } from "@/lib/utils";
 
 export function Logo({
@@ -14,9 +14,10 @@ export function Logo({
     <span className={cn("inline-flex items-center gap-2 sm:gap-2.5", className)}>
       <img
         src={LOGO_URL}
+        srcSet={LOGO_SRCSET}
         alt={`${APP_NAME} logo`}
-        width={72}
-        height={72}
+        width={36}
+        height={36}
         decoding="async"
         className="h-8 w-8 shrink-0 rounded-xl object-cover ring-1 ring-primary/40 sm:h-9 sm:w-9"
       />
