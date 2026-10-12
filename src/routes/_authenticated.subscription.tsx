@@ -63,7 +63,10 @@ export const Route = createFileRoute("/_authenticated/subscription")({
     return out;
   },
   head: () => ({
-    meta: [{ title: `Subscription — ${APP_NAME}` }, { name: "robots", content: "noindex, nofollow" }],
+    meta: [
+      { title: `Subscription — ${APP_NAME}` },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: SubscriptionPage,
 });

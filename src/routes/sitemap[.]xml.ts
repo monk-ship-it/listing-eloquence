@@ -7,13 +7,19 @@ interface SitemapEntry {
   path: string;
   changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
   priority?: string;
+  lastmod?: string;
 }
+
+/** Date each static page's content last changed significantly. */
+const CONTENT_UPDATED = "2026-10-12";
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const entries: SitemapEntry[] = [
+        const { GUIDES } = await import("@/lib/guides");
+        const guideMod = new Map(GUIDES.map((g) => [g.path as string, g.dateModified]));
+        const staticEntries: SitemapEntry[] = [
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/uk-property-listing-generator", changefreq: "monthly", priority: "0.8" },
           { path: "/us-real-estate-listing-generator", changefreq: "monthly", priority: "0.8" },
@@ -31,11 +37,42 @@ export const Route = createFileRoute("/sitemap.xml")({
             priority: "0.7",
           },
         ];
+        const entries: SitemapEntry[] = staticEntries.map((e) => ({
+          ...e,
+          lastmod: guideMod.get(e.path) ?? CONTENT_UPDATED,
+        }));
+
+        // Every published Opinly post, paginated. A feed failure surfaces as
+        // 503 rather than serving a partial sitemap.
+        try {
+          const { fetchPosts } = await import("@/lib/opinly/api.server");
+          let cursor: string | undefined;
+          for (let page = 0; page < 50; page++) {
+            const res = await fetchPosts({ limit: 50, sort: "newest", cursor });
+            for (const post of res.data) {
+              entries.push({
+                path: `/blog/${encodeURIComponent(post.slug)}`,
+                changefreq: "monthly",
+                priority: "0.6",
+                lastmod: (post.lastPublishedAt || post.firstPublishedAt)?.slice(0, 10),
+              });
+            }
+            if (!res.has_more || !res.next_cursor) break;
+            cursor = res.next_cursor;
+          }
+        } catch (err) {
+          console.error("Sitemap: blog post listing failed", err);
+          return new Response("Sitemap temporarily unavailable", {
+            status: 503,
+            headers: { "Retry-After": "300" },
+          });
+        }
 
         const urls = entries.map((e) =>
           [
             `  <url>`,
             `    <loc>${BASE_URL}${e.path}</loc>`,
+            e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
             e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
             e.priority ? `    <priority>${e.priority}</priority>` : null,
             `  </url>`,

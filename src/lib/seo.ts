@@ -6,7 +6,8 @@ export const SITE_NAME = "Quill by CopyByMonk";
 export const ORG_ID = `${SITE}/#org`;
 export const WEBSITE_ID = `${SITE}/#website`;
 export const OG_IMAGE = `${SITE}/og-image.png`;
-export const OG_IMAGE_ALT = "Quill by CopyByMonk — one set of notes becomes a complete listing pack";
+export const OG_IMAGE_ALT =
+  "Quill by CopyByMonk — one set of notes becomes a complete listing pack";
 export const LOGO_ABS = `${SITE}/icon-512.png`;
 
 export type Locale = "en_GB" | "en_US";

@@ -3,7 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
 import { APP_NAME } from "@/lib/config";
-import { SITE, socialMeta, MARKET_ALTERNATES, jsonLd, breadcrumbNode, softwareAppNode } from "@/lib/seo";
+import {
+  SITE,
+  socialMeta,
+  MARKET_ALTERNATES,
+  jsonLd,
+  breadcrumbNode,
+  softwareAppNode,
+} from "@/lib/seo";
 import { Check, ArrowRight, ShieldCheck, Mic, Sparkles, Copy } from "lucide-react";
 
 const CANONICAL = "https://copybymonk.com/uk-property-listing-generator";
@@ -39,12 +46,25 @@ export const Route = createFileRoute("/uk-property-listing-generator")({
   head: () => ({
     meta: [
       { title: "Estate Agent Property Description Generator (UK) | Quill" },
-      { name: "description", content: "AI property description generator for UK estate agents: portal-ready descriptions, 6–10 key features, teaser, email blast and social captions from your notes." },
+      {
+        name: "description",
+        content:
+          "AI property description generator for UK estate agents: portal-ready descriptions, 6–10 key features, teaser, email blast and social captions from your notes.",
+      },
       { property: "og:title", content: "Estate Agent Property Description Generator (UK) | Quill" },
-      { property: "og:description", content: "AI property description generator for UK estate agents: portal-ready descriptions, 6–10 key features, teaser, email blast and social captions from your notes." },
+      {
+        property: "og:description",
+        content:
+          "AI property description generator for UK estate agents: portal-ready descriptions, 6–10 key features, teaser, email blast and social captions from your notes.",
+      },
       { property: "og:url", content: CANONICAL },
       { property: "og:type", content: "website" },
-      ...socialMeta({ title: "Estate Agent Property Description Generator (UK) | Quill", description: "AI property description generator for UK estate agents: portal-ready descriptions, 6–10 key features, teaser, email blast and social captions from your notes.", locale: "en_GB" }),
+      ...socialMeta({
+        title: "Estate Agent Property Description Generator (UK) | Quill",
+        description:
+          "AI property description generator for UK estate agents: portal-ready descriptions, 6–10 key features, teaser, email blast and social captions from your notes.",
+        locale: "en_GB",
+      }),
     ],
     links: [{ rel: "canonical", href: CANONICAL }, ...MARKET_ALTERNATES],
 
@@ -58,7 +78,8 @@ export const Route = createFileRoute("/uk-property-listing-generator")({
       jsonLd(
         softwareAppNode({
           url: CANONICAL,
-          description: "AI property description generator for UK estate agents: portal-ready descriptions, Key Features, teaser, Email Blast and social captions from one set of notes.",
+          description:
+            "AI property description generator for UK estate agents: portal-ready descriptions, Key Features, teaser, Email Blast and social captions from one set of notes.",
           currency: "GBP",
           prices: [
             { name: "Starter (UK)", price: 39 },

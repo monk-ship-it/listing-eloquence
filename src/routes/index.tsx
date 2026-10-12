@@ -56,17 +56,27 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "AI Listing Description Generator | Quill by CopyByMonk" },
-      { name: "description", content: "AI listing descriptions for UK estate agents and US agents. One set of notes becomes a portal description or MLS remarks, key features, email and social copy." },
+      {
+        name: "description",
+        content:
+          "AI listing descriptions for UK estate agents and US agents. One set of notes becomes a portal description or MLS remarks, key features, email and social copy.",
+      },
       { property: "og:title", content: "AI Listing Description Generator | Quill by CopyByMonk" },
-      { property: "og:description", content: "AI listing descriptions for UK estate agents and US agents. One set of notes becomes a portal description or MLS remarks, key features, email and social copy." },
+      {
+        property: "og:description",
+        content:
+          "AI listing descriptions for UK estate agents and US agents. One set of notes becomes a portal description or MLS remarks, key features, email and social copy.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE}/` },
-      ...socialMeta({ title: "AI Listing Description Generator | Quill by CopyByMonk", description: "AI listing descriptions for UK estate agents and US agents. One set of notes becomes a portal description or MLS remarks, key features, email and social copy.", locale: "en_GB" }),
+      ...socialMeta({
+        title: "AI Listing Description Generator | Quill by CopyByMonk",
+        description:
+          "AI listing descriptions for UK estate agents and US agents. One set of notes becomes a portal description or MLS remarks, key features, email and social copy.",
+        locale: "en_GB",
+      }),
     ],
-    links: [
-      { rel: "canonical", href: `${SITE}/` },
-      ...MARKET_ALTERNATES,
-    ],
+    links: [{ rel: "canonical", href: `${SITE}/` }, ...MARKET_ALTERNATES],
     scripts: [
       jsonLd(ORGANIZATION_NODE),
       jsonLd(WEBSITE_NODE),

@@ -132,7 +132,15 @@ function PostPage() {
           <p className="mt-4 text-lg text-muted-foreground">{post.description}</p>
           <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
             {authorImage ? (
-              <img src={authorImage} alt="" width={36} height={36} loading="lazy" decoding="async" className="h-9 w-9 rounded-full object-cover" />
+              <img
+                src={authorImage}
+                alt=""
+                width={36}
+                height={36}
+                loading="lazy"
+                decoding="async"
+                className="h-9 w-9 rounded-full object-cover"
+              />
             ) : null}
             {post.author ? <span className="text-foreground">{post.author.name}</span> : null}
             <time dateTime={post.firstPublishedAt}>{formatPostDate(post.firstPublishedAt)}</time>

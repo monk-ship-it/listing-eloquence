@@ -3,7 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
 import { APP_NAME } from "@/lib/config";
-import { SITE, socialMeta, MARKET_ALTERNATES, jsonLd, breadcrumbNode, softwareAppNode } from "@/lib/seo";
+import {
+  SITE,
+  socialMeta,
+  MARKET_ALTERNATES,
+  jsonLd,
+  breadcrumbNode,
+  softwareAppNode,
+} from "@/lib/seo";
 import { Check, ArrowRight, ShieldCheck, Mic, Sparkles, Copy } from "lucide-react";
 
 const CANONICAL = "https://copybymonk.com/us-real-estate-listing-generator";
@@ -39,12 +46,25 @@ export const Route = createFileRoute("/us-real-estate-listing-generator")({
   head: () => ({
     meta: [
       { title: "MLS Remarks Generator & AI Listing Descriptions | Quill" },
-      { name: "description", content: "AI listing description generator for US real estate agents. MLS-ready remarks, key features, email blast and social captions, with Fair Housing guardrails." },
+      {
+        name: "description",
+        content:
+          "AI listing description generator for US real estate agents. MLS-ready remarks, key features, email blast and social captions, with Fair Housing guardrails.",
+      },
       { property: "og:title", content: "MLS Remarks Generator & AI Listing Descriptions | Quill" },
-      { property: "og:description", content: "AI listing description generator for US real estate agents. MLS-ready remarks, key features, email blast and social captions, with Fair Housing guardrails." },
+      {
+        property: "og:description",
+        content:
+          "AI listing description generator for US real estate agents. MLS-ready remarks, key features, email blast and social captions, with Fair Housing guardrails.",
+      },
       { property: "og:url", content: CANONICAL },
       { property: "og:type", content: "website" },
-      ...socialMeta({ title: "MLS Remarks Generator & AI Listing Descriptions | Quill", description: "AI listing description generator for US real estate agents. MLS-ready remarks, key features, email blast and social captions, with Fair Housing guardrails.", locale: "en_US" }),
+      ...socialMeta({
+        title: "MLS Remarks Generator & AI Listing Descriptions | Quill",
+        description:
+          "AI listing description generator for US real estate agents. MLS-ready remarks, key features, email blast and social captions, with Fair Housing guardrails.",
+        locale: "en_US",
+      }),
     ],
     links: [{ rel: "canonical", href: CANONICAL }, ...MARKET_ALTERNATES],
 
@@ -58,7 +78,8 @@ export const Route = createFileRoute("/us-real-estate-listing-generator")({
       jsonLd(
         softwareAppNode({
           url: CANONICAL,
-          description: "AI listing description generator for US real estate agents: MLS-ready remarks, Key Features, teaser, Email Blast and social captions, with Fair Housing guardrails.",
+          description:
+            "AI listing description generator for US real estate agents: MLS-ready remarks, Key Features, teaser, Email Blast and social captions, with Fair Housing guardrails.",
           currency: "USD",
           prices: [
             { name: "Starter (US)", price: 49 },
