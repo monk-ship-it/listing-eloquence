@@ -164,7 +164,7 @@ function AuthPage() {
         </div>
         <Card className="border-border/70 bg-card/80 p-7 backdrop-blur">
           <Tabs value={mode} onValueChange={(v) => setMode(v as "login" | "signup")}>
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-2 max-sm:h-auto">
               <TabsTrigger value="signup" className="max-sm:min-h-11">Start free trial</TabsTrigger>
               <TabsTrigger value="login" className="max-sm:min-h-11">Log in</TabsTrigger>
             </TabsList>
