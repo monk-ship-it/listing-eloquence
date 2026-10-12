@@ -208,15 +208,6 @@ export const PRICE_MONTHLY = PLAN_MAP.starter.price;
 
 export const STRIPE_PAYMENT_LINK = PLAN_MAP.starter.stripeLink;
 
-/** Emails granted free, permanent access to the app (case-insensitive). */
-export const COMPED_EMAILS = ["domenico@copybymonk.com"];
-
-/** Whether the given email always has full access, bypassing billing. */
-export function isCompedEmail(email: string | null | undefined): boolean {
-  if (!email) return false;
-  return COMPED_EMAILS.includes(email.trim().toLowerCase());
-}
-
 /** Build a payment-link URL pre-filled with the user's email and reference. */
 export function buildCheckoutUrl(userId: string, email: string, plan: PlanId = "starter"): string {
   const link = PLAN_MAP[plan]?.stripeLink || STRIPE_PAYMENT_LINK;

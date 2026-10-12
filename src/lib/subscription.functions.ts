@@ -1,13 +1,28 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
-  isCompedEmail,
   getPlan,
   TRIAL_DAYS,
   MARKETS,
   resolveMarketId,
+  PLAN_PRICING,
+  type MarketId,
   type PlanId,
 } from "./config";
+
+async function comped(email: string | null | undefined): Promise<boolean> {
+  const { isCompedEmail } = await import("./comped.server");
+  return isCompedEmail(email);
+}
+
+/** Market derived from the stored Stripe price id (defaults to UK). */
+export function marketFromPriceId(priceId: string | null | undefined): MarketId {
+  if (!priceId) return "uk";
+  for (const m of Object.keys(PLAN_PRICING) as MarketId[]) {
+    if (Object.values(PLAN_PRICING[m]).some((p) => p.priceId === priceId)) return m;
+  }
+  return "uk";
+}
 
 export interface SubscriptionInfo {
   status: string;
@@ -19,6 +34,8 @@ export interface SubscriptionInfo {
   hasAccess: boolean;
   isComped: boolean;
   email: string | null;
+  /** Billing market derived from the Stripe price id. */
+  market: MarketId;
 }
 
 export interface UsageInfo {
@@ -31,7 +48,7 @@ export interface UsageInfo {
   resetsOn: string;
 }
 
-function toInfo(
+async function toInfo(
   row: {
     status: string;
     plan?: string | null;
@@ -39,20 +56,22 @@ function toInfo(
     trial_end: string | null;
     current_period_end: string | null;
     email: string | null;
+    stripe_price_id?: string | null;
   } | null,
-): SubscriptionInfo {
+): Promise<SubscriptionInfo> {
   const rawStatus = row?.status ?? "none";
-  const comped = isCompedEmail(row?.email);
+  const isComped = await comped(row?.email);
   return {
-    status: comped ? "active" : rawStatus,
+    status: isComped ? "active" : rawStatus,
     rawStatus,
     plan: getPlan(row?.plan).id,
     cancelAtPeriodEnd: row?.cancel_at_period_end ?? false,
     trialEnd: row?.trial_end ?? null,
     currentPeriodEnd: row?.current_period_end ?? null,
-    hasAccess: comped || hasActiveAccess(rawStatus, row?.current_period_end ?? null),
-    isComped: comped,
+    hasAccess: isComped || hasActiveAccess(rawStatus, row?.current_period_end ?? null),
+    isComped,
     email: row?.email ?? null,
+    market: marketFromPriceId(row?.stripe_price_id),
   };
 }
 
@@ -104,7 +123,7 @@ export async function readReconciledSubscriber(
     .eq("user_id", userId)
     .maybeSingle();
 
-  if (isCompedEmail(data?.email)) return data ?? null;
+  if (await comped(data?.email)) return data ?? null;
 
   const { reconcileSubscriberRow } = await import("./billing-sync.server");
   const { row } = await reconcileSubscriberRow(
@@ -169,8 +188,8 @@ export const getMyUsage = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<UsageInfo> => {
     const { supabase, userId } = context;
     const data = await readReconciledSubscriber(supabase, userId);
-    const comped = isCompedEmail(data?.email);
-    return computeUsage(supabase, userId, getPlan(data?.plan).id, comped);
+    const isComped = await comped(data?.email);
+    return computeUsage(supabase, userId, getPlan(data?.plan).id, isComped);
   });
 
 export const cancelMySubscription = createServerFn({ method: "POST" })
@@ -205,7 +224,7 @@ export const cancelMySubscription = createServerFn({ method: "POST" })
         status: updated.status,
       })
       .eq("user_id", userId)
-      .select("status, plan, cancel_at_period_end, trial_end, current_period_end, email")
+      .select("status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_price_id")
       .maybeSingle();
 
     return toInfo(saved);
@@ -247,7 +266,7 @@ export const resumeMySubscription = createServerFn({ method: "POST" })
         status: updated.status,
       })
       .eq("user_id", userId)
-      .select("status, plan, cancel_at_period_end, trial_end, current_period_end, email")
+      .select("status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_price_id")
       .maybeSingle();
 
     return toInfo(saved);
@@ -300,7 +319,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const email = (claims as { email?: string } | undefined)?.email ?? row?.email ?? "";
 
     if (
-      isCompedEmail(email) ||
+      (await comped(email)) ||
       hasActiveAccess(row?.status ?? "none", row?.current_period_end ?? null)
     ) {
       throw new Error(
@@ -368,7 +387,7 @@ export const verifyCheckoutSession = createServerFn({ method: "POST" })
 
       const { data: dbRow } = await supabase
         .from("subscribers")
-        .select("status, plan, cancel_at_period_end, trial_end, current_period_end, email")
+        .select("status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_price_id")
         .eq("user_id", userId)
         .maybeSingle();
 
