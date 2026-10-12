@@ -1,22 +1,28 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { BlogShell } from "@/components/blog/BlogShell";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, Building2, Home } from "lucide-react";
 import { listBlogPosts } from "@/lib/opinly.functions";
 import { formatPostDate, listImageUrl, imageAlt, SITE_URL } from "@/lib/opinly/shared";
 import { GUIDES } from "@/lib/guides";
-import heroExterior from "@/assets/guides-hero-exterior.jpg";
-import ukTerrace from "@/assets/guides-uk-terrace.jpg";
-import usHome from "@/assets/guides-us-home.jpg";
+import { IMG, type ResponsiveImage } from "@/lib/images";
+import type { OpinlyPostList } from "@/lib/opinly/types";
+import { socialMeta, jsonLd, breadcrumbNode, ORG_REF } from "@/lib/seo";
 
 const TITLE = "Property Listing Copy Guides for UK & US Agents";
-const DOC_TITLE = "Listing Copy Guides for UK & US Agents | CopyByMonk";
+const DOC_TITLE = "Listing Copy Guides for UK & US Agents | Quill";
 const DESCRIPTION =
   "Practical listing copy guides for UK estate agents and US real estate pros: description examples, portal templates, MLS remarks and checklists.";
 
 export const Route = createFileRoute("/blog/")({
+  loader: async (): Promise<{ posts: OpinlyPostList["data"] }> => {
+    try {
+      const res = await listBlogPosts({ data: { limit: 6, sort: "newest" } });
+      return { posts: res?.data ?? [] };
+    } catch {
+      return { posts: [] };
+    }
+  },
   head: () => ({
     meta: [
       { title: DOC_TITLE },
@@ -26,9 +32,7 @@ export const Route = createFileRoute("/blog/")({
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE_URL}/blog` },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: TITLE },
-      { name: "twitter:description", content: DESCRIPTION },
+      ...socialMeta({ title: TITLE, description: DESCRIPTION, locale: "en_GB" }),
     ],
     links: [
       { rel: "canonical", href: `${SITE_URL}/blog` },
@@ -43,6 +47,7 @@ export const Route = createFileRoute("/blog/")({
           name: TITLE,
           url: `${SITE_URL}/blog`,
           description: DESCRIPTION,
+          publisher: ORG_REF,
         }),
       },
       {
@@ -91,10 +96,14 @@ function WalkaroundPanel() {
     <div className="relative mt-10 overflow-hidden rounded-3xl border border-border/50 bg-card">
       <div className="relative aspect-[16/9] w-full overflow-hidden sm:aspect-[21/9]">
         <img
-          src={heroExterior}
+          src={IMG.guidesHero.src}
+          srcSet={IMG.guidesHero.srcSet}
+          sizes="(min-width: 1024px) 1024px, 100vw"
           alt="Georgian townhouse exterior in bright daylight with sash windows and a black front door"
-          width={1920}
-          height={1088}
+          width={IMG.guidesHero.width}
+          height={IMG.guidesHero.height}
+          loading="eager"
+          fetchPriority="high"
           decoding="async"
           className="walkaround-img absolute inset-0 h-full w-full object-cover"
         />
@@ -146,15 +155,9 @@ function WalkaroundPanel() {
 
 /** Secondary enhancement: renders only if the external feed responds with posts. */
 function LatestArticles() {
-  const fetchPosts = useServerFn(listBlogPosts);
-  const { data } = useQuery({
-    queryKey: ["opinly", "posts", "hub"],
-    queryFn: () => fetchPosts({ data: { limit: 6, sort: "newest" as const } }),
-    staleTime: 60_000,
-    retry: false,
-  });
-
-  if (!data || data.data.length === 0) return null;
+  const { posts } = Route.useLoaderData();
+  const data = { data: posts };
+  if (data.data.length === 0) return null;
 
   return (
     <section className="mt-14" aria-labelledby="latest-articles">
@@ -218,7 +221,7 @@ function MarketSection({
   icon: React.ReactNode;
   title: string;
   intro: string;
-  image: string;
+  image: ResponsiveImage;
   imageAlt: string;
   generatorTo: string;
   generatorLabel: string;
@@ -237,10 +240,12 @@ function MarketSection({
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">{intro}</p>
         </div>
         <img
-          src={image}
+          src={image.src}
+          srcSet={image.srcSet}
+          sizes="176px"
           alt={alt}
-          width={1280}
-          height={853}
+          width={image.width}
+          height={image.height}
           loading="lazy"
           decoding="async"
           className="hidden aspect-[4/3] w-full rounded-2xl object-cover ring-1 ring-border/60 sm:block"
@@ -286,7 +291,7 @@ function BlogHub() {
         icon={<Home className="h-4 w-4" />}
         title="UK estate agents"
         intro="Portal-style descriptions, key features and Material Information habits."
-        image={ukTerrace}
+        image={IMG.guidesUk}
         imageAlt="Victorian terraced house with a black front door, bay window and red brick facade"
         generatorTo="/uk-property-listing-generator"
         generatorLabel="UK property listing generator"
@@ -298,7 +303,7 @@ function BlogHub() {
         icon={<Building2 className="h-4 w-4" />}
         title="US real estate professionals"
         intro="MLS remarks, longer-form listing descriptions and fair-housing-conscious wording."
-        image={usHome}
+        image={IMG.guidesUs}
         imageAlt="Craftsman-style suburban home with a covered front porch and lit entrance at dusk"
         generatorTo="/us-real-estate-listing-generator"
         generatorLabel="US real estate listing generator"

@@ -1,15 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Camera, ShieldCheck, Sparkles, Pause, Play } from "lucide-react";
-import exteriorImg from "@/assets/home-walk-exterior.jpg";
-import kitchenImg from "@/assets/home-walk-kitchen.jpg";
-import gardenImg from "@/assets/home-walk-garden.jpg";
+import { IMG, type ResponsiveImage } from "@/lib/images";
 
 type Step = {
   id: string;
   label: string;
   title: string;
   body: string;
-  image: string;
+  image: ResponsiveImage;
   alt: string;
   icon: typeof Camera;
   chips: string[];
@@ -21,7 +19,7 @@ const STEPS: Step[] = [
     label: "Walk the property",
     title: "Capture the instruction once",
     body: "Speak, type or paste rough notes from the valuation or viewing — kerb appeal, room by room, the outside space. One source of truth for every asset that follows.",
-    image: exteriorImg,
+    image: IMG.walkExterior,
     alt: "Sunlit detached stone home with a gravel driveway, green lawn and clear blue sky",
     icon: Camera,
     chips: ["Dictate on site", "Type or paste", "No CRM migration"],
@@ -31,7 +29,7 @@ const STEPS: Step[] = [
     label: "Quill structures the facts",
     title: "Separate facts from copy",
     body: "Quill extracts the structured facts first — beds, receptions, tenure, outside space — then drafts copy from them, so accuracy and tone are handled independently.",
-    image: kitchenImg,
+    image: IMG.walkKitchen,
     alt: "Bright kitchen and living space with a marble island and daylight through tall windows",
     icon: ShieldCheck,
     chips: ["5 bedrooms", "3 receptions", "Walled garden", "Freehold"],
@@ -41,7 +39,7 @@ const STEPS: Step[] = [
     label: "The listing pack appears",
     title: "Produce the full pack",
     body: "Headline, 6–10 Key Features, the listing description, a short teaser, Email Blast copy and Instagram, Facebook and X captions — drafted together and fully editable before use.",
-    image: gardenImg,
+    image: IMG.walkGarden,
     alt: "Private walled garden on a sunny day with a striped lawn and mature planting behind an elegant home",
     icon: Sparkles,
     chips: ["Headline", "Key Features", "Description", "Email Blast", "Captions"],
@@ -128,11 +126,13 @@ export function PropertyWalkthrough({
               {STEPS.map((s, i) => (
                 <img
                   key={s.id}
-                  src={s.image}
+                  src={s.image.src}
+                  srcSet={s.image.srcSet}
+                  sizes="(min-width: 1024px) 600px, 100vw"
                   alt={s.alt}
-                  width={1600}
-                  height={1000}
-                  loading={i === 0 ? "eager" : "lazy"}
+                  width={s.image.width}
+                  height={s.image.height}
+                  loading="lazy"
                   decoding="async"
                   className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1200ms] ease-out ${
                     i === index ? "opacity-100" : "opacity-0"
