@@ -13,7 +13,7 @@ import { PenLine, History, CreditCard, User, Shield, Menu, LogOut } from "lucide
 
 export const Route = createFileRoute("/_authenticated")({
   head: () => ({
-    meta: [{ name: "robots", content: "noindex,follow" }],
+    meta: [{ name: "robots", content: "noindex, nofollow" }],
   }),
   component: AuthenticatedLayout,
 });

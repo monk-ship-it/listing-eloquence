@@ -54,7 +54,12 @@ export const Route = createFileRoute("/auth")({
         content: `Sign in or create your ${APP_NAME} account to generate AI property listings.`,
       },
       { property: "og:url", content: "https://copybymonk.com/auth" },
-      { name: "robots", content: "noindex" },
+      { name: "twitter:title", content: `Sign in — ${APP_NAME}` },
+      {
+        name: "twitter:description",
+        content: `Sign in or create your ${APP_NAME} account to generate AI property listings.`,
+      },
+      { name: "robots", content: "noindex, nofollow" },
     ],
     links: [{ rel: "canonical", href: "https://copybymonk.com/auth" }],
   }),

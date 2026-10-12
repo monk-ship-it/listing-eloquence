@@ -40,7 +40,7 @@ export const Route = createFileRoute("/_authenticated/history")({
   head: () => ({
     meta: [
       { title: `Saved listings — ${APP_NAME}` },
-      { name: "robots", content: "noindex,follow" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: HistoryPage,

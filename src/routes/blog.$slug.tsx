@@ -3,6 +3,7 @@ import { BlogShell } from "@/components/blog/BlogShell";
 import { ContentRenderer } from "@/components/blog/ContentRenderer";
 import { getBlogPost } from "@/lib/opinly.functions";
 import type { OpinlyFullPost } from "@/lib/opinly/types";
+import { socialMeta, ORG_REF, OG_IMAGE } from "@/lib/seo";
 import { formatPostDate, postImageUrl, SITE_URL, opinlyImageUrl } from "@/lib/opinly/shared";
 
 export const Route = createFileRoute("/blog/$slug")({
@@ -14,7 +15,7 @@ export const Route = createFileRoute("/blog/$slug")({
   head: ({ params, loaderData }) => {
     const url = `${SITE_URL}/blog/${params.slug}`;
     if (!loaderData) {
-      return { meta: [{ title: "Unavailable" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Unavailable" }, { name: "robots", content: "noindex, nofollow" }] };
     }
     const { post } = loaderData;
     const title = post.metaTitle || post.title;
@@ -28,15 +29,14 @@ export const Route = createFileRoute("/blog/$slug")({
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: description },
-        ...(hero
-          ? [
-              { property: "og:image", content: hero },
-              { name: "twitter:image", content: hero },
-            ]
-          : []),
+        { property: "article:published_time", content: post.firstPublishedAt },
+        { property: "article:modified_time", content: post.modifiedAt },
+        ...socialMeta({
+          title,
+          description,
+          locale: "en_GB",
+          image: hero ? { url: hero, alt: post.titleFile?.altText || post.title } : undefined,
+        }),
       ],
       links: [{ rel: "canonical", href: url }],
       scripts: [
@@ -51,10 +51,9 @@ export const Route = createFileRoute("/blog/$slug")({
             dateModified: post.modifiedAt,
             mainEntityOfPage: { "@type": "WebPage", "@id": url },
             url,
-            ...(hero ? { image: [hero] } : {}),
+            image: [hero ?? OG_IMAGE],
             ...(post.author ? { author: { "@type": "Person", name: post.author.name } } : {}),
-            publisher: { "@type": "Organization", name: "Quill" },
-            ...(post.faqs?.length ? {} : {}),
+            publisher: ORG_REF,
           }),
         },
         {
@@ -63,7 +62,7 @@ export const Route = createFileRoute("/blog/$slug")({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
               { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blog` },
               { "@type": "ListItem", position: 3, name: post.title, item: url },
             ],
@@ -133,7 +132,7 @@ function PostPage() {
           <p className="mt-4 text-lg text-muted-foreground">{post.description}</p>
           <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
             {authorImage ? (
-              <img src={authorImage} alt="" className="h-9 w-9 rounded-full object-cover" />
+              <img src={authorImage} alt="" width={36} height={36} loading="lazy" decoding="async" className="h-9 w-9 rounded-full object-cover" />
             ) : null}
             {post.author ? <span className="text-foreground">{post.author.name}</span> : null}
             <time dateTime={post.firstPublishedAt}>{formatPostDate(post.firstPublishedAt)}</time>
@@ -144,7 +143,12 @@ function PostPage() {
           <img
             src={hero}
             alt={post.titleFile?.altText || post.title}
-            className="mb-10 w-full rounded-2xl border border-border"
+            width={1200}
+            height={630}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            className="mb-10 h-auto w-full rounded-2xl border border-border"
           />
         ) : null}
 

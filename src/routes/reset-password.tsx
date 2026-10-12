@@ -21,7 +21,12 @@ export const Route = createFileRoute("/reset-password")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "robots", content: "noindex" },
+      { name: "twitter:title", content: `Reset password — ${APP_NAME}` },
+      {
+        name: "twitter:description",
+        content: `Choose a new password for your ${APP_NAME} account.`,
+      },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: ResetPasswordPage,

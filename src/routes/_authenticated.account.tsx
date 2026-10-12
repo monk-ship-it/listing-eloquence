@@ -36,7 +36,9 @@ import {
 import { CheckCircle2, CreditCard, Mail, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/account")({
-  head: () => ({ meta: [{ title: `Account — ${APP_NAME}` }] }),
+  head: () => ({
+    meta: [{ title: `Account — ${APP_NAME}` }, { name: "robots", content: "noindex, nofollow" }],
+  }),
   component: AccountPage,
 });
 
