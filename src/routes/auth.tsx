@@ -165,8 +165,8 @@ function AuthPage() {
         <Card className="border-border/70 bg-card/80 p-7 backdrop-blur">
           <Tabs value={mode} onValueChange={(v) => setMode(v as "login" | "signup")}>
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signup">Start free trial</TabsTrigger>
-              <TabsTrigger value="login">Log in</TabsTrigger>
+              <TabsTrigger value="signup" className="max-sm:min-h-11">Start free trial</TabsTrigger>
+              <TabsTrigger value="login" className="max-sm:min-h-11">Log in</TabsTrigger>
             </TabsList>
 
             <TabsContent value="signup" className="mt-6">
@@ -248,7 +248,7 @@ function AuthPage() {
                     type="button"
                     onClick={handleForgot}
                     disabled={busy}
-                    className="w-full text-center text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                    className="w-full text-center text-sm text-muted-foreground max-sm:min-h-11 underline-offset-4 hover:text-foreground hover:underline"
                   >
                     Forgot password?
                   </button>

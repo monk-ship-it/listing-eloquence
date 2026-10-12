@@ -155,6 +155,19 @@ function HistoryPage() {
               onDelete={() => remove(item.id)}
             />
           ))}
+          {hasMore && (
+            <div className="flex justify-center pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="max-sm:min-h-11"
+                disabled={query.isFetching}
+                onClick={() => setLimit((l) => l + PAGE)}
+              >
+                {query.isFetching ? "Loading…" : "Load more"}
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </main>
@@ -283,7 +296,7 @@ function HistoryItem({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9"
+                  className="h-11 w-11 sm:h-9 sm:w-9"
                   aria-label="Copy key features"
                   onClick={() => doCopy(formatKeyFeaturesBlock(features), "Key features copied.")}
                 >
@@ -309,7 +322,7 @@ function HistoryItem({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9"
+                className="h-11 w-11 sm:h-9 sm:w-9"
                 aria-label="Copy description"
                 onClick={() => doCopy(item.output.listing, "Description copied.")}
               >
@@ -334,7 +347,7 @@ function HistoryItem({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9"
+                  className="h-11 w-11 sm:h-9 sm:w-9"
                   aria-label="Copy teaser summary"
                   onClick={() => doCopy(item.output.summary, "Teaser copied.")}
                 >
@@ -374,7 +387,7 @@ function HistoryItem({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-9 w-9"
+                          className="h-11 w-11 sm:h-9 sm:w-9"
                           aria-label={`Copy ${post.platform} post`}
                           onClick={() =>
                             doCopy(`${post.caption}${tags ? `\n\n${tags}` : ""}`, "Post copied.")

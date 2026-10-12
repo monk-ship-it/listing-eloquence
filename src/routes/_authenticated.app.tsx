@@ -271,7 +271,7 @@ function GeneratorPage() {
               <Lock className="h-5 w-5 text-primary" />
               <p className="text-sm">Start your free trial to generate listings.</p>
             </div>
-            <Button asChild size="sm">
+            <Button asChild size="sm" className="max-sm:min-h-11">
               <Link to="/subscription">Start free trial</Link>
             </Button>
           </div>
