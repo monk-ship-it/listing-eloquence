@@ -31,7 +31,8 @@ export function BlogShell({ children }: { children: ReactNode }) {
               Articles
             </Link>
             <Link
-              to="/app"
+              to="/auth"
+              search={{ plan: "starter" }}
               className="inline-flex min-h-11 items-center rounded-md bg-primary px-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-4"
             >
               Create first pack

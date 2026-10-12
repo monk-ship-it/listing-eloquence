@@ -142,6 +142,11 @@ export function GuideLayout({
         <h1 className="mt-5 font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
           {meta.title}
         </h1>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Published <time dateTime={meta.datePublished}>{formatGuideDate(meta.datePublished, meta.market)}</time>
+          {" · "}
+          Updated <time dateTime={meta.dateModified}>{formatGuideDate(meta.dateModified, meta.market)}</time>
+        </p>
         <p className="mt-4 text-lg leading-relaxed text-muted-foreground">{standfirst}</p>
 
         {children}
