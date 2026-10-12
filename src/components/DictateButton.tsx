@@ -1,4 +1,4 @@
-import { Mic, AlertCircle } from "lucide-react";
+import { Mic, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDictation } from "@/hooks/useDictation";
 import { cn } from "@/lib/utils";
@@ -30,13 +30,27 @@ export function DictateButton({ onResult, className, lang }: DictateButtonProps)
         </span>
       )}
       {status === "error" && error && (
-        <span className="flex items-center gap-1 text-xs font-medium text-destructive" title={error}>
+        <span
+          className="flex items-center gap-1 text-xs font-medium text-destructive"
+          title={error}
+        >
           <AlertCircle className="h-3 w-3" />
           <span className="max-w-[8rem] truncate">{error}</span>
         </span>
       )}
 
-      {status === "listening" ? (
+      {status === "processing" ? (
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          disabled
+          aria-label="Transcribing…"
+          className="h-8 w-8"
+        >
+          <Loader2 className="h-4 w-4 animate-spin" />
+        </Button>
+      ) : status === "listening" ? (
         <Button
           type="button"
           variant="destructive"

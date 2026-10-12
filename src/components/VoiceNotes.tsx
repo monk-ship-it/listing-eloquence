@@ -1,4 +1,5 @@
-import { Mic, Trash2, Globe } from "lucide-react";
+import { useRef } from "react";
+import { Mic, Trash2, Globe, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,8 +25,15 @@ interface VoiceNotesProps {
 export function VoiceNotes({ value, onChange }: VoiceNotesProps) {
   const { lang, setLang, languages } = useDictationSettings();
 
-  const append = (text: string) =>
-    onChange(value.trim() ? `${value.trim()} ${text}` : text);
+  // Track the latest value so several phrases in one burst never overwrite each other.
+  const valueRef = useRef(value);
+  valueRef.current = value;
+  const append = (text: string) => {
+    const cur = valueRef.current.trim();
+    const next = cur ? `${cur} ${text}` : text;
+    valueRef.current = next;
+    onChange(next);
+  };
 
   const { status, error, supported, toggle } = useDictation(append, lang);
 
@@ -33,11 +41,14 @@ export function VoiceNotes({ value, onChange }: VoiceNotesProps) {
     ? "Voice dictation isn’t supported in this browser — type or paste your notes instead."
     : status === "listening"
       ? "Listening… speak naturally."
-      : status === "error"
-        ? error || "Microphone access was blocked. Please allow access or type your notes manually."
-        : value.trim()
-          ? "Dictation stopped. You can edit the notes before generating."
-          : "Ready to dictate.";
+      : status === "processing"
+        ? "Transcribing…"
+        : status === "error"
+          ? error ||
+            "Microphone access was blocked. Please allow access or type your notes manually."
+          : value.trim()
+            ? "Dictation stopped. You can edit the notes before generating."
+            : "Ready to dictate.";
 
   const isError = status === "error";
 
@@ -72,9 +83,15 @@ export function VoiceNotes({ value, onChange }: VoiceNotesProps) {
               type="button"
               variant={status === "listening" ? "destructive" : "default"}
               onClick={toggle}
+              disabled={status === "processing"}
               className="gap-2"
             >
-              {status === "listening" ? (
+              {status === "processing" ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Transcribing…
+                </>
+              ) : status === "listening" ? (
                 <>
                   <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-current" />
                   Stop dictation
