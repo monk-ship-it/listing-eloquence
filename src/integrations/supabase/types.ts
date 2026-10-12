@@ -278,6 +278,30 @@ export type Database = {
         }
         Relationships: []
       }
+      transcription_usage: {
+        Row: {
+          bytes: number | null
+          created_at: string
+          id: string
+          lang: string | null
+          user_id: string
+        }
+        Insert: {
+          bytes?: number | null
+          created_at?: string
+          id?: string
+          lang?: string | null
+          user_id: string
+        }
+        Update: {
+          bytes?: number | null
+          created_at?: string
+          id?: string
+          lang?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
