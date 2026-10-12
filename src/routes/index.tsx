@@ -66,14 +66,6 @@ export const Route = createFileRoute("/")({
     links: [
       { rel: "canonical", href: `${SITE}/` },
       ...MARKET_ALTERNATES,
-      {
-        rel: "preload",
-        as: "image",
-        type: "image/webp",
-        imageSrcSet: IMG.walkExterior.srcSet,
-        imageSizes: "100vw",
-        fetchPriority: "high",
-      },
     ],
     scripts: [
       jsonLd(ORGANIZATION_NODE),
