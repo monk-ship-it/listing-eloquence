@@ -144,7 +144,6 @@
   html {
     font-family: var(--font-sans);
     scrollbar-gutter: stable;
-    overflow-y: scroll;
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
     /* Stop iOS/Android from auto-inflating text on rotation/zoom so the
@@ -161,7 +160,8 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    /* clip (not hidden) so position: sticky headers keep working. */
+    overflow-x: clip;
     /* Base body rhythm — comfortable default for any untagged copy. */
     font-size: 1rem;
     line-height: 1.6;
@@ -322,7 +322,9 @@
 }
 
 /* Scroll reveal */
-.reveal {
+/* Content is visible by default (no JS / reduced motion). Only elements armed
+   by JS after hydration — and still off-screen — start hidden. */
+.reveal.reveal-armed {
   opacity: 0;
   transform: translateY(24px);
   transition:
@@ -330,7 +332,7 @@
     transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
 }
-.reveal.is-visible {
+.reveal.reveal-armed.is-visible {
   opacity: 1;
   transform: none;
 }

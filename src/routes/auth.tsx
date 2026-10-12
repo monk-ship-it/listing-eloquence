@@ -153,7 +153,7 @@ function AuthPage() {
   const selectedPlan = planParam ? getPlan(planParam) : null;
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center px-5 py-12">
+    <div className="relative flex min-h-dvh items-center justify-center px-5 py-12">
       <div className="absolute inset-0 bg-radial-glow" />
       <div className="absolute inset-0 bg-grid opacity-50" />
       <div className="relative w-full max-w-md">

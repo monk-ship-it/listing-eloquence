@@ -182,7 +182,7 @@ function Landing() {
 
   return (
     <MarketContext.Provider value={{ market, setMarket }}>
-      <div className="public-daylight min-h-screen overflow-x-hidden">
+      <div className="public-daylight min-h-screen overflow-x-clip">
         <Header user={authed} />
         <Hero authed={authed} />
         <Workflow />
