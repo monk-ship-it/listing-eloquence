@@ -178,7 +178,20 @@ function useMarket() {
 function Landing() {
   const { user } = useAuth();
   const authed = !!user;
-  const [market, setMarket] = useState<MarketId>(DEFAULT_MARKET);
+  const [market, setMarketState] = useState<MarketId>(DEFAULT_MARKET);
+  // Restore the saved/URL market after hydration (server renders the default).
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("market");
+    const restored = q === "us" || q === "uk" ? q : readSavedMarket();
+    if (restored) {
+      setMarketState(restored);
+      if (q === "us" || q === "uk") saveMarketChoice(q);
+    }
+  }, []);
+  const setMarket = (m: MarketId) => {
+    setMarketState(m);
+    saveMarketChoice(m);
+  };
 
   return (
     <MarketContext.Provider value={{ market, setMarket }}>
@@ -217,7 +230,7 @@ function MarketToggle({ className = "" }: { className?: string }) {
           role="tab"
           aria-selected={market === m.id}
           onClick={() => setMarket(m.id)}
-          className={`rounded-full px-4 py-1.5 text-xs font-medium transition-colors sm:text-sm ${
+          className={`rounded-full px-4 py-1.5 text-xs font-medium transition-colors max-sm:min-h-11 sm:text-sm ${
             market === m.id
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground"
@@ -249,7 +262,7 @@ function CtaButton({
 }) {
   const { market } = useMarket();
   return (
-    <Button asChild {...rest}>
+    <Button asChild {...rest} className={`max-sm:min-h-11 ${rest.className ?? ""}`}>
       <Link to={authed ? "/subscription" : "/auth"} search={{ plan, market }}>
         {children}
       </Link>
@@ -292,7 +305,7 @@ function Header({ user }: { user: boolean }) {
           </Link>
 
           {user ? (
-            <Button asChild>
+            <Button asChild className="max-sm:min-h-11">
               <Link to="/app">Open app</Link>
             </Button>
           ) : (
@@ -300,12 +313,10 @@ function Header({ user }: { user: boolean }) {
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <Link to="/auth">Log in</Link>
               </Button>
-              <Button asChild variant="ghost" size="icon" className="sm:hidden" aria-label="Log in">
-                <Link to="/auth">
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
+              <Button asChild variant="ghost" size="sm" className="min-h-11 px-3 sm:hidden">
+                <Link to="/auth">Log in</Link>
               </Button>
-              <Button asChild>
+              <Button asChild className="max-sm:min-h-11">
                 <Link to="/auth" search={{ plan: "starter", market }}>
                   Start free trial
                 </Link>
