@@ -1,31 +1,21 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { isCompedEmail } from "./config";
 
 interface AdminContext {
-  supabase: {
-    from: (table: string) => {
-      select: (cols: string) => {
-        eq: (col: string, val: string) => { maybeSingle: () => Promise<{ data: unknown }> };
-      };
-    };
-  };
   userId: string;
-  claims: Record<string, unknown>;
 }
 
+/**
+ * Admin check via the server-only user_roles table. Never derived from
+ * user-editable profile data or email claims.
+ */
 async function assertAdmin(context: AdminContext): Promise<void> {
-  const claimEmail = typeof context.claims?.email === "string" ? (context.claims.email as string) : null;
-  let email = claimEmail;
-  if (!email) {
-    const { data } = await context.supabase
-      .from("profiles")
-      .select("email")
-      .eq("id", context.userId)
-      .maybeSingle();
-    email = (data as { email?: string } | null)?.email ?? null;
-  }
-  if (!isCompedEmail(email)) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.rpc("has_role", {
+    _user_id: context.userId,
+    _role: "admin",
+  });
+  if (error || data !== true) {
     throw new Error("FORBIDDEN");
   }
 }

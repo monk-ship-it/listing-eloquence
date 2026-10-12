@@ -1,24 +1,34 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "crypto";
 
+const SIGNATURE_TOLERANCE_SECONDS = 5 * 60;
+
 function verifyStripeSignature(payload: string, sigHeader: string, secret: string): boolean {
-  const parts = sigHeader.split(",").reduce<Record<string, string>>((acc, part) => {
-    const [k, v] = part.split("=");
-    if (k && v) acc[k] = v;
-    return acc;
-  }, {});
+  let timestamp: string | null = null;
+  const signatures: string[] = [];
+  for (const part of sigHeader.split(",")) {
+    const idx = part.indexOf("=");
+    if (idx < 0) continue;
+    const k = part.slice(0, idx).trim();
+    const v = part.slice(idx + 1).trim();
+    if (k === "t") timestamp = v;
+    else if (k === "v1" && v) signatures.push(v);
+  }
+  if (!timestamp || signatures.length === 0) return false;
 
-  const timestamp = parts["t"];
-  const signature = parts["v1"];
-  if (!timestamp || !signature) return false;
+  // Replay protection: reject signatures older/newer than the tolerance.
+  const ts = Number(timestamp);
+  if (!Number.isFinite(ts)) return false;
+  if (Math.abs(Math.floor(Date.now() / 1000) - ts) > SIGNATURE_TOLERANCE_SECONDS) return false;
 
-  const signedPayload = `${timestamp}.${payload}`;
-  const expected = createHmac("sha256", secret).update(signedPayload).digest("hex");
-
-  const a = Buffer.from(expected);
-  const b = Buffer.from(signature);
-  if (a.length !== b.length) return false;
-  return timingSafeEqual(a, b);
+  const expected = Buffer.from(
+    createHmac("sha256", secret).update(`${timestamp}.${payload}`).digest("hex"),
+  );
+  // Accept a match on ANY v1 signature (Stripe sends several during secret rolls).
+  return signatures.some((sig) => {
+    const b = Buffer.from(sig);
+    return b.length === expected.length && timingSafeEqual(expected, b);
+  });
 }
 
 function toIso(unixSeconds: number | null | undefined): string | null {
@@ -64,6 +74,26 @@ function firstSubscriptionPrice(sub: unknown): StripeRecord | null {
   const items = asRecord(record?.items);
   const firstItem = asRecord(asArray(items?.data)[0]);
   return asRecord(firstItem?.price);
+}
+
+/** current_period_end now lives on subscription items in newer API versions. */
+function subscriptionPeriodEnd(sub: unknown): number | null {
+  const record = asRecord(sub);
+  const top = numberValue(record?.current_period_end);
+  if (top) return top;
+  const items = asRecord(record?.items);
+  return numberValue(asRecord(asArray(items?.data)[0])?.current_period_end);
+}
+
+/** Invoice subscription id: legacy `subscription` or newer `parent.subscription_details`. */
+function invoiceSubscriptionId(invoice: StripeRecord): string | null {
+  const direct = invoice.subscription;
+  if (typeof direct === "string" && direct) return direct;
+  const directObj = stringValue(asRecord(direct)?.id);
+  if (directObj) return directObj;
+  const details = asRecord(asRecord(invoice.parent)?.subscription_details);
+  const nested = details?.subscription;
+  return stringValue(nested) ?? stringValue(asRecord(nested)?.id);
 }
 
 function invoiceLinePeriodEnd(invoice: StripeRecord): number | null {
@@ -195,7 +225,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
                 const sub = await getStripeSubscription(subscriptionId);
                 status = sub.status;
                 trialEnd = toIso(sub.trial_end);
-                periodEnd = toIso(sub.current_period_end);
+                periodEnd = toIso(subscriptionPeriodEnd(sub));
                 cancelAtPeriodEnd = !!sub.cancel_at_period_end;
                 priceId = priceFromSubscription(sub) ?? priceId;
                 amount = amountFromSubscription(sub) ?? amount;
@@ -227,18 +257,32 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
             // webhook deliveries simply re-apply the same values.
             // Match by user id (client_reference_id) first, then email,
             // then customer id.
+            let matched: { user_id: string }[] | null = null;
             if (userId) {
-              await supabaseAdmin
+              ({ data: matched } = await supabaseAdmin
                 .from("subscribers")
                 .update({ ...fields, ...(email ? { email } : {}) })
-                .eq("user_id", userId);
+                .eq("user_id", userId)
+                .select("user_id"));
             } else if (email) {
-              await supabaseAdmin.from("subscribers").update(fields).eq("email", email);
-            } else if (customerId) {
-              await supabaseAdmin
+              ({ data: matched } = await supabaseAdmin
                 .from("subscribers")
                 .update(fields)
-                .eq("stripe_customer_id", customerId);
+                .eq("email", email)
+                .select("user_id"));
+            } else if (customerId) {
+              ({ data: matched } = await supabaseAdmin
+                .from("subscribers")
+                .update(fields)
+                .eq("stripe_customer_id", customerId)
+                .select("user_id"));
+            }
+            if (!matched || matched.length === 0) {
+              console.warn("Stripe webhook: no subscriber row matched checkout", {
+                customerId,
+                subscriptionId,
+                hasUserId: !!userId,
+              });
             }
           } else if (
             event.type === "customer.subscription.updated" ||
@@ -272,7 +316,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               status,
               plan,
               trial_end: toIso(numberValue(sub.trial_end)),
-              current_period_end: toIso(numberValue(sub.current_period_end)),
+              current_period_end: toIso(subscriptionPeriodEnd(sub)),
               cancel_at_period_end: booleanValue(sub.cancel_at_period_end),
               updated_at: new Date().toISOString(),
             };
@@ -285,16 +329,25 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
               .select("user_id");
 
             if (!updated || updated.length === 0) {
+              let fallback: { user_id: string }[] | null = null;
               if (userId) {
-                await supabaseAdmin
+                ({ data: fallback } = await supabaseAdmin
                   .from("subscribers")
                   .update(fields)
-                  .eq("user_id", userId);
+                  .eq("user_id", userId)
+                  .select("user_id"));
               } else if (fields.stripe_customer_id) {
-                await supabaseAdmin
+                ({ data: fallback } = await supabaseAdmin
                   .from("subscribers")
                   .update(fields)
-                  .eq("stripe_customer_id", fields.stripe_customer_id);
+                  .eq("stripe_customer_id", fields.stripe_customer_id)
+                  .select("user_id"));
+              }
+              if (!fallback || fallback.length === 0) {
+                console.warn("Stripe webhook: no subscriber row matched subscription", {
+                  customerId: fields.stripe_customer_id,
+                  subscriptionId,
+                });
               }
             }
           } else if (event.type === "invoice.paid") {
@@ -303,7 +356,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
             const invoice = eventObject(event);
             if (!invoice) return new Response("Invalid payload", { status: 400 });
 
-            const subscriptionId: string | null = stringValue(invoice.subscription);
+            const subscriptionId: string | null = invoiceSubscriptionId(invoice);
             const periodEnd = toIso(invoiceLinePeriodEnd(invoice));
             if (subscriptionId) {
               await supabaseAdmin
@@ -319,7 +372,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
             const invoice = eventObject(event);
             if (!invoice) return new Response("Invalid payload", { status: 400 });
 
-            const subscriptionId: string | null = stringValue(invoice.subscription);
+            const subscriptionId: string | null = invoiceSubscriptionId(invoice);
             if (subscriptionId) {
               await supabaseAdmin
                 .from("subscribers")

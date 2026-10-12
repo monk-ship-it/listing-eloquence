@@ -8,6 +8,13 @@
       "when": 1791846499232,
       "tag": "0000_transcription_usage",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791846634350,
+      "tag": "0001_user_roles_and_profile_email_guard",
+      "breakpoints": true
     }
   ]
 }

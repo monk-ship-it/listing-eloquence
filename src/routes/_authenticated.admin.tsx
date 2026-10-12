@@ -53,7 +53,9 @@ function AdminPage() {
   }
 
   if (adminQuery.isLoading) {
-    return <main className="mx-auto max-w-2xl px-5 py-10 text-sm text-muted-foreground">Loading…</main>;
+    return (
+      <main className="mx-auto max-w-2xl px-5 py-10 text-sm text-muted-foreground">Loading…</main>
+    );
   }
 
   if (!isAdmin) {

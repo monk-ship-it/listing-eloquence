@@ -18,8 +18,21 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
-import { getMySubscription, cancelMySubscription, resumeMySubscription, verifyCheckoutSession } from "@/lib/subscription.functions";
-import { APP_NAME, PRICE_MONTHLY, TRIAL_DAYS, CONTACT_EMAIL, getPlan } from "@/lib/config";
+import {
+  getMySubscription,
+  cancelMySubscription,
+  resumeMySubscription,
+  verifyCheckoutSession,
+} from "@/lib/subscription.functions";
+import {
+  APP_NAME,
+  TRIAL_DAYS,
+  CONTACT_EMAIL,
+  getPlan,
+  planPriceDisplay,
+  readSavedMarket,
+  type MarketId,
+} from "@/lib/config";
 import { CheckCircle2, CreditCard, Mail, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/account")({
@@ -29,7 +42,11 @@ export const Route = createFileRoute("/_authenticated/account")({
 
 function fmtDate(iso: string | null) {
   if (!iso) return "—";
-  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  return new Date(iso).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -100,7 +117,6 @@ function AccountPage() {
   const hasAccess = sub?.hasAccess ?? false;
   const inactive = !hasAccess;
 
-
   async function cancel() {
     setBusy(true);
     try {
@@ -128,7 +144,12 @@ function AccountPage() {
   }
 
   const plan = getPlan(sub?.plan);
-
+  const [savedMarket, setSavedMarket] = useState<MarketId>("uk");
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("market");
+    setSavedMarket(q === "us" || q === "uk" ? q : (readSavedMarket() ?? "uk"));
+  }, []);
+  const market: MarketId = sub && sub.rawStatus !== "none" ? sub.market : savedMarket;
 
   return (
     <main className="mx-auto max-w-3xl px-5 py-10">
@@ -149,7 +170,8 @@ function AccountPage() {
       )}
       {activation === "pending" && (
         <div className="mt-6 rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 text-sm text-amber-700">
-          Payment received. Your account is still being activated. Please refresh in a moment or contact support.
+          Payment received. Your account is still being activated. Please refresh in a moment or
+          contact support.
         </div>
       )}
 
@@ -166,8 +188,8 @@ function AccountPage() {
         ) : inactive ? (
           <div className="mt-6">
             <p className="text-sm text-muted-foreground">
-              Start your {TRIAL_DAYS}-day free trial to unlock listing generation. Plans from {PRICE_MONTHLY}/month —
-              cancel anytime.
+              Start your {TRIAL_DAYS}-day free trial to unlock listing generation. Plans from{" "}
+              {planPriceDisplay("starter", market)}/month — cancel anytime.
             </p>
             <Button asChild className="mt-5" size="lg">
               <a href="/subscription">
@@ -178,7 +200,10 @@ function AccountPage() {
         ) : (
           <div className="mt-6 space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Info label="Plan" value={`${plan.name} — ${plan.price} / month`} />
+              <Info
+                label="Plan"
+                value={`${plan.name} — ${planPriceDisplay(plan.id, market)} / month`}
+              />
               <Info label="Listings" value={`${plan.monthlyListings} per month`} />
 
               {status === "trialing" ? (
@@ -194,7 +219,8 @@ function AccountPage() {
             {sub?.cancelAtPeriodEnd ? (
               <div className="rounded-lg border border-border/70 bg-muted/30 p-4">
                 <p className="text-sm text-muted-foreground">
-                  Your subscription is set to cancel. You'll keep access until {fmtDate(sub?.currentPeriodEnd ?? null)}.
+                  Your subscription is set to cancel. You'll keep access until{" "}
+                  {fmtDate(sub?.currentPeriodEnd ?? null)}.
                 </p>
                 <Button className="mt-3" variant="outline" onClick={resume} disabled={busy}>
                   Resume subscription
@@ -218,8 +244,8 @@ function AccountPage() {
                     <AlertDialogTitle>Cancel your subscription?</AlertDialogTitle>
                     <AlertDialogDescription>
                       You'll keep access until the end of your current billing period
-                      {sub?.currentPeriodEnd ? ` (${fmtDate(sub.currentPeriodEnd)})` : ""}. You can resume
-                      anytime before then.
+                      {sub?.currentPeriodEnd ? ` (${fmtDate(sub.currentPeriodEnd)})` : ""}. You can
+                      resume anytime before then.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

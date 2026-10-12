@@ -80,9 +80,7 @@ export interface ReconcileResult {
  * - Stripe unavailable/erroring → row returned unchanged (no guessed writes).
  * - Success → authoritative values persisted via the admin client and returned.
  */
-export async function reconcileSubscriberRow(
-  row: SubscriberRow | null,
-): Promise<ReconcileResult> {
+export async function reconcileSubscriberRow(row: SubscriberRow | null): Promise<ReconcileResult> {
   const current: SubscriberRow = row ?? {};
   const subscriptionId = str(current.stripe_subscription_id);
   const userId = str(current.user_id);
