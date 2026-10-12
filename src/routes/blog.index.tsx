@@ -7,7 +7,7 @@ import { formatPostDate, listImageUrl, imageAlt, SITE_URL } from "@/lib/opinly/s
 import { GUIDES } from "@/lib/guides";
 import { IMG, type ResponsiveImage } from "@/lib/images";
 import type { OpinlyPostList } from "@/lib/opinly/types";
-import { socialMeta, jsonLd, breadcrumbNode, ORG_REF } from "@/lib/seo";
+import { socialMeta, ORG_REF } from "@/lib/seo";
 
 const TITLE = "Property Listing Copy Guides for UK & US Agents";
 const DOC_TITLE = "Listing Copy Guides for UK & US Agents | Quill";

@@ -1,6 +1,8 @@
 /** Static, evergreen SEO guides published under the public Guides hub. */
 
-export const SITE = "https://copybymonk.com";
+import { SITE, ORG_REF, OG_IMAGE, socialMeta } from "@/lib/seo";
+
+export { SITE };
 
 export type GuideMarket = "uk" | "us";
 
@@ -12,6 +14,8 @@ export interface GuideMeta {
     | "/mls-remarks-examples"
     | "/real-estate-listing-description-examples";
   title: string;
+  /** Document <title>, with the "| Quill" suffix. */
+  docTitle: string;
   /** Short label for cards and cross-links. */
   label: string;
   /** 140–160 char meta description. */
@@ -20,11 +24,13 @@ export interface GuideMeta {
   blurb: string;
   market: GuideMarket;
   datePublished: string;
+  dateModified: string;
 }
 
 export const GUIDES: GuideMeta[] = [
   {
     path: "/property-description-examples",
+    docTitle: "UK Property Description Examples for Estate Agents | Quill",
     title: "Property Description Examples for UK Estate Agents",
     label: "UK property description examples",
     description:
@@ -33,9 +39,11 @@ export const GUIDES: GuideMeta[] = [
       "Full worked descriptions for four UK property types, annotated so you can see which sentence is doing the selling.",
     market: "uk",
     datePublished: "2026-08-08",
+    dateModified: "2026-10-12",
   },
   {
     path: "/rightmove-property-description-template",
+    docTitle: "Rightmove-Style Description Template & Checklist | Quill",
     title: "Rightmove-Style Property Description Template & Checklist",
     label: "Rightmove-style description template",
     description:
@@ -44,9 +52,11 @@ export const GUIDES: GuideMeta[] = [
       "A paragraph-by-paragraph template plus a pre-publish checklist you can run before a listing goes live.",
     market: "uk",
     datePublished: "2026-08-08",
+    dateModified: "2026-10-12",
   },
   {
     path: "/mls-remarks-examples",
+    docTitle: "MLS Remarks Examples & Public Remarks Template | Quill",
     title: "MLS Remarks Examples and Templates for Agents",
     label: "MLS remarks examples",
     description:
@@ -55,9 +65,11 @@ export const GUIDES: GuideMeta[] = [
       "Public remarks examples for four home types, plus wording habits that keep copy focused on the property.",
     market: "us",
     datePublished: "2026-08-08",
+    dateModified: "2026-10-12",
   },
   {
     path: "/real-estate-listing-description-examples",
+    docTitle: "Real Estate Listing Description Examples | Quill",
     title: "Real Estate Listing Description Examples by Home Type",
     label: "US listing description examples",
     description:
@@ -66,6 +78,7 @@ export const GUIDES: GuideMeta[] = [
       "Longer-form listing descriptions across home types, written in three different tones for the same facts.",
     market: "us",
     datePublished: "2026-08-08",
+    dateModified: "2026-10-12",
   },
 ];
 
@@ -108,10 +121,11 @@ export function guideHead(meta: GuideMeta, faqs?: { q: string; a: string }[]) {
         description: meta.description,
         inLanguage: meta.market === "uk" ? "en-GB" : "en-US",
         datePublished: meta.datePublished,
-        dateModified: meta.datePublished,
+        dateModified: meta.dateModified,
+        image: [OG_IMAGE],
         mainEntityOfPage: { "@type": "WebPage", "@id": url },
-        author: { "@type": "Organization", name: "CopyByMonk" },
-        publisher: { "@type": "Organization", name: "CopyByMonk", url: `${SITE}/` },
+        author: ORG_REF,
+        publisher: ORG_REF,
       }),
     },
   ];
@@ -133,15 +147,19 @@ export function guideHead(meta: GuideMeta, faqs?: { q: string; a: string }[]) {
 
   return {
     meta: [
-      { title: `${meta.label} | CopyByMonk` },
+      { title: meta.docTitle },
       { name: "description", content: meta.description },
       { property: "og:title", content: meta.title },
       { property: "og:description", content: meta.description },
       { property: "og:type", content: "article" },
       { property: "og:url", content: url },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: meta.title },
-      { name: "twitter:description", content: meta.description },
+      { property: "article:published_time", content: meta.datePublished },
+      { property: "article:modified_time", content: meta.dateModified },
+      ...socialMeta({
+        title: meta.title,
+        description: meta.description,
+        locale: meta.market === "uk" ? "en_GB" : "en_US",
+      }),
     ],
     links: [{ rel: "canonical", href: url }],
     scripts,
