@@ -113,9 +113,9 @@ function Page() {
           considered.
         </p>
         <p>
-          The garden is approximately 40ft, laid mainly to lawn with a paved terrace directly off the
-          kitchen and a brick-built shed at the rear. On-street parking is unrestricted. Freehold.
-          Council tax band D. EPC rating D.
+          The garden is approximately 40ft, laid mainly to lawn with a paved terrace directly off
+          the kitchen and a brick-built shed at the rear. On-street parking is unrestricted.
+          Freehold. Council tax band D. EPC rating D.
         </p>
       </GuideExample>
       <GuideH3>Why it works</GuideH3>
@@ -137,8 +137,8 @@ function Page() {
         <p>
           The ground floor has been reworked for family life: an entrance porch and hall with a
           cloakroom and WC, a front sitting room, and an open-plan kitchen and family room across
-          the back of the house with a large island, a pantry cupboard and doors to the garden. There
-          is a separate study off the hall, useful for two people working from home.
+          the back of the house with a large island, a pantry cupboard and doors to the garden.
+          There is a separate study off the hall, useful for two people working from home.
         </p>
         <p>
           On the first floor the principal bedroom has an en-suite shower room and fitted wardrobes

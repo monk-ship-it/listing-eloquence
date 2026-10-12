@@ -133,7 +133,9 @@ function USPage() {
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="min-h-[44px]">
-            <Link to="/" hash="workflow">See the workflow</Link>
+            <Link to="/" hash="workflow">
+              See the workflow
+            </Link>
           </Button>
         </div>
         <p className="mt-3 text-xs text-muted-foreground">

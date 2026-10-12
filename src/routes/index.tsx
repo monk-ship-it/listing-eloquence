@@ -405,7 +405,7 @@ function Hero({ authed }: { authed: boolean }) {
               asChild
               size="lg"
               variant="outline"
-              className="w-full border-border bg-card/60 hover:bg-card sm:w-auto"
+              className="w-full border-border bg-card/60 hover:bg-card max-sm:min-h-11 sm:w-auto"
             >
               <a href="#workflow">See the workflow</a>
             </Button>

@@ -43,7 +43,6 @@ function Page() {
       meta={META}
       standfirst="Use this template as a repeatable structure for UK portal listings: an opening hook, a room-by-room walkthrough, outside space, location, then the factual close. Fill in the bracketed prompts from your property notes, then run the pre-publish checklist at the end."
     >
-      
       <div className="mt-6 rounded-xl border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
         CopyByMonk is an independent tool. It is not affiliated with, endorsed by or connected to
         Rightmove, OnTheMarket or Zoopla. “Rightmove-style” here describes a widely used UK portal
@@ -52,10 +51,10 @@ function Page() {
 
       <GuideH2 id="structure">The five-block structure</GuideH2>
       <GuideP>
-        Portal listings are scanned in a predictable order: photograph, price, key features, then the
-        first two lines of the description. Everything below the second line has to be earned. This
-        structure front-loads the decision-making facts and keeps the detail in the order a buyer
-        walks the property.
+        Portal listings are scanned in a predictable order: photograph, price, key features, then
+        the first two lines of the description. Everything below the second line has to be earned.
+        This structure front-loads the decision-making facts and keeps the detail in the order a
+        buyer walks the property.
       </GuideP>
       <GuideList
         items={[
@@ -75,16 +74,16 @@ function Page() {
         </p>
         <p>
           <strong>Accommodation.</strong> The front door opens into [entrance hall / porch and its
-          notable detail]. The [reception room] has [window type, fireplace, dimensions]. The kitchen
-          [dimensions] has [worktop material, integrated appliances, table space] and [doors /
-          window] to [garden / side return]. [Ground-floor WC, utility, study — include only if
+          notable detail]. The [reception room] has [window type, fireplace, dimensions]. The
+          kitchen [dimensions] has [worktop material, integrated appliances, table space] and [doors
+          / window] to [garden / side return]. [Ground-floor WC, utility, study — include only if
           present.]
         </p>
         <p>
-          <strong>Upstairs.</strong> There are [number] bedrooms: the principal bedroom has [wardrobe
-          / en-suite / aspect], [bedroom two] is a [double / single] overlooking [front / rear], and
-          [bedroom three] currently [use]. The family bathroom has [bath, shower, suite detail].
-          [Loft: boarded / ladder / standing height, subject to consents.]
+          <strong>Upstairs.</strong> There are [number] bedrooms: the principal bedroom has
+          [wardrobe / en-suite / aspect], [bedroom two] is a [double / single] overlooking [front /
+          rear], and [bedroom three] currently [use]. The family bathroom has [bath, shower, suite
+          detail]. [Loft: boarded / ladder / standing height, subject to consents.]
         </p>
         <p>
           <strong>Outside.</strong> The rear garden is approximately [size] and [aspect], laid to
@@ -97,8 +96,8 @@ function Page() {
           market, canal path.]
         </p>
         <p>
-          <strong>Facts.</strong> [Freehold / Leasehold with X years remaining, service charge £X per
-          year, ground rent £X per year.] Council tax band [X]. EPC rating [X]. [Heating type.]
+          <strong>Facts.</strong> [Freehold / Leasehold with X years remaining, service charge £X
+          per year, ground rent £X per year.] Council tax band [X]. EPC rating [X]. [Heating type.]
           [Drainage if not mains.]
         </p>
       </GuideExample>
@@ -110,16 +109,16 @@ function Page() {
           kitchen-diner with doors to a west-facing garden.
         </p>
         <p>
-          The front door opens into a hall with a cloakroom and WC. The sitting room has a bay window
-          and a log-burner. The kitchen-diner runs across the rear with quartz worktops, an
+          The front door opens into a hall with a cloakroom and WC. The sitting room has a bay
+          window and a log-burner. The kitchen-diner runs across the rear with quartz worktops, an
           integrated oven, induction hob and dishwasher, space for a six-seat table and French doors
           to the terrace. A utility room off the kitchen holds the washing machine and the boiler,
           serviced annually.
         </p>
         <p>
-          Upstairs there are two doubles and a single. The principal bedroom has fitted wardrobes and
-          looks over the garden; the second double faces the front; the third takes a single bed and
-          a desk. The bathroom has a bath with a shower over and a heated towel rail.
+          Upstairs there are two doubles and a single. The principal bedroom has fitted wardrobes
+          and looks over the garden; the second double faces the front; the third takes a single bed
+          and a desk. The bathroom has a bath with a shower over and a heated towel rail.
         </p>
         <p>
           The garden is approximately 50ft and west-facing, mainly lawn with a paved terrace off the
@@ -173,11 +172,11 @@ function Page() {
 
       <GuideH2 id="material-information">Material Information, briefly</GuideH2>
       <GuideP>
-        UK listings are expected to carry the material facts a buyer needs before enquiring — tenure,
-        council tax band, EPC, and any specific restriction or risk that would affect a decision.
-        This guide is not legal advice; follow your agency's compliance process and current portal
-        guidance. Practically, the writing habit that keeps you safe is simple: state facts you have
-        verified, omit facts you have not, and never let an adjective imply a fact.
+        UK listings are expected to carry the material facts a buyer needs before enquiring —
+        tenure, council tax band, EPC, and any specific restriction or risk that would affect a
+        decision. This guide is not legal advice; follow your agency's compliance process and
+        current portal guidance. Practically, the writing habit that keeps you safe is simple: state
+        facts you have verified, omit facts you have not, and never let an adjective imply a fact.
       </GuideP>
 
       <GuideH2 id="faqs">FAQs</GuideH2>

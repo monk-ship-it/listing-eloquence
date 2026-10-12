@@ -53,10 +53,10 @@ export async function callLovableAiJson(messages: ChatMessage[], model?: string)
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-      model: resolvedModel,
-      max_tokens: 4096,
-      system: systemPrompt || undefined,
-      messages: conversation,
+        model: resolvedModel,
+        max_tokens: 4096,
+        system: systemPrompt || undefined,
+        messages: conversation,
       }),
     });
   } catch (err) {

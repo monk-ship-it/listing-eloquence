@@ -185,7 +185,10 @@ function GeneratorPage() {
       requestAnimationFrame(() => {
         if (window.matchMedia("(max-width: 1023px)").matches) {
           const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-          resultsRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+          resultsRef.current?.scrollIntoView({
+            behavior: reduce ? "auto" : "smooth",
+            block: "start",
+          });
         }
       });
     } catch (err) {
@@ -199,7 +202,9 @@ function GeneratorPage() {
         );
         queryClient.invalidateQueries({ queryKey: ["usage"] });
       } else if (msg.includes("MALFORMED_AI_OUTPUT")) {
-        toast.error("The writer returned an incomplete draft. Please try again — this didn't use a listing.");
+        toast.error(
+          "The writer returned an incomplete draft. Please try again — this didn't use a listing.",
+        );
       } else if (msg.includes("RATE_LIMIT")) {
         toast.error("Lots of requests right now — please wait a moment and try again.");
       } else if (msg.includes("AI_TIMEOUT")) {
@@ -249,7 +254,9 @@ function GeneratorPage() {
       {subQuery.isError && (
         <Card className="mt-6 border-destructive/40 bg-destructive/5 p-5" role="alert">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm">We couldn't load your subscription. Check your connection and try again.</p>
+            <p className="text-sm">
+              We couldn't load your subscription. Check your connection and try again.
+            </p>
             <Button
               type="button"
               size="sm"
