@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Camera, ShieldCheck, Sparkles, Pause, Play, Check } from "lucide-react";
+import { Camera, ShieldCheck, Sparkles, Pause, Play } from "lucide-react";
 import exteriorImg from "@/assets/home-walk-exterior.jpg";
 import kitchenImg from "@/assets/home-walk-kitchen.jpg";
 import gardenImg from "@/assets/home-walk-garden.jpg";
@@ -177,13 +177,14 @@ export function PropertyWalkthrough({
                       }`}
                     >
                       <span
+                        aria-hidden="true"
                         className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl border text-sm font-bold ${
                           isActive
-                            ? "border-primary/40 bg-primary text-primary-foreground"
+                            ? "border-primary/40 bg-primary text-primary-foreground ring-2 ring-primary/30 ring-offset-2 ring-offset-background"
                             : "border-border bg-background text-muted-foreground"
                         }`}
                       >
-                        {isActive ? <Check className="h-4 w-4" /> : i + 1}
+                        {i + 1}
                       </span>
                       <span className="min-w-0">
                         <span className="block text-base font-semibold">{s.title}</span>
