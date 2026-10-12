@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
 import { APP_NAME } from "@/lib/config";
+import { SITE, socialMeta, MARKET_ALTERNATES, jsonLd, breadcrumbNode, softwareAppNode } from "@/lib/seo";
 import { Check, ArrowRight, ShieldCheck, Mic, Sparkles, Copy } from "lucide-react";
 
 const CANONICAL = "https://copybymonk.com/us-real-estate-listing-generator";
@@ -37,45 +38,35 @@ const FAQS: { q: string; a: string }[] = [
 export const Route = createFileRoute("/us-real-estate-listing-generator")({
   head: () => ({
     meta: [
-      { title: `US Real Estate Listing Generator — ${APP_NAME}` },
-      {
-        name: "description",
-        content:
-          "Turn one set of property notes into an MLS-ready listing pack: headline, 6–10 key features, remarks, teaser, email blast and social captions.",
-      },
-
-      { property: "og:title", content: `US Real Estate Listing Generator — ${APP_NAME}` },
-      {
-        property: "og:description",
-        content:
-          "Headline, Key Features, MLS-ready remarks, teaser, Email Blast and Instagram/Facebook/X captions — written from your facts, in your voice.",
-      },
+      { title: "MLS Remarks Generator & AI Listing Descriptions | Quill" },
+      { name: "description", content: "AI listing description generator for US real estate agents. MLS-ready remarks, key features, email blast and social captions, with Fair Housing guardrails." },
+      { property: "og:title", content: "MLS Remarks Generator & AI Listing Descriptions | Quill" },
+      { property: "og:description", content: "AI listing description generator for US real estate agents. MLS-ready remarks, key features, email blast and social captions, with Fair Housing guardrails." },
       { property: "og:url", content: CANONICAL },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: `US Real Estate Listing Generator — ${APP_NAME}` },
-      {
-        name: "twitter:description",
-        content:
-          "One set of notes becomes a full US listing pack: Headline, Key Features, MLS remarks, teaser, Email Blast and Instagram/Facebook/X captions.",
-      },
+      ...socialMeta({ title: "MLS Remarks Generator & AI Listing Descriptions | Quill", description: "AI listing description generator for US real estate agents. MLS-ready remarks, key features, email blast and social captions, with Fair Housing guardrails.", locale: "en_US" }),
     ],
-    links: [
-      { rel: "canonical", href: CANONICAL },
-      { rel: "alternate", hrefLang: "en-US", href: CANONICAL },
-      {
-        rel: "alternate",
-        hrefLang: "en-GB",
-        href: "https://copybymonk.com/uk-property-listing-generator",
-      },
-      {
-        rel: "alternate",
-        hrefLang: "x-default",
-        href: "https://copybymonk.com/uk-property-listing-generator",
-      },
-    ],
+    links: [{ rel: "canonical", href: CANONICAL }, ...MARKET_ALTERNATES],
 
     scripts: [
+      jsonLd(
+        breadcrumbNode([
+          { name: "Home", url: `${SITE}/` },
+          { name: "US real estate listing generator", url: CANONICAL },
+        ]),
+      ),
+      jsonLd(
+        softwareAppNode({
+          url: CANONICAL,
+          description: "AI listing description generator for US real estate agents: MLS-ready remarks, Key Features, teaser, Email Blast and social captions, with Fair Housing guardrails.",
+          currency: "USD",
+          prices: [
+            { name: "Starter (US)", price: 49 },
+            { name: "Pro (US)", price: 99 },
+            { name: "Growth (US)", price: 199 },
+          ],
+        }),
+      ),
       {
         type: "application/ld+json",
         children: JSON.stringify({
