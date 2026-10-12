@@ -391,7 +391,7 @@ export const verifyCheckoutSession = createServerFn({ method: "POST" })
         .eq("user_id", userId)
         .maybeSingle();
 
-      const subscription = toInfo(dbRow);
+      const subscription = await toInfo(dbRow);
       return { ok: belongs, activated: subscription.hasAccess, subscription };
     },
   );
