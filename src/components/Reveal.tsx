@@ -17,11 +17,16 @@ export function Reveal({
   delay?: number;
 }) {
   const ref = useRef<HTMLElement | null>(null);
+  const [armed, setArmed] = useState(false);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    // Already on screen: leave it visible rather than flashing it out and in.
+    if (el.getBoundingClientRect().top < window.innerHeight) return;
+    setArmed(true);
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -40,7 +45,7 @@ export function Reveal({
   return (
     <Tag
       ref={ref as never}
-      className={cn("reveal", visible && "is-visible", className)}
+      className={cn("reveal", armed && "reveal-armed", visible && "is-visible", className)}
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}
     >
       {children}

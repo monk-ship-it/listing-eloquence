@@ -49,6 +49,7 @@ function GeneratorPage() {
 
   const [input, setInput] = useState<ListingInput>(EMPTY_INPUT);
   const [output, setOutput] = useState<ListingOutput | null>(null);
+  const resultsRef = useRef<HTMLDivElement | null>(null);
   const [busy, setBusy] = useState(false);
   // Immediate lock so rapid double-submits can't race the disabled UI state.
   const inFlight = useRef(false);
@@ -180,6 +181,16 @@ function GeneratorPage() {
       queryClient.invalidateQueries({ queryKey: ["generations"] });
       queryClient.invalidateQueries({ queryKey: ["usage"] });
       toast.success("Listing generated.");
+      // On mobile the results sit below the form — bring them into view.
+      requestAnimationFrame(() => {
+        if (window.matchMedia("(max-width: 1023px)").matches) {
+          const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          resultsRef.current?.scrollIntoView({
+            behavior: reduce ? "auto" : "smooth",
+            block: "start",
+          });
+        }
+      });
     } catch (err) {
       if (myId !== requestId.current) return;
       const msg = err instanceof Error ? err.message : "Generation failed.";
@@ -190,6 +201,16 @@ function GeneratorPage() {
           "You've used all your listings this month. Upgrade your plan or wait for next month's renewal.",
         );
         queryClient.invalidateQueries({ queryKey: ["usage"] });
+      } else if (msg.includes("MALFORMED_AI_OUTPUT")) {
+        toast.error(
+          "The writer returned an incomplete draft. Please try again — this didn't use a listing.",
+        );
+      } else if (msg.includes("RATE_LIMIT")) {
+        toast.error("Lots of requests right now — please wait a moment and try again.");
+      } else if (msg.includes("AI_TIMEOUT")) {
+        toast.error("That took too long to write. Please try again.");
+      } else if (msg.includes("AI_UNAVAILABLE") || /claude api error/i.test(msg)) {
+        toast.error("The listing writer is temporarily unavailable. Please try again shortly.");
       } else {
         toast.error(msg);
       }
@@ -230,15 +251,35 @@ function GeneratorPage() {
         </div>
       </div>
 
-      {!subQuery.isLoading && !hasAccess && (
+      {subQuery.isError && (
+        <Card className="mt-6 border-destructive/40 bg-destructive/5 p-5" role="alert">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm">
+              We couldn't load your subscription. Check your connection and try again.
+            </p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="min-h-11 sm:min-h-9"
+              onClick={() => subQuery.refetch()}
+              disabled={subQuery.isFetching}
+            >
+              {subQuery.isFetching ? "Retrying…" : "Retry"}
+            </Button>
+          </div>
+        </Card>
+      )}
+
+      {!subQuery.isLoading && !subQuery.isError && !hasAccess && (
         <Card className="mt-6 border-primary/40 bg-primary/5 p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <Lock className="h-5 w-5 text-primary" />
               <p className="text-sm">Start your free trial to generate listings.</p>
             </div>
-            <Button asChild size="sm">
-              <Link to="/account">Start free trial</Link>
+            <Button asChild size="sm" className="min-h-11 sm:min-h-0">
+              <Link to="/subscription">Start free trial</Link>
             </Button>
           </div>
         </Card>
@@ -577,7 +618,7 @@ function GeneratorPage() {
         </form>
 
         {/* Output */}
-        <div className="space-y-6">
+        <div ref={resultsRef} className="scroll-mt-20 space-y-6">
           {!output ? (
             <Card className="flex min-h-[300px] flex-col items-center justify-center p-10 text-center">
               <Sparkles className="h-8 w-8 text-primary/60" />

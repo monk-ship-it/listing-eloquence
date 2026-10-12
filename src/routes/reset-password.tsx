@@ -64,7 +64,7 @@ function ResetPasswordPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center px-5 py-12">
+    <div className="relative flex min-h-dvh items-center justify-center px-5 py-12">
       <div className="absolute inset-0 bg-radial-glow" />
       <div className="absolute inset-0 bg-grid opacity-50" />
       <div className="relative w-full max-w-md">
@@ -108,7 +108,12 @@ function ResetPasswordPage() {
                 onChange={(e) => setConfirm(e.target.value)}
               />
             </div>
-            <Button type="submit" className="w-full" size="lg" disabled={busy || !ready}>
+            <Button
+              type="submit"
+              className="w-full min-h-11 sm:min-h-0"
+              size="lg"
+              disabled={busy || !ready}
+            >
               {busy ? "Please wait…" : "Update password"}
             </Button>
           </form>

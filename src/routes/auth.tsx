@@ -153,7 +153,7 @@ function AuthPage() {
   const selectedPlan = planParam ? getPlan(planParam) : null;
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center px-5 py-12">
+    <div className="relative flex min-h-dvh items-center justify-center px-5 py-12">
       <div className="absolute inset-0 bg-radial-glow" />
       <div className="absolute inset-0 bg-grid opacity-50" />
       <div className="relative w-full max-w-md">
@@ -164,9 +164,13 @@ function AuthPage() {
         </div>
         <Card className="border-border/70 bg-card/80 p-7 backdrop-blur">
           <Tabs value={mode} onValueChange={(v) => setMode(v as "login" | "signup")}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signup">Start free trial</TabsTrigger>
-              <TabsTrigger value="login">Log in</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 h-auto sm:h-9">
+              <TabsTrigger value="signup" className="min-h-11 sm:min-h-0">
+                Start free trial
+              </TabsTrigger>
+              <TabsTrigger value="login" className="min-h-11 sm:min-h-0">
+                Log in
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="signup" className="mt-6">
@@ -240,7 +244,12 @@ function AuthPage() {
                     placeholder="At least 6 characters"
                   />
                 </div>
-                <Button type="submit" className="w-full" size="lg" disabled={busy}>
+                <Button
+                  type="submit"
+                  className="w-full min-h-11 sm:min-h-0"
+                  size="lg"
+                  disabled={busy}
+                >
                   {busy ? "Please wait…" : mode === "signup" ? "Create account" : "Log in"}
                 </Button>
                 {mode === "login" && (
@@ -248,7 +257,7 @@ function AuthPage() {
                     type="button"
                     onClick={handleForgot}
                     disabled={busy}
-                    className="w-full text-center text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                    className="w-full text-center text-sm text-muted-foreground min-h-11 sm:min-h-0 underline-offset-4 hover:text-foreground hover:underline"
                   >
                     Forgot password?
                   </button>

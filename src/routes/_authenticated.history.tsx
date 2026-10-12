@@ -75,7 +75,14 @@ function HistoryPage() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const query = useQuery({ queryKey: ["generations"], queryFn: () => listFn() });
+  const PAGE = 100;
+  const [limit, setLimit] = useState(PAGE);
+  // Fetch one extra row so we know whether a "Load more" is needed.
+  const query = useQuery({
+    queryKey: ["generations", limit],
+    queryFn: () => listFn({ data: { limit: limit + 1 } }),
+    placeholderData: (prev) => prev,
+  });
 
   async function remove(id: string) {
     if (deletingId) return;
@@ -83,7 +90,7 @@ function HistoryPage() {
     try {
       const res = await delFn({ data: { id } });
       // Only remove from cache after the server confirms the delete.
-      qc.setQueryData<GenerationRecord[]>(["generations"], (prev) =>
+      qc.setQueryData<GenerationRecord[]>(["generations", limit], (prev) =>
         (prev ?? []).filter((x) => x.id !== id),
       );
       if (!res.deleted) toast.info("That listing was already removed.");
@@ -97,7 +104,9 @@ function HistoryPage() {
     }
   }
 
-  const items = query.data ?? [];
+  const allItems = query.data ?? [];
+  const hasMore = allItems.length > limit;
+  const items = hasMore ? allItems.slice(0, limit) : allItems;
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-8 sm:px-5">
@@ -146,6 +155,19 @@ function HistoryPage() {
               onDelete={() => remove(item.id)}
             />
           ))}
+          {hasMore && (
+            <div className="flex justify-center pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="min-h-11 sm:min-h-0"
+                disabled={query.isFetching}
+                onClick={() => setLimit((l) => l + PAGE)}
+              >
+                {query.isFetching ? "Loading…" : "Load more"}
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </main>
@@ -274,7 +296,7 @@ function HistoryItem({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9"
+                  className="h-11 w-11 sm:h-9 sm:w-9"
                   aria-label="Copy key features"
                   onClick={() => doCopy(formatKeyFeaturesBlock(features), "Key features copied.")}
                 >
@@ -300,7 +322,7 @@ function HistoryItem({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9"
+                className="h-11 w-11 sm:h-9 sm:w-9"
                 aria-label="Copy description"
                 onClick={() => doCopy(item.output.listing, "Description copied.")}
               >
@@ -325,7 +347,7 @@ function HistoryItem({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9"
+                  className="h-11 w-11 sm:h-9 sm:w-9"
                   aria-label="Copy teaser summary"
                   onClick={() => doCopy(item.output.summary, "Teaser copied.")}
                 >
@@ -365,7 +387,7 @@ function HistoryItem({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-9 w-9"
+                          className="h-11 w-11 sm:h-9 sm:w-9"
                           aria-label={`Copy ${post.platform} post`}
                           onClick={() =>
                             doCopy(`${post.caption}${tags ? `\n\n${tags}` : ""}`, "Post copied.")

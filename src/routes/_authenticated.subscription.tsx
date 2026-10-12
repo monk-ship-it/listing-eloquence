@@ -439,7 +439,7 @@ function SubscriptionPage() {
                       key={m.id}
                       type="button"
                       onClick={() => setMarket(m.id)}
-                      className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                      className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors min-h-11 sm:min-h-0 ${
                         market === m.id
                           ? "bg-primary text-primary-foreground"
                           : "text-muted-foreground hover:text-foreground"

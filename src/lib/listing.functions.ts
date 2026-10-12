@@ -296,27 +296,37 @@ export const generateListing = createServerFn({ method: "POST" })
           ? "\n\nLANGUAGE OVERRIDE FOR THIS LISTING: Ignore any instruction in the brand voice to use British English. Write in US English with US real estate vocabulary and follow the US Fair Housing rules above."
           : "";
 
-      const content = await callLovableAiJson([
+      const messages = [
         {
-          role: "system",
+          role: "system" as const,
           content: `${masterPrompt}\n\nBRAND VOICE FOR THIS LISTING:\n${voicePrompt}${languageOverride}`,
         },
-        { role: "user", content: buildUserPrompt(data, market) },
-      ]);
+        { role: "user" as const, content: buildUserPrompt(data, market) },
+      ];
 
-      let parsed: ListingOutput;
-      try {
-        const raw = JSON.parse(content);
-        parsed = validateNewListingOutput(raw);
-      } catch {
-        const match = content.match(/\{[\s\S]*\}/);
-        if (!match) throw new Error("MALFORMED_AI_OUTPUT");
+      const parseOutput = (content: string): ListingOutput | null => {
         try {
-          parsed = validateNewListingOutput(JSON.parse(match[0]));
+          return validateNewListingOutput(JSON.parse(content));
         } catch {
-          throw new Error("MALFORMED_AI_OUTPUT");
+          const match = content.match(/\{[\s\S]*\}/);
+          if (!match) return null;
+          try {
+            return validateNewListingOutput(JSON.parse(match[0]));
+          } catch {
+            return null;
+          }
         }
+      };
+
+      // One automatic retry on malformed JSON. The quota slot was reserved once
+      // above, so a retry never consumes a second listing.
+      let parsed: ListingOutput | null = null;
+      for (let attempt = 0; attempt < 2 && !parsed; attempt++) {
+        const content = await callLovableAiJson(messages);
+        parsed = parseOutput(content);
+        if (!parsed) console.warn("Malformed AI output", { attempt });
       }
+      if (!parsed) throw new Error("MALFORMED_AI_OUTPUT");
 
       // Persist to history.
       const { data: savedGen, error: insertError } = await supabase
