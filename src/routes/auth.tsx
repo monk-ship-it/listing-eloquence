@@ -244,7 +244,12 @@ function AuthPage() {
                     placeholder="At least 6 characters"
                   />
                 </div>
-                <Button type="submit" className="w-full min-h-11 sm:min-h-0" size="lg" disabled={busy}>
+                <Button
+                  type="submit"
+                  className="w-full min-h-11 sm:min-h-0"
+                  size="lg"
+                  disabled={busy}
+                >
                   {busy ? "Please wait…" : mode === "signup" ? "Create account" : "Log in"}
                 </Button>
                 {mode === "login" && (
