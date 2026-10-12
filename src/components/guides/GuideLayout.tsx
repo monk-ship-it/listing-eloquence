@@ -162,3 +162,12 @@ export function GuideLayout({
     </BlogShell>
   );
 }
+
+function formatGuideDate(iso: string, market: "uk" | "us") {
+  return new Date(`${iso}T12:00:00Z`).toLocaleDateString(market === "uk" ? "en-GB" : "en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
