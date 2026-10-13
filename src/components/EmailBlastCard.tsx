@@ -123,8 +123,7 @@ export function EmailBlastCard({
           <h3 className="font-display text-lg font-semibold text-foreground">Email Blast</h3>
         </div>
         <p className="mt-1 text-xs text-muted-foreground">
-          New-instruction email for your applicant database — copy and paste into your CRM or
-          email.
+          New-instruction email for your applicant database — copy and paste into your CRM or email.
         </p>
       </div>
 

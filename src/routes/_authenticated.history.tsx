@@ -416,9 +416,7 @@ function HistoryItem({
                           size="icon"
                           className="h-11 w-11 sm:h-9 sm:w-9"
                           aria-label={`Copy ${post.platform} post`}
-                          onClick={() =>
-                            doCopy(formatSocialPost(post), "Post copied.")
-                          }
+                          onClick={() => doCopy(formatSocialPost(post), "Post copied.")}
                         >
                           <Copy className="h-3.5 w-3.5" />
                         </Button>

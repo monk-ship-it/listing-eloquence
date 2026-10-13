@@ -21,8 +21,23 @@ import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME } from "@/lib/config";
 import { VoiceNotes } from "@/components/VoiceNotes";
-import { EmailBlastCard } from "@/components/EmailBlastCard";
-import { copyText, buildCopyAllText, formatKeyFeaturesBlock } from "@/lib/clipboard";
+import { EmailBlastCard, GenerateMarketingButton } from "@/components/EmailBlastCard";
+import {
+  copyText,
+  buildCopyAllText,
+  formatKeyFeaturesBlock,
+  formatSocialPost,
+} from "@/lib/clipboard";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Copy, Sparkles, RefreshCw, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app")({
@@ -48,6 +63,10 @@ function GeneratorPage() {
 
   const [input, setInput] = useState<ListingInput>(EMPTY_INPUT);
   const [output, setOutput] = useState<ListingOutput | null>(null);
+  const [generationId, setGenerationId] = useState<string | null>(null);
+  // Snapshot of the details the current pack was generated from.
+  const [generatedFrom, setGeneratedFrom] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const resultsRef = useRef<HTMLDivElement | null>(null);
   const [busy, setBusy] = useState(false);
   // Immediate lock so rapid double-submits can't race the disabled UI state.
@@ -59,19 +78,16 @@ function GeneratorPage() {
   const usage = usageQuery.data;
   const outOfListings = !!usage && !usage.unlimited && usage.remaining <= 0;
 
-  function clearOutputIfIdle() {
-    if (!inFlight.current) setOutput(null);
-  }
-
   function set<K extends keyof ListingInput>(key: K, value: ListingInput[K]) {
     setInput((prev) => ({ ...prev, [key]: value }));
-    clearOutputIfIdle();
   }
 
   function loadExample() {
     if (inFlight.current) return;
     setInput(EXAMPLE_INPUT);
     setOutput(null);
+    setGenerationId(null);
+    setGeneratedFrom(null);
     toast.success("Example property loaded.");
   }
 
@@ -80,13 +96,21 @@ function GeneratorPage() {
     inFlight.current = true;
     const myId = ++requestId.current;
     setBusy(true);
+    const snapshot = JSON.stringify(input);
     try {
       const result = await generate({ data: input });
       if (myId !== requestId.current) return; // stale response — ignore
-      setOutput(result);
+      setOutput(result.output);
+      setGenerationId(result.generationId);
+      setGeneratedFrom(snapshot);
+      if (result.output.marketingStatus === "failed") {
+        toast.warning(
+          "Listing ready. The email & social didn't generate — you can add them free below.",
+        );
+      }
       queryClient.invalidateQueries({ queryKey: ["generations"] });
       queryClient.invalidateQueries({ queryKey: ["usage"] });
-      toast.success("Listing generated.");
+      if (result.output.marketingStatus !== "failed") toast.success("Listing generated.");
       // On mobile the results sit below the form — bring them into view.
       requestAnimationFrame(() => {
         if (window.matchMedia("(max-width: 1023px)").matches) {
@@ -107,7 +131,7 @@ function GeneratorPage() {
           "You've used all your listings this month. Upgrade your plan or wait for next month's renewal.",
         );
         queryClient.invalidateQueries({ queryKey: ["usage"] });
-      } else if (msg.includes("MALFORMED_AI_OUTPUT")) {
+      } else if (msg.includes("MALFORMED_AI_OUTPUT") || msg.includes("AI_TRUNCATED")) {
         toast.error(
           "The writer returned an incomplete draft. Please try again — this didn't use a listing.",
         );
@@ -125,6 +149,19 @@ function GeneratorPage() {
       inFlight.current = false;
     }
   }
+
+  function requestRegenerate() {
+    if (inFlight.current) return;
+    if (usage && !usage.unlimited) setConfirmOpen(true);
+    else void run();
+  }
+
+  function onMarketingGenerated(next: ListingOutput) {
+    setOutput(next);
+    queryClient.invalidateQueries({ queryKey: ["generations"] });
+  }
+
+  const isStale = !!output && generatedFrom !== null && generatedFrom !== JSON.stringify(input);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -489,6 +526,14 @@ function GeneratorPage() {
             </Card>
           ) : (
             <>
+              {isStale && (
+                <div
+                  role="status"
+                  className="rounded-lg border border-primary/30 bg-primary/5 px-4 py-2.5 text-sm"
+                >
+                  You've changed the details since this pack was generated — Regenerate to update.
+                </div>
+              )}
               <Card className="p-6">
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="font-display text-xl font-semibold">{output.headline}</h2>
@@ -574,16 +619,28 @@ function GeneratorPage() {
                 <p className="mt-2 text-sm text-muted-foreground">{output.summary}</p>
               </Card>
 
-              {output.emailBlast && (
-                <EmailBlastCard
-                  emailBlast={output.emailBlast}
-                  keyFeatures={output.keyFeatures}
-                  onCopy={(text) => copyToast(text, "Email Blast copied.")}
-                />
-              )}
+              <EmailBlastCard
+                emailBlast={output.emailBlast}
+                keyFeatures={output.keyFeatures}
+                generationId={generationId}
+                marketingStatus={output.marketingStatus}
+                onGenerated={onMarketingGenerated}
+              />
 
               <Card className="p-6">
                 <h3 className="font-display text-lg font-semibold">Social pack</h3>
+                {output.social.length === 0 && (
+                  <>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      The social posts didn't generate this time.
+                    </p>
+                    <GenerateMarketingButton
+                      generationId={generationId}
+                      label="Generate social posts — free, doesn't use a listing"
+                      onGenerated={onMarketingGenerated}
+                    />
+                  </>
+                )}
                 <div className="mt-4 space-y-4">
                   {output.social.map((post) => (
                     <div key={post.platform} className="rounded-lg border border-border/70 p-4">
@@ -594,12 +651,7 @@ function GeneratorPage() {
                           size="icon"
                           className="h-11 w-11 shrink-0"
                           aria-label={`Copy ${post.platform} post`}
-                          onClick={() =>
-                            copyToast(
-                              `${post.caption}\n\n${post.hashtags.map((h) => `#${h}`).join(" ")}`,
-                              "Post copied.",
-                            )
-                          }
+                          onClick={() => copyToast(formatSocialPost(post), "Post copied.")}
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
@@ -623,11 +675,25 @@ function GeneratorPage() {
                 type="button"
                 variant="outline"
                 className="w-full"
-                onClick={run}
-                disabled={busy}
+                onClick={requestRegenerate}
+                disabled={busy || !hasAccess || outOfListings}
               >
                 <RefreshCw className="mr-2 h-4 w-4" /> Regenerate
               </Button>
+              <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Regenerate this listing?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This uses 1 of your {usage?.remaining ?? 0} remaining listings.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => void run()}>Regenerate</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </>
           )}
         </div>

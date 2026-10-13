@@ -40,3 +40,25 @@ OUTPUT QA — before returning JSON, mentally check that the copy:
 
 Always return valid JSON only, in exactly the requested shape.
 ```
+
+## Email Blast (marketing call)
+
+In the app the pack is produced by two parallel tool-use calls with the same
+system prompt, voice and facts:
+
+1. **Core** (`submit_listing_core`): headline, portal description, teaser and
+   6–10 key features.
+2. **Marketing** (`submit_listing_marketing`): the Email Blast and three social
+   posts (Instagram, Facebook, X).
+
+Email Blast fields: `subjectLines` (3 options, aim ≤ 60 characters),
+`previewText` (aim ≤ 90 characters), `headline`, `body` (2–4 plain-text
+paragraphs, no bullet list or sign-off) and `callToAction`. Never invent agent
+names, phone numbers, URLs, dates, urgency or offers.
+
+"Copy email" pastes in this order: `Subject: …`, headline, body, key features
+as "• " bullets, `<CTA>: [Add property link]`, then
+`[Your name, branch, phone]`.
+
+If the marketing call fails, the listing is still saved and the agent can
+generate the Email Blast free from the generator or Saved listings.

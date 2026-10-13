@@ -177,7 +177,10 @@ const CORE_SCHEMA = {
   type: "object",
   properties: {
     headline: { type: "string", description: "A compelling listing headline" },
-    listing: { type: "string", description: "Full portal description, paragraphs separated by \\n\\n" },
+    listing: {
+      type: "string",
+      description: "Full portal description, paragraphs separated by \\n\\n",
+    },
     summary: { type: "string", description: "1–2 sentence teaser" },
     keyFeatures: {
       type: "array",
@@ -316,9 +319,7 @@ export async function runMarketing(
 
 /** Same access gate as generation: comped, or active trial/subscription. */
 async function assertAccess(
-  supabase: Parameters<
-    typeof import("./subscription.functions").readReconciledSubscriber
-  >[0],
+  supabase: Parameters<typeof import("./subscription.functions").readReconciledSubscriber>[0],
   userId: string,
 ) {
   const { isCompedEmail } = await import("./comped.server");
@@ -489,7 +490,9 @@ export const generateMarketingForGeneration = createServerFn({ method: "POST" })
     const rawInputs = (row.inputs ?? {}) as Record<string, unknown>;
     const input = {
       ...(rawInputs as unknown as ListingInput),
-      voice: (VALID_VOICES.has(rawInputs.voice as VoiceId) ? rawInputs.voice : row.voice) as VoiceId,
+      voice: (VALID_VOICES.has(rawInputs.voice as VoiceId)
+        ? rawInputs.voice
+        : row.voice) as VoiceId,
     };
     let safeInput: ListingInput;
     try {
