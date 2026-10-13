@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { cloneElement, useId, useRef, useState, type ReactElement, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent } from "react";
 
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -21,6 +21,22 @@ import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME } from "@/lib/config";
 import { VoiceNotes } from "@/components/VoiceNotes";
+import {
+  DictationProvider,
+  useDictationContext,
+  type DictationSink,
+} from "@/components/dictation/DictationProvider";
+import { FieldDictationStatus, FieldMic } from "@/components/dictation/FieldMic";
+import { FIELD_DEFS, fieldRows, type FieldDef, type TextFieldKey } from "@/lib/listing-fields";
+import { extractListingFields } from "@/lib/extract.functions";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { EmailBlastCard, GenerateMarketingButton } from "@/components/EmailBlastCard";
 import {
   copyText,
@@ -54,6 +70,16 @@ async function copyToast(text: string, label = "Copied to clipboard.") {
 }
 
 function GeneratorPage() {
+  return (
+    <DictationProvider>
+      <GeneratorInner />
+    </DictationProvider>
+  );
+}
+
+function GeneratorInner() {
+  const dictation = useDictationContext();
+  const extract = useServerFn(extractListingFields);
   const generate = useServerFn(generateListing);
   const subFn = useServerFn(getMySubscription);
   const usageFn = useServerFn(getMyUsage);
@@ -78,13 +104,142 @@ function GeneratorPage() {
   const usage = usageQuery.data;
   const outOfListings = !!usage && !usage.unlimited && usage.remaining <= 0;
 
+  // Latest input, updated synchronously so dictation sinks and Generate never
+  // read a stale value while React is still re-rendering.
+  const inputRef = useRef<ListingInput>(input);
+  // Fields filled from voice notes: key → previous value (for undo).
+  const [fromNotes, setFromNotes] = useState<Record<string, string>>({});
+  const [conflicts, setConflicts] = useState<Conflict[]>([]);
+  const [filling, setFilling] = useState(false);
+
+  function setField(key: TextFieldKey, value: string) {
+    inputRef.current = { ...inputRef.current, [key]: value };
+    setInput(inputRef.current);
+  }
+
+  /** A change the agent typed: also drops any "From notes" chip. */
+  function userEdit(key: TextFieldKey, value: string) {
+    setField(key, value);
+    setFromNotes((prev) => {
+      if (!(key in prev)) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  }
+
   function set<K extends keyof ListingInput>(key: K, value: ListingInput[K]) {
-    setInput((prev) => ({ ...prev, [key]: value }));
+    inputRef.current = { ...inputRef.current, [key]: value };
+    setInput(inputRef.current);
+  }
+
+  const sinks = useMemo(() => {
+    const out = {} as Record<TextFieldKey, DictationSink>;
+    for (const d of FIELD_DEFS) {
+      out[d.key] = {
+        get: () => String(inputRef.current[d.key] ?? ""),
+        set: (v: string) => userEdit(d.key, v),
+      };
+    }
+    return out;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function fillFromNotes() {
+    if (filling) return;
+    const notes = inputRef.current.voiceNotes.trim();
+    if (notes.length < 10) return;
+    setFilling(true);
+    try {
+      const res = await extract({ data: { voiceNotes: notes } });
+      const filled: Record<string, string> = {};
+      const found: Conflict[] = [];
+      let firstKey: string | null = null;
+      for (const def of FIELD_DEFS) {
+        const v = res.fields[def.key];
+        if (!v) continue;
+        const cur = String(inputRef.current[def.key] ?? "").trim();
+        if (!cur) {
+          filled[def.key] = "";
+          setField(def.key, v);
+          firstKey ??= def.key;
+        } else if (cur.toLowerCase() !== v.trim().toLowerCase()) {
+          found.push({ key: def.key, label: def.label, mine: cur, notes: v });
+        }
+      }
+      setFromNotes((prev) => ({ ...prev, ...filled }));
+      setConflicts(found);
+      const n = Object.keys(filled).length;
+      if (n === 0 && found.length === 0) {
+        toast.info("No new details found in your notes.");
+      } else {
+        toast.success(
+          `Filled ${n} field${n === 1 ? "" : "s"}${found.length ? ` · ${found.length} to review` : ""}`,
+        );
+      }
+      if (firstKey && window.matchMedia("(max-width: 1023px)").matches && found.length === 0) {
+        requestAnimationFrame(() =>
+          document
+            .getElementById(`field-${firstKey}`)
+            ?.scrollIntoView({ behavior: "smooth", block: "center" }),
+        );
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      toast.error(
+        msg.includes("EXTRACT_LIMIT_REACHED")
+          ? "You've reached today's limit for filling the form from notes. Try again tomorrow."
+          : msg.includes("SUBSCRIPTION_REQUIRED")
+            ? "Your trial or subscription is required."
+            : msg.includes("RATE_LIMIT")
+              ? "Lots of requests right now — please wait a moment and try again."
+              : msg.includes("AI_TIMEOUT")
+                ? "That took too long. Please try again."
+                : /^(AI_|MALFORMED)/.test(msg) || !msg
+                  ? "Couldn't read your notes just now. Please try again."
+                  : msg,
+      );
+    } finally {
+      setFilling(false);
+    }
+  }
+
+  function resolveConflict(key: string, useNotes: boolean) {
+    const c = conflicts.find((x) => x.key === key);
+    if (!c) return;
+    if (useNotes) {
+      setField(c.key, c.notes);
+      setFromNotes((prev) => ({ ...prev, [c.key]: c.mine }));
+    }
+    setConflicts((prev) => prev.filter((x) => x.key !== key));
+  }
+
+  function useAllFromNotes() {
+    for (const c of conflicts) setField(c.key, c.notes);
+    setFromNotes((prev) => ({
+      ...prev,
+      ...Object.fromEntries(conflicts.map((c) => [c.key, c.mine])),
+    }));
+    setConflicts([]);
+  }
+
+  function undoFromNotes(key: TextFieldKey) {
+    const prev = fromNotes[key];
+    if (prev === undefined) return;
+    setField(key, prev);
+    setFromNotes((p) => {
+      const next = { ...p };
+      delete next[key];
+      return next;
+    });
   }
 
   function loadExample() {
     if (inFlight.current) return;
+    inputRef.current = EXAMPLE_INPUT;
     setInput(EXAMPLE_INPUT);
+    setFromNotes({});
+    setConflicts([]);
     setOutput(null);
     setGenerationId(null);
     setGeneratedFrom(null);
@@ -96,9 +251,12 @@ function GeneratorPage() {
     inFlight.current = true;
     const myId = ++requestId.current;
     setBusy(true);
-    const snapshot = JSON.stringify(input);
+    // Let any in-progress dictation finish and land before sending.
+    await dictation.finishPending();
+    const current = inputRef.current;
+    const snapshot = JSON.stringify(current);
     try {
-      const result = await generate({ data: input });
+      const result = await generate({ data: current });
       if (myId !== requestId.current) return; // stale response — ignore
       setOutput(result.output);
       setGenerationId(result.generationId);
@@ -256,7 +414,13 @@ function GeneratorPage() {
         {/* Input */}
         <form onSubmit={handleSubmit} className="space-y-6" aria-busy={busy}>
           <fieldset disabled={busy} className="space-y-6 disabled:opacity-70">
-            <VoiceNotes value={input.voiceNotes} onChange={(v) => set("voiceNotes", v)} />
+            <VoiceNotes
+              value={input.voiceNotes}
+              onChange={(v) => userEdit("voiceNotes", v)}
+              sink={sinks.voiceNotes}
+              onFill={fillFromNotes}
+              filling={filling}
+            />
 
             <Card className="p-5 sm:p-6">
               <h2 className="font-display text-xl font-semibold">Structured property details</h2>
@@ -299,207 +463,48 @@ function GeneratorPage() {
               </div>
 
               <div className="mt-5 grid gap-4">
-                <Field label="Address / location">
-                  <Input
-                    value={input.address}
-                    onChange={(e) => set("address", e.target.value)}
-                    placeholder="12 Park Avenue, Harrogate, HG1"
-                  />
-                </Field>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Field label="Property type">
-                    <Input
-                      value={input.propertyType}
-                      onChange={(e) => set("propertyType", e.target.value)}
-                      placeholder="Victorian semi-detached house"
+                {fieldRows(FIELD_DEFS.filter((d) => d.section === "details")).map((row) =>
+                  row.length === 1 ? (
+                    <DetailField
+                      key={row[0].key}
+                      def={row[0]}
+                      value={String(input[row[0].key] ?? "")}
+                      onChange={(v) => userEdit(row[0].key, v)}
+                      sink={sinks[row[0].key]}
+                      fromNotes={row[0].key in fromNotes}
+                      onUndo={() => undoFromNotes(row[0].key)}
                     />
-                  </Field>
-                  <Field label="Year built">
-                    <Input
-                      value={input.yearBuilt}
-                      onChange={(e) => set("yearBuilt", e.target.value)}
-                      placeholder="1901"
-                    />
-                  </Field>
-                </div>
-                <div className="grid grid-cols-3 gap-3">
-                  <Field label="Bedrooms">
-                    <Input
-                      value={input.bedrooms}
-                      onChange={(e) => set("bedrooms", e.target.value)}
-                      placeholder="4"
-                    />
-                  </Field>
-                  <Field label="Bathrooms">
-                    <Input
-                      value={input.bathrooms}
-                      onChange={(e) => set("bathrooms", e.target.value)}
-                      placeholder="2"
-                    />
-                  </Field>
-                  <Field label="Receptions">
-                    <Input
-                      value={input.receptions}
-                      onChange={(e) => set("receptions", e.target.value)}
-                      placeholder="2"
-                    />
-                  </Field>
-                </div>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Field label="Tenure">
-                    <Input
-                      value={input.tenure}
-                      onChange={(e) => set("tenure", e.target.value)}
-                      placeholder="Freehold"
-                    />
-                  </Field>
-                  <Field label="Asking price (£)">
-                    <Input
-                      value={input.price}
-                      onChange={(e) => set("price", e.target.value)}
-                      placeholder="525,000"
-                    />
-                  </Field>
-                </div>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Field label="Price qualifier">
-                    <Input
-                      value={input.priceQualifier}
-                      onChange={(e) => set("priceQualifier", e.target.value)}
-                      placeholder="Guide Price / OIEO"
-                    />
-                  </Field>
-                  <Field label="Lease remaining (yrs)">
-                    <Input
-                      value={input.leaseYears}
-                      onChange={(e) => set("leaseYears", e.target.value)}
-                      placeholder="If leasehold"
-                    />
-                  </Field>
-                </div>
-                <Field label="Key features">
-                  <Textarea
-                    value={input.keyFeatures}
-                    onChange={(e) => set("keyFeatures", e.target.value)}
-                    placeholder="Open-plan kitchen, log burner, south-facing garden…"
-                    rows={2}
-                  />
-                </Field>
-                <Field label="Room dimensions">
-                  <Textarea
-                    value={input.dimensions}
-                    onChange={(e) => set("dimensions", e.target.value)}
-                    placeholder="Living room 5.2m x 4.1m…"
-                    rows={2}
-                  />
-                </Field>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Field label="EPC rating">
-                    <Input
-                      value={input.epc}
-                      onChange={(e) => set("epc", e.target.value)}
-                      placeholder="C"
-                    />
-                  </Field>
-                  <Field label="Council Tax band">
-                    <Input
-                      value={input.councilTaxBand}
-                      onChange={(e) => set("councilTaxBand", e.target.value)}
-                      placeholder="D"
-                    />
-                  </Field>
-                </div>
-                <Field label="Outside space / garden">
-                  <Input
-                    value={input.outsideSpace}
-                    onChange={(e) => set("outsideSpace", e.target.value)}
-                    placeholder="Landscaped rear garden, patio"
-                  />
-                </Field>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Field label="Parking">
-                    <Input
-                      value={input.parking}
-                      onChange={(e) => set("parking", e.target.value)}
-                      placeholder="Driveway, garage"
-                    />
-                  </Field>
-                  <Field label="Heating">
-                    <Input
-                      value={input.heating}
-                      onChange={(e) => set("heating", e.target.value)}
-                      placeholder="Gas central heating"
-                    />
-                  </Field>
-                </div>
-                <Field label="Utilities / broadband">
-                  <Input
-                    value={input.utilities}
-                    onChange={(e) => set("utilities", e.target.value)}
-                    placeholder="Mains services, Ultrafast broadband"
-                  />
-                </Field>
-                <Field label="Nearby (schools, transport, amenities)">
-                  <Textarea
-                    value={input.nearby}
-                    onChange={(e) => set("nearby", e.target.value)}
-                    placeholder="Outstanding primary, station 0.5 miles…"
-                    rows={2}
-                  />
-                </Field>
-                <Field label="Period / character features">
-                  <Textarea
-                    value={input.periodFeatures}
-                    onChange={(e) => set("periodFeatures", e.target.value)}
-                    placeholder="Original cornicing, sash windows…"
-                    rows={2}
-                  />
-                </Field>
-                <Field label="Area highlights">
-                  <Input
-                    value={input.areaHighlights}
-                    onChange={(e) => set("areaHighlights", e.target.value)}
-                    placeholder="Vibrant market town, riverside walks"
-                  />
-                </Field>
-                <Field label="Disclosures / condition notes">
-                  <Textarea
-                    value={input.disclosures}
-                    onChange={(e) => set("disclosures", e.target.value)}
-                    placeholder="Recent rewire; survey available…"
-                    rows={2}
-                  />
-                </Field>
-                <Field label="Viewing / access notes (kept out of the listing)">
-                  <Textarea
-                    value={input.showingNotes}
-                    onChange={(e) => set("showingNotes", e.target.value)}
-                    placeholder="By appointment; key with branch…"
-                    rows={2}
-                  />
-                </Field>
-                <Field label="Media / photo / floor-plan notes">
-                  <Textarea
-                    value={input.mediaNotes}
-                    onChange={(e) => set("mediaNotes", e.target.value)}
-                    placeholder="Photos + floor plan booked…"
-                    rows={2}
-                  />
-                </Field>
-                <Field label="Target audience">
-                  <Input
-                    value={input.targetAudience}
-                    onChange={(e) => set("targetAudience", e.target.value)}
-                    placeholder="Growing families, professionals"
-                  />
-                </Field>
+                  ) : (
+                    <div
+                      key={row[0].key}
+                      className={`grid gap-3 ${row.length === 3 ? "grid-cols-3" : "grid-cols-1 sm:grid-cols-2"}`}
+                    >
+                      {row.map((def) => (
+                        <DetailField
+                          key={def.key}
+                          def={def}
+                          value={String(input[def.key] ?? "")}
+                          onChange={(v) => userEdit(def.key, v)}
+                          sink={sinks[def.key]}
+                          fromNotes={def.key in fromNotes}
+                          onUndo={() => undoFromNotes(def.key)}
+                        />
+                      ))}
+                    </div>
+                  ),
+                )}
               </div>
 
               <Button
                 type="submit"
                 className="mt-6 w-full"
                 size="lg"
-                disabled={busy || !hasAccess || outOfListings}
+                disabled={
+                  busy ||
+                  !hasAccess ||
+                  outOfListings ||
+                  (dictation.activeKey !== null && dictation.status === "processing")
+                }
               >
                 {busy ? (
                   <>
@@ -698,20 +703,136 @@ function GeneratorPage() {
           )}
         </div>
       </div>
+      <Dialog
+        open={conflicts.length > 0}
+        onOpenChange={(open) => {
+          if (!open) setConflicts([]);
+        }}
+      >
+        <DialogContent className="max-h-[85dvh] w-[calc(100vw-2rem)] max-w-lg overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Check these details</DialogTitle>
+            <DialogDescription>
+              Your notes say something different from what's already in the form. Nothing has been
+              changed yet.
+            </DialogDescription>
+          </DialogHeader>
+          <ul className="space-y-3">
+            {conflicts.map((c) => (
+              <li key={c.key} className="rounded-lg border border-border/70 p-3">
+                <p className="text-sm font-semibold">{c.label}</p>
+                <p className="mt-1 break-words text-sm text-muted-foreground">
+                  You typed <span className="font-medium text-foreground">{c.mine}</span> · notes
+                  say <span className="font-medium text-foreground">{c.notes}</span>
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="min-h-11 sm:min-h-9"
+                    onClick={() => resolveConflict(c.key, false)}
+                  >
+                    Keep mine
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="min-h-11 sm:min-h-9"
+                    onClick={() => resolveConflict(c.key, true)}
+                  >
+                    Use notes
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <DialogFooter className="gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="min-h-11 sm:min-h-10"
+              onClick={() => setConflicts([])}
+            >
+              Keep all mine
+            </Button>
+            <Button type="button" className="min-h-11 sm:min-h-10" onClick={useAllFromNotes}>
+              Use all from notes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
 
-function Field({ label, children }: { label: string; children: ReactElement<{ id?: string }> }) {
-  const autoId = useId();
-  const id = children.props.id ?? autoId;
-  const controlled = cloneElement(children, { id });
+interface Conflict {
+  key: TextFieldKey;
+  label: string;
+  mine: string;
+  notes: string;
+}
+
+/** One form field rendered from its FIELD_DEFS entry, with its own mic. */
+function DetailField({
+  def,
+  value,
+  onChange,
+  sink,
+  fromNotes,
+  onUndo,
+}: {
+  def: FieldDef;
+  value: string;
+  onChange: (v: string) => void;
+  sink: DictationSink;
+  fromNotes: boolean;
+  onUndo: () => void;
+}) {
+  const id = `field-${def.key}`;
+  const mic = <FieldMic fieldKey={def.key} label={def.label} sink={sink} mode={def.dictateMode} />;
   return (
-    <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-xs text-muted-foreground">
-        {label}
-      </Label>
-      {controlled}
+    <div className="min-w-0 space-y-1.5">
+      <div className="flex min-h-5 flex-wrap items-center gap-x-2 gap-y-1">
+        <Label htmlFor={id} className="text-xs text-muted-foreground">
+          {def.label}
+        </Label>
+        <FieldDictationStatus fieldKey={def.key} />
+        {fromNotes && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+            From notes
+            <button
+              type="button"
+              onClick={onUndo}
+              className="-my-2 -mr-1.5 min-h-8 rounded-full px-1.5 underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-primary"
+              aria-label={`Undo ${def.label} from notes`}
+            >
+              Undo
+            </button>
+          </span>
+        )}
+        {def.kind === "textarea" && <span className="ml-auto -my-2">{mic}</span>}
+      </div>
+      {def.kind === "textarea" ? (
+        <Textarea
+          id={id}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={def.placeholder}
+          rows={def.rows ?? 2}
+        />
+      ) : (
+        <div className="relative">
+          <Input
+            id={id}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={def.placeholder}
+            className="pr-12"
+          />
+          <span className="absolute inset-y-0 right-0.5 flex items-center">{mic}</span>
+        </div>
+      )}
     </div>
   );
 }
