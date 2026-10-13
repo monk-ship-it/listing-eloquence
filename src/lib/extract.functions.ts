@@ -41,6 +41,22 @@ function buildSchema() {
   };
 }
 
+/** Model call + server-side evidence filter (server only). */
+export async function runExtraction(notes: string): Promise<ExtractResult> {
+  const { callClaudeTool } = await import("./ai-gateway.server");
+  const raw = await callClaudeTool({
+    system: SYSTEM,
+    user: `AGENT VOICE NOTES:\n${notes}`,
+    toolName: TOOL,
+    toolDescription: "Submit only the fields the agent explicitly stated.",
+    inputSchema: buildSchema(),
+    maxTokens: 1500,
+    timeoutMs: 30_000,
+    temperature: 0,
+  });
+  return filterExtraction(raw, notes);
+}
+
 /** "Fill the form from my voice note". Free (no listing credit), 40/day. */
 export const extractListingFields = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -76,19 +92,9 @@ export const extractListingFields = createServerFn({ method: "POST" })
     }
     if ((count ?? 0) >= DAILY_LIMIT) throw new Error("EXTRACT_LIMIT_REACHED");
 
-    const { callClaudeTool } = await import("./ai-gateway.server");
-    let raw: unknown;
+    let result: ExtractResult;
     try {
-      raw = await callClaudeTool({
-        system: SYSTEM,
-        user: `AGENT VOICE NOTES:\n${data.voiceNotes}`,
-        toolName: TOOL,
-        toolDescription: "Submit only the fields the agent explicitly stated.",
-        inputSchema: buildSchema(),
-        maxTokens: 1500,
-        timeoutMs: 30_000,
-        temperature: 0,
-      });
+      result = await runExtraction(data.voiceNotes);
     } catch (err) {
       const m = err instanceof Error ? err.message : "";
       console.warn("extract failed", m);
@@ -106,7 +112,6 @@ export const extractListingFields = createServerFn({ method: "POST" })
       );
     }
 
-    const result = filterExtraction(raw, data.voiceNotes);
     const { error: usageErr } = await supabaseAdmin
       .from("regen_usage")
       .insert({ user_id: userId, kind: "extract" });
