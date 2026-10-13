@@ -15,6 +15,13 @@
       "when": 1791846634350,
       "tag": "0001_user_roles_and_profile_email_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791932761469,
+      "tag": "0002_generation_errors_and_regen_usage",
+      "breakpoints": true
     }
   ]
 }

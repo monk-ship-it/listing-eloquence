@@ -23,8 +23,13 @@ import {
   deleteGeneration,
   type GenerationRecord,
 } from "@/lib/generations.functions";
-import { copyText, buildCopyAllText, formatKeyFeaturesBlock } from "@/lib/clipboard";
-import { EmailBlastCard } from "@/components/EmailBlastCard";
+import {
+  copyText,
+  buildCopyAllText,
+  formatKeyFeaturesBlock,
+  formatSocialPost,
+} from "@/lib/clipboard";
+import { EmailBlastCard, GenerateMarketingButton } from "@/components/EmailBlastCard";
 import {
   Copy,
   Trash2,
@@ -205,6 +210,12 @@ function HistoryItem({
   const panelId = `history-panel-${item.id}`;
   const dateLabel = formatDate(item.createdAt);
   const features = item.output.keyFeatures ?? [];
+  const qc = useQueryClient();
+  const onGenerated = (output: GenerationRecord["output"]) => {
+    qc.setQueriesData<GenerationRecord[]>({ queryKey: ["generations"] }, (prev) =>
+      prev?.map((g) => (g.id === item.id ? { ...g, output } : g)),
+    );
+  };
 
   return (
     <Card className="overflow-hidden p-0">
@@ -360,12 +371,28 @@ function HistoryItem({
             </div>
           )}
 
-          {item.output.emailBlast && (
-            <div className="mt-5">
-              <EmailBlastCard
-                emailBlast={item.output.emailBlast}
-                keyFeatures={features}
-                onCopy={(text) => doCopy(text, "Email Blast copied.")}
+          <div className="mt-5">
+            <EmailBlastCard
+              emailBlast={item.output.emailBlast}
+              keyFeatures={features}
+              generationId={item.id}
+              marketingStatus={item.output.marketingStatus}
+              onGenerated={onGenerated}
+            />
+          </div>
+
+          {(!item.output.social || item.output.social.length === 0) && (
+            <div className="mt-5 rounded-lg border border-border/60 p-4">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Social pack
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                No social posts were saved with this listing.
+              </p>
+              <GenerateMarketingButton
+                generationId={item.id}
+                label="Generate social posts — free, doesn't use a listing"
+                onGenerated={onGenerated}
               />
             </div>
           )}
@@ -389,9 +416,7 @@ function HistoryItem({
                           size="icon"
                           className="h-11 w-11 sm:h-9 sm:w-9"
                           aria-label={`Copy ${post.platform} post`}
-                          onClick={() =>
-                            doCopy(`${post.caption}${tags ? `\n\n${tags}` : ""}`, "Post copied.")
-                          }
+                          onClick={() => doCopy(formatSocialPost(post), "Post copied.")}
                         >
                           <Copy className="h-3.5 w-3.5" />
                         </Button>

@@ -70,24 +70,27 @@ export interface ListingOutput {
   /** Structured email campaign copy. Null on legacy saved rows only. */
   emailBlast: EmailBlast | null;
   social: SocialPost[];
+  /** "failed" when the email/social call failed; can be generated free later. */
+  marketingStatus?: "failed";
 }
 
 // Sensible per-field length caps for the Email Blast.
-const EMAIL_SUBJECT_MAX = 90;
-const EMAIL_PREVIEW_MAX = 160;
-const EMAIL_HEADLINE_MAX = 140;
-const EMAIL_BODY_MAX = 3000;
-const EMAIL_CTA_MAX = 60;
+const EMAIL_SUBJECT_MAX = 120;
+const EMAIL_PREVIEW_MAX = 200;
+const EMAIL_HEADLINE_MAX = 160;
+const EMAIL_BODY_MAX = 4000;
+const EMAIL_CTA_MAX = 80;
 
 /**
  * Editable placeholders appended to the copied/rendered Email Blast. Quill
  * never invents agent contact info, property URLs, availability or dates —
  * these lines are surfaced verbatim so the user fills them in before sending.
  */
+export const EMAIL_LINK_PLACEHOLDER = "[Add property link]";
+export const EMAIL_SIGNOFF_PLACEHOLDER = "[Your name, branch, phone]";
 export const EMAIL_BLAST_PLACEHOLDERS = [
-  "Property link: [Add property URL]",
-  "Agent contact: [Add name, phone and email]",
-  "Sending note: Add the sender details and unsubscribe controls required by your email platform.",
+  `Property link: ${EMAIL_LINK_PLACEHOLDER}`,
+  `Sign-off: ${EMAIL_SIGNOFF_PLACEHOLDER}`,
 ] as const;
 
 /**
@@ -182,154 +185,136 @@ export function coerceLegacyEmailBlast(raw: unknown): EmailBlast | null {
   return { subjectLines, previewText, headline, body, callToAction };
 }
 
-/**
- * Canonical platform labels emitted by strict validation.
- * Order here IS the order returned to callers.
- */
+/** Canonical platform labels, in output order. */
 const CANONICAL_PLATFORMS = ["Instagram", "Facebook", "X"] as const;
 type CanonicalPlatform = (typeof CANONICAL_PLATFORMS)[number];
 
 /**
- * Map a raw platform string from the model to a canonical platform.
- * Accepts common aliases (IG/Instagram, FB/Facebook, X/Twitter/Twitter-X in
- * either order/case). Returns null for anything unrecognised — the caller
- * treats unexpected platforms as invalid rather than silently dropping them.
+ * Map a raw platform label to a canonical platform. Labels are compared with
+ * spaces and punctuation stripped, so "Twitter / X", "X (formerly Twitter)"
+ * and "x-twitter" all resolve to X. Returns null when unrecognised.
  */
-function canonicalisePlatform(raw: string): CanonicalPlatform | null {
-  const k = raw.trim().toLowerCase().replace(/\s+/g, " ");
+export function canonicalisePlatform(raw: string): CanonicalPlatform | null {
+  const k = raw.toLowerCase().replace(/[^a-z0-9]/g, "");
   if (k === "instagram" || k === "ig" || k === "insta") return "Instagram";
   if (k === "facebook" || k === "fb" || k === "meta") return "Facebook";
   if (
     k === "x" ||
     k === "twitter" ||
-    k === "x (twitter)" ||
-    k === "twitter (x)" ||
-    k === "x/twitter" ||
-    k === "twitter/x" ||
-    k === "twitter-x" ||
-    k === "x-twitter"
+    k === "twitterx" ||
+    k === "xtwitter" ||
+    k === "xformerlytwitter" ||
+    k === "twitterformerlyx" ||
+    k === "xtwitterformerly"
   ) {
     return "X";
   }
   return null;
 }
 
+function cleanFeature(f: unknown): string {
+  return typeof f === "string"
+    ? f
+        .trim()
+        .replace(/^[-•*·\s]+/, "")
+        .replace(/[.!?;,]+$/g, "")
+        .trim()
+    : "";
+}
+
+export type CoreOutput = Pick<ListingOutput, "headline" | "listing" | "summary" | "keyFeatures">;
+export type MarketingOutput = Pick<ListingOutput, "emailBlast" | "social">;
+
 /**
- * Strict validator for NEW AI responses. Enforces the raw shape BEFORE tolerant
- * normalisation would silently trim/dedupe/slice, so a model response with
- * e.g. 11 keyFeatures or an extra social entry is rejected rather than being
- * quietly reduced. Requires 6–10 unique cleaned Key Features and exactly
- * three social posts — one each for Instagram, Facebook and X — with
- * canonical platform labels in that order.
+ * Tolerant-but-safe validator for the CORE call. Cleans and dedupes key
+ * features, slices to 10, and fails only when fewer than 6 remain or a
+ * required text field is empty.
  */
-export function validateNewListingOutput(raw: unknown): ListingOutput {
+export function validateCoreOutput(raw: unknown): CoreOutput {
   if (!raw || typeof raw !== "object") throw new Error("MALFORMED_AI_OUTPUT");
   const r = raw as Record<string, unknown>;
-
-  // Strict raw keyFeatures shape check — count, type, cleaned length, uniqueness.
-  if (!Array.isArray(r.keyFeatures)) throw new Error("MALFORMED_AI_OUTPUT");
-  if (r.keyFeatures.length < 6 || r.keyFeatures.length > 10) {
-    throw new Error("MALFORMED_AI_OUTPUT");
-  }
-  const seenFeatures = new Set<string>();
-  for (const f of r.keyFeatures) {
-    if (typeof f !== "string") throw new Error("MALFORMED_AI_OUTPUT");
-    const cleaned = f
-      .trim()
-      .replace(/^[-•*·\s]+/, "")
-      .replace(/[.!?;,]+$/g, "")
-      .trim();
-    if (!cleaned || cleaned.length > 240) throw new Error("MALFORMED_AI_OUTPUT");
-    const key = cleaned.toLowerCase();
-    if (seenFeatures.has(key)) throw new Error("MALFORMED_AI_OUTPUT");
-    seenFeatures.add(key);
-  }
-
-  // Strict raw social shape check — exactly 3 entries, each a well-formed object.
-  if (!Array.isArray(r.social) || r.social.length !== 3) {
-    throw new Error("MALFORMED_AI_OUTPUT");
-  }
-  for (const p of r.social) {
-    if (!p || typeof p !== "object") throw new Error("MALFORMED_AI_OUTPUT");
-    const post = p as Record<string, unknown>;
-    if (typeof post.platform !== "string" || !post.platform.trim()) {
-      throw new Error("MALFORMED_AI_OUTPUT");
-    }
-    if (typeof post.caption !== "string" || !post.caption.trim()) {
-      throw new Error("MALFORMED_AI_OUTPUT");
-    }
-  }
-
-  // Strict Email Blast shape check.
-  const emailBlast = validateNewEmailBlast(r.emailBlast);
-
-  // Tolerant normalisation now safe: raw shape already validated.
-  const out = normaliseListingOutput(raw);
-  if (!out.summary) throw new Error("MALFORMED_AI_OUTPUT");
-  if (out.keyFeatures.length < 6 || out.keyFeatures.length > 10) {
-    throw new Error("MALFORMED_AI_OUTPUT");
-  }
-
-  const byPlatform = new Map<CanonicalPlatform, SocialPost>();
-  for (const p of out.social) {
-    const canonical = canonicalisePlatform(p.platform);
-    if (!canonical) throw new Error("MALFORMED_AI_OUTPUT"); // unexpected platform
-    if (byPlatform.has(canonical)) throw new Error("MALFORMED_AI_OUTPUT"); // duplicate
-    if (!p.caption) throw new Error("MALFORMED_AI_OUTPUT");
-    byPlatform.set(canonical, { ...p, platform: canonical });
-  }
-  if (byPlatform.size !== 3) throw new Error("MALFORMED_AI_OUTPUT");
-  const ordered: SocialPost[] = [];
-  for (const platform of CANONICAL_PLATFORMS) {
-    const post = byPlatform.get(platform);
-    if (!post) throw new Error("MALFORMED_AI_OUTPUT");
-    ordered.push(post);
-  }
-
-  return { ...out, emailBlast, social: ordered };
+  const headline = typeof r.headline === "string" ? r.headline.trim() : "";
+  const listing = typeof r.listing === "string" ? r.listing.trim() : "";
+  const summary = typeof r.summary === "string" ? r.summary.trim() : "";
+  if (!headline || !listing || !summary) throw new Error("MALFORMED_AI_OUTPUT");
+  const seen = new Set<string>();
+  const keyFeatures = (Array.isArray(r.keyFeatures) ? r.keyFeatures : [])
+    .map(cleanFeature)
+    .filter((f) => f.length > 0 && f.length <= 240)
+    .filter((f) => {
+      const k = f.toLowerCase();
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    })
+    .slice(0, 10);
+  if (keyFeatures.length < 6) throw new Error("MALFORMED_AI_OUTPUT");
+  return { headline, listing, summary, keyFeatures };
 }
 
 /**
- * Strict validator for NEW AI Email Blast output. Enforces exactly 3 unique
- * non-empty subject lines and non-empty preview/headline/body/CTA strings,
- * all within sensible length caps. Rejects malformed output rather than
- * silently trimming or padding.
+ * Tolerant-but-safe validator for the MARKETING call (Email Blast + social).
+ * Subject lines: dedupe, drop any over the cap, keep the first 3, fail only
+ * if none remain. Other email fields must be present and within caps.
+ * Social: platform labels normalised; unknown/duplicate platforms dropped;
+ * fails only if no usable post remains.
  */
-function validateNewEmailBlast(raw: unknown): EmailBlast {
+export function validateMarketingOutput(raw: unknown): MarketingOutput {
   if (!raw || typeof raw !== "object") throw new Error("MALFORMED_AI_OUTPUT");
-  const e = raw as Record<string, unknown>;
+  const r = raw as Record<string, unknown>;
+  const e = (r.emailBlast ?? {}) as Record<string, unknown>;
 
-  if (!Array.isArray(e.subjectLines) || e.subjectLines.length !== 3) {
-    throw new Error("MALFORMED_AI_OUTPUT");
-  }
-  const seen = new Set<string>();
-  const subjectLines: string[] = [];
-  for (const s of e.subjectLines) {
-    if (typeof s !== "string") throw new Error("MALFORMED_AI_OUTPUT");
-    const cleaned = s.trim();
-    if (!cleaned || cleaned.length > EMAIL_SUBJECT_MAX) {
-      throw new Error("MALFORMED_AI_OUTPUT");
-    }
-    const key = cleaned.toLowerCase();
-    if (seen.has(key)) throw new Error("MALFORMED_AI_OUTPUT");
-    seen.add(key);
-    subjectLines.push(cleaned);
-  }
+  const seenS = new Set<string>();
+  const subjectLines = (Array.isArray(e.subjectLines) ? e.subjectLines : [])
+    .map((s) => (typeof s === "string" ? s.trim() : ""))
+    .filter((s) => s.length > 0 && s.length <= EMAIL_SUBJECT_MAX)
+    .filter((s) => {
+      const k = s.toLowerCase();
+      if (seenS.has(k)) return false;
+      seenS.add(k);
+      return true;
+    })
+    .slice(0, 3);
+  if (subjectLines.length === 0) throw new Error("MALFORMED_AI_OUTPUT");
 
-  const checkStr = (v: unknown, max: number): string => {
-    if (typeof v !== "string") throw new Error("MALFORMED_AI_OUTPUT");
-    const t = v.trim();
+  const str = (v: unknown, max: number): string => {
+    const t = typeof v === "string" ? v.trim() : "";
     if (!t || t.length > max) throw new Error("MALFORMED_AI_OUTPUT");
     return t;
   };
-
-  return {
+  const emailBlast: EmailBlast = {
     subjectLines,
-    previewText: checkStr(e.previewText, EMAIL_PREVIEW_MAX),
-    headline: checkStr(e.headline, EMAIL_HEADLINE_MAX),
-    body: checkStr(e.body, EMAIL_BODY_MAX),
-    callToAction: checkStr(e.callToAction, EMAIL_CTA_MAX),
+    previewText: str(e.previewText, EMAIL_PREVIEW_MAX),
+    headline: str(e.headline, EMAIL_HEADLINE_MAX),
+    body: str(e.body, EMAIL_BODY_MAX),
+    callToAction: str(e.callToAction, EMAIL_CTA_MAX),
   };
+
+  const byPlatform = new Map<CanonicalPlatform, SocialPost>();
+  for (const p of Array.isArray(r.social) ? r.social : []) {
+    if (!p || typeof p !== "object") continue;
+    const post = p as Record<string, unknown>;
+    const platform = canonicalisePlatform(typeof post.platform === "string" ? post.platform : "");
+    const caption = typeof post.caption === "string" ? post.caption.trim() : "";
+    if (!platform || !caption || byPlatform.has(platform)) continue;
+    const seenH = new Set<string>();
+    const hashtags = (Array.isArray(post.hashtags) ? (post.hashtags as unknown[]) : [])
+      .map((h) => (typeof h === "string" ? h.replace(/^#+/, "").replace(/\s+/g, "").trim() : ""))
+      .filter((h) => h.length > 0 && h.length <= 60)
+      .filter((h) => {
+        const k = h.toLowerCase();
+        if (seenH.has(k)) return false;
+        seenH.add(k);
+        return true;
+      })
+      .slice(0, 20);
+    byPlatform.set(platform, { platform, caption, hashtags });
+  }
+  const social = CANONICAL_PLATFORMS.map((pl) => byPlatform.get(pl)).filter(
+    (p): p is SocialPost => !!p,
+  );
+  if (social.length === 0) throw new Error("MALFORMED_AI_OUTPUT");
+  return { emailBlast, social };
 }
 
 /**
@@ -361,6 +346,7 @@ export function coerceLegacyOutput(raw: unknown): ListingOutput {
       : [],
     emailBlast: coerceLegacyEmailBlast(r.emailBlast),
     social,
+    ...(r.marketingStatus === "failed" ? { marketingStatus: "failed" as const } : {}),
   };
 }
 
