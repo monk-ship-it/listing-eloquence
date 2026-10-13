@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { callLovableAiJson } from "./ai-gateway.server";
+import { callClaudeTool } from "./ai-gateway.server";
 import { VOICE_PROMPTS, type VoiceId } from "./voices";
 import { MASTER_LISTING_SYSTEM_PROMPT } from "./master-listing-prompt";
-import type { ListingInput, ListingOutput } from "./listing-types";
-import { validateNewListingOutput } from "./listing-types";
+import type { CoreOutput, ListingInput, ListingOutput, MarketingOutput } from "./listing-types";
+import { coerceLegacyOutput, validateCoreOutput, validateMarketingOutput } from "./listing-types";
 import { VOICES } from "./voices";
 
 /** Max characters accepted per free-text field to keep payloads sane. */
@@ -92,7 +92,7 @@ const L = {
   mediaNotes: "Media / photo / floor-plan notes",
 };
 
-function buildUserPrompt(input: ListingInput): string {
+function buildFacts(input: ListingInput): string {
   let details = "";
   details += field("Address / location", input.address);
   details += field("Area highlights", input.areaHighlights);
@@ -124,65 +124,211 @@ function buildUserPrompt(input: ListingInput): string {
     ? `\nAGENT VOICE NOTES (raw, dictated or pasted — treat as supplementary context only):\n${input.voiceNotes.trim()}\n`
     : "";
 
-  const languageLine = "- Use British English and spelling throughout.";
-
-  const materialLine =
-    "- Where Material Information is provided (tenure, price, council tax band, EPC, parking, utilities) weave the key facts in naturally.";
-
-  const portalLine =
-    "- The full listing should be portal-ready (Rightmove / OnTheMarket style): an opening hook, then well-organised paragraphs covering the property, accommodation, outside space and location.";
-
-  const factHandlingLine =
-    "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. Do NOT include viewing/access notes in the portal description, teaser or social captions — treat those as internal-only.";
-
-  return `Create a UK property sales listing from the details below.
-
-STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
-${details}
+  return `STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
+${details || "- (none supplied — use the voice notes)\n"}
 ${voiceNotes}
 RULES FOR COMBINING SOURCES:
 - The structured property details above are authoritative. Where the agent voice notes conflict with a structured field, ALWAYS use the structured field (e.g. structured "Bedrooms: 4" wins over voice notes saying "five bedrooms").
 - Use the voice notes only to add extra colour, context or facts that are NOT already covered by a structured field. Never invent or upgrade figures from the notes.
 
-
-REQUIREMENTS:
+GENERAL REQUIREMENTS:
 - Write only from the facts provided; never invent figures, names or features that are not given.
 - Read every detail precisely and do not transfer an adjective from one thing to another. A descriptor attached to a specific feature applies ONLY to that feature — e.g. "Victorian fireplace" means the fireplace is Victorian, NOT that the property is Victorian. Never describe the property's style, era or type unless the property type itself explicitly states it.
 - Do not generalise, upgrade or embellish facts: keep each described attribute scoped exactly to the item it was given for.
-${languageLine}
-${materialLine}
-${portalLine}
-${factHandlingLine}
-- Provide a short punchy teaser summary (1–2 sentences).
-- Provide 6–10 concise, factual, portal-ready "keyFeatures" bullets drawn STRICTLY from the supplied facts. Each bullet must be a short phrase (no sentences, no trailing full stops), non-duplicative, and safe for compliance. NEVER invent, upgrade or infer facts. Bullets should highlight the property's strongest, most factual selling points (property type, bedrooms/bathrooms, tenure/ownership, key features, outside space, parking, energy/tax band, notable features, location advantages) in the order most useful to a buyer.
-- Provide an "emailBlast" object with:
-    - "subjectLines": exactly 3 unique, concise subject-line options (short strings, no emoji spam, no ALL CAPS);
-    - "previewText": one short preheader / preview text (factual one-liner);
-    - "headline": a short campaign headline;
-    - "body": a plain-text email body of 2–4 short paragraphs, UK estate-agent database email tone, matching the selected voice, grounded ONLY in the structured facts above;
-    - "callToAction": a short CTA label such as "View property details" or "Arrange a viewing".
-    NEVER invent an agent name, phone, email, URL, date, availability, urgency or offer deadline in the email — the user fills those in separately. Keep private viewing/access notes out of the campaign copy.
-- Provide three social media posts (Instagram, Facebook, X) — each an engaging caption appropriate to that platform, plus a list of relevant hashtags (no '#' symbol in the array, just the words).
+- Use British English and spelling throughout.
+- Do NOT include viewing/access notes anywhere — treat those as internal-only.`;
+}
 
-Respond ONLY with a JSON object in exactly this shape:
-{
-  "headline": "string — a compelling listing headline",
-  "listing": "string — the full listing body, paragraphs separated by \\n\\n",
-  "summary": "string — short teaser",
-  "keyFeatures": ["string — short factual bullet", "..."],
-  "emailBlast": {
-    "subjectLines": ["string", "string", "string"],
-    "previewText": "string",
-    "headline": "string",
-    "body": "string",
-    "callToAction": "string"
+function buildCorePrompt(input: ListingInput): string {
+  return `Create the core copy for a UK property sales listing from the details below.
+
+${buildFacts(input)}
+- Where Material Information is provided (tenure, price, council tax band, EPC, parking, utilities) weave the key facts in naturally.
+- The full listing should be portal-ready (Rightmove / OnTheMarket style): an opening hook, then well-organised paragraphs covering the property, accommodation, outside space and location. Separate paragraphs with a blank line.
+- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided.
+- Provide a short punchy teaser summary (1–2 sentences).
+- Provide 6–10 concise, factual, portal-ready "keyFeatures" bullets drawn STRICTLY from the supplied facts. Each bullet must be a short phrase (no sentences, no trailing full stops), non-duplicative, and safe for compliance. Order them by usefulness to a buyer.
+
+Return the result by calling the ${CORE_TOOL} tool.`;
+}
+
+function buildMarketingPrompt(input: ListingInput): string {
+  return `Create the marketing copy (applicant email and social posts) for a new UK sales instruction from the details below.
+
+${buildFacts(input)}
+
+EMAIL BLAST (new-instruction email to the agent's applicant database):
+- "subjectLines": exactly 3 unique options, each ideally 60 characters or fewer, no emoji, no ALL CAPS.
+- "previewText": one factual preheader, ideally 90 characters or fewer.
+- "headline": a short campaign headline.
+- "body": plain text, 2–4 short paragraphs separated by a blank line, matching the selected voice, grounded ONLY in the facts above. Include the EPC rating where supplied. Do not include a bullet list (key features are added separately), a greeting name, or a sign-off.
+- "callToAction": a short label such as "View property details" or "Arrange a viewing".
+- NEVER invent an agent name, phone, email, URL, date, availability, urgency or offer deadline.
+
+SOCIAL: exactly three posts — platform "Instagram", "Facebook" and "X" — each an engaging caption suited to that platform, plus relevant hashtags (words only, no '#').
+
+Return the result by calling the ${MARKETING_TOOL} tool.`;
+}
+
+const CORE_TOOL = "submit_listing_core";
+const MARKETING_TOOL = "submit_listing_marketing";
+
+const CORE_SCHEMA = {
+  type: "object",
+  properties: {
+    headline: { type: "string", description: "A compelling listing headline" },
+    listing: { type: "string", description: "Full portal description, paragraphs separated by \\n\\n" },
+    summary: { type: "string", description: "1–2 sentence teaser" },
+    keyFeatures: {
+      type: "array",
+      items: { type: "string" },
+      minItems: 6,
+      maxItems: 10,
+      description: "6–10 short factual bullets",
+    },
   },
-  "social": [
-    { "platform": "Instagram", "caption": "string", "hashtags": ["string"] },
-    { "platform": "Facebook", "caption": "string", "hashtags": ["string"] },
-    { "platform": "X", "caption": "string", "hashtags": ["string"] }
-  ]
-}`;
+  required: ["headline", "listing", "summary", "keyFeatures"],
+};
+
+const MARKETING_SCHEMA = {
+  type: "object",
+  properties: {
+    emailBlast: {
+      type: "object",
+      properties: {
+        subjectLines: { type: "array", items: { type: "string" }, minItems: 3, maxItems: 3 },
+        previewText: { type: "string" },
+        headline: { type: "string" },
+        body: { type: "string" },
+        callToAction: { type: "string" },
+      },
+      required: ["subjectLines", "previewText", "headline", "body", "callToAction"],
+    },
+    social: {
+      type: "array",
+      minItems: 3,
+      maxItems: 3,
+      items: {
+        type: "object",
+        properties: {
+          platform: { type: "string", enum: ["Instagram", "Facebook", "X"] },
+          caption: { type: "string" },
+          hashtags: { type: "array", items: { type: "string" } },
+        },
+        required: ["platform", "caption", "hashtags"],
+      },
+    },
+  },
+  required: ["emailBlast", "social"],
+};
+
+function systemPromptFor(voiceId: string): string {
+  const voice = (voiceId ?? "professional") as VoiceId;
+  const voicePrompt = VOICE_PROMPTS[voice] ?? VOICE_PROMPTS.professional;
+  return `${MASTER_LISTING_SYSTEM_PROMPT}\n\nBRAND VOICE FOR THIS LISTING:\n${voicePrompt}\n\nReturn your answer only by calling the provided tool.`;
+}
+
+function errorCode(err: unknown): string {
+  const m = err instanceof Error ? err.message : String(err);
+  const known = [
+    "AI_TRUNCATED",
+    "AI_TIMEOUT",
+    "RATE_LIMIT",
+    "AI_UNAVAILABLE",
+    "MALFORMED_AI_OUTPUT",
+  ];
+  return known.find((k) => m.includes(k)) ?? "UNKNOWN";
+}
+
+/** Server-side log of each failed attempt (never blocks the request). */
+async function logGenerationError(
+  userId: string,
+  stage: "core" | "marketing" | "regen",
+  err: unknown,
+) {
+  const code = errorCode(err);
+  console.warn("Generation attempt failed", { stage, code });
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("generation_errors").insert({ user_id: userId, stage, code });
+  } catch (e) {
+    console.error("generation_errors insert failed", e);
+  }
+}
+
+/** CORE call: retry once on truncation/invalid output (8000 tokens) or timeout. */
+export async function runCore(input: ListingInput, userId: string): Promise<CoreOutput> {
+  const system = systemPromptFor(input.voice);
+  const user = buildCorePrompt(input);
+  const attempt = async (maxTokens: number) =>
+    validateCoreOutput(
+      await callClaudeTool({
+        system,
+        user,
+        toolName: CORE_TOOL,
+        toolDescription: "Submit the headline, portal description, teaser and key features.",
+        inputSchema: CORE_SCHEMA,
+        maxTokens,
+      }),
+    );
+  try {
+    return await attempt(6000);
+  } catch (err) {
+    await logGenerationError(userId, "core", err);
+    const code = errorCode(err);
+    if (code === "AI_TRUNCATED" || code === "MALFORMED_AI_OUTPUT") return await attempt(8000);
+    if (code === "AI_TIMEOUT") return await attempt(6000);
+    throw err;
+  }
+}
+
+/** MARKETING call: one retry on any failure. */
+export async function runMarketing(
+  input: ListingInput,
+  userId: string,
+  stage: "marketing" | "regen" = "marketing",
+): Promise<MarketingOutput> {
+  const system = systemPromptFor(input.voice);
+  const user = buildMarketingPrompt(input);
+  const attempt = async () =>
+    validateMarketingOutput(
+      await callClaudeTool({
+        system,
+        user,
+        toolName: MARKETING_TOOL,
+        toolDescription: "Submit the Email Blast and the three social posts.",
+        inputSchema: MARKETING_SCHEMA,
+        maxTokens: 3000,
+      }),
+    );
+  try {
+    return await attempt();
+  } catch (err) {
+    await logGenerationError(userId, stage, err);
+    try {
+      return await attempt();
+    } catch (err2) {
+      await logGenerationError(userId, stage, err2);
+      throw err2;
+    }
+  }
+}
+
+/** Same access gate as generation: comped, or active trial/subscription. */
+async function assertAccess(
+  supabase: Parameters<
+    typeof import("./subscription.functions").readReconciledSubscriber
+  >[0],
+  userId: string,
+) {
+  const { isCompedEmail } = await import("./comped.server");
+  const { hasActiveAccess, readReconciledSubscriber } = await import("./subscription.functions");
+  const sub = await readReconciledSubscriber(supabase, userId);
+  const comped = isCompedEmail(sub?.email);
+  const status = sub?.status ?? "none";
+  const hasAccess = comped || hasActiveAccess(status, sub?.current_period_end ?? null);
+  if (!hasAccess) throw new Error("SUBSCRIPTION_REQUIRED");
+  return { sub, comped };
 }
 
 export const generateListing = createServerFn({ method: "POST" })
@@ -190,31 +336,22 @@ export const generateListing = createServerFn({ method: "POST" })
   .inputValidator((input: ListingInput) => {
     if (!input || typeof input !== "object") throw new Error("Invalid input");
     const cleaned = normaliseInput(input);
-    if (!cleaned.address?.trim() && !cleaned.propertyType?.trim() && !cleaned.keyFeatures?.trim()) {
+    const hasFacts =
+      !!cleaned.address?.trim() || !!cleaned.propertyType?.trim() || !!cleaned.keyFeatures?.trim();
+    if (!hasFacts && (cleaned.voiceNotes?.trim().length ?? 0) < 20) {
       throw new Error("Please provide some property details before generating.");
     }
     return cleaned;
   })
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data, context }): Promise<{ generationId: string; output: ListingOutput }> => {
     const { supabase, userId } = context;
 
-    // Subscription gate (server-side enforcement). The row is reconciled
-    // against Stripe first so a subscription cancelled in Stripe can never
-    // keep granting access from a stale database status.
-    const { isCompedEmail } = await import("./comped.server");
-    const { hasActiveAccess, readReconciledSubscriber } = await import("./subscription.functions");
-    const sub = await readReconciledSubscriber(supabase, userId);
-    const comped = isCompedEmail(sub?.email);
-    const status = sub?.status ?? "none";
-    const hasAccess = comped || hasActiveAccess(status, sub?.current_period_end ?? null);
-    if (!hasAccess) {
-      throw new Error("SUBSCRIPTION_REQUIRED");
-    }
+    // Subscription gate (server-side), reconciled against Stripe first.
+    const { sub, comped } = await assertAccess(supabase, userId);
 
     // Atomic monthly-quota reservation for paid/trial users. Comped accounts
     // stay unlimited and skip reservation entirely. The quota RPCs are
-    // service-role only (not callable by signed-in users); the user id passed
-    // in comes from the verified auth middleware, never from the client.
+    // service-role only; the user id comes from the verified auth middleware.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let reservationId: string | null = null;
     if (!comped) {
@@ -248,42 +385,20 @@ export const generateListing = createServerFn({ method: "POST" })
     };
 
     try {
+      // Core and marketing run in parallel. Only core success is required
+      // (and only it consumes the reserved listing credit).
+      const [coreRes, mktRes] = await Promise.allSettled([
+        runCore(data, userId),
+        runMarketing(data, userId),
+      ]);
+      if (coreRes.status === "rejected") throw coreRes.reason;
+
+      const parsed: ListingOutput =
+        mktRes.status === "fulfilled"
+          ? { ...coreRes.value, ...mktRes.value }
+          : { ...coreRes.value, emailBlast: null, social: [], marketingStatus: "failed" };
+
       const voice = (data.voice ?? "professional") as VoiceId;
-      const voicePrompt = VOICE_PROMPTS[voice] ?? VOICE_PROMPTS.professional;
-
-      const messages = [
-        {
-          role: "system" as const,
-          content: `${MASTER_LISTING_SYSTEM_PROMPT}\n\nBRAND VOICE FOR THIS LISTING:\n${voicePrompt}`,
-        },
-        { role: "user" as const, content: buildUserPrompt(data) },
-      ];
-
-      const parseOutput = (content: string): ListingOutput | null => {
-        try {
-          return validateNewListingOutput(JSON.parse(content));
-        } catch {
-          const match = content.match(/\{[\s\S]*\}/);
-          if (!match) return null;
-          try {
-            return validateNewListingOutput(JSON.parse(match[0]));
-          } catch {
-            return null;
-          }
-        }
-      };
-
-      // One automatic retry on malformed JSON. The quota slot was reserved once
-      // above, so a retry never consumes a second listing.
-      let parsed: ListingOutput | null = null;
-      for (let attempt = 0; attempt < 2 && !parsed; attempt++) {
-        const content = await callLovableAiJson(messages);
-        parsed = parseOutput(content);
-        if (!parsed) console.warn("Malformed AI output", { attempt });
-      }
-      if (!parsed) throw new Error("MALFORMED_AI_OUTPUT");
-
-      // Persist to history.
       const { data: savedGen, error: insertError } = await supabase
         .from("generations")
         .insert({
@@ -301,41 +416,119 @@ export const generateListing = createServerFn({ method: "POST" })
       const savedGenId = savedGen.id as string;
 
       if (reservationId) {
-        // Finalize the reservation atomically — attach it to the generation.
         const { data: finalizedOk, error: finalizeError } = await supabaseAdmin.rpc(
           "finalize_generation_slot",
           { _user_id: userId, reservation_id: reservationId, generation_id: savedGenId },
         );
-
         if (finalizeError || finalizedOk !== true) {
-          // Compensate: remove the just-created generation, then release the
-          // reservation so history and quota can't diverge.
           await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
-          reservationId = null; // finalize failed but reservation still exists
+          reservationId = null;
           throw new Error("Couldn't record listing usage. Please try again.");
         }
-        // Reservation is now completed; do not release on any later error.
         reservationId = null;
       } else if (comped) {
-        // Comped accounts keep durable usage analytics via the direct insert
-        // path. If it fails, roll back history so the two views stay aligned.
-        // `plan` mirrors the stored subscription plan only — the RLS policy
-        // rejects any self-reported plan that differs from the real one.
         const { error: usageError } = await supabase.from("generation_usage").insert({
           user_id: userId,
           generation_id: savedGenId,
           plan: sub?.plan ?? null,
         });
-
         if (usageError) {
           await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
           throw new Error("Couldn't record listing usage. Please try again.");
         }
       }
 
-      return parsed;
+      return { generationId: savedGenId, output: parsed };
     } catch (err) {
       await releaseReservation();
       throw err;
     }
+  });
+
+const REGEN_DAILY_LIMIT = 30;
+
+/**
+ * Fill in the Email Blast (and the social pack, if empty) for an existing
+ * saved listing. Free — never reserves a listing slot — but limited to
+ * REGEN_DAILY_LIMIT successful runs per user per day.
+ */
+export const generateMarketingForGeneration = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { generationId: string }) => {
+    const id = input?.generationId;
+    if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Invalid listing.");
+    return { generationId: id };
+  })
+  .handler(async ({ data, context }): Promise<ListingOutput> => {
+    const { supabase, userId } = context;
+    await assertAccess(supabase, userId);
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const since = new Date();
+    since.setUTCHours(0, 0, 0, 0);
+    const { count, error: countError } = await supabaseAdmin
+      .from("regen_usage")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("kind", "marketing")
+      .gte("created_at", since.toISOString());
+    if (countError) {
+      console.error("regen_usage count failed", countError);
+      throw new Error("AI_UNAVAILABLE");
+    }
+    if ((count ?? 0) >= REGEN_DAILY_LIMIT) throw new Error("REGEN_LIMIT_REACHED");
+
+    const { data: row, error } = await supabase
+      .from("generations")
+      .select("id, voice, inputs, output")
+      .eq("id", data.generationId)
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (error || !row) throw new Error("That listing couldn't be found.");
+
+    const rawInputs = (row.inputs ?? {}) as Record<string, unknown>;
+    const input = {
+      ...(rawInputs as unknown as ListingInput),
+      voice: (VALID_VOICES.has(rawInputs.voice as VoiceId) ? rawInputs.voice : row.voice) as VoiceId,
+    };
+    let safeInput: ListingInput;
+    try {
+      safeInput = normaliseInput({
+        ...input,
+        voice: VALID_VOICES.has(input.voice) ? input.voice : "professional",
+      });
+    } catch {
+      safeInput = { ...input, voice: "professional" };
+    }
+
+    let mkt: MarketingOutput;
+    try {
+      mkt = await runMarketing(safeInput, userId, "regen");
+    } catch (err) {
+      const code = errorCode(err);
+      throw new Error(code === "UNKNOWN" ? "AI_UNAVAILABLE" : code);
+    }
+
+    const current = coerceLegacyOutput(row.output);
+    const rawOut = { ...((row.output ?? {}) as Record<string, unknown>) };
+    delete rawOut.marketingStatus;
+    rawOut.emailBlast = mkt.emailBlast;
+    if (current.social.length === 0) rawOut.social = mkt.social;
+
+    const { error: updateError } = await supabase
+      .from("generations")
+      .update({ output: JSON.parse(JSON.stringify(rawOut)) })
+      .eq("id", row.id)
+      .eq("user_id", userId);
+    if (updateError) {
+      console.error("generation update failed", updateError);
+      throw new Error("Couldn't save the email. Please try again.");
+    }
+
+    const { error: usageErr } = await supabaseAdmin
+      .from("regen_usage")
+      .insert({ user_id: userId, kind: "marketing" });
+    if (usageErr) console.error("regen_usage insert failed", usageErr);
+
+    return coerceLegacyOutput(rawOut);
   });
