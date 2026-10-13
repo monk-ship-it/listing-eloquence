@@ -19,7 +19,7 @@ async function copyWithToast(text: string, label: string) {
   else toast.error("Couldn't copy — please copy manually.");
 }
 
-export function friendlyMarketingError(msg: string): string {
+function friendlyMarketingError(msg: string): string {
   if (msg.includes("REGEN_LIMIT_REACHED"))
     return "You've reached today's limit for free email & social generations. Try again tomorrow.";
   if (msg.includes("SUBSCRIPTION_REQUIRED"))

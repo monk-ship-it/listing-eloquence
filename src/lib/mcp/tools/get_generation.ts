@@ -14,7 +14,7 @@ export default defineTool({
   name: "get_generation",
   title: "Get a listing",
   description:
-    "Fetch the full content of a previously generated Quill listing by its id. Returns the inputs used and the full generated output (headline, listing body, 6–10 key features bullets, teaser summary, structured emailBlast copy — subjectLines, previewText, headline, body, callToAction — and Instagram, Facebook and X social posts). emailBlast is null on legacy rows saved before the Email Blast feature, or when marketingStatus is "failed"; it can be generated free in the Quill app.",
+    "Fetch the full content of a previously generated Quill listing by its id. Returns the inputs used and the full generated output (headline, listing body, 6–10 key features bullets, teaser summary, structured emailBlast copy — subjectLines, previewText, headline, body, callToAction — and Instagram, Facebook and X social posts). emailBlast is null on legacy rows saved before the Email Blast feature, or when marketingStatus is failed; it can be generated free in the Quill app.",
   inputSchema: {
     id: z.string().uuid().describe("The listing id returned by list_generations."),
   },
