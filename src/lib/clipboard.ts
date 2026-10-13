@@ -1,5 +1,5 @@
 import type { EmailBlast } from "./listing-types";
-import { EMAIL_BLAST_PLACEHOLDERS } from "./listing-types";
+import { EMAIL_LINK_PLACEHOLDER, EMAIL_SIGNOFF_PLACEHOLDER } from "./listing-types";
 
 /**
  * Copy text to the clipboard. Awaits the Clipboard API when available,
@@ -52,54 +52,43 @@ export function formatKeyFeaturesBlock(features: string[] | undefined): string {
 }
 
 /**
- * Format an Email Blast as clearly-headed plain text, easy to paste into
- * Mailchimp, Outlook or a CRM editor. Reuses the generated Key Features so
- * agents don't have to rebuild a second bullet list.
- *
- * Appends the fixed editable placeholder block — Quill never invents
- * property URLs, agent contact info, or platform sending controls.
+ * Paste-ready plain-text email for Gmail, Outlook, Alto, Reapit etc.:
+ * Subject, headline, body, key-feature bullets, CTA with link placeholder,
+ * then the sign-off placeholder. Quill never invents links or contact info.
  */
-export function formatEmailBlastBlock(
+export function formatEmailForPaste(
   emailBlast: EmailBlast | null | undefined,
-  keyFeatures?: string[],
+  opts: { subject?: string; keyFeatures?: string[]; includeFeatures?: boolean } = {},
 ): string {
   if (!emailBlast) return "";
-  const lines: string[] = ["--- Email Blast ---", ""];
+  const subject = opts.subject ?? emailBlast.subjectLines?.[0] ?? "";
+  const blocks: string[] = [];
+  if (subject) blocks.push(`Subject: ${subject}`);
+  if (emailBlast.headline) blocks.push(emailBlast.headline);
+  if (emailBlast.body) blocks.push(emailBlast.body.trim());
+  if (opts.includeFeatures !== false && opts.keyFeatures && opts.keyFeatures.length > 0) {
+    blocks.push(opts.keyFeatures.map((f) => `• ${f}`).join("\n"));
+  }
+  blocks.push(`${emailBlast.callToAction || "View property details"}: ${EMAIL_LINK_PLACEHOLDER}`);
+  blocks.push(EMAIL_SIGNOFF_PLACEHOLDER);
+  return blocks.join("\n\n");
+}
 
-  if (emailBlast.subjectLines && emailBlast.subjectLines.length > 0) {
-    lines.push("Subject line options:");
-    emailBlast.subjectLines.forEach((s, i) => lines.push(`${i + 1}. ${s}`));
-    lines.push("");
-  }
-  if (emailBlast.previewText) {
-    lines.push(`Preview text: ${emailBlast.previewText}`);
-    lines.push("");
-  }
-  if (emailBlast.headline) {
-    lines.push(`Headline: ${emailBlast.headline}`);
-    lines.push("");
-  }
-  if (emailBlast.body) {
-    lines.push("Body:");
-    lines.push(emailBlast.body);
-    lines.push("");
-  }
-  const features = formatKeyFeaturesBlock(keyFeatures);
-  if (features) {
-    lines.push(features);
-    lines.push("");
-  }
-  if (emailBlast.callToAction) {
-    lines.push(`Call to action: ${emailBlast.callToAction}`);
-    lines.push("");
-  }
-  for (const p of EMAIL_BLAST_PLACEHOLDERS) lines.push(p);
-  return lines.join("\n");
+/** Body paragraphs only. */
+export function formatEmailBodyOnly(emailBlast: EmailBlast | null | undefined): string {
+  return emailBlast?.body?.trim() ?? "";
+}
+
+/** Caption plus hashtags, with no trailing blank line when there are none. */
+export function formatSocialPost(p: { caption: string; hashtags?: string[] }): string {
+  const tags = (p.hashtags ?? []).map((t) => `#${t.replace(/^#/, "")}`).join(" ");
+  return tags ? `${p.caption}\n\n${tags}` : p.caption;
 }
 
 /**
  * Build the full "copy all" text for a generated listing.
- * Order: headline → Key Features → Description → Teaser → Email Blast → Social pack.
+ * Order: headline → Key Features → Description → Teaser → Email → Social pack.
+ * The email omits its bullet list here so Key Features appear only once.
  */
 export function buildCopyAllText(output: {
   headline: string;
@@ -110,7 +99,7 @@ export function buildCopyAllText(output: {
   social?: { platform: string; caption: string; hashtags: string[] }[];
 }): string {
   const features = formatKeyFeaturesBlock(output.keyFeatures);
-  const email = formatEmailBlastBlock(output.emailBlast, output.keyFeatures);
+  const email = formatEmailForPaste(output.emailBlast, { includeFeatures: false });
   const social = (output.social ?? [])
     .map((p) => {
       const tags = (p.hashtags ?? []).map((t) => `#${t.replace(/^#/, "")}`).join(" ");
@@ -122,7 +111,7 @@ export function buildCopyAllText(output: {
     features ? `\n${features}` : "",
     `\nDescription:\n${output.listing}`,
     output.summary ? `\nTeaser: ${output.summary}` : "",
-    email ? `\n${email}` : "",
+    email ? `\n--- Email Blast ---\n${email}` : "",
     social ? `\n--- Social pack ---\n${social}` : "",
   ]
     .filter((s) => s !== "")
