@@ -161,7 +161,7 @@ ${factHandlingLine}
     - "previewText": one short preheader / preview text (factual one-liner);
     - "headline": a short campaign headline;
     - "body": a plain-text email body of 2–4 short paragraphs, UK estate-agent database email tone, matching the selected voice, grounded ONLY in the structured facts above;
-    - "callToAction": a short CTA label such as ${isUs ? '"View property details" or "Schedule a showing"' : '"View property details" or "Arrange a viewing"'}.
+    - "callToAction": a short CTA label such as "View property details" or "Arrange a viewing".
     NEVER invent an agent name, phone, email, URL, date, availability, urgency or offer deadline in the email — the user fills those in separately. Keep private viewing/access notes out of the campaign copy.
 - Provide three social media posts (Instagram, Facebook, X) — each an engaging caption appropriate to that platform, plus a list of relevant hashtags (no '#' symbol in the array, just the words).
 
