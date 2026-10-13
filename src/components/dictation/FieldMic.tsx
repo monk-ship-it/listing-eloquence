@@ -64,7 +64,10 @@ export function FieldDictationStatus({ fieldKey }: { fieldKey: string }) {
   if (d.activeKey !== fieldKey) return null;
   if (d.status !== "listening" && d.status !== "processing") return null;
   return (
-    <span className="flex items-center gap-1 text-xs font-medium text-destructive" aria-live="polite">
+    <span
+      className="flex items-center gap-1 text-xs font-medium text-destructive"
+      aria-live="polite"
+    >
       {d.status === "listening" ? (
         <>
           <span className="h-2 w-2 animate-pulse rounded-full bg-destructive" /> Listening…

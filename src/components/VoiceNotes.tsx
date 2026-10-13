@@ -120,7 +120,10 @@ export function VoiceNotes({ value, onChange, sink, onFill, filling, disabled }:
         <div className="flex items-center gap-1.5">
           <Globe className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           <Select value={d.lang} onValueChange={(v) => d.setLang(v as LanguageCode)}>
-            <SelectTrigger className="h-11 w-[10rem] text-xs sm:h-8" aria-label="Dictation language">
+            <SelectTrigger
+              className="h-11 w-[10rem] text-xs sm:h-8"
+              aria-label="Dictation language"
+            >
               <SelectValue placeholder="Language" />
             </SelectTrigger>
             <SelectContent>

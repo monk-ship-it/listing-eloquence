@@ -50,7 +50,10 @@ const SCALES: Record<string, number> = {
 
 /** Remove trailing full stops / punctuation that speech engines add. */
 export function stripTrailing(s: string): string {
-  return s.trim().replace(/[.!?,;:]+$/g, "").trim();
+  return s
+    .trim()
+    .replace(/[.!?,;:]+$/g, "")
+    .trim();
 }
 
 function digitValue(w: string): number | null {
@@ -157,7 +160,10 @@ function formatNumber(n: number): string {
 /** Bedrooms/bathrooms/receptions/lease years: "four" → "4", "two and a half" → "2.5". */
 export function normaliseCount(s: string): string {
   const clean = stripTrailing(s);
-  const stripped = clean.replace(/\s*(bed(room)?s?|bath(room)?s?|reception(s| rooms?)?|years?)$/i, "");
+  const stripped = clean.replace(
+    /\s*(bed(room)?s?|bath(room)?s?|reception(s| rooms?)?|years?)$/i,
+    "",
+  );
   const n = wordsToNumber(stripped);
   return n === null ? clean : formatNumber(n);
 }

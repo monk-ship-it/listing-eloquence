@@ -78,7 +78,8 @@ export function filterExtraction(raw: unknown, notes: string): ExtractResult {
     if (!value || value.length > max || !quote) continue;
     const nq = norm(quote);
     if (!nq || !haystack.includes(nq)) continue;
-    out.fields[d.key] = FIELD_BY_KEY[d.key].dictateMode === "replace" ? normaliseForField(d.key, value) : value;
+    out.fields[d.key] =
+      FIELD_BY_KEY[d.key].dictateMode === "replace" ? normaliseForField(d.key, value) : value;
     out.evidence[d.key] = quote;
   }
   return out;
@@ -90,7 +91,8 @@ export const extractListingFields = createServerFn({ method: "POST" })
   .inputValidator((input: { voiceNotes: string }) => {
     const notes = typeof input?.voiceNotes === "string" ? input.voiceNotes.trim() : "";
     if (notes.length < 10) throw new Error("Add a few details to your voice notes first.");
-    if (notes.length > MAX_NOTES) throw new Error("Your voice notes are too long to read in one go.");
+    if (notes.length > MAX_NOTES)
+      throw new Error("Your voice notes are too long to read in one go.");
     return { voiceNotes: notes };
   })
   .handler(async ({ data, context }): Promise<ExtractResult> => {
