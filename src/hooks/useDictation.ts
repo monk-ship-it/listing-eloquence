@@ -81,13 +81,22 @@ function friendlyServerError(msg: string) {
 const MIC_DENIED =
   "Microphone access was blocked. Enable it for this site in your browser or device settings, then try again.";
 
-export function useDictation(onResult: (text: string) => void, lang?: string) {
+export function useDictation(
+  onResult: (text: string) => void,
+  lang?: string,
+  onStatus?: (status: DictationStatus, error: string | null) => void,
+) {
   const [status, setStatus] = useState<DictationStatus>("idle");
   const [error, setError] = useState<string | null>(null);
   const [supported, setSupported] = useState(false);
   const transcribe = useServerFn(transcribeAudio);
 
   const onResultRef = useRef(onResult);
+  const onStatusRef = useRef(onStatus);
+  useEffect(() => {
+    onStatusRef.current = onStatus;
+  }, [onStatus]);
+  const errorRef = useRef<string | null>(null);
   const langRef = useRef(lang || "en-GB");
   useEffect(() => {
     onResultRef.current = onResult;
@@ -104,6 +113,7 @@ export function useDictation(onResult: (text: string) => void, lang?: string) {
   const setStat = (s: DictationStatus) => {
     statusRef.current = s;
     setStatus(s);
+    onStatusRef.current?.(s, s === "error" ? errorRef.current : null);
   };
 
   // Engine A state
@@ -124,6 +134,7 @@ export function useDictation(onResult: (text: string) => void, lang?: string) {
   };
 
   const fail = (msg: string) => {
+    errorRef.current = msg;
     setError(msg);
     setStat("error");
   };
