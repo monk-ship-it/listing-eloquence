@@ -24,15 +24,7 @@ import {
   resumeMySubscription,
   verifyCheckoutSession,
 } from "@/lib/subscription.functions";
-import {
-  APP_NAME,
-  TRIAL_DAYS,
-  CONTACT_EMAIL,
-  getPlan,
-  planPriceDisplay,
-  readSavedMarket,
-  type MarketId,
-} from "@/lib/config";
+import { APP_NAME, TRIAL_DAYS, CONTACT_EMAIL, getPlan, planPriceDisplay } from "@/lib/config";
 import { CheckCircle2, CreditCard, Mail, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/account")({
@@ -146,12 +138,6 @@ function AccountPage() {
   }
 
   const plan = getPlan(sub?.plan);
-  const [savedMarket, setSavedMarket] = useState<MarketId>("uk");
-  useEffect(() => {
-    const q = new URLSearchParams(window.location.search).get("market");
-    setSavedMarket(q === "us" || q === "uk" ? q : (readSavedMarket() ?? "uk"));
-  }, []);
-  const market: MarketId = sub && sub.rawStatus !== "none" ? sub.market : savedMarket;
 
   return (
     <main className="mx-auto max-w-3xl px-5 py-10">
@@ -191,7 +177,7 @@ function AccountPage() {
           <div className="mt-6">
             <p className="text-sm text-muted-foreground">
               Start your {TRIAL_DAYS}-day free trial to unlock listing generation. Plans from{" "}
-              {planPriceDisplay("starter", market)}/month — cancel anytime.
+              {planPriceDisplay("starter")}/month — cancel anytime.
             </p>
             <Button asChild className="mt-5" size="lg">
               <a href="/subscription">
@@ -202,10 +188,7 @@ function AccountPage() {
         ) : (
           <div className="mt-6 space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Info
-                label="Plan"
-                value={`${plan.name} — ${planPriceDisplay(plan.id, market)} / month`}
-              />
+              <Info label="Plan" value={`${plan.name} — ${planPriceDisplay(plan.id)} / month`} />
               <Info label="Listings" value={`${plan.monthlyListings} per month`} />
 
               {status === "trialing" ? (

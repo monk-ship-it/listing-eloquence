@@ -14,9 +14,6 @@ import gHero1600 from "@/assets/guides-hero-exterior-1600.webp";
 import gUk640 from "@/assets/guides-uk-terrace-640.webp";
 import gUk1024 from "@/assets/guides-uk-terrace-1024.webp";
 import gUk1600 from "@/assets/guides-uk-terrace-1600.webp";
-import gUs640 from "@/assets/guides-us-home-640.webp";
-import gUs1024 from "@/assets/guides-us-home-1024.webp";
-import gUs1600 from "@/assets/guides-us-home-1600.webp";
 
 export interface ResponsiveImage {
   src: string;
@@ -40,5 +37,4 @@ export const IMG = {
   walkGarden: set(walkGar640, walkGar1024, walkGar1600, 1008 / 1600),
   guidesHero: set(gHero640, gHero1024, gHero1600, 1088 / 1920),
   guidesUk: set(gUk640, gUk1024, gUk1600, 864 / 1280),
-  guidesUs: set(gUs640, gUs1024, gUs1600, 864 / 1280),
 };

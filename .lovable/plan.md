@@ -33,7 +33,7 @@ Read-only audit. No code changes proposed; nothing is critically broken.
 | Stripe webhook route | PASS | `POST /api/public/stripe-webhook` — this is the URL to register in Stripe Dashboard (prod + preview stable URLs both available). |
 | Signature verification + raw body + timing-safe compare | PASS | Present in `stripe-webhook.ts`. |
 | Billing Portal route uses logged-in user's Stripe customer ID | PASS | `createBillingPortalUrl` in `subscription.functions.ts` is auth-gated (`requireSupabaseAuth`) and looks up the caller's `stripe_customer_id` from `subscribers` before calling Stripe. |
-| Checkout uses live Quill price IDs only | PASS | `PLAN_PRICING` in `src/lib/config.ts` maps plan × market → single authoritative price ID. No legacy £24.99/£29.99/£49.99 references. |
+| Checkout uses live Quill price IDs only | PASS | `PLAN_PRICING` in `src/lib/config.ts` maps each plan → single authoritative GBP price ID. No legacy £24.99/£29.99/£49.99 references. |
 | Checkout uses `mode: 'subscription'` | PASS | Confirmed in `stripe.server.ts`. |
 | Stripe secret key exposed to client | PASS | Only referenced in `*.server.ts` and server function handlers; not in any `VITE_*` var or client import. |
 | Subscription gating (`active`/`trialing` only) | PASS | Enforced server-side in `hasActiveAccess` and `generateListing`. |
@@ -44,7 +44,7 @@ Read-only audit. No code changes proposed; nothing is critically broken.
 2. **Webhook endpoint registered** at `https://copybymonk.com/api/public/stripe-webhook` (or the custom domain in use) subscribing to: `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid`, `invoice.payment_failed`.
 3. **Billing Portal enabled** in Stripe Dashboard → Settings → Billing → Customer portal, with cancel-at-period-end permitted.
 4. **Deactivate legacy products/prices** (£24.99 / £29.99 / £49.99 and any legacy payment links) so they cannot be purchased.
-5. **Confirm live price IDs are active** for all six SKUs (Starter/Pro/Growth × GBP/USD) referenced in `src/lib/config.ts`.
+5. **Confirm live price IDs are active** for the three GBP SKUs (Starter/Pro/Growth) referenced in `src/lib/config.ts`.
 6. Optional: remove unused `STRIPE_*_PRICE_ID` / `STRIPE_*_PAYMENT_LINK_ID` secrets from Project Settings to reduce noise.
 
 ## Overall

@@ -1,27 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import {
-  getPlan,
-  TRIAL_DAYS,
-  MARKETS,
-  resolveMarketId,
-  PLAN_PRICING,
-  type MarketId,
-  type PlanId,
-} from "./config";
+import { getPlan, TRIAL_DAYS, type PlanId } from "./config";
 
 async function comped(email: string | null | undefined): Promise<boolean> {
   const { isCompedEmail } = await import("./comped.server");
   return isCompedEmail(email);
-}
-
-/** Market derived from the stored Stripe price id (defaults to UK). */
-export function marketFromPriceId(priceId: string | null | undefined): MarketId {
-  if (!priceId) return "uk";
-  for (const m of Object.keys(PLAN_PRICING) as MarketId[]) {
-    if (Object.values(PLAN_PRICING[m]).some((p) => p.priceId === priceId)) return m;
-  }
-  return "uk";
 }
 
 export interface SubscriptionInfo {
@@ -34,8 +17,6 @@ export interface SubscriptionInfo {
   hasAccess: boolean;
   isComped: boolean;
   email: string | null;
-  /** Billing market derived from the Stripe price id. */
-  market: MarketId;
 }
 
 export interface UsageInfo {
@@ -71,7 +52,6 @@ async function toInfo(
     hasAccess: isComped || hasActiveAccess(rawStatus, row?.current_period_end ?? null),
     isComped,
     email: row?.email ?? null,
-    market: marketFromPriceId(row?.stripe_price_id),
   };
 }
 
@@ -313,10 +293,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
   .handler(async ({ context, data }): Promise<{ url: string }> => {
     const { supabase, userId, claims } = context;
     const plan = getPlan(data.plan).id;
-    // Never trust a client-provided price id: validate the market and resolve
-    // the authoritative Stripe price id server-side from plan + market.
-    const market = resolveMarketId(data.market);
-    const currency = MARKETS[market].currency;
+    // Never trust a client-provided price id: resolve the authoritative GBP
+    // Stripe price id server-side from the plan. Any client `market` is ignored.
 
     const row = await readReconciledSubscriber(supabase, userId);
 
@@ -333,7 +311,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
 
     const { resolvePriceId, createSubscriptionCheckoutSession } = await import("./stripe.server");
     const { getAppUrl } = await import("./config.server");
-    const priceId = await resolvePriceId(plan, market);
+    const priceId = await resolvePriceId(plan);
 
     // Never trust a client-supplied origin verbatim for Stripe redirect URLs.
     // Allowlist known public app origins; otherwise fall back to APP_URL.
@@ -353,10 +331,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       email,
       customerId: row?.stripe_customer_id ?? null,
       successUrl: `${origin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancelUrl: `${origin}/subscription?checkout=cancelled&market=${market}`,
+      cancelUrl: `${origin}/subscription?checkout=cancelled`,
       trialDays: plan === "starter" ? TRIAL_DAYS : 0,
-      market,
-      currency,
     });
 
     if (!session?.url) throw new Error("Could not start checkout. Please try again.");

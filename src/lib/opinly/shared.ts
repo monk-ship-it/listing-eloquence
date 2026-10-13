@@ -42,3 +42,24 @@ export function formatPostDate(iso: string | null | undefined): string {
   if (Number.isNaN(d.getTime())) return "";
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 }
+
+/**
+ * Quill is UK-only. Posts tagged/categorised for the US market, or whose title
+ * mentions MLS, are excluded from the blog index, sitemap and RSS.
+ */
+const US_LABEL = /^(us|usa|united[- ]states|us[- ]agents?|us[- ]market|real[- ]estate[- ]us)$/i;
+export function isNonUkPost(post: {
+  title?: string | null;
+  category?: { slug?: string; name?: string } | null;
+  tags?: { slug?: string; name?: string }[] | null;
+  categories?: string[] | null;
+}): boolean {
+  if (post.title && /\bMLS\b/i.test(post.title)) return true;
+  const labels = [
+    post.category?.slug,
+    post.category?.name,
+    ...(post.tags ?? []).flatMap((t) => [t.slug, t.name]),
+    ...(post.categories ?? []),
+  ].filter((v): v is string => !!v);
+  return labels.some((l) => US_LABEL.test(l.trim()));
+}

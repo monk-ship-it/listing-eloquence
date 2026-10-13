@@ -67,12 +67,6 @@ export function BlogShell({ children }: { children: ReactNode }) {
             >
               UK listing generator
             </Link>
-            <Link
-              to="/us-real-estate-listing-generator"
-              className="inline-flex items-center hover:text-foreground min-h-11 sm:min-h-0"
-            >
-              US listing generator
-            </Link>
             <a
               href="/rss.xml"
               className="inline-flex items-center hover:text-foreground min-h-11 sm:min-h-0"

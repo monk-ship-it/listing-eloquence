@@ -2,11 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { callLovableAiJson } from "./ai-gateway.server";
 import { VOICE_PROMPTS, type VoiceId } from "./voices";
-import {
-  MASTER_LISTING_SYSTEM_PROMPT,
-  US_MASTER_LISTING_SYSTEM_PROMPT,
-} from "./master-listing-prompt";
-import { resolveMarketId, type MarketId } from "./config";
+import { MASTER_LISTING_SYSTEM_PROMPT } from "./master-listing-prompt";
 import type { ListingInput, ListingOutput } from "./listing-types";
 import { validateNewListingOutput } from "./listing-types";
 import { VOICES } from "./voices";
@@ -15,7 +11,6 @@ import { VOICES } from "./voices";
 const MAX_FIELD_LEN = 4000;
 const MAX_VOICE_NOTES_LEN = 8000;
 
-const VALID_MARKETS = new Set(["uk", "us"]);
 const VALID_VOICES = new Set(VOICES.map((v) => v.id));
 
 function clip(v: unknown, max: number, label: string): string {
@@ -31,13 +26,10 @@ function clip(v: unknown, max: number, label: string): string {
 }
 
 function normaliseInput(input: ListingInput): ListingInput {
-  if (!VALID_MARKETS.has(input.market)) {
-    throw new Error("Please choose a valid market (UK or US).");
-  }
   if (!VALID_VOICES.has(input.voice)) {
     throw new Error("Please choose a valid brand voice.");
   }
-  const out = { ...input } as ListingInput;
+  const out = { ...input, market: "uk" } as ListingInput;
   const stringKeys: (keyof ListingInput)[] = [
     "voiceNotes",
     "address",
@@ -81,48 +73,26 @@ function field(label: string, value: string) {
   return value && value.trim() ? `- ${label}: ${value.trim()}\n` : "";
 }
 
-/** Market-aware labels so the model interprets each structured field correctly. */
-function fieldLabels(market: MarketId) {
-  if (market === "us") {
-    return {
-      tenure: "Ownership (e.g. fee simple / condo)",
-      lease: "HOA / monthly dues",
-      price: "Asking price (USD)",
-      receptions: "Additional living spaces",
-      dimensions: "Square footage / lot size / room dimensions",
-      epc: "Energy rating",
-      tax: "Property taxes",
-      outside: "Outdoor space / lot",
-      utilities: "Utilities / internet",
-      nearby: "Nearby (school district, transit, amenities)",
-      periodFeatures: "Architectural / notable features",
-      yearBuilt: "Year built",
-      disclosures: "Disclosures / condition notes",
-      showingNotes: "Showing / access notes",
-      mediaNotes: "Media / photo / floor-plan notes",
-    };
-  }
-  return {
-    tenure: "Tenure",
-    lease: "Lease remaining (years)",
-    price: "Asking price (GBP)",
-    receptions: "Reception rooms",
-    dimensions: "Room dimensions",
-    epc: "EPC rating",
-    tax: "Council Tax band",
-    outside: "Outside space / garden",
-    utilities: "Utilities / broadband",
-    nearby: "Nearby (schools, transport, amenities)",
-    periodFeatures: "Period / character features",
-    yearBuilt: "Year built",
-    disclosures: "Disclosures / condition notes",
-    showingNotes: "Viewing / access notes",
-    mediaNotes: "Media / photo / floor-plan notes",
-  };
-}
+/** UK labels so the model interprets each structured field correctly. */
+const L = {
+  tenure: "Tenure",
+  lease: "Lease remaining (years)",
+  price: "Asking price (GBP)",
+  receptions: "Reception rooms",
+  dimensions: "Room dimensions",
+  epc: "EPC rating",
+  tax: "Council Tax band",
+  outside: "Outside space / garden",
+  utilities: "Utilities / broadband",
+  nearby: "Nearby (schools, transport, amenities)",
+  periodFeatures: "Period / character features",
+  yearBuilt: "Year built",
+  disclosures: "Disclosures / condition notes",
+  showingNotes: "Viewing / access notes",
+  mediaNotes: "Media / photo / floor-plan notes",
+};
 
-function buildUserPrompt(input: ListingInput, market: MarketId): string {
-  const L = fieldLabels(market);
+function buildUserPrompt(input: ListingInput): string {
   let details = "";
   details += field("Address / location", input.address);
   details += field("Area highlights", input.areaHighlights);
@@ -154,25 +124,18 @@ function buildUserPrompt(input: ListingInput, market: MarketId): string {
     ? `\nAGENT VOICE NOTES (raw, dictated or pasted — treat as supplementary context only):\n${input.voiceNotes.trim()}\n`
     : "";
 
-  const isUs = market === "us";
+  const languageLine = "- Use British English and spelling throughout.";
 
-  const languageLine = isUs
-    ? "- Use US English spelling and US real estate vocabulary throughout (home, property, square feet, HOA, property taxes, listing, showing). Prices in US dollars."
-    : "- Use British English and spelling throughout.";
+  const materialLine =
+    "- Where Material Information is provided (tenure, price, council tax band, EPC, parking, utilities) weave the key facts in naturally.";
 
-  const materialLine = isUs
-    ? "- Where provided, weave key facts (ownership, price, property taxes, HOA, square footage, lot size, parking, utilities) in naturally. Only use school district, HOA, tax or square footage facts if given."
-    : "- Where Material Information is provided (tenure, price, council tax band, EPC, parking, utilities) weave the key facts in naturally.";
+  const portalLine =
+    "- The full listing should be portal-ready (Rightmove / OnTheMarket style): an opening hook, then well-organised paragraphs covering the property, accommodation, outside space and location.";
 
-  const portalLine = isUs
-    ? "- The full listing should be MLS-ready: an opening hook, then well-organised paragraphs covering the home, layout, outdoor space and location. Describe the property, not the ideal buyer — follow Fair Housing (no protected-class references; no school/safety overclaims)."
-    : "- The full listing should be portal-ready (Rightmove / OnTheMarket style): an opening hook, then well-organised paragraphs covering the property, accommodation, outside space and location.";
+  const factHandlingLine =
+    "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. Do NOT include viewing/access notes in the portal description, teaser or social captions — treat those as internal-only.";
 
-  const factHandlingLine = isUs
-    ? "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. State disclosure/condition facts factually and never speculate. Do NOT include showing/access notes in the public MLS remarks, teaser or social captions — treat those as internal-only."
-    : "- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided. Do NOT include viewing/access notes in the portal description, teaser or social captions — treat those as internal-only.";
-
-  return `Create a ${isUs ? "US real estate" : "UK property"} sales listing from the details below.
+  return `Create a UK property sales listing from the details below.
 
 STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 ${details}
@@ -191,14 +154,14 @@ ${materialLine}
 ${portalLine}
 ${factHandlingLine}
 - Provide a short punchy teaser summary (1–2 sentences).
-- Provide 6–10 concise, factual, portal/MLS-ready "keyFeatures" bullets drawn STRICTLY from the supplied facts. Each bullet must be a short phrase (no sentences, no trailing full stops), non-duplicative, and safe for compliance. NEVER invent, upgrade or infer facts. Bullets should highlight the property's strongest, most factual selling points (property type, bedrooms/bathrooms, tenure/ownership, key features, outside space, parking, energy/tax band, notable features, location advantages) in the order most useful to a buyer.
+- Provide 6–10 concise, factual, portal-ready "keyFeatures" bullets drawn STRICTLY from the supplied facts. Each bullet must be a short phrase (no sentences, no trailing full stops), non-duplicative, and safe for compliance. NEVER invent, upgrade or infer facts. Bullets should highlight the property's strongest, most factual selling points (property type, bedrooms/bathrooms, tenure/ownership, key features, outside space, parking, energy/tax band, notable features, location advantages) in the order most useful to a buyer.
 - Provide an "emailBlast" object with:
     - "subjectLines": exactly 3 unique, concise subject-line options (short strings, no emoji spam, no ALL CAPS);
     - "previewText": one short preheader / preview text (factual one-liner);
     - "headline": a short campaign headline;
-    - "body": a plain-text email body of 2–4 short paragraphs, ${isUs ? "US real estate listing announcement" : "UK estate-agent database email"} tone, matching the selected voice, grounded ONLY in the structured facts above;
-    - "callToAction": a short CTA label such as ${isUs ? '"View property details" or "Schedule a showing"' : '"View property details" or "Arrange a viewing"'}.
-    NEVER invent an agent name, phone, email, URL, date, availability, urgency or offer deadline in the email — the user fills those in separately. ${isUs ? "Follow Fair Housing: describe the home, not the ideal buyer; keep private showing/access notes and disclosures out of the campaign copy." : "Keep private viewing/access notes out of the campaign copy."}
+    - "body": a plain-text email body of 2–4 short paragraphs, UK estate-agent database email tone, matching the selected voice, grounded ONLY in the structured facts above;
+    - "callToAction": a short CTA label such as "View property details" or "Arrange a viewing".
+    NEVER invent an agent name, phone, email, URL, date, availability, urgency or offer deadline in the email — the user fills those in separately. Keep private viewing/access notes out of the campaign copy.
 - Provide three social media posts (Instagram, Facebook, X) — each an engaging caption appropriate to that platform, plus a list of relevant hashtags (no '#' symbol in the array, just the words).
 
 Respond ONLY with a JSON object in exactly this shape:
@@ -285,23 +248,15 @@ export const generateListing = createServerFn({ method: "POST" })
     };
 
     try {
-      const market = resolveMarketId(data.market);
       const voice = (data.voice ?? "professional") as VoiceId;
       const voicePrompt = VOICE_PROMPTS[voice] ?? VOICE_PROMPTS.professional;
-      const masterPrompt =
-        market === "us" ? US_MASTER_LISTING_SYSTEM_PROMPT : MASTER_LISTING_SYSTEM_PROMPT;
-
-      const languageOverride =
-        market === "us"
-          ? "\n\nLANGUAGE OVERRIDE FOR THIS LISTING: Ignore any instruction in the brand voice to use British English. Write in US English with US real estate vocabulary and follow the US Fair Housing rules above."
-          : "";
 
       const messages = [
         {
           role: "system" as const,
-          content: `${masterPrompt}\n\nBRAND VOICE FOR THIS LISTING:\n${voicePrompt}${languageOverride}`,
+          content: `${MASTER_LISTING_SYSTEM_PROMPT}\n\nBRAND VOICE FOR THIS LISTING:\n${voicePrompt}`,
         },
-        { role: "user" as const, content: buildUserPrompt(data, market) },
+        { role: "user" as const, content: buildUserPrompt(data) },
       ];
 
       const parseOutput = (content: string): ListingOutput | null => {

@@ -14,13 +14,12 @@ import { VOICES, type VoiceId } from "@/lib/voices";
 import {
   EMPTY_INPUT,
   EXAMPLE_INPUT,
-  US_EXAMPLE_INPUT,
   type ListingInput,
   type ListingOutput,
 } from "@/lib/listing-types";
 import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
-import { APP_NAME, MARKETS, type MarketId } from "@/lib/config";
+import { APP_NAME } from "@/lib/config";
 import { VoiceNotes } from "@/components/VoiceNotes";
 import { EmailBlastCard } from "@/components/EmailBlastCard";
 import { copyText, buildCopyAllText, formatKeyFeaturesBlock } from "@/lib/clipboard";
@@ -69,105 +68,12 @@ function GeneratorPage() {
     clearOutputIfIdle();
   }
 
-  function appendTo(key: keyof ListingInput) {
-    return (text: string) => {
-      setInput((prev) => {
-        const current = (prev[key] as string) ?? "";
-        const next = current.trim() ? `${current.trim()} ${text}` : text;
-        return { ...prev, [key]: next };
-      });
-      clearOutputIfIdle();
-    };
-  }
-
-  const market = input.market;
-  const isUs = market === "us";
-
-  function setMarket(m: MarketId) {
-    setInput((prev) => ({ ...prev, market: m }));
-    clearOutputIfIdle();
-  }
-
   function loadExample() {
     if (inFlight.current) return;
-    setInput(isUs ? US_EXAMPLE_INPUT : EXAMPLE_INPUT);
+    setInput(EXAMPLE_INPUT);
     setOutput(null);
     toast.success("Example property loaded.");
   }
-
-  const L = isUs
-    ? {
-        address: "Address / location",
-        addressPh: "148 Magnolia Court, Winter Park, FL 32789",
-        propertyType: "Property type",
-        propertyTypePh: "Single-family home",
-        tenure: "Ownership",
-        tenurePh: "Fee simple / condo",
-        price: "Asking price ($)",
-        pricePh: "895,000",
-        lease: "HOA / monthly dues",
-        leasePh: "$90 / month",
-        dimensions: "Square footage / lot / room sizes",
-        dimensionsPh: "Approx. 3,200 sq ft, 0.25-acre lot…",
-        epc: "Energy rating",
-        epcPh: "If available",
-        tax: "Property taxes",
-        taxPh: "Approx. $9,000 / year",
-        outside: "Outdoor space / lot",
-        outsidePh: "Fenced backyard, heated pool",
-        heating: "Heating / cooling",
-        heatingPh: "Central heat & A/C",
-        utilities: "Utilities / internet",
-        utilitiesPh: "City water & sewer, fiber internet",
-        nearby: "Nearby (school district, transit, amenities)",
-        nearbyPh: "Winter Park school district; near Park Ave, I-4…",
-        periodFeatures: "Architectural / notable features",
-        periodFeaturesPh: "Craftsman detailing, coffered ceilings…",
-        yearBuilt: "Year built",
-        yearBuiltPh: "2016",
-        disclosures: "Disclosures / condition notes",
-        disclosuresPh: "Roof replaced 2021; seller's disclosure available…",
-        showingNotes: "Showing / access notes (kept out of public remarks)",
-        showingNotesPh: "By appointment via ShowingTime; 24 hrs' notice…",
-        mediaNotes: "Media / photo / floor-plan notes",
-        mediaNotesPh: "Pro photos + drone scheduled; floor plan to follow…",
-      }
-    : {
-        address: "Address / location",
-        addressPh: "12 Park Avenue, Harrogate, HG1",
-        propertyType: "Property type",
-        propertyTypePh: "Victorian semi-detached house",
-        tenure: "Tenure",
-        tenurePh: "Freehold",
-        price: "Asking price (£)",
-        pricePh: "525,000",
-        lease: "Lease remaining (yrs)",
-        leasePh: "If leasehold",
-        dimensions: "Room dimensions",
-        dimensionsPh: "Living room 5.2m x 4.1m…",
-        epc: "EPC rating",
-        epcPh: "C",
-        tax: "Council Tax band",
-        taxPh: "D",
-        outside: "Outside space / garden",
-        outsidePh: "Landscaped rear garden, patio",
-        heating: "Heating",
-        heatingPh: "Gas central heating",
-        utilities: "Utilities / broadband",
-        utilitiesPh: "Mains services, Ultrafast broadband",
-        nearby: "Nearby (schools, transport, amenities)",
-        nearbyPh: "Outstanding primary, station 0.5 miles…",
-        periodFeatures: "Period / character features",
-        periodFeaturesPh: "Original cornicing, sash windows…",
-        yearBuilt: "Year built",
-        yearBuiltPh: "1901",
-        disclosures: "Disclosures / condition notes",
-        disclosuresPh: "Recent rewire; survey available…",
-        showingNotes: "Viewing / access notes (kept out of the listing)",
-        showingNotesPh: "By appointment; key with branch…",
-        mediaNotes: "Media / photo / floor-plan notes",
-        mediaNotesPh: "Photos + floor plan booked…",
-      };
 
   async function run() {
     if (inFlight.current) return;
@@ -323,41 +229,6 @@ function GeneratorPage() {
               </p>
 
               <div className="mt-5">
-                <Label id="market-label">Market</Label>
-                <div
-                  role="radiogroup"
-                  aria-labelledby="market-label"
-                  className="mt-2 inline-flex rounded-lg border border-border/70 p-1"
-                >
-                  {Object.values(MARKETS).map((m) => {
-                    const selected = market === m.id;
-                    return (
-                      <button
-                        key={m.id}
-                        type="button"
-                        role="radio"
-                        aria-checked={selected}
-                        aria-pressed={selected}
-                        onClick={() => setMarket(m.id)}
-                        className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                          selected
-                            ? "bg-primary text-primary-foreground"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
-                      >
-                        {m.label}
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {isUs
-                    ? "US mode writes MLS-ready US English copy and follows Fair Housing language."
-                    : "UK mode writes portal-ready UK English copy following Material Information guidance."}
-                </p>
-              </div>
-
-              <div className="mt-5">
                 <Label id="voice-label">Brand voice</Label>
                 <div
                   role="radiogroup"
@@ -391,26 +262,26 @@ function GeneratorPage() {
               </div>
 
               <div className="mt-5 grid gap-4">
-                <Field label={L.address}>
+                <Field label="Address / location">
                   <Input
                     value={input.address}
                     onChange={(e) => set("address", e.target.value)}
-                    placeholder={L.addressPh}
+                    placeholder="12 Park Avenue, Harrogate, HG1"
                   />
                 </Field>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Field label={L.propertyType}>
+                  <Field label="Property type">
                     <Input
                       value={input.propertyType}
                       onChange={(e) => set("propertyType", e.target.value)}
-                      placeholder={L.propertyTypePh}
+                      placeholder="Victorian semi-detached house"
                     />
                   </Field>
-                  <Field label={L.yearBuilt}>
+                  <Field label="Year built">
                     <Input
                       value={input.yearBuilt}
                       onChange={(e) => set("yearBuilt", e.target.value)}
-                      placeholder={L.yearBuiltPh}
+                      placeholder="1901"
                     />
                   </Field>
                 </div>
@@ -426,10 +297,10 @@ function GeneratorPage() {
                     <Input
                       value={input.bathrooms}
                       onChange={(e) => set("bathrooms", e.target.value)}
-                      placeholder={isUs ? "3.5" : "2"}
+                      placeholder="2"
                     />
                   </Field>
-                  <Field label={isUs ? "Living spaces" : "Receptions"}>
+                  <Field label="Receptions">
                     <Input
                       value={input.receptions}
                       onChange={(e) => set("receptions", e.target.value)}
@@ -438,18 +309,18 @@ function GeneratorPage() {
                   </Field>
                 </div>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Field label={L.tenure}>
+                  <Field label="Tenure">
                     <Input
                       value={input.tenure}
                       onChange={(e) => set("tenure", e.target.value)}
-                      placeholder={L.tenurePh}
+                      placeholder="Freehold"
                     />
                   </Field>
-                  <Field label={L.price}>
+                  <Field label="Asking price (£)">
                     <Input
                       value={input.price}
                       onChange={(e) => set("price", e.target.value)}
-                      placeholder={L.pricePh}
+                      placeholder="525,000"
                     />
                   </Field>
                 </div>
@@ -458,14 +329,14 @@ function GeneratorPage() {
                     <Input
                       value={input.priceQualifier}
                       onChange={(e) => set("priceQualifier", e.target.value)}
-                      placeholder={isUs ? "e.g. Best offer" : "Guide Price / OIEO"}
+                      placeholder="Guide Price / OIEO"
                     />
                   </Field>
-                  <Field label={L.lease}>
+                  <Field label="Lease remaining (yrs)">
                     <Input
                       value={input.leaseYears}
                       onChange={(e) => set("leaseYears", e.target.value)}
-                      placeholder={L.leasePh}
+                      placeholder="If leasehold"
                     />
                   </Field>
                 </div>
@@ -473,43 +344,39 @@ function GeneratorPage() {
                   <Textarea
                     value={input.keyFeatures}
                     onChange={(e) => set("keyFeatures", e.target.value)}
-                    placeholder={
-                      isUs
-                        ? "Chef's kitchen, quartz counters, heated pool…"
-                        : "Open-plan kitchen, log burner, south-facing garden…"
-                    }
+                    placeholder="Open-plan kitchen, log burner, south-facing garden…"
                     rows={2}
                   />
                 </Field>
-                <Field label={L.dimensions}>
+                <Field label="Room dimensions">
                   <Textarea
                     value={input.dimensions}
                     onChange={(e) => set("dimensions", e.target.value)}
-                    placeholder={L.dimensionsPh}
+                    placeholder="Living room 5.2m x 4.1m…"
                     rows={2}
                   />
                 </Field>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Field label={L.epc}>
+                  <Field label="EPC rating">
                     <Input
                       value={input.epc}
                       onChange={(e) => set("epc", e.target.value)}
-                      placeholder={L.epcPh}
+                      placeholder="C"
                     />
                   </Field>
-                  <Field label={L.tax}>
+                  <Field label="Council Tax band">
                     <Input
                       value={input.councilTaxBand}
                       onChange={(e) => set("councilTaxBand", e.target.value)}
-                      placeholder={L.taxPh}
+                      placeholder="D"
                     />
                   </Field>
                 </div>
-                <Field label={L.outside}>
+                <Field label="Outside space / garden">
                   <Input
                     value={input.outsideSpace}
                     onChange={(e) => set("outsideSpace", e.target.value)}
-                    placeholder={L.outsidePh}
+                    placeholder="Landscaped rear garden, patio"
                   />
                 </Field>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -517,37 +384,37 @@ function GeneratorPage() {
                     <Input
                       value={input.parking}
                       onChange={(e) => set("parking", e.target.value)}
-                      placeholder={isUs ? "Three-car garage, driveway" : "Driveway, garage"}
+                      placeholder="Driveway, garage"
                     />
                   </Field>
-                  <Field label={L.heating}>
+                  <Field label="Heating">
                     <Input
                       value={input.heating}
                       onChange={(e) => set("heating", e.target.value)}
-                      placeholder={L.heatingPh}
+                      placeholder="Gas central heating"
                     />
                   </Field>
                 </div>
-                <Field label={L.utilities}>
+                <Field label="Utilities / broadband">
                   <Input
                     value={input.utilities}
                     onChange={(e) => set("utilities", e.target.value)}
-                    placeholder={L.utilitiesPh}
+                    placeholder="Mains services, Ultrafast broadband"
                   />
                 </Field>
-                <Field label={L.nearby}>
+                <Field label="Nearby (schools, transport, amenities)">
                   <Textarea
                     value={input.nearby}
                     onChange={(e) => set("nearby", e.target.value)}
-                    placeholder={L.nearbyPh}
+                    placeholder="Outstanding primary, station 0.5 miles…"
                     rows={2}
                   />
                 </Field>
-                <Field label={L.periodFeatures}>
+                <Field label="Period / character features">
                   <Textarea
                     value={input.periodFeatures}
                     onChange={(e) => set("periodFeatures", e.target.value)}
-                    placeholder={L.periodFeaturesPh}
+                    placeholder="Original cornicing, sash windows…"
                     rows={2}
                   />
                 </Field>
@@ -555,46 +422,40 @@ function GeneratorPage() {
                   <Input
                     value={input.areaHighlights}
                     onChange={(e) => set("areaHighlights", e.target.value)}
-                    placeholder={
-                      isUs
-                        ? "Established neighborhood, near dining and parks"
-                        : "Vibrant market town, riverside walks"
-                    }
+                    placeholder="Vibrant market town, riverside walks"
                   />
                 </Field>
-                <Field label={L.disclosures}>
+                <Field label="Disclosures / condition notes">
                   <Textarea
                     value={input.disclosures}
                     onChange={(e) => set("disclosures", e.target.value)}
-                    placeholder={L.disclosuresPh}
+                    placeholder="Recent rewire; survey available…"
                     rows={2}
                   />
                 </Field>
-                <Field label={L.showingNotes}>
+                <Field label="Viewing / access notes (kept out of the listing)">
                   <Textarea
                     value={input.showingNotes}
                     onChange={(e) => set("showingNotes", e.target.value)}
-                    placeholder={L.showingNotesPh}
+                    placeholder="By appointment; key with branch…"
                     rows={2}
                   />
                 </Field>
-                <Field label={L.mediaNotes}>
+                <Field label="Media / photo / floor-plan notes">
                   <Textarea
                     value={input.mediaNotes}
                     onChange={(e) => set("mediaNotes", e.target.value)}
-                    placeholder={L.mediaNotesPh}
+                    placeholder="Photos + floor plan booked…"
                     rows={2}
                   />
                 </Field>
-                {!isUs && (
-                  <Field label="Target audience">
-                    <Input
-                      value={input.targetAudience}
-                      onChange={(e) => set("targetAudience", e.target.value)}
-                      placeholder="Growing families, professionals"
-                    />
-                  </Field>
-                )}
+                <Field label="Target audience">
+                  <Input
+                    value={input.targetAudience}
+                    onChange={(e) => set("targetAudience", e.target.value)}
+                    placeholder="Growing families, professionals"
+                  />
+                </Field>
               </div>
 
               <Button

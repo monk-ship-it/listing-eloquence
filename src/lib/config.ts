@@ -13,21 +13,17 @@ export const CONTACT_EMAIL = "domenico@copybymonk.com";
 export type PlanId = "starter" | "pro" | "growth";
 
 // ---------------------------------------------------------------------------
-// Markets & currencies
+// Market & currency — Quill is UK-only (GBP).
 // ---------------------------------------------------------------------------
-export type MarketId = "uk" | "us";
-export type CurrencyId = "gbp" | "usd";
+export type MarketId = "uk";
+export type CurrencyId = "gbp";
 
 export interface Market {
   id: MarketId;
   currency: CurrencyId;
-  /** Long selector label, e.g. "UK estate agents · GBP". */
   label: string;
-  /** Compact label, e.g. "UK · GBP". */
   shortLabel: string;
-  /** Currency symbol. */
   symbol: string;
-  /** Audience noun, e.g. "estate agents" / "real estate agents". */
   audience: string;
 }
 
@@ -40,107 +36,69 @@ export const MARKETS: Record<MarketId, Market> = {
     symbol: "£",
     audience: "estate agents",
   },
-  us: {
-    id: "us",
-    currency: "usd",
-    label: "US real estate agents · USD",
-    shortLabel: "US · USD",
-    symbol: "$",
-    audience: "real estate agents",
-  },
 };
 
 export const DEFAULT_MARKET: MarketId = "uk";
 
-export function getMarket(market: string | null | undefined): Market {
-  return MARKETS[(market as MarketId) ?? DEFAULT_MARKET] ?? MARKETS[DEFAULT_MARKET];
+export function getMarket(_market?: string | null): Market {
+  return MARKETS.uk;
 }
 
-/** Narrow an untrusted value to a valid MarketId, defaulting to UK. */
-export function resolveMarketId(market: string | null | undefined): MarketId {
-  return market === "us" ? "us" : "uk";
-}
-
-const MARKET_STORAGE_KEY = "quill-market";
-
-/** Read the visitor's saved market choice (browser only; call from effects). */
-export function readSavedMarket(): MarketId | null {
-  if (typeof window === "undefined") return null;
-  const v = window.localStorage.getItem(MARKET_STORAGE_KEY);
-  return v === "us" || v === "uk" ? v : null;
-}
-
-/** Persist the visitor's market choice (browser only). */
-export function saveMarketChoice(market: MarketId): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(MARKET_STORAGE_KEY, market);
+/** Always "uk". Tolerates legacy values (e.g. "us") stored on old rows. */
+export function resolveMarketId(_market?: string | null): MarketId {
+  return "uk";
 }
 
 /**
- * Authoritative, hard-coded Stripe price identifiers per market and plan.
- * Amounts are in the currency's minor unit (pence / cents). These are the
- * single source of truth used server-side to resolve the correct price id —
- * the client never provides a price id.
- */
-export const PLAN_PRICING: Record<
-  MarketId,
-  Record<PlanId, { amount: number; priceId: string; display: string }>
-> = {
-  uk: {
-    starter: { amount: 3900, priceId: "price_1TqWz1AAj6LfwOUatt9zzYA1", display: "£39" },
-    pro: { amount: 7900, priceId: "price_1TqWz2AAj6LfwOUaQBZwZyJr", display: "£79" },
-    growth: { amount: 14900, priceId: "price_1TqWz3AAj6LfwOUat924mxdX", display: "£149" },
-  },
-  us: {
-    starter: { amount: 4900, priceId: "price_1Tst7KAAj6LfwOUap6nwwkT1", display: "$49" },
-    pro: { amount: 9900, priceId: "price_1Tst7TAAj6LfwOUaTOG299iy", display: "$99" },
-    growth: { amount: 19900, priceId: "price_1Tst7dAAj6LfwOUaD8AqhUVE", display: "$199" },
-  },
-};
-
-/** Display price string (e.g. "£39" / "$49") for a plan in a given market. */
-export function planPriceDisplay(plan: PlanId, market: MarketId): string {
-  return PLAN_PRICING[market]?.[plan]?.display ?? PLAN_PRICING.uk[plan].display;
-}
-
-/** Authoritative Stripe price id for a plan + market (server-side resolution). */
-export function resolvePlanPriceId(plan: PlanId, market: MarketId): string {
-  return PLAN_PRICING[market]?.[plan]?.priceId ?? PLAN_PRICING.uk[plan].priceId;
-}
-
-/**
- * Live Stripe identifiers for the current pricing (GBP, monthly).
- * These are public identifiers (safe in the client bundle) and act as the
- * authoritative source of truth for checkout, used ahead of any env secrets.
- * Amounts are in pence.
+ * Authoritative Stripe identifiers per plan (GBP, monthly). Amounts in pence.
+ * Public identifiers — safe in the client bundle. The client never provides a
+ * price id; it is resolved server-side from the plan.
  *
  * NOTE: The old payment links (£24.99/£29.99/£49.99) are intentionally
- * inactive in Stripe; authenticated checkouts use server-created sessions
- * with the prices below.
+ * inactive in Stripe; authenticated checkouts use server-created sessions.
  */
-export const STRIPE_PLAN_IDS: Record<
+export const PLAN_PRICING: Record<
   PlanId,
-  { amount: number; priceId: string; paymentLinkId: string; paymentLinkUrl: string }
+  {
+    amount: number;
+    priceId: string;
+    display: string;
+    paymentLinkId: string;
+    paymentLinkUrl: string;
+  }
 > = {
   starter: {
     amount: 3900,
     priceId: "price_1TqWz1AAj6LfwOUatt9zzYA1",
+    display: "£39",
     paymentLinkId: "plink_1TqWzwAAj6LfwOUacoHflGaU",
     paymentLinkUrl: "https://buy.stripe.com/5kQ3cugxncRgbRIbN87AI0F",
   },
   pro: {
     amount: 7900,
     priceId: "price_1TqWz2AAj6LfwOUaQBZwZyJr",
+    display: "£79",
     paymentLinkId: "plink_1TqWzxAAj6LfwOUabZDgo7y9",
     paymentLinkUrl: "https://buy.stripe.com/bJe7sK0yp8B02h818u7AI0G",
   },
   growth: {
     amount: 14900,
     priceId: "price_1TqWz3AAj6LfwOUat924mxdX",
+    display: "£149",
     paymentLinkId: "plink_1TqWzyAAj6LfwOUaWFwYhXOc",
     paymentLinkUrl: "https://buy.stripe.com/14A3cu5SJbNc9JAg3o7AI0H",
   },
 };
+
+/** Display price string (e.g. "£39") for a plan. */
+export function planPriceDisplay(plan: PlanId): string {
+  return (PLAN_PRICING[plan] ?? PLAN_PRICING.starter).display;
+}
+
+/** Authoritative Stripe price id for a plan (server-side resolution). */
+export function resolvePlanPriceId(plan: PlanId): string {
+  return (PLAN_PRICING[plan] ?? PLAN_PRICING.starter).priceId;
+}
 
 export interface Plan {
   id: PlanId;
@@ -171,7 +129,7 @@ export const PLANS: Plan[] = [
       "Saved listing history",
       "Dedicated voice notes field",
     ],
-    stripeLink: STRIPE_PLAN_IDS.starter.paymentLinkUrl,
+    stripeLink: PLAN_PRICING.starter.paymentLinkUrl,
   },
   {
     id: "pro",
@@ -189,7 +147,7 @@ export const PLANS: Plan[] = [
       "Priority generation",
       "Dedicated voice notes field",
     ],
-    stripeLink: STRIPE_PLAN_IDS.pro.paymentLinkUrl,
+    stripeLink: PLAN_PRICING.pro.paymentLinkUrl,
     popular: true,
   },
   {
@@ -208,7 +166,7 @@ export const PLANS: Plan[] = [
       "Priority generation",
       "Dedicated voice notes field",
     ],
-    stripeLink: STRIPE_PLAN_IDS.growth.paymentLinkUrl,
+    stripeLink: PLAN_PRICING.growth.paymentLinkUrl,
   },
 ];
 

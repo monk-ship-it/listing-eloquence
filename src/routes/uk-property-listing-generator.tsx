@@ -3,14 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
 import { APP_NAME } from "@/lib/config";
-import {
-  SITE,
-  socialMeta,
-  MARKET_ALTERNATES,
-  jsonLd,
-  breadcrumbNode,
-  softwareAppNode,
-} from "@/lib/seo";
+import { SITE, socialMeta, jsonLd, breadcrumbNode, softwareAppNode } from "@/lib/seo";
 import { Check, ArrowRight, ShieldCheck, Mic, Sparkles, Copy } from "lucide-react";
 
 const CANONICAL = "https://copybymonk.com/uk-property-listing-generator";
@@ -66,7 +59,7 @@ export const Route = createFileRoute("/uk-property-listing-generator")({
         locale: "en_GB",
       }),
     ],
-    links: [{ rel: "canonical", href: CANONICAL }, ...MARKET_ALTERNATES],
+    links: [{ rel: "canonical", href: CANONICAL }],
 
     scripts: [
       jsonLd(
@@ -80,7 +73,6 @@ export const Route = createFileRoute("/uk-property-listing-generator")({
           url: CANONICAL,
           description:
             "AI property description generator for UK estate agents: portal-ready descriptions, Key Features, teaser, Email Blast and social captions from one set of notes.",
-          currency: "GBP",
           prices: [
             { name: "Starter (UK)", price: 39 },
             { name: "Pro (UK)", price: 79 },
@@ -114,11 +106,8 @@ function UKPage() {
             <Logo withByline />
           </div>
           <nav className="flex shrink-0 items-center gap-2">
-            <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-              <Link to="/us-real-estate-listing-generator">US version</Link>
-            </Button>
             <Button asChild className="min-h-[44px]">
-              <Link to="/auth" search={{ plan: "starter", market: "uk" }}>
+              <Link to="/auth" search={{ plan: "starter" }}>
                 Get started
               </Link>
             </Button>
@@ -141,7 +130,7 @@ function UKPage() {
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Button asChild size="lg" className="min-h-[44px]">
-            <Link to="/auth" search={{ plan: "starter", market: "uk" }}>
+            <Link to="/auth" search={{ plan: "starter" }}>
               Create first pack <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
@@ -312,12 +301,9 @@ function UKPage() {
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-3">
             <Button asChild size="lg" className="min-h-[44px]">
-              <Link to="/auth" search={{ plan: "starter", market: "uk" }}>
+              <Link to="/auth" search={{ plan: "starter" }}>
                 Create first pack
               </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="min-h-[44px]">
-              <Link to="/us-real-estate-listing-generator">US real estate version</Link>
             </Button>
           </div>
           <p className="mt-5 text-xs text-muted-foreground">
