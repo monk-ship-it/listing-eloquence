@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { filterExtraction } from "./extract.functions";
+import { filterExtraction } from "./extract-filter";
 
 const notes =
   "Four bed semi on Brenzett Close, Chatham, freehold, guide price three fifty, EPC C, council tax band D";
