@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SITE_URL } from "@/lib/opinly/shared";
+import { SITE_URL, isUsOnlyPost } from "@/lib/opinly/shared";
 
 function escapeXml(value: string) {
   return value
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/rss.xml")({
         const { fetchRss } = await import("@/lib/opinly/api.server");
         let items: Awaited<ReturnType<typeof fetchRss>> = [];
         try {
-          items = await fetchRss(20);
+          items = (await fetchRss(20)).filter((i) => !isUsOnlyPost(i));
         } catch (err) {
           console.error("RSS build failed", err);
         }
@@ -27,8 +27,8 @@ export const Route = createFileRoute("/rss.xml")({
           `  <channel>`,
           `    <title>Quill Blog</title>`,
           `    <link>${SITE_URL}/blog</link>`,
-          `    <description>Listing copy and marketing guides for UK estate agents and US real estate teams.</description>`,
-          `    <language>en</language>`,
+          `    <description>Listing copy and marketing guides for UK estate agents.</description>`,
+          `    <language>en-gb</language>`,
           `    <atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml" />`,
           ...items.map((item) =>
             [

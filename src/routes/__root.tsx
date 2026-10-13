@@ -6,7 +6,6 @@ import {
   useRouter,
   HeadContent,
   Scripts,
-  useRouterState,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -14,7 +13,6 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { htmlLangFor } from "@/lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -85,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Quill turns one set of property notes into a complete AI listing pack for UK estate agents and US real estate agents.",
+          "Quill turns one set of property notes into a complete, compliant listing pack for UK estate agents.",
       },
       { name: "author", content: "CopyByMonk" },
       { name: "theme-color", content: "#f7f3ea" },
@@ -121,9 +119,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <html lang={htmlLangFor(pathname)} className="dark">
+    <html lang="en-GB" className="dark">
       <head>
         <HeadContent />
       </head>

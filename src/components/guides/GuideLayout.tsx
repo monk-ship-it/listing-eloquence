@@ -59,20 +59,20 @@ export function GuideFaqs({ faqs }: { faqs: { q: string; a: string }[] }) {
   );
 }
 
-/** Contextual call to action pointing at the right market generator. */
+/** Contextual call to action pointing at the UK generator. */
 export function GuideCta({ meta, label }: { meta: GuideMeta; label: string }) {
   return (
     <section className="mt-12 rounded-2xl border border-primary/30 bg-primary/5 p-6 sm:p-8">
       <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">{label}</h2>
       <p className="mt-2 text-sm text-muted-foreground">
         Speak or paste your property facts once and Quill returns a Headline, 6–10 Key Features, the{" "}
-        {meta.market === "uk" ? "portal-ready description" : "MLS-ready remarks"}, a short teaser,
+        portal-ready description, a short teaser,
         Email Blast copy and Instagram, Facebook and X captions.
       </p>
       <div className="mt-5 flex flex-wrap gap-3">
         <Button asChild size="lg" className="min-h-[44px]">
-          <Link to={generatorPath(meta.market)}>
-            {meta.market === "uk" ? "UK listing generator" : "US listing generator"}
+          <Link to={generatorPath()}>
+            UK listing generator
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
@@ -145,12 +145,12 @@ export function GuideLayout({
         <p className="mt-3 text-sm text-muted-foreground">
           Published{" "}
           <time dateTime={meta.datePublished}>
-            {formatGuideDate(meta.datePublished, meta.market)}
+            {formatGuideDate(meta.datePublished)}
           </time>
           {" · "}
           Updated{" "}
           <time dateTime={meta.dateModified}>
-            {formatGuideDate(meta.dateModified, meta.market)}
+            {formatGuideDate(meta.dateModified)}
           </time>
         </p>
         <p className="mt-4 text-lg leading-relaxed text-muted-foreground">{standfirst}</p>
@@ -163,8 +163,8 @@ export function GuideLayout({
   );
 }
 
-function formatGuideDate(iso: string, market: "uk" | "us") {
-  return new Date(`${iso}T12:00:00Z`).toLocaleDateString(market === "uk" ? "en-GB" : "en-US", {
+function formatGuideDate(iso: string) {
+  return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-GB", {
     day: "numeric",
     month: "long",
     year: "numeric",

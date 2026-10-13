@@ -11,7 +11,7 @@ interface SitemapEntry {
 }
 
 /** Date each static page's content last changed significantly. */
-const CONTENT_UPDATED = "2026-10-12";
+const CONTENT_UPDATED = "2026-10-13";
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
@@ -22,17 +22,10 @@ export const Route = createFileRoute("/sitemap.xml")({
         const staticEntries: SitemapEntry[] = [
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/uk-property-listing-generator", changefreq: "monthly", priority: "0.8" },
-          { path: "/us-real-estate-listing-generator", changefreq: "monthly", priority: "0.8" },
           { path: "/blog", changefreq: "weekly", priority: "0.7" },
           { path: "/property-description-examples", changefreq: "monthly", priority: "0.7" },
           {
             path: "/rightmove-property-description-template",
-            changefreq: "monthly",
-            priority: "0.7",
-          },
-          { path: "/mls-remarks-examples", changefreq: "monthly", priority: "0.7" },
-          {
-            path: "/real-estate-listing-description-examples",
             changefreq: "monthly",
             priority: "0.7",
           },
@@ -46,10 +39,11 @@ export const Route = createFileRoute("/sitemap.xml")({
         // 503 rather than serving a partial sitemap.
         try {
           const { fetchPosts } = await import("@/lib/opinly/api.server");
+          const { isUsOnlyPost } = await import("@/lib/opinly/shared");
           let cursor: string | undefined;
           for (let page = 0; page < 50; page++) {
             const res = await fetchPosts({ limit: 50, sort: "newest", cursor });
-            for (const post of res.data) {
+            for (const post of res.data.filter((p) => !isUsOnlyPost(p))) {
               entries.push({
                 path: `/blog/${encodeURIComponent(post.slug)}`,
                 changefreq: "monthly",

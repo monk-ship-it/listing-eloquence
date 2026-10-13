@@ -4,15 +4,11 @@ import { SITE, ORG_REF, OG_IMAGE, socialMeta } from "@/lib/seo";
 
 export { SITE };
 
-export type GuideMarket = "uk" | "us";
-
 export interface GuideMeta {
   /** Route path, also the canonical path. */
   path:
     | "/property-description-examples"
-    | "/rightmove-property-description-template"
-    | "/mls-remarks-examples"
-    | "/real-estate-listing-description-examples";
+    | "/rightmove-property-description-template";
   title: string;
   /** Document <title>, with the "| Quill" suffix. */
   docTitle: string;
@@ -22,7 +18,6 @@ export interface GuideMeta {
   description: string;
   /** One-line card blurb. */
   blurb: string;
-  market: GuideMarket;
   datePublished: string;
   dateModified: string;
 }
@@ -37,7 +32,6 @@ export const GUIDES: GuideMeta[] = [
       "Property description examples for UK estate agents across flats, terraces, semis and country homes, with a breakdown of why each example actually works.",
     blurb:
       "Full worked descriptions for four UK property types, annotated so you can see which sentence is doing the selling.",
-    market: "uk",
     datePublished: "2026-08-08",
     dateModified: "2026-10-12",
   },
@@ -50,33 +44,6 @@ export const GUIDES: GuideMeta[] = [
       "A practical Rightmove-style property description template and pre-publish checklist for UK estate agents, with fill-in prompts and Material Information notes.",
     blurb:
       "A paragraph-by-paragraph template plus a pre-publish checklist you can run before a listing goes live.",
-    market: "uk",
-    datePublished: "2026-08-08",
-    dateModified: "2026-10-12",
-  },
-  {
-    path: "/mls-remarks-examples",
-    docTitle: "MLS Remarks Examples & Public Remarks Template | Quill",
-    title: "MLS Remarks Examples and Templates for Agents",
-    label: "MLS remarks examples",
-    description:
-      "MLS remarks examples and reusable templates for US agents, with character-count discipline and fair-housing-conscious wording you can adapt to your listings.",
-    blurb:
-      "Public remarks examples for four home types, plus wording habits that keep copy focused on the property.",
-    market: "us",
-    datePublished: "2026-08-08",
-    dateModified: "2026-10-12",
-  },
-  {
-    path: "/real-estate-listing-description-examples",
-    docTitle: "Real Estate Listing Description Examples | Quill",
-    title: "Real Estate Listing Description Examples by Home Type",
-    label: "US listing description examples",
-    description:
-      "Real estate listing description examples across condos, new builds, ranch homes and luxury listings, shown in three tones so you can match your brand voice.",
-    blurb:
-      "Longer-form listing descriptions across home types, written in three different tones for the same facts.",
-    market: "us",
     datePublished: "2026-08-08",
     dateModified: "2026-10-12",
   },
@@ -92,8 +59,8 @@ export function siblingGuides(path: GuideMeta["path"]): GuideMeta[] {
   return GUIDES.filter((g) => g.path !== path);
 }
 
-export function generatorPath(market: GuideMarket) {
-  return market === "uk" ? "/uk-property-listing-generator" : "/us-real-estate-listing-generator";
+export function generatorPath() {
+  return "/uk-property-listing-generator" as const;
 }
 
 /** Head metadata shared by every guide route. */
@@ -119,7 +86,7 @@ export function guideHead(meta: GuideMeta, faqs?: { q: string; a: string }[]) {
         "@type": "BlogPosting",
         headline: meta.title,
         description: meta.description,
-        inLanguage: meta.market === "uk" ? "en-GB" : "en-US",
+        inLanguage: "en-GB",
         datePublished: meta.datePublished,
         dateModified: meta.dateModified,
         image: [OG_IMAGE],
@@ -158,7 +125,7 @@ export function guideHead(meta: GuideMeta, faqs?: { q: string; a: string }[]) {
       ...socialMeta({
         title: meta.title,
         description: meta.description,
-        locale: meta.market === "uk" ? "en_GB" : "en_US",
+        locale: "en_GB",
       }),
     ],
     links: [{ rel: "canonical", href: url }],
