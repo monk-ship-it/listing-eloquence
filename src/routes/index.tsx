@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { createContext, useContext, useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { Reveal } from "@/components/Reveal";
 import { Button } from "@/components/ui/button";
@@ -9,20 +8,15 @@ import {
   PLANS,
   TRIAL_DAYS,
   CONTACT_EMAIL,
-  MARKETS,
-  DEFAULT_MARKET,
   planPriceDisplay,
-  readSavedMarket,
-  saveMarketChoice,
   type PlanId,
-  type MarketId,
 } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
   Check,
   Mic,
   ArrowRight,
-  ArrowLeftRight,
+  FileCheck2,
   Pencil,
   Sparkles,
   FileText,
@@ -45,7 +39,6 @@ import { IMG } from "@/lib/images";
 import {
   SITE,
   socialMeta,
-  MARKET_ALTERNATES,
   jsonLd,
   ORGANIZATION_NODE,
   WEBSITE_NODE,
@@ -55,28 +48,28 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "AI Listing Description Generator | Quill by CopyByMonk" },
+      { title: "AI Property Description Generator for UK Estate Agents | Quill" },
       {
         name: "description",
         content:
-          "AI listing descriptions for UK estate agents and US agents. One set of notes becomes a portal description or MLS remarks, key features, email and social copy.",
+          "Turn one set of notes into a Rightmove-ready description, key features, applicant email and social posts. Built for UK estate agents. 14-day free trial.",
       },
-      { property: "og:title", content: "AI Listing Description Generator | Quill by CopyByMonk" },
+      { property: "og:title", content: "AI Property Description Generator for UK Estate Agents | Quill" },
       {
         property: "og:description",
         content:
-          "AI listing descriptions for UK estate agents and US agents. One set of notes becomes a portal description or MLS remarks, key features, email and social copy.",
+          "Turn one set of notes into a Rightmove-ready description, key features, applicant email and social posts. Built for UK estate agents. 14-day free trial.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE}/` },
       ...socialMeta({
-        title: "AI Listing Description Generator | Quill by CopyByMonk",
+        title: "AI Property Description Generator for UK Estate Agents | Quill",
         description:
-          "AI listing descriptions for UK estate agents and US agents. One set of notes becomes a portal description or MLS remarks, key features, email and social copy.",
+          "Turn one set of notes into a Rightmove-ready description, key features, applicant email and social posts. Built for UK estate agents. 14-day free trial.",
         locale: "en_GB",
       }),
     ],
-    links: [{ rel: "canonical", href: `${SITE}/` }, ...MARKET_ALTERNATES],
+    links: [{ rel: "canonical", href: `${SITE}/` }],
     scripts: [
       jsonLd(ORGANIZATION_NODE),
       jsonLd(WEBSITE_NODE),
@@ -84,8 +77,7 @@ export const Route = createFileRoute("/")({
         softwareAppNode({
           url: `${SITE}/`,
           description:
-            "AI listing pack generator for UK estate agents and US real estate agents. One set of notes becomes a Headline, 6–10 Key Features, a portal-ready UK description or MLS-ready remarks, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
-          currency: "GBP",
+            "AI listing pack generator for UK estate agents. One set of notes becomes a Headline, 6–10 Key Features, a portal-ready description, a short teaser, Email Blast copy and Instagram, Facebook and X captions.",
           prices: [
             { name: "Starter (UK)", price: 39 },
             { name: "Pro (UK)", price: 79 },
@@ -98,35 +90,12 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const MarketContext = createContext<{
-  market: MarketId;
-  setMarket: (m: MarketId) => void;
-}>({ market: DEFAULT_MARKET, setMarket: () => {} });
-
-function useMarket() {
-  return useContext(MarketContext);
-}
-
 function Landing() {
   const { user } = useAuth();
   const authed = !!user;
-  const [market, setMarketState] = useState<MarketId>(DEFAULT_MARKET);
-  // Restore the saved/URL market after hydration (server renders the default).
-  useEffect(() => {
-    const q = new URLSearchParams(window.location.search).get("market");
-    const restored = q === "us" || q === "uk" ? q : readSavedMarket();
-    if (restored) {
-      setMarketState(restored);
-      if (q === "us" || q === "uk") saveMarketChoice(q);
-    }
-  }, []);
-  const setMarket = (m: MarketId) => {
-    setMarketState(m);
-    saveMarketChoice(m);
-  };
 
   return (
-    <MarketContext.Provider value={{ market, setMarket }}>
+    <>
       <div className="public-daylight min-h-screen overflow-x-clip">
         <Header user={authed} />
         <Hero authed={authed} />
@@ -142,41 +111,12 @@ function Landing() {
         <FinalCta authed={authed} />
         <Footer />
       </div>
-    </MarketContext.Provider>
-  );
-}
-
-/** Segmented UK / US market + currency toggle. */
-function MarketToggle({ className = "" }: { className?: string }) {
-  const { market, setMarket } = useMarket();
-  return (
-    <div
-      className={`inline-flex rounded-full border border-border/70 bg-card/50 p-1 backdrop-blur ${className}`}
-      role="tablist"
-      aria-label="Choose your market"
-    >
-      {Object.values(MARKETS).map((m) => (
-        <button
-          key={m.id}
-          type="button"
-          role="tab"
-          aria-selected={market === m.id}
-          onClick={() => setMarket(m.id)}
-          className={`rounded-full px-4 py-1.5 text-xs font-medium transition-colors min-h-11 sm:min-h-0 sm:text-sm ${
-            market === m.id
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          {m.label}
-        </button>
-      ))}
-    </div>
+    </>
   );
 }
 
 /**
- * A "Start free trial"-style CTA that preserves the chosen plan and market and
+ * A "Start free trial"-style CTA that preserves the chosen plan and
  * routes signed-in users straight to checkout, signed-out users to sign up.
  */
 function CtaButton({
@@ -192,10 +132,9 @@ function CtaButton({
   variant?: React.ComponentProps<typeof Button>["variant"];
   className?: string;
 }) {
-  const { market } = useMarket();
   return (
     <Button asChild {...rest} className={`min-h-11 sm:min-h-0 ${rest.className ?? ""}`}>
-      <Link to={authed ? "/subscription" : "/auth"} search={{ plan, market }}>
+      <Link to={authed ? "/subscription" : "/auth"} search={{ plan }}>
         {children}
       </Link>
     </Button>
@@ -211,30 +150,23 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 /* ---------------------------------- Header --------------------------------- */
 
 function Header({ user }: { user: boolean }) {
-  const { market } = useMarket();
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
         <Logo withByline />
         <nav className="flex items-center gap-1.5 sm:gap-2" aria-label="Primary">
           <Link
-            to="/uk-property-listing-generator"
-            className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex"
-          >
-            UK
-          </Link>
-          <Link
-            to="/us-real-estate-listing-generator"
-            className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex"
-          >
-            US
-          </Link>
-          <Link
             to="/blog"
             className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex"
           >
             Guides
           </Link>
+          <a
+            href="#pricing"
+            className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background md:inline-flex"
+          >
+            Pricing
+          </a>
 
           {user ? (
             <Button asChild className="min-h-11 sm:min-h-0">
@@ -249,7 +181,7 @@ function Header({ user }: { user: boolean }) {
                 <Link to="/auth">Log in</Link>
               </Button>
               <Button asChild className="min-h-11 sm:min-h-0">
-                <Link to="/auth" search={{ plan: "starter", market }}>
+                <Link to="/auth" search={{ plan: "starter" }}>
                   Start free trial
                 </Link>
               </Button>
@@ -263,18 +195,14 @@ function Header({ user }: { user: boolean }) {
 
 /* ----------------------------------- Hero ---------------------------------- */
 
-function heroChips(market: MarketId): string[] {
-  return [
-    market === "us" ? "Built for US real estate teams" : "Built for UK estate agencies",
-    market === "us" ? "MLS-ready remarks" : "Portal-ready descriptions",
-    "One source of truth for every asset",
-    "No CRM migration",
-  ];
-}
+const HERO_CHIPS = [
+  "Built for UK estate agencies",
+  "Portal-ready descriptions",
+  "One source of truth for every asset",
+  "No CRM migration",
+];
 
 function Hero({ authed }: { authed: boolean }) {
-  const { market } = useMarket();
-  const isUs = market === "us";
   return (
     <section className="relative overflow-hidden">
       {/* Cinematic property backdrop — decorative, fixed to the section box so it
@@ -305,29 +233,15 @@ function Hero({ authed }: { authed: boolean }) {
             <AudioLines className="h-3.5 w-3.5" /> One set of notes → a complete listing pack
           </span>
 
-          <div className="mt-5">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Choose your market
-            </p>
-            <MarketToggle />
-          </div>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            Switching adapts terminology, pricing, listing fields and compliance guidance —
-            {isUs
-              ? " US mode writes MLS-ready remarks."
-              : " UK mode writes portal-ready descriptions."}
-          </p>
-
           <h1 className="mt-5 text-balance font-display text-[clamp(2rem,8vw,2.6rem)] font-semibold leading-[1.12] sm:mt-6 sm:text-5xl lg:text-[3.6rem]">
             Turn one set of notes into a{" "}
             <span className="text-gradient">complete listing pack.</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {APP_NAME} helps UK estate agents and US real estate teams remove the slow admin between
-            instruction and launch. Speak, type or paste the facts once, choose the brand voice, and
-            generate the Headline, Key Features, listing description, short teaser, Email Blast copy
-            and Instagram, Facebook and X captions from the same source of truth.
+            {APP_NAME} helps UK estate agents get new instructions live faster. Speak, type or paste
+            the facts once, choose your brand voice, and get the portal description, key features,
+            strapline, applicant email and social posts from the same source of truth.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -348,13 +262,9 @@ function Hero({ authed }: { authed: boolean }) {
             <ShieldCheck className="h-4 w-4 text-primary" />
             {TRIAL_DAYS}-day trial at secure checkout · card required · cancel anytime
           </p>
-          <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-            <ArrowLeftRight className="h-4 w-4 text-primary" />
-            Switch between UK and US markets any time before checkout.
-          </p>
 
           <div className="mt-7 flex flex-wrap gap-2.5">
-            {heroChips(market).map((chip) => (
+            {HERO_CHIPS.map((chip) => (
               <span
                 key={chip}
                 className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/50 px-3 py-1.5 text-xs font-medium text-foreground/90"
@@ -488,13 +398,11 @@ const WAVE_HEIGHTS = [40, 70, 95, 60, 85, 50, 75, 100, 55, 80, 45, 90, 60, 70, 4
 
 /** Heading + intro for the animated walkthrough, which owns the #workflow anchor. */
 function Workflow() {
-  const { market } = useMarket();
-  const isUs = market === "us";
   return (
     <PropertyWalkthrough
       eyebrow="The workflow"
       heading="Built to remove listing admin, not to replace agents."
-      intro={`Quill sits between instruction and launch. Capture the property once and hand your team a consistent, ${isUs ? "MLS-ready" : "portal-ready"} pack instead of copy-and-paste work.`}
+      intro={`Quill sits between instruction and launch. Capture the property once and hand your team a consistent, portal-ready pack instead of copy-and-paste work.`}
     />
   );
 }
@@ -503,8 +411,6 @@ function Workflow() {
 
 /** Image-backed band that breaks up the long page with warm property light. */
 function EditorialBand() {
-  const { market } = useMarket();
-  const isUs = market === "us";
   return (
     <section aria-label="Why one source of truth" className="relative">
       <div className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
@@ -528,8 +434,8 @@ function EditorialBand() {
               The detail that sells the room, in every asset.
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-foreground/85 sm:text-base">
-              Describe the space once. Quill keeps the same facts across the{" "}
-              {isUs ? "MLS remarks" : "portal description"}, the teaser, the Email Blast copy and
+              Describe the space once. Quill keeps the same facts across the portal description,
+              the teaser, the Email Blast copy and
               every caption — so nothing drifts between channels.
             </p>
           </div>
@@ -561,10 +467,10 @@ const BENEFIT_GROUPS = [
       "Professional, Premium, Luxury and Heritage voices keep every listing on-brand without rewriting from scratch.",
   },
   {
-    icon: ArrowLeftRight,
-    title: "UK / US market-aware copy",
+    icon: FileCheck2,
+    title: "Material Information built in",
     items:
-      "Descriptions and remarks adapt to UK portal or US MLS conventions from the same facts, so the team doesn't retype the same property twice.",
+      "Tenure, council tax, EPC and leasehold costs written in clearly, with missing details flagged before you publish.",
   },
   {
     icon: FileText,
@@ -575,8 +481,6 @@ const BENEFIT_GROUPS = [
 ];
 
 function ListingDetail() {
-  const { market } = useMarket();
-  const isUs = market === "us";
   return (
     <section className="surface-sky border-y border-border py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
@@ -589,12 +493,6 @@ function ListingDetail() {
             Quill generates the listing pack from one set of notes, so your team spends less time
             retyping, rewriting and formatting property copy.
           </p>
-          <div className="mt-6 flex flex-col items-center gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Choose your market
-            </p>
-            <MarketToggle />
-          </div>
         </Reveal>
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {BENEFIT_GROUPS.map((g, i) => (
@@ -687,26 +585,7 @@ function Voices() {
 /* ------------------------------ Live example ------------------------------- */
 
 function LiveExample() {
-  const { market } = useMarket();
-  const isUs = market === "us";
-  const facts: [string, string][] = isUs
-    ? [
-        ["Type", "Single-family home"],
-        ["Location", "Winter Park, FL"],
-        ["Beds / baths", "4 bed · 3.5 bath"],
-        ["Square footage", "≈ 3,200 sq ft"],
-        ["Lot size", "0.25-acre lot"],
-        ["Price", "$895,000"],
-        ["Year built", "2016"],
-        [
-          "Key features",
-          "Chef's kitchen, quartz counters, first-floor primary suite, screened lanai, heated pool",
-        ],
-        ["Ownership", "Fee simple · HOA $90/mo"],
-        ["Parking", "Three-car attached garage"],
-        ["Voice", "Premium"],
-      ]
-    : [
+  const facts: [string, string][] = [
         ["Type", "Grade II listed detached home"],
         ["Location", "Cotswold market town"],
         ["Bedrooms", "5"],
@@ -722,10 +601,9 @@ function LiveExample() {
         ["Parking", "Gravel driveway and detached double cart shed"],
         ["Voice", "Heritage"],
       ];
-  const spokenNote = isUs
-    ? "“Four bed three and a half bath in Winter Park, about 3,200 square feet, quarter-acre lot, heated pool, three-car garage, asking eight ninety-five…”"
-    : "“Five bedrooms, Grade II listed, walled garden, original beams, inglenook fireplace, near the high street…”";
-  const demo = isUs ? DEMO_US : DEMO_UK;
+  const spokenNote =
+    "“Five bedrooms, Grade II listed, walled garden, original beams, inglenook fireplace, near the high street…”";
+  const demo = DEMO_UK;
 
   return (
     <section id="example" className="panel-ivory border-y border-border py-16 sm:py-24">
@@ -1108,59 +986,6 @@ const DEMO_UK: DemoPack = {
   },
 };
 
-const DEMO_US: DemoPack = {
-  headline: "Refined 4-Bedroom Winter Park Home with Heated Pool and Chef's Kitchen",
-  keyFeatures: [
-    "Single-family home built in 2016",
-    "Approximately 3,200 sq ft on a 0.25-acre lot",
-    "Four bedrooms and three and a half bathrooms",
-    "Chef's kitchen with quartz countertops",
-    "First-floor primary suite",
-    "Screened lanai and heated saltwater pool",
-    "Fenced backyard on a tree-lined street",
-    "Three-car attached garage with paver driveway",
-    "Fee simple ownership, HOA $90/month",
-  ],
-  listing: [
-    "Set on a quarter-acre lot on a tree-lined street in Winter Park, this 2016-built single-family home offers approximately 3,200 square feet of well-proportioned living space with a layout arranged for everyday comfort and entertaining.",
-    "The chef's kitchen features quartz countertops and opens to the main living area, while the first-floor primary suite adds convenience and privacy. A screened lanai extends the living space outdoors to a heated pool set within a fenced backyard.",
-    "Four bedrooms, three and a half bathrooms and a three-car attached garage complete the home. Offered fee simple with an HOA of $90 per month, close to Park Avenue shops and dining.",
-  ],
-  summary:
-    "Winter Park single-family home, approximately 3,200 sq ft on a quarter-acre lot. Four bedrooms, 3.5 baths, chef's kitchen, first-floor primary suite, screened lanai and heated pool. Offered at $895,000.",
-  emailBlast: {
-    subjectLines: [
-      "Just listed in Winter Park: 4-bed pool home, $895,000",
-      "New Winter Park listing — chef's kitchen and heated pool",
-      "Winter Park 4/3.5 with first-floor primary, offered at $895,000",
-    ],
-    previewText:
-      "Approximately 3,200 sq ft on a 0.25-acre lot with a first-floor primary and heated pool.",
-    headline: "Just listed in Winter Park",
-    body: [
-      "We're pleased to announce a new listing in Winter Park: a 2016-built single-family home offering approximately 3,200 square feet on a quarter-acre lot, on a tree-lined street close to Park Avenue shops and dining.",
-      "The home features a chef's kitchen with quartz countertops opening to the main living area, a first-floor primary suite for added convenience, and a three-car attached garage with paver driveway. Four bedrooms and three and a half bathrooms are thoughtfully arranged throughout.",
-      "Outside, a screened lanai extends to a heated saltwater pool within a fenced backyard. Offered fee simple at $895,000 with an HOA of $90 per month.",
-    ],
-    callToAction: "Schedule a showing",
-  },
-  instagram: {
-    caption:
-      "Winter Park single-family home — chef's kitchen with quartz counters, first-floor primary suite, screened lanai and a heated pool. 4 bed, 3.5 bath, ~3,200 sq ft. Offered at $895,000.",
-    hashtags: "#WinterParkFL #FloridaRealEstate #JustListed #HomeForSale #PoolHome",
-  },
-  facebook: {
-    caption:
-      "Just listed in Winter Park — a 4-bedroom, 3.5-bath single-family home of about 3,200 sq ft on a quarter-acre lot. Chef's kitchen, first-floor primary suite, screened lanai and a heated pool. Offered at $895,000. Showings by appointment.",
-    hashtags: "#WinterParkHomes #FloridaRealEstate #ForSale",
-  },
-  x: {
-    caption:
-      "Just listed in Winter Park: 4 bed, 3.5 bath, ~3,200 sq ft on a quarter-acre lot. Chef's kitchen, first-floor primary suite, screened lanai and heated pool. $895,000.",
-    hashtags: "#WinterParkFL #FloridaRealEstate #JustListed",
-  },
-};
-
 /* ----------------------------- Voice dictation ----------------------------- */
 
 const DICTATION_EXAMPLES_UK = [
@@ -1181,34 +1006,13 @@ const DICTATION_EXAMPLES_UK = [
   },
 ];
 
-const DICTATION_EXAMPLES_US = [
-  {
-    label: "Kitchen",
-    raw: "Kitchen’s all redone, white oak cabinets, Sub-Zero fridge, quartz island, sliders out to the deck, gets the afternoon sun…",
-    out: "Renovated kitchen with white oak cabinetry, a Sub-Zero refrigerator, a quartz-topped island and sliding doors opening to the deck.",
-  },
-  {
-    label: "Outdoor",
-    raw: "Backyard’s fenced, heated pool, covered patio, quarter-acre lot, sprinklers already in…",
-    out: "Fenced backyard on a quarter-acre lot with a heated pool, a covered patio and an in-ground sprinkler system.",
-  },
-  {
-    label: "Parking & area",
-    raw: "Three-car garage, EV charger, close to the interstate, downtown’s about ten minutes…",
-    out: "Three-car attached garage with an EV charger, quick interstate access and roughly ten minutes to downtown.",
-  },
-];
-
 function VoiceDictation({ authed }: { authed: boolean }) {
-  const { market } = useMarket();
-  const examples = market === "us" ? DICTATION_EXAMPLES_US : DICTATION_EXAMPLES_UK;
+  const examples = DICTATION_EXAMPLES_UK;
   const bullets = [
     "Dictate rough notes into one voice notes field",
     "Add to existing text without overwriting it",
     "Every transcript stays fully editable before generating",
-    market === "us"
-      ? "Useful between showings, valuations and client calls"
-      : "Useful between viewings, valuations and vendor calls",
+    "Useful between viewings, valuations and vendor calls",
   ];
   return (
     <section id="voice-demo" className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
@@ -1303,7 +1107,6 @@ function VoiceDictation({ authed }: { authed: boolean }) {
 /* --------------------------------- Pricing --------------------------------- */
 
 function Pricing({ authed }: { authed: boolean }) {
-  const { market } = useMarket();
   return (
     <section id="pricing" className="surface-sand border-y border-border py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-5">
@@ -1313,13 +1116,10 @@ function Pricing({ authed }: { authed: boolean }) {
             Plans that scale with your instructions.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Every plan includes UK and US markets, all four brand voices, voice dictation and the
+            Every plan includes all four brand voices, voice dictation and the
             full listing pack — Headline, Key Features, description, teaser, Email Blast copy and
             Instagram, Facebook and X captions.
           </p>
-          <div className="mt-6 flex justify-center">
-            <MarketToggle />
-          </div>
         </Reveal>
 
         <div className="mt-12 grid items-stretch gap-6 md:grid-cols-3">
@@ -1340,7 +1140,7 @@ function Pricing({ authed }: { authed: boolean }) {
                 <h3 className="font-display text-2xl font-semibold">{plan.name}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{plan.tagline}</p>
                 <p className="mt-5 font-display text-4xl font-semibold tracking-tight">
-                  {planPriceDisplay(plan.id, market)}
+                  {planPriceDisplay(plan.id)}
 
                   <span className="text-base font-normal text-muted-foreground">/month</span>
                 </p>
@@ -1459,7 +1259,7 @@ function Footer() {
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row sm:gap-4">
           <Logo withByline />
           <nav
-            aria-label="Markets and guides"
+            aria-label="Guides"
             className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm"
           >
             <Link
@@ -1467,12 +1267,6 @@ function Footer() {
               className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               UK property listing generator
-            </Link>
-            <Link
-              to="/us-real-estate-listing-generator"
-              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              US real estate listing generator
             </Link>
             <Link
               to="/blog"
@@ -1487,22 +1281,10 @@ function Footer() {
               UK description examples
             </Link>
             <Link
-              to="/mls-remarks-examples"
-              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              MLS remarks examples
-            </Link>
-            <Link
               to="/rightmove-property-description-template"
               className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               Rightmove-style template
-            </Link>
-            <Link
-              to="/real-estate-listing-description-examples"
-              className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              US listing description examples
             </Link>
           </nav>
 
@@ -1515,7 +1297,7 @@ function Footer() {
         </div>
         <div className="rule my-6" />
         <p className="text-center text-xs text-muted-foreground sm:text-left">
-          © 2026 {APP_NAME}. Crafted for estate and real estate agents in the UK and US.
+          © 2026 {APP_NAME}. Crafted for UK estate agents.
         </p>
       </div>
     </footer>
