@@ -10,7 +10,7 @@ export const OG_IMAGE_ALT =
   "Quill by CopyByMonk — one set of notes becomes a complete listing pack";
 export const LOGO_ABS = `${SITE}/icon-512.png`;
 
-export type Locale = "en_GB" | "en_US";
+export type Locale = "en_GB";
 
 /** Reference to the single Organization node, for publisher/author fields. */
 export const ORG_REF = { "@id": ORG_ID } as const;
@@ -38,7 +38,7 @@ export const WEBSITE_NODE = {
   name: SITE_NAME,
   url: `${SITE}/`,
   publisher: ORG_REF,
-  inLanguage: ["en-GB", "en-US"],
+  inLanguage: "en-GB",
 };
 
 /** og:image / twitter:image / site_name / locale tags shared by public pages. */
@@ -71,36 +71,15 @@ export function socialMeta(opts: {
   ];
 }
 
-/** hreflang alternates shared by /, the UK page and the US page. */
-export const MARKET_ALTERNATES = [
-  { rel: "alternate", hrefLang: "en-GB", href: `${SITE}/uk-property-listing-generator` },
-  { rel: "alternate", hrefLang: "en-US", href: `${SITE}/us-real-estate-listing-generator` },
-  { rel: "alternate", hrefLang: "x-default", href: `${SITE}/` },
-];
-
-export const NOINDEX = { name: "robots", content: "noindex, nofollow" };
-
-/** Routes whose content is US English. Everything else is en-GB. */
-const US_PATHS = new Set([
-  "/us-real-estate-listing-generator",
-  "/mls-remarks-examples",
-  "/real-estate-listing-description-examples",
-]);
-
-export function htmlLangFor(pathname: string): "en-GB" | "en-US" {
-  const p = pathname.replace(/\/+$/, "") || "/";
-  return US_PATHS.has(p) ? "en-US" : "en-GB";
-}
-
 export function jsonLd(node: unknown) {
   return { type: "application/ld+json", children: JSON.stringify(node) };
 }
 
-/** SoftwareApplication with one market's three monthly Offers. */
+/** SoftwareApplication with the three monthly GBP Offers. */
 export function softwareAppNode(opts: {
   url: string;
   description: string;
-  currency: "GBP" | "USD";
+  currency?: "GBP";
   prices: { name: string; price: number }[];
 }) {
   return {
@@ -116,12 +95,12 @@ export function softwareAppNode(opts: {
       "@type": "Offer",
       name: p.name,
       price: String(p.price),
-      priceCurrency: opts.currency,
+      priceCurrency: "GBP",
       url: opts.url,
       priceSpecification: {
         "@type": "UnitPriceSpecification",
         price: p.price,
-        priceCurrency: opts.currency,
+        priceCurrency: "GBP",
         billingDuration: "P1M",
         unitText: "MONTH",
       },
