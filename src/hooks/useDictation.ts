@@ -73,7 +73,7 @@ function friendlyServerError(msg: string) {
   if (msg.includes("TRANSCRIPTION_RATE_LIMIT"))
     return "Too many requests — please wait a moment and try again.";
   if (msg.includes("TRANSCRIPTION_DAILY_LIMIT"))
-    return "You've reached today's dictation limit. Please type your notes.";
+    return "You've used today's dictation allowance (resets over the next 24 hours). Please type for now.";
   if (msg.includes("SUBSCRIPTION_REQUIRED")) return "An active plan is needed to dictate.";
   return "Transcription failed — please try again or type your notes.";
 }
