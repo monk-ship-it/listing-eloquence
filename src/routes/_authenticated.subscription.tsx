@@ -33,13 +33,8 @@ import {
   getPlan,
   TRIAL_DAYS,
   CONTACT_EMAIL,
-  MARKETS,
-  resolveMarketId,
-  readSavedMarket,
-  saveMarketChoice,
   planPriceDisplay,
   type PlanId,
-  type MarketId,
 } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -55,11 +50,11 @@ import {
 const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
 
 export const Route = createFileRoute("/_authenticated/subscription")({
-  validateSearch: (search: Record<string, unknown>): { plan?: PlanId; market?: MarketId } => {
+  validateSearch: (search: Record<string, unknown>): { plan?: PlanId } => {
+    // Legacy ?market= values are tolerated and ignored (UK-only).
     const plan = search.plan as string | undefined;
-    const out: { plan?: PlanId; market?: MarketId } = {};
+    const out: { plan?: PlanId } = {};
     if (plan && VALID_PLANS.includes(plan as PlanId)) out.plan = plan as PlanId;
-    if (search.market === "us" || search.market === "uk") out.market = search.market as MarketId;
     return out;
   },
   head: () => ({
@@ -128,12 +123,7 @@ const STATUS_META: Record<
 
 function SubscriptionPage() {
   const { user } = useAuth();
-  const { plan: planParam, market: marketParam } = Route.useSearch();
-  const [market, setMarketState] = useState<MarketId>(resolveMarketId(marketParam));
-  const setMarket = (m: MarketId) => {
-    setMarketState(m);
-    saveMarketChoice(m);
-  };
+  const { plan: planParam } = Route.useSearch();
   const checkoutFn = useServerFn(createCheckoutSession);
   const subFn = useServerFn(getMySubscription);
   const usageFn = useServerFn(getMyUsage);
@@ -213,19 +203,6 @@ function SubscriptionPage() {
   const currentPlan = getPlan(sub?.plan);
 
   const isComped = sub?.isComped ?? false;
-  // Subscribers see prices in their billing market; others use ?market= or
-  // their saved choice (default UK).
-  const hasBillingMarket = !!sub && rawStatus !== "none";
-  useEffect(() => {
-    if (!sub) return;
-    if (hasBillingMarket) setMarketState(sub.market);
-    else if (!marketParam) {
-      const saved = readSavedMarket();
-      if (saved) setMarketState(saved);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sub, hasBillingMarket, marketParam]);
-  const displayMarket: MarketId = hasBillingMarket && sub ? sub.market : market;
 
   async function startCheckout(planId: PlanId = currentPlan.id) {
     if (!user) {
@@ -246,10 +223,10 @@ function SubscriptionPage() {
       // logged-in user's id (client_reference_id), metadata and the exact
       // server-selected Price ID. The webhook activates the correct account.
       const { url } = await checkoutFn({
-        data: { plan: planId, origin: window.location.origin, market },
+        data: { plan: planId, origin: window.location.origin },
       });
       // Drop ?plan= so pressing Back from Stripe doesn't re-open checkout.
-      window.history.replaceState(window.history.state, "", `/subscription?market=${market}`);
+      window.history.replaceState(window.history.state, "", "/subscription");
       window.location.href = url;
     } catch (err) {
       toast.error(
@@ -344,7 +321,7 @@ function SubscriptionPage() {
               {!sub?.isComped && (
                 <Row
                   label="Plan"
-                  value={`${currentPlan.name} — ${planPriceDisplay(currentPlan.id, displayMarket)} / month`}
+                  value={`${currentPlan.name} — ${planPriceDisplay(currentPlan.id)} / month`}
                 />
               )}
               {!sub?.isComped && usage && (
@@ -437,24 +414,6 @@ function SubscriptionPage() {
                   or manage billing below. We won't create a second subscription.
                 </p>
               )}
-              {!hasAccess && (
-                <div className="mt-4 inline-flex rounded-lg border border-border/70 p-1">
-                  {Object.values(MARKETS).map((m) => (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => setMarket(m.id)}
-                      className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors min-h-11 sm:min-h-0 ${
-                        market === m.id
-                          ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {m.label}
-                    </button>
-                  ))}
-                </div>
-              )}
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
                 {PLANS.map((plan) => {
                   const isCurrent = hasAccess && plan.id === currentPlan.id;
@@ -470,7 +429,7 @@ function SubscriptionPage() {
                         {isCurrent && <Badge variant="default">Current</Badge>}
                       </div>
                       <p className="mt-1 font-display text-2xl font-semibold">
-                        {planPriceDisplay(plan.id, market)}
+                        {planPriceDisplay(plan.id)}
 
                         <span className="text-xs font-normal text-muted-foreground">/mo</span>
                       </p>

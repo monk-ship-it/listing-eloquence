@@ -14,10 +14,7 @@ import {
   TRIAL_DAYS,
   getPlan,
   planPriceDisplay,
-  resolveMarketId,
-  readSavedMarket,
   type PlanId,
-  type MarketId,
 } from "@/lib/config";
 
 const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
@@ -32,11 +29,10 @@ function sanitizeNext(value: unknown): string | undefined {
 export const Route = createFileRoute("/auth")({
   validateSearch: (
     search: Record<string, unknown>,
-  ): { plan?: PlanId; market?: MarketId; next?: string } => {
+  ): { plan?: PlanId; next?: string } => {
     const plan = search.plan as string | undefined;
-    const out: { plan?: PlanId; market?: MarketId; next?: string } = {};
+    const out: { plan?: PlanId; next?: string } = {};
     if (plan && VALID_PLANS.includes(plan as PlanId)) out.plan = plan as PlanId;
-    if (search.market === "us" || search.market === "uk") out.market = search.market as MarketId;
     const next = sanitizeNext(search.next);
     if (next) out.next = next;
     return out;
@@ -69,11 +65,8 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const { plan: planParam, market: marketParam, next } = Route.useSearch();
+  const { plan: planParam, next } = Route.useSearch();
   const plan: PlanId = planParam ?? "starter";
-  const [savedMarket, setSavedMarket] = useState<MarketId | null>(null);
-  useEffect(() => setSavedMarket(readSavedMarket()), []);
-  const market: MarketId = marketParam ? resolveMarketId(marketParam) : (savedMarket ?? "uk");
   const [mode, setMode] = useState<"login" | "signup">("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -91,7 +84,7 @@ function AuthPage() {
       window.location.href = next;
       return;
     }
-    navigate({ to: "/subscription", search: { plan, market } });
+    navigate({ to: "/subscription", search: { plan } });
   }
 
   useEffect(() => {
@@ -106,7 +99,7 @@ function AuthPage() {
       if (mode === "signup") {
         const emailRedirectTo = next
           ? `${window.location.origin}${next}`
-          : `${window.location.origin}/subscription?plan=${plan}&market=${market}`;
+          : `${window.location.origin}/subscription?plan=${plan}`;
         const { data: signUpData, error } = await supabase.auth.signUp({
           email,
           password,
@@ -118,7 +111,7 @@ function AuthPage() {
         if (error) throw error;
         if (!signUpData.session) {
           // Email confirmation required: the confirmation link returns them
-          // to /subscription with the chosen plan and market.
+          // to /subscription with the chosen plan.
           setCheckInbox(true);
           return;
         }
@@ -188,7 +181,7 @@ function AuthPage() {
               </p>
               {selectedPlan && (
                 <p className="mt-2 text-sm font-medium text-foreground">
-                  {selectedPlan.name} · {planPriceDisplay(selectedPlan.id, market)}/month
+                  {selectedPlan.name} · {planPriceDisplay(selectedPlan.id)}/month
                   {selectedPlan.id === "starter" ? ` after your ${TRIAL_DAYS}-day trial` : ""}
                 </p>
               )}
