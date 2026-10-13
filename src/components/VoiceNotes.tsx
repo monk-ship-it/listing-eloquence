@@ -1,5 +1,4 @@
-import { useRef } from "react";
-import { Mic, Trash2, Globe, Loader2 } from "lucide-react";
+import { Mic, Trash2, Globe, Loader2, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,47 +9,46 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useDictation } from "@/hooks/useDictation";
-import { useDictationSettings } from "@/hooks/useDictationSettings";
+import { useDictationContext, type DictationSink } from "@/components/dictation/DictationProvider";
+import type { LanguageCode } from "@/hooks/useDictationSettings";
+import { FIELD_BY_KEY } from "@/lib/listing-fields";
 
 interface VoiceNotesProps {
   value: string;
   onChange: (value: string) => void;
+  /** Reads/writes the latest value synchronously (used by dictation). */
+  sink: DictationSink;
+  onFill: () => void;
+  filling: boolean;
+  disabled?: boolean;
 }
 
+const DEF = FIELD_BY_KEY.voiceNotes;
+
 /**
- * Single dedicated voice-notes section. Replaces the per-field mic buttons:
- * dictation transcripts are appended to one large editable textarea.
+ * Voice-notes section: large Start/Stop dictation button (shared page
+ * engine, appends with a space) plus "Fill the form from these notes".
  */
-export function VoiceNotes({ value, onChange }: VoiceNotesProps) {
-  const { lang, setLang, languages } = useDictationSettings();
+export function VoiceNotes({ value, onChange, sink, onFill, filling, disabled }: VoiceNotesProps) {
+  const d = useDictationContext();
+  const mine = d.activeKey === "voiceNotes";
+  const status = mine ? d.status : "idle";
+  const otherBusy = d.activeKey !== null && !mine;
+  const justFinished = d.lastFinishedKey === "voiceNotes" && value.trim().length >= 10;
 
-  // Track the latest value so several phrases in one burst never overwrite each other.
-  const valueRef = useRef(value);
-  valueRef.current = value;
-  const append = (text: string) => {
-    const cur = valueRef.current.trim();
-    const next = cur ? `${cur} ${text}` : text;
-    valueRef.current = next;
-    onChange(next);
-  };
-
-  const { status, error, supported, toggle } = useDictation(append, lang);
-
-  const statusLine = !supported
+  const statusLine = !d.supported
     ? "Voice dictation isn’t supported in this browser — type or paste your notes instead."
     : status === "listening"
       ? "Listening… speak naturally."
       : status === "processing"
         ? "Transcribing…"
-        : status === "error"
-          ? error ||
-            "Microphone access was blocked. Please allow access or type your notes manually."
+        : d.errorKey === "voiceNotes" && d.error
+          ? d.error
           : value.trim()
             ? "Dictation stopped. You can edit the notes before generating."
             : "Ready to dictate.";
 
-  const isError = status === "error";
+  const isError = !mine && d.errorKey === "voiceNotes" && !!d.error;
 
   return (
     <div className="rounded-2xl border border-border/70 bg-card/60 p-5 shadow-sm backdrop-blur-sm sm:p-6">
@@ -63,33 +61,34 @@ export function VoiceNotes({ value, onChange }: VoiceNotesProps) {
       </div>
 
       <div className="mt-4 space-y-2">
-        <Label htmlFor="voice-notes" className="text-xs text-muted-foreground">
-          Dictated property notes
+        <Label htmlFor="field-voiceNotes" className="text-xs text-muted-foreground">
+          {DEF.label}
         </Label>
         <Textarea
-          id="voice-notes"
+          id="field-voiceNotes"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          rows={5}
-          placeholder="Example: Four-bedroom semi-detached house on Brenzett Close, open-plan kitchen, heated marble flooring, log burner in the main living room, two bathrooms, leasehold, guide price…"
+          rows={DEF.rows}
+          placeholder={DEF.placeholder}
           className="min-h-[7.5rem] resize-y text-base"
         />
       </div>
 
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2">
-          {supported && (
+          {d.supported && (
             <Button
               type="button"
               variant={status === "listening" ? "destructive" : "default"}
-              onClick={toggle}
-              disabled={status === "processing"}
-              className="gap-2"
+              onClick={() => d.toggle("voiceNotes", DEF.label, sink, DEF.dictateMode)}
+              disabled={disabled || otherBusy || (mine && status !== "listening")}
+              className="min-h-11 gap-2 sm:min-h-10"
+              aria-label={status === "listening" ? "Stop dictation" : "Dictate voice notes"}
             >
-              {status === "processing" ? (
+              {mine && status !== "listening" ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Transcribing…
+                  {status === "processing" ? "Transcribing…" : "Starting…"}
                 </>
               ) : status === "listening" ? (
                 <>
@@ -105,7 +104,13 @@ export function VoiceNotes({ value, onChange }: VoiceNotesProps) {
             </Button>
           )}
           {value.trim() && (
-            <Button type="button" variant="outline" onClick={() => onChange("")} className="gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onChange("")}
+              disabled={disabled || mine}
+              className="min-h-11 gap-2 sm:min-h-10"
+            >
               <Trash2 className="h-4 w-4" />
               Clear voice notes
             </Button>
@@ -114,12 +119,15 @@ export function VoiceNotes({ value, onChange }: VoiceNotesProps) {
 
         <div className="flex items-center gap-1.5">
           <Globe className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-          <Select value={lang} onValueChange={(v) => setLang(v as typeof lang)}>
-            <SelectTrigger className="h-8 w-[10rem] text-xs">
+          <Select value={d.lang} onValueChange={(v) => d.setLang(v as LanguageCode)}>
+            <SelectTrigger
+              className="h-11 w-[10rem] text-xs sm:h-8"
+              aria-label="Dictation language"
+            >
               <SelectValue placeholder="Language" />
             </SelectTrigger>
             <SelectContent>
-              {languages.map((l) => (
+              {d.languages.map((l) => (
                 <SelectItem key={l.code} value={l.code}>
                   {l.label}
                 </SelectItem>
@@ -141,6 +149,35 @@ export function VoiceNotes({ value, onChange }: VoiceNotesProps) {
         )}
         {statusLine}
       </p>
+
+      <div className="mt-4 border-t border-border/60 pt-4">
+        {justFinished && !filling && (
+          <p className="mb-2 text-xs font-medium text-primary">
+            Got it — want Quill to fill the form from what you just said?
+          </p>
+        )}
+        <Button
+          type="button"
+          variant={justFinished ? "default" : "outline"}
+          onClick={onFill}
+          disabled={disabled || filling || d.activeKey !== null || value.trim().length < 10}
+          className="min-h-11 w-full gap-2 sm:min-h-10 sm:w-auto"
+        >
+          {filling ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" /> Reading your notes…
+            </>
+          ) : (
+            <>
+              <Wand2 className="h-4 w-4" /> Fill the form from these notes
+            </>
+          )}
+        </Button>
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          Free — doesn’t use a listing. Only fills what you said; you check everything before
+          generating.
+        </p>
+      </div>
     </div>
   );
 }

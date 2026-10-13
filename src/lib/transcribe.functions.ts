@@ -3,7 +3,8 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { LANGUAGES } from "@/hooks/useDictationSettings";
 
 const MAX_BYTES = 10 * 1024 * 1024;
-const DAILY_LIMIT = 60;
+const DAILY_CALL_LIMIT = 200;
+const DAILY_BYTE_BUDGET = 40 * 1024 * 1024;
 const MODEL = "openai/gpt-transcribe";
 
 /**
@@ -35,21 +36,25 @@ export const transcribeAudio = createServerFn({ method: "POST" })
       throw new Error("SUBSCRIPTION_REQUIRED");
     }
 
+    // Rolling 24h budget: 200 calls and 40 MB of audio. Usage is recorded only
+    // after a successful transcription, so failed attempts never count.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const { count, error: countError } = await supabaseAdmin
+    const { data: usageRows, error: usageError } = await supabaseAdmin
       .from("transcription_usage")
-      .select("id", { count: "exact", head: true })
+      .select("bytes")
       .eq("user_id", userId)
-      .gte("created_at", since);
-    if (countError) {
-      console.error("transcription_usage count failed", countError);
+      .gte("created_at", since)
+      .limit(DAILY_CALL_LIMIT + 1);
+    if (usageError) {
+      console.error("transcription_usage read failed", usageError);
       throw new Error("TRANSCRIPTION_FAILED");
     }
-    if ((count ?? 0) >= DAILY_LIMIT) throw new Error("TRANSCRIPTION_DAILY_LIMIT");
-    await supabaseAdmin
-      .from("transcription_usage")
-      .insert({ user_id: userId, lang: data.lang, bytes: data.file.size });
+    const rows = usageRows ?? [];
+    const usedBytes = rows.reduce((sum, r) => sum + (r.bytes ?? 0), 0);
+    if (rows.length >= DAILY_CALL_LIMIT || usedBytes + data.file.size > DAILY_BYTE_BUDGET) {
+      throw new Error("TRANSCRIPTION_DAILY_LIMIT");
+    }
 
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
@@ -133,5 +138,10 @@ export const transcribeAudio = createServerFn({ method: "POST" })
 
     const text = ((finalText ?? deltas) as string).trim();
     if (!text) throw new Error("NO_SPEECH");
+
+    const { error: insertError } = await supabaseAdmin
+      .from("transcription_usage")
+      .insert({ user_id: userId, lang: data.lang, bytes: data.file.size });
+    if (insertError) console.error("transcription_usage insert failed", insertError);
     return { text };
   });

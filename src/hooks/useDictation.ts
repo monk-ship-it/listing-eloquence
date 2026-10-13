@@ -73,7 +73,7 @@ function friendlyServerError(msg: string) {
   if (msg.includes("TRANSCRIPTION_RATE_LIMIT"))
     return "Too many requests — please wait a moment and try again.";
   if (msg.includes("TRANSCRIPTION_DAILY_LIMIT"))
-    return "You've reached today's dictation limit. Please type your notes.";
+    return "You've used today's dictation allowance (resets over the next 24 hours). Please type for now.";
   if (msg.includes("SUBSCRIPTION_REQUIRED")) return "An active plan is needed to dictate.";
   return "Transcription failed — please try again or type your notes.";
 }
@@ -81,13 +81,22 @@ function friendlyServerError(msg: string) {
 const MIC_DENIED =
   "Microphone access was blocked. Enable it for this site in your browser or device settings, then try again.";
 
-export function useDictation(onResult: (text: string) => void, lang?: string) {
+export function useDictation(
+  onResult: (text: string) => void,
+  lang?: string,
+  onStatus?: (status: DictationStatus, error: string | null) => void,
+) {
   const [status, setStatus] = useState<DictationStatus>("idle");
   const [error, setError] = useState<string | null>(null);
   const [supported, setSupported] = useState(false);
   const transcribe = useServerFn(transcribeAudio);
 
   const onResultRef = useRef(onResult);
+  const onStatusRef = useRef(onStatus);
+  useEffect(() => {
+    onStatusRef.current = onStatus;
+  }, [onStatus]);
+  const errorRef = useRef<string | null>(null);
   const langRef = useRef(lang || "en-GB");
   useEffect(() => {
     onResultRef.current = onResult;
@@ -104,6 +113,7 @@ export function useDictation(onResult: (text: string) => void, lang?: string) {
   const setStat = (s: DictationStatus) => {
     statusRef.current = s;
     setStatus(s);
+    onStatusRef.current?.(s, s === "error" ? errorRef.current : null);
   };
 
   // Engine A state
@@ -124,6 +134,7 @@ export function useDictation(onResult: (text: string) => void, lang?: string) {
   };
 
   const fail = (msg: string) => {
+    errorRef.current = msg;
     setError(msg);
     setStat("error");
   };

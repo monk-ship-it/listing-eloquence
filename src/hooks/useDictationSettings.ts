@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "dictation-language";
 
@@ -29,21 +29,53 @@ export const LANGUAGES = [
 
 export type LanguageCode = (typeof LANGUAGES)[number]["code"];
 
+// Shared module-level store so every mic and the language picker agree.
+let currentLang: LanguageCode = "en-GB";
+let loaded = false;
+const listeners = new Set<() => void>();
+
+function loadOnce() {
+  if (loaded || typeof window === "undefined") return;
+  loaded = true;
+  try {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    const exists = LANGUAGES.find((l) => l.code === stored);
+    if (exists) currentLang = exists.code;
+  } catch {
+    // storage unavailable (private mode etc.) — keep default
+  }
+}
+
+function subscribe(cb: () => void) {
+  listeners.add(cb);
+  return () => {
+    listeners.delete(cb);
+  };
+}
+
+export function setDictationLang(code: LanguageCode) {
+  currentLang = code;
+  try {
+    window.localStorage.setItem(STORAGE_KEY, code);
+  } catch {
+    // ignore
+  }
+  listeners.forEach((l) => l());
+}
+
 export function useDictationSettings() {
-  const [lang, setLang] = useState<LanguageCode>("en-GB");
+  const lang = useSyncExternalStore(
+    subscribe,
+    () => currentLang,
+    () => "en-GB" as LanguageCode,
+  );
 
   useEffect(() => {
-    const stored = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
-    if (stored) {
-      const exists = LANGUAGES.find((l) => l.code === stored);
-      if (exists) setLang(exists.code as LanguageCode);
+    if (!loaded) {
+      loadOnce();
+      listeners.forEach((l) => l());
     }
   }, []);
 
-  const saveLang = (code: LanguageCode) => {
-    setLang(code);
-    window.localStorage.setItem(STORAGE_KEY, code);
-  };
-
-  return { lang, setLang: saveLang, languages: LANGUAGES };
+  return { lang, setLang: setDictationLang, languages: LANGUAGES };
 }
