@@ -48,7 +48,7 @@ export function formatPostDate(iso: string | null | undefined): string {
  * mentions MLS, are excluded from the blog index, sitemap and RSS.
  */
 const US_LABEL = /^(us|usa|united[- ]states|us[- ]agents?|us[- ]market|real[- ]estate[- ]us)$/i;
-export function isUsOnlyPost(post: {
+export function isNonUkPost(post: {
   title?: string | null;
   category?: { slug?: string; name?: string } | null;
   tags?: { slug?: string; name?: string }[] | null;

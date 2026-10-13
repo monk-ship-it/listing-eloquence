@@ -59,8 +59,7 @@ export function getStripePlanConfig(): Record<
       paymentLinkId:
         envWithPrefix("STRIPE_STARTER_PAYMENT_LINK_ID", "plink_") ??
         PLAN_PRICING.starter.paymentLinkId,
-      priceId:
-        envWithPrefix("STRIPE_STARTER_PRICE_ID", "price_") ?? PLAN_PRICING.starter.priceId,
+      priceId: envWithPrefix("STRIPE_STARTER_PRICE_ID", "price_") ?? PLAN_PRICING.starter.priceId,
       amount: PLAN_PRICING.starter.amount,
     },
     pro: {

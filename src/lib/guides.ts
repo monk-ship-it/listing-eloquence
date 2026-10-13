@@ -6,9 +6,7 @@ export { SITE };
 
 export interface GuideMeta {
   /** Route path, also the canonical path. */
-  path:
-    | "/property-description-examples"
-    | "/rightmove-property-description-template";
+  path: "/property-description-examples" | "/rightmove-property-description-template";
   title: string;
   /** Document <title>, with the "| Quill" suffix. */
   docTitle: string;

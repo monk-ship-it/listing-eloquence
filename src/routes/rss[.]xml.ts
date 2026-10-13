@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SITE_URL, isUsOnlyPost } from "@/lib/opinly/shared";
+import { SITE_URL, isNonUkPost } from "@/lib/opinly/shared";
 
 function escapeXml(value: string) {
   return value
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/rss.xml")({
         const { fetchRss } = await import("@/lib/opinly/api.server");
         let items: Awaited<ReturnType<typeof fetchRss>> = [];
         try {
-          items = (await fetchRss(20)).filter((i) => !isUsOnlyPost(i));
+          items = (await fetchRss(20)).filter((i) => !isNonUkPost(i));
         } catch (err) {
           console.error("RSS build failed", err);
         }

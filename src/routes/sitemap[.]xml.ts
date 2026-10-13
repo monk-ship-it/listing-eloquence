@@ -39,11 +39,11 @@ export const Route = createFileRoute("/sitemap.xml")({
         // 503 rather than serving a partial sitemap.
         try {
           const { fetchPosts } = await import("@/lib/opinly/api.server");
-          const { isUsOnlyPost } = await import("@/lib/opinly/shared");
+          const { isNonUkPost } = await import("@/lib/opinly/shared");
           let cursor: string | undefined;
           for (let page = 0; page < 50; page++) {
             const res = await fetchPosts({ limit: 50, sort: "newest", cursor });
-            for (const post of res.data.filter((p) => !isUsOnlyPost(p))) {
+            for (const post of res.data.filter((p) => !isNonUkPost(p))) {
               entries.push({
                 path: `/blog/${encodeURIComponent(post.slug)}`,
                 changefreq: "monthly",

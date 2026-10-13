@@ -124,8 +124,7 @@ function buildUserPrompt(input: ListingInput): string {
     ? `\nAGENT VOICE NOTES (raw, dictated or pasted — treat as supplementary context only):\n${input.voiceNotes.trim()}\n`
     : "";
 
-  const languageLine =
-    "- Use British English and spelling throughout.";
+  const languageLine = "- Use British English and spelling throughout.";
 
   const materialLine =
     "- Where Material Information is provided (tenure, price, council tax band, EPC, parking, utilities) weave the key facts in naturally.";

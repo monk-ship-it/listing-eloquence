@@ -54,4 +54,3 @@ OUTPUT QA — before returning JSON, mentally check that the copy:
 - the Email Blast is grounded in the same facts as the listing and does NOT invent agent contact info, URLs, dates, urgency or availability.
 
 Always return valid JSON only, in exactly the requested shape.`;
-

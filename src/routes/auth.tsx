@@ -9,13 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import {
-  APP_NAME,
-  TRIAL_DAYS,
-  getPlan,
-  planPriceDisplay,
-  type PlanId,
-} from "@/lib/config";
+import { APP_NAME, TRIAL_DAYS, getPlan, planPriceDisplay, type PlanId } from "@/lib/config";
 
 const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
 
@@ -27,9 +21,7 @@ function sanitizeNext(value: unknown): string | undefined {
 }
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (
-    search: Record<string, unknown>,
-  ): { plan?: PlanId; next?: string } => {
+  validateSearch: (search: Record<string, unknown>): { plan?: PlanId; next?: string } => {
     const plan = search.plan as string | undefined;
     const out: { plan?: PlanId; next?: string } = {};
     if (plan && VALID_PLANS.includes(plan as PlanId)) out.plan = plan as PlanId;

@@ -66,8 +66,8 @@ export function GuideCta({ meta, label }: { meta: GuideMeta; label: string }) {
       <h2 className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">{label}</h2>
       <p className="mt-2 text-sm text-muted-foreground">
         Speak or paste your property facts once and Quill returns a Headline, 6–10 Key Features, the{" "}
-        portal-ready description, a short teaser,
-        Email Blast copy and Instagram, Facebook and X captions.
+        portal-ready description, a short teaser, Email Blast copy and Instagram, Facebook and X
+        captions.
       </p>
       <div className="mt-5 flex flex-wrap gap-3">
         <Button asChild size="lg" className="min-h-[44px]">
@@ -143,15 +143,9 @@ export function GuideLayout({
           {meta.title}
         </h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          Published{" "}
-          <time dateTime={meta.datePublished}>
-            {formatGuideDate(meta.datePublished)}
-          </time>
+          Published <time dateTime={meta.datePublished}>{formatGuideDate(meta.datePublished)}</time>
           {" · "}
-          Updated{" "}
-          <time dateTime={meta.dateModified}>
-            {formatGuideDate(meta.dateModified)}
-          </time>
+          Updated <time dateTime={meta.dateModified}>{formatGuideDate(meta.dateModified)}</time>
         </p>
         <p className="mt-4 text-lg leading-relaxed text-muted-foreground">{standfirst}</p>
 

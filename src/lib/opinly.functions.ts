@@ -19,9 +19,9 @@ export const listBlogPosts = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => listSchema.parse(input ?? {}))
   .handler(async ({ data }): Promise<OpinlyPostList> => {
     const { fetchPosts } = await import("./opinly/api.server");
-    const { isUsOnlyPost } = await import("./opinly/shared");
+    const { isNonUkPost } = await import("./opinly/shared");
     const res = await fetchPosts(data);
-    return { ...res, data: res.data.filter((p) => !isUsOnlyPost(p)) };
+    return { ...res, data: res.data.filter((p) => !isNonUkPost(p)) };
   });
 
 export const getBlogPost = createServerFn({ method: "GET" })

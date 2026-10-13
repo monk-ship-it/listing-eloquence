@@ -1,10 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import {
-  getPlan,
-  TRIAL_DAYS,
-  type PlanId,
-} from "./config";
+import { getPlan, TRIAL_DAYS, type PlanId } from "./config";
 
 async function comped(email: string | null | undefined): Promise<boolean> {
   const { isCompedEmail } = await import("./comped.server");

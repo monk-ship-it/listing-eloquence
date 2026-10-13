@@ -54,7 +54,10 @@ export const Route = createFileRoute("/")({
         content:
           "Turn one set of notes into a Rightmove-ready description, key features, applicant email and social posts. Built for UK estate agents. 14-day free trial.",
       },
-      { property: "og:title", content: "AI Property Description Generator for UK Estate Agents | Quill" },
+      {
+        property: "og:title",
+        content: "AI Property Description Generator for UK Estate Agents | Quill",
+      },
       {
         property: "og:description",
         content:
@@ -434,9 +437,8 @@ function EditorialBand() {
               The detail that sells the room, in every asset.
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-foreground/85 sm:text-base">
-              Describe the space once. Quill keeps the same facts across the portal description,
-              the teaser, the Email Blast copy and
-              every caption — so nothing drifts between channels.
+              Describe the space once. Quill keeps the same facts across the portal description, the
+              teaser, the Email Blast copy and every caption — so nothing drifts between channels.
             </p>
           </div>
         </div>
@@ -586,21 +588,21 @@ function Voices() {
 
 function LiveExample() {
   const facts: [string, string][] = [
-        ["Type", "Grade II listed detached home"],
-        ["Location", "Cotswold market town"],
-        ["Bedrooms", "5"],
-        ["Bathrooms", "3"],
-        ["Receptions", "3"],
-        ["Price", "Guide Price £1,450,000"],
-        ["Tenure", "Freehold"],
-        [
-          "Key features",
-          "Inglenook fireplace, flagstone floors, exposed beams, bespoke kitchen, cellar, original sash windows",
-        ],
-        ["Outside space", "Walled garden, mature borders, orchard, stone terrace"],
-        ["Parking", "Gravel driveway and detached double cart shed"],
-        ["Voice", "Heritage"],
-      ];
+    ["Type", "Grade II listed detached home"],
+    ["Location", "Cotswold market town"],
+    ["Bedrooms", "5"],
+    ["Bathrooms", "3"],
+    ["Receptions", "3"],
+    ["Price", "Guide Price £1,450,000"],
+    ["Tenure", "Freehold"],
+    [
+      "Key features",
+      "Inglenook fireplace, flagstone floors, exposed beams, bespoke kitchen, cellar, original sash windows",
+    ],
+    ["Outside space", "Walled garden, mature borders, orchard, stone terrace"],
+    ["Parking", "Gravel driveway and detached double cart shed"],
+    ["Voice", "Heritage"],
+  ];
   const spokenNote =
     "“Five bedrooms, Grade II listed, walled garden, original beams, inglenook fireplace, near the high street…”";
   const demo = DEMO_UK;
@@ -1116,9 +1118,9 @@ function Pricing({ authed }: { authed: boolean }) {
             Plans that scale with your instructions.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Every plan includes all four brand voices, voice dictation and the
-            full listing pack — Headline, Key Features, description, teaser, Email Blast copy and
-            Instagram, Facebook and X captions.
+            Every plan includes all four brand voices, voice dictation and the full listing pack —
+            Headline, Key Features, description, teaser, Email Blast copy and Instagram, Facebook
+            and X captions.
           </p>
         </Reveal>
 

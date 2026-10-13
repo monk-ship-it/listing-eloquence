@@ -24,13 +24,7 @@ import {
   resumeMySubscription,
   verifyCheckoutSession,
 } from "@/lib/subscription.functions";
-import {
-  APP_NAME,
-  TRIAL_DAYS,
-  CONTACT_EMAIL,
-  getPlan,
-  planPriceDisplay,
-} from "@/lib/config";
+import { APP_NAME, TRIAL_DAYS, CONTACT_EMAIL, getPlan, planPriceDisplay } from "@/lib/config";
 import { CheckCircle2, CreditCard, Mail, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/account")({
@@ -194,10 +188,7 @@ function AccountPage() {
         ) : (
           <div className="mt-6 space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Info
-                label="Plan"
-                value={`${plan.name} — ${planPriceDisplay(plan.id)} / month`}
-              />
+              <Info label="Plan" value={`${plan.name} — ${planPriceDisplay(plan.id)} / month`} />
               <Info label="Listings" value={`${plan.monthlyListings} per month`} />
 
               {status === "trialing" ? (

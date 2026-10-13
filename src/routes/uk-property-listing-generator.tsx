@@ -3,13 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
 import { APP_NAME } from "@/lib/config";
-import {
-  SITE,
-  socialMeta,
-  jsonLd,
-  breadcrumbNode,
-  softwareAppNode,
-} from "@/lib/seo";
+import { SITE, socialMeta, jsonLd, breadcrumbNode, softwareAppNode } from "@/lib/seo";
 import { Check, ArrowRight, ShieldCheck, Mic, Sparkles, Copy } from "lucide-react";
 
 const CANONICAL = "https://copybymonk.com/uk-property-listing-generator";
@@ -79,7 +73,7 @@ export const Route = createFileRoute("/uk-property-listing-generator")({
           url: CANONICAL,
           description:
             "AI property description generator for UK estate agents: portal-ready descriptions, Key Features, teaser, Email Blast and social captions from one set of notes.",
-                    prices: [
+          prices: [
             { name: "Starter (UK)", price: 39 },
             { name: "Pro (UK)", price: 79 },
             { name: "Growth (UK)", price: 149 },
