@@ -15,7 +15,9 @@ RULES:
 - Normalise: bedrooms/bathrooms/receptions/lease years as digits ("four" → "4", "two and a half" → "2.5"); EPC and council tax as a single capital letter ("EPC C" → "C", "band d" → "D"); price as digits with commas, no £ ("one point four five million" → "1,450,000", "three fifty" said as a price → "350,000", "350k" → "350,000"); tenure capitalised ("Freehold", "Leasehold", "Share of freehold").
 - priceQualifier only when a qualifier is said, written in title case, e.g. "Guide Price", "Offers in Excess of", "Offers Over".
 - For descriptive fields (key features, outside space, parking, heating, nearby etc.) keep the agent's own wording, tidied into a short comma-separated phrase. Don't add adjectives.
-- Viewing/access instructions go only in showingNotes.
+- Viewing/access instructions go only in showingNotes; photo/floorplan notes only in mediaNotes.
+- Select fields must use one of the listed options exactly. Part C items (building safety, restrictions, rights & easements, flooding, coastal erosion, planning, accessibility, coalfield/mining) only when the agent addresses them: "None known" if they say none/no, otherwise "Yes – <details>".
+- Supplies: only what is said (e.g. "mains drainage" → sewerage "Mains"; don't assume mains for anything else).
 - For every field you return, add an "evidence" entry: a short VERBATIM quote (max 80 characters) copied exactly from the notes that states it.
 
 Return the result by calling the ${TOOL} tool.`;
@@ -24,7 +26,16 @@ function buildSchema() {
   const props: Record<string, unknown> = {};
   const evidence: Record<string, unknown> = {};
   for (const d of EXTRACTABLE_FIELDS) {
-    props[d.key] = { type: "string", description: d.label };
+    props[d.key] = {
+      type: "string",
+      description: [
+        d.label,
+        d.kind === "select" && d.options ? `One of: ${d.options.join(" | ")}.` : "",
+        d.hint ?? "",
+      ]
+        .filter(Boolean)
+        .join(" "),
+    };
     evidence[d.key] = { type: "string", maxLength: 80 };
   }
   return {

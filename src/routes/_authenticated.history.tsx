@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -23,23 +23,9 @@ import {
   deleteGeneration,
   type GenerationRecord,
 } from "@/lib/generations.functions";
-import {
-  copyText,
-  buildCopyAllText,
-  formatKeyFeaturesBlock,
-  formatSocialPost,
-} from "@/lib/clipboard";
-import { EmailBlastCard, GenerateMarketingButton } from "@/components/EmailBlastCard";
-import {
-  Copy,
-  Trash2,
-  FileText,
-  ChevronDown,
-  ChevronUp,
-  Loader2,
-  Plus,
-  RefreshCw,
-} from "lucide-react";
+import { ListingPack } from "@/components/pack/ListingPack";
+import { coerceLegacyInput } from "@/lib/listing-types";
+import { Trash2, FileText, ChevronDown, ChevronUp, Loader2, Plus, RefreshCw } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/history")({
   head: () => ({
@@ -50,12 +36,6 @@ export const Route = createFileRoute("/_authenticated/history")({
   }),
   component: HistoryPage,
 });
-
-async function doCopy(text: string, label = "Copied to clipboard.") {
-  const ok = await copyText(text);
-  if (ok) toast.success(label);
-  else toast.error("Couldn't copy — please copy manually.");
-}
 
 function formatDate(iso: string): string {
   try {
@@ -209,7 +189,7 @@ function HistoryItem({
 }) {
   const panelId = `history-panel-${item.id}`;
   const dateLabel = formatDate(item.createdAt);
-  const features = item.output.keyFeatures ?? [];
+  const inputs = useMemo(() => coerceLegacyInput(item.inputs), [item.inputs]);
   const qc = useQueryClient();
   const onGenerated = (output: GenerationRecord["output"]) => {
     qc.setQueriesData<GenerationRecord[]>({ queryKey: ["generations"] }, (prev) =>
@@ -282,153 +262,12 @@ function HistoryItem({
 
       {open && (
         <div id={panelId} className="border-t border-border/60 p-4 sm:p-5">
-          <div className="flex items-start justify-between gap-3">
-            <h2 className="min-w-0 break-words font-display text-lg font-semibold leading-tight">
-              {item.output.headline}
-            </h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-11 w-11 shrink-0"
-              title="Copy full pack"
-              aria-label="Copy full listing pack"
-              onClick={() => doCopy(buildCopyAllText(item.output), "Full pack copied.")}
-            >
-              <Copy className="h-4 w-4" />
-            </Button>
-          </div>
-
-          {features.length > 0 && (
-            <div className="mt-4">
-              <div className="flex items-center justify-between gap-2">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Key features
-                </h3>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-11 w-11 sm:h-9 sm:w-9"
-                  aria-label="Copy key features"
-                  onClick={() => doCopy(formatKeyFeaturesBlock(features), "Key features copied.")}
-                >
-                  <Copy className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-              <ul className="mt-2 grid gap-1.5 text-sm sm:grid-cols-2">
-                {features.map((f, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                    <span className="break-words">{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <div className="mt-4">
-            <div className="flex items-center justify-between gap-2">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Description
-              </h3>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-11 w-11 sm:h-9 sm:w-9"
-                aria-label="Copy description"
-                onClick={() => doCopy(item.output.listing, "Description copied.")}
-              >
-                <Copy className="h-3.5 w-3.5" />
-              </Button>
-            </div>
-            <div className="mt-2 space-y-3 text-sm leading-relaxed text-muted-foreground">
-              {item.output.listing.split("\n\n").map((p, i) => (
-                <p key={i} className="break-words">
-                  {p}
-                </p>
-              ))}
-            </div>
-          </div>
-
-          {item.output.summary && (
-            <div className="mt-4">
-              <div className="flex items-center justify-between gap-2">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Teaser summary
-                </h3>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-11 w-11 sm:h-9 sm:w-9"
-                  aria-label="Copy teaser summary"
-                  onClick={() => doCopy(item.output.summary, "Teaser copied.")}
-                >
-                  <Copy className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-              <p className="mt-1 break-words rounded-lg bg-muted/50 p-3 text-sm">
-                {item.output.summary}
-              </p>
-            </div>
-          )}
-
-          <div className="mt-5">
-            <EmailBlastCard
-              emailBlast={item.output.emailBlast}
-              keyFeatures={features}
-              generationId={item.id}
-              marketingStatus={item.output.marketingStatus}
-              onGenerated={onGenerated}
-            />
-          </div>
-
-          {(!item.output.social || item.output.social.length === 0) && (
-            <div className="mt-5 rounded-lg border border-border/60 p-4">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Social pack
-              </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                No social posts were saved with this listing.
-              </p>
-              <GenerateMarketingButton
-                generationId={item.id}
-                label="Generate social posts — free, doesn't use a listing"
-                onGenerated={onGenerated}
-              />
-            </div>
-          )}
-
-          {item.output.social && item.output.social.length > 0 && (
-            <div className="mt-5">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Social pack
-              </h3>
-              <div className="mt-2 space-y-3">
-                {item.output.social.map((post, i) => {
-                  const tags = (post.hashtags ?? [])
-                    .map((t) => `#${t.replace(/^#/, "")}`)
-                    .join(" ");
-                  return (
-                    <div key={i} className="rounded-lg border border-border/60 p-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <Badge variant="secondary">{post.platform}</Badge>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-11 w-11 sm:h-9 sm:w-9"
-                          aria-label={`Copy ${post.platform} post`}
-                          onClick={() => doCopy(formatSocialPost(post), "Post copied.")}
-                        >
-                          <Copy className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                      <p className="mt-2 break-words text-sm">{post.caption}</p>
-                      {tags && <p className="mt-2 break-words text-xs text-primary">{tags}</p>}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+          <ListingPack
+            output={item.output}
+            input={inputs}
+            generationId={item.id}
+            onOutputChange={onGenerated}
+          />
         </div>
       )}
     </Card>

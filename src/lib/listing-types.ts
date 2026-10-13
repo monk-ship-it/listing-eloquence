@@ -23,7 +23,35 @@ export interface ListingInput {
   outsideSpace: string;
   parking: string;
   heating: string;
-  utilities: string;
+  /** LEGACY combined supplies field — retired from the form; old rows still use it. */
+  utilities?: string;
+  groundRent: string;
+  groundRentReview: string;
+  serviceCharge: string;
+  serviceChargePeriod: string;
+  reserveFund: string;
+  sharePercent: string;
+  rent: string;
+  fullMarketValue: string;
+  localAuthority: string;
+  chainStatus: string;
+  construction: string;
+  constructionDetails: string;
+  electricity: string;
+  water: string;
+  waterMetered: string;
+  sewerage: string;
+  broadband: string;
+  broadbandSpeed: string;
+  mobileSignal: string;
+  buildingSafety: string;
+  restrictions: string;
+  rightsEasements: string;
+  flooding: string;
+  coastalErosion: string;
+  planning: string;
+  accessibility: string;
+  coalfieldMining: string;
   nearby: string;
   periodFeatures: string;
   targetAudience: string;
@@ -35,6 +63,8 @@ export interface ListingInput {
   showingNotes: string;
   /** Media / photo / floor-plan notes. */
   mediaNotes: string;
+  /** Seller has approved the particulars (TPO Code 7j). */
+  sellerApproved?: boolean;
 }
 
 export interface SocialPost {
@@ -61,6 +91,11 @@ export interface EmailBlast {
   callToAction: string;
 }
 
+export interface SellerEmail {
+  subject: string;
+  body: string;
+}
+
 export interface ListingOutput {
   headline: string;
   listing: string;
@@ -70,6 +105,8 @@ export interface ListingOutput {
   /** Structured email campaign copy. Null on legacy saved rows only. */
   emailBlast: EmailBlast | null;
   social: SocialPost[];
+  /** Seller approval email (draft particulars check). Null on older rows. */
+  sellerEmail?: SellerEmail | null;
   /** "failed" when the email/social call failed; can be generated free later. */
   marketingStatus?: "failed";
 }
@@ -223,7 +260,7 @@ function cleanFeature(f: unknown): string {
 }
 
 export type CoreOutput = Pick<ListingOutput, "headline" | "listing" | "summary" | "keyFeatures">;
-export type MarketingOutput = Pick<ListingOutput, "emailBlast" | "social">;
+export type MarketingOutput = Pick<ListingOutput, "emailBlast" | "social" | "sellerEmail">;
 
 /**
  * Tolerant-but-safe validator for the CORE call. Cleans and dedupes key
@@ -314,7 +351,20 @@ export function validateMarketingOutput(raw: unknown): MarketingOutput {
     (p): p is SocialPost => !!p,
   );
   if (social.length === 0) throw new Error("MALFORMED_AI_OUTPUT");
-  return { emailBlast, social };
+
+  // Email Blast must close with the material-information pointer.
+  const MI_LINE = "Full material information is on the property listing.";
+  if (!emailBlast.body.toLowerCase().includes(MI_LINE.toLowerCase())) {
+    emailBlast.body = `${emailBlast.body}\n\n${MI_LINE}`;
+  }
+
+  // Seller approval email is optional — never fails the marketing call.
+  let sellerEmail = coerceSellerEmail(r.sellerEmail);
+  if (sellerEmail && sellerEmail.body.length > 6000) sellerEmail = null;
+  if (sellerEmail && !sellerEmail.body.includes("[Your name, branch, phone]")) {
+    sellerEmail.body = `${sellerEmail.body}\n\n[Your name, branch, phone]`;
+  }
+  return { emailBlast, social, sellerEmail };
 }
 
 /**
@@ -346,6 +396,7 @@ export function coerceLegacyOutput(raw: unknown): ListingOutput {
       : [],
     emailBlast: coerceLegacyEmailBlast(r.emailBlast),
     social,
+    sellerEmail: coerceSellerEmail(r.sellerEmail),
     ...(r.marketingStatus === "failed" ? { marketingStatus: "failed" as const } : {}),
   };
 }
@@ -371,7 +422,33 @@ export const EMPTY_INPUT: ListingInput = {
   outsideSpace: "",
   parking: "",
   heating: "",
-  utilities: "",
+  groundRent: "",
+  groundRentReview: "",
+  serviceCharge: "",
+  serviceChargePeriod: "",
+  reserveFund: "",
+  sharePercent: "",
+  rent: "",
+  fullMarketValue: "",
+  localAuthority: "",
+  chainStatus: "",
+  construction: "",
+  constructionDetails: "",
+  electricity: "",
+  water: "",
+  waterMetered: "",
+  sewerage: "",
+  broadband: "",
+  broadbandSpeed: "",
+  mobileSignal: "",
+  buildingSafety: "",
+  restrictions: "",
+  rightsEasements: "",
+  flooding: "",
+  coastalErosion: "",
+  planning: "",
+  accessibility: "",
+  coalfieldMining: "",
   nearby: "",
   periodFeatures: "",
   targetAudience: "",
@@ -382,16 +459,15 @@ export const EMPTY_INPUT: ListingInput = {
 };
 
 export const EXAMPLE_INPUT: ListingInput = {
-  market: "uk",
+  ...EMPTY_INPUT,
   voice: "heritage",
   voiceNotes:
     "This is the Old Rectory on Church Lane in Burford. Lovely characterful period rectory, Grade II listed, five bedrooms, three bathrooms, inglenook fireplace and flagstone floors. Walled garden about half an acre with an orchard. Guide price one point four five million, freehold.",
   address: "The Old Rectory, Church Lane, Burford, Oxfordshire OX18",
   areaHighlights:
-    "Sought-after Cotswold market town, honey-stone high street, independent shops and the River Windrush nearby",
+    "Cotswold market town, honey-stone high street, independent shops and the River Windrush nearby",
   propertyType: "Grade II listed detached period rectory",
   tenure: "Freehold",
-  leaseYears: "",
   price: "1,450,000",
   priceQualifier: "Guide Price",
   bedrooms: "5",
@@ -402,19 +478,88 @@ export const EXAMPLE_INPUT: ListingInput = {
   dimensions: "Drawing room 6.8m x 5.1m; Kitchen/breakfast room 7.2m x 4.4m",
   epc: "E",
   councilTaxBand: "G",
+  localAuthority: "West Oxfordshire District Council",
+  chainStatus: "No onward chain",
+  construction: "Standard",
+  constructionDetails: "Cotswold stone under a stone slate roof",
+  electricity: "Mains",
+  water: "Mains",
+  waterMetered: "Yes",
+  sewerage: "Septic tank",
+  broadband: "FTTP",
+  broadbandSpeed: "Ultrafast available",
+  mobileSignal: "Good outdoor coverage on major networks",
   outsideSpace:
     "Walled garden of around half an acre, mature herbaceous borders, orchard and a stone terrace",
   parking: "Gravel driveway and detached double cart shed",
   heating: "Oil-fired central heating",
-  utilities: "Mains water and electricity, private drainage, Ultrafast broadband available",
-  nearby:
-    "Burford Primary (Ofsted Good), The Burford School, Charlbury station (London Paddington ~80 mins), A40 for Oxford and Cheltenham",
+  nearby: "The Burford School, Charlbury station, A40 for Oxford and Cheltenham",
   periodFeatures:
     "Early 18th-century origins, later Georgian additions, retains much original joinery and fireplaces",
-  targetAudience:
-    "Families and downsizers seeking a characterful country home within a vibrant town",
-  yearBuilt: "",
-  disclosures: "",
-  showingNotes: "",
-  mediaNotes: "",
+  targetAudience: "Growing family, Downsizer",
+  buildingSafety: "None known",
+  restrictions: "Yes – Grade II listed; within the Burford Conservation Area",
+  rightsEasements: "None known",
+  flooding: "None known",
+  coastalErosion: "None known",
+  planning: "None known",
+  accessibility: "None known",
+  coalfieldMining: "None known",
+  sellerApproved: false,
 };
+
+/** A second-floor leasehold flat — used for testing leasehold handling. */
+export const LEASEHOLD_EXAMPLE: ListingInput = {
+  ...EMPTY_INPUT,
+  voice: "plain",
+  address: "Flat 12, Riverside Court, Chatham, Kent ME4",
+  propertyType: "Second-floor apartment",
+  tenure: "Leasehold",
+  leaseYears: "112",
+  groundRent: "250",
+  groundRentReview: "reviewed every 25 years",
+  serviceCharge: "1,840",
+  serviceChargePeriod: "y/e Mar 2026",
+  price: "235,000",
+  priceQualifier: "Offers in Excess of",
+  bedrooms: "2",
+  bathrooms: "1",
+  receptions: "1",
+  keyFeatures: "Open-plan kitchen/living room, balcony with river views, lift, allocated parking",
+  dimensions: "Kitchen/living room 6.10m x 4.20m; Bedroom 1 3.90m x 3.20m",
+  epc: "C",
+  councilTaxBand: "C",
+  localAuthority: "Medway Council",
+  chainStatus: "Chain involved",
+  electricity: "Mains",
+  water: "Mains",
+  waterMetered: "Yes",
+  sewerage: "Mains",
+  heating: "Electric panel heaters",
+  broadband: "FTTP",
+  parking: "One allocated space",
+  nearby: "Chatham station",
+  targetAudience: "First-time buyer, Investor",
+};
+
+/** Fill any missing fields on a saved row's inputs so old listings still render. */
+export function coerceLegacyInput(raw: unknown): ListingInput {
+  const r = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const out: Record<string, unknown> = { ...EMPTY_INPUT };
+  for (const k of Object.keys(EMPTY_INPUT)) {
+    const v = r[k];
+    if (typeof v === "string") out[k] = v;
+  }
+  if (typeof r.utilities === "string") out.utilities = r.utilities;
+  out.sellerApproved = r.sellerApproved === true;
+  out.market = "uk";
+  return out as unknown as ListingInput;
+}
+
+export function coerceSellerEmail(raw: unknown): SellerEmail | null {
+  if (!raw || typeof raw !== "object") return null;
+  const e = raw as Record<string, unknown>;
+  const subject = typeof e.subject === "string" ? e.subject.trim() : "";
+  const body = typeof e.body === "string" ? e.body.trim() : "";
+  return body ? { subject, body } : null;
+}

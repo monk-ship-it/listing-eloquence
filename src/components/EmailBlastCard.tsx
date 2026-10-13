@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
@@ -106,12 +106,14 @@ export function EmailBlastCard({
   generationId,
   marketingStatus,
   onGenerated,
+  renderText,
 }: {
   emailBlast: EmailBlast | null;
   keyFeatures?: string[];
   generationId?: string | null;
   marketingStatus?: "failed";
   onGenerated?: (output: ListingOutput) => void;
+  renderText?: (text: string) => ReactNode;
 }) {
   const [chosen, setChosen] = useState(0);
 
@@ -148,6 +150,7 @@ export function EmailBlastCard({
           keyFeatures={keyFeatures}
           chosen={Math.min(chosen, Math.max(0, emailBlast.subjectLines.length - 1))}
           onChoose={setChosen}
+          renderText={renderText}
         />
       )}
     </Card>
@@ -159,11 +162,13 @@ function EmailBlastBody({
   keyFeatures,
   chosen,
   onChoose,
+  renderText = (t) => t,
 }: {
   emailBlast: EmailBlast;
   keyFeatures?: string[];
   chosen: number;
   onChoose: (i: number) => void;
+  renderText?: (text: string) => ReactNode;
 }) {
   const subject = emailBlast.subjectLines[chosen] ?? "";
   return (
@@ -250,7 +255,7 @@ function EmailBlastBody({
           <div className="mt-1 space-y-3 text-sm leading-relaxed text-muted-foreground">
             {emailBlast.body.split(/\n{2,}/).map((p, i) => (
               <p key={i} className="break-words">
-                {p}
+                {renderText(p)}
               </p>
             ))}
           </div>

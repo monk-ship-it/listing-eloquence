@@ -3,8 +3,7 @@ import type { ReactNode } from "react";
 import { toast } from "sonner";
 import { useDictation, type DictationStatus } from "@/hooks/useDictation";
 import { useDictationSettings, type LanguageCode, LANGUAGES } from "@/hooks/useDictationSettings";
-import { applyDictation, type DictateMode } from "@/lib/listing-fields";
-import { normaliseForField } from "@/lib/dictation-normalise";
+import { applyDictation, normaliseFieldValue, type DictateMode } from "@/lib/listing-fields";
 
 export interface DictationSink {
   get: () => string;
@@ -71,7 +70,13 @@ export function DictationProvider({ children }: { children: ReactNode }) {
     if (s.mode === "replace") {
       if (s.prev === null) s.prev = s.sink.get();
       s.raw = s.raw ? `${s.raw} ${text}` : text;
-      const next = normaliseForField(s.key, s.raw);
+      const next = normaliseFieldValue(s.key, s.raw);
+      if (next === null) {
+        toast.info(`Didn't catch a ${s.label.toLowerCase()} option — please choose it.`, {
+          id: `dictate-${s.key}`,
+        });
+        return;
+      }
       s.sink.set(next);
       const prev = s.prev;
       const sink = s.sink;
