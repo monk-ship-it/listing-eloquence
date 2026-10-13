@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BlogShell } from "@/components/blog/BlogShell";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookOpen, Building2, Home } from "lucide-react";
+import { ArrowRight, BookOpen, Home } from "lucide-react";
 import { listBlogPosts } from "@/lib/opinly.functions";
 import { formatPostDate, listImageUrl, imageAlt, SITE_URL } from "@/lib/opinly/shared";
 import { GUIDES } from "@/lib/guides";
@@ -9,10 +9,10 @@ import { IMG, type ResponsiveImage } from "@/lib/images";
 import type { OpinlyPostList } from "@/lib/opinly/types";
 import { socialMeta, ORG_REF } from "@/lib/seo";
 
-const TITLE = "Property Listing Copy Guides for UK & US Agents";
-const DOC_TITLE = "Listing Copy Guides for UK & US Agents | Quill";
+const TITLE = "Listing copy guides for UK estate agents";
+const DOC_TITLE = "Listing Copy Guides for UK Estate Agents | Quill";
 const DESCRIPTION =
-  "Practical listing copy guides for UK estate agents and US real estate pros: description examples, portal templates, MLS remarks and checklists.";
+  "Practical listing copy guides for UK estate agents: property description examples, Rightmove-style templates, Material Information habits and checklists.";
 
 export const Route = createFileRoute("/blog/")({
   loader: async (): Promise<{ posts: OpinlyPostList["data"] }> => {
@@ -66,10 +66,10 @@ export const Route = createFileRoute("/blog/")({
   component: BlogHub,
 });
 
-function GuideCards({ market }: { market: "uk" | "us" }) {
+function GuideCards() {
   return (
     <ul className="mt-6 grid gap-x-8 gap-y-7 sm:grid-cols-2">
-      {GUIDES.filter((g) => g.market === market).map((g) => (
+      {GUIDES.map((g) => (
         <li key={g.path}>
           <Link
             to={g.path}
@@ -207,7 +207,6 @@ function LatestArticles() {
 
 function MarketSection({
   id,
-  market,
   icon,
   title,
   intro,
@@ -217,7 +216,6 @@ function MarketSection({
   generatorLabel,
 }: {
   id: string;
-  market: "uk" | "us";
   icon: React.ReactNode;
   title: string;
   intro: string;
@@ -232,7 +230,7 @@ function MarketSection({
         <div>
           <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
             {icon}
-            {market === "uk" ? "United Kingdom" : "United States"}
+            United Kingdom
           </p>
           <h2 id={id} className="mt-3 font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
             {title}
@@ -252,7 +250,7 @@ function MarketSection({
         />
       </div>
 
-      <GuideCards market={market} />
+      <GuideCards />
 
       <p className="mt-6 text-sm">
         <Link
@@ -274,12 +272,12 @@ function BlogHub() {
           <BookOpen className="h-4 w-4" /> Guides
         </p>
         <h1 className="mt-4 font-serif text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
-          Property listing copy guides
+          Listing copy guides for UK estate agents
         </h1>
         <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
           Worked examples, templates and checklists for writing listing copy that reads well on
-          property portals and in the MLS. Written for UK estate agents and US real estate
-          professionals, with a bias towards specifics over adjectives.
+          Rightmove, Zoopla and OnTheMarket. Written for UK estate agents, with a bias towards
+          specifics over adjectives.
         </p>
       </header>
 
@@ -287,7 +285,6 @@ function BlogHub() {
 
       <MarketSection
         id="uk-guides"
-        market="uk"
         icon={<Home className="h-4 w-4" />}
         title="UK estate agents"
         intro="Portal-style descriptions, key features and Material Information habits."
@@ -297,18 +294,6 @@ function BlogHub() {
         generatorLabel="UK property listing generator"
       />
 
-      <MarketSection
-        id="us-guides"
-        market="us"
-        icon={<Building2 className="h-4 w-4" />}
-        title="US real estate professionals"
-        intro="MLS remarks, longer-form listing descriptions and fair-housing-conscious wording."
-        image={IMG.guidesUs}
-        imageAlt="Craftsman-style suburban home with a covered front porch and lit entrance at dusk"
-        generatorTo="/us-real-estate-listing-generator"
-        generatorLabel="US real estate listing generator"
-      />
-
       <LatestArticles />
 
       <section className="mt-16 rounded-3xl surface-sand p-7 text-center ring-1 ring-primary/20 sm:mt-20 sm:p-10">
@@ -316,15 +301,12 @@ function BlogHub() {
           Stop writing listing copy from scratch
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          Quill turns one set of property notes into a Headline, 6–10 Key Features, a portal or MLS
+          Quill turns one set of property notes into a Headline, 6–10 Key Features, a portal-ready
           description, a short teaser, Email Blast copy and Instagram, Facebook and X captions.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Button asChild size="lg" className="min-h-[44px]">
             <Link to="/uk-property-listing-generator">For UK agents</Link>
-          </Button>
-          <Button asChild size="lg" variant="outline" className="min-h-[44px]">
-            <Link to="/us-real-estate-listing-generator">For US agents</Link>
           </Button>
         </div>
       </section>
