@@ -102,6 +102,7 @@ export async function callClaudeTool(opts: {
   maxTokens: number;
   timeoutMs?: number;
   model?: string;
+  temperature?: number;
 }): Promise<unknown> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
@@ -125,6 +126,7 @@ export async function callClaudeTool(opts: {
         body: JSON.stringify({
           model,
           max_tokens: opts.maxTokens,
+          ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),
           system: opts.system,
           messages: [{ role: "user", content: opts.user }],
           tools: [
