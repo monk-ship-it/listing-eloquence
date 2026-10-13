@@ -181,8 +181,8 @@ export function normaliseYear(s: string): string {
 export function normaliseCouncilTax(s: string): string {
   const clean = stripTrailing(s);
   const m =
-    clean.match(/^(?:council\s*tax\s*)?(?:band\s*)?([a-h])$/i) ??
-    clean.match(/\bband\s+([a-h])\b/i);
+    clean.match(/^(?:council\s*tax\s*)?(?:band\s*)?([a-i])$/i) ??
+    clean.match(/\bband\s+([a-i])\b/i);
   return m ? m[1].toUpperCase() : clean;
 }
 

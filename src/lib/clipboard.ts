@@ -90,14 +90,18 @@ export function formatSocialPost(p: { caption: string; hashtags?: string[] }): s
  * Order: headline → Key Features → Description → Teaser → Email → Social pack.
  * The email omits its bullet list here so Key Features appear only once.
  */
-export function buildCopyAllText(output: {
-  headline: string;
-  listing: string;
-  summary?: string;
-  keyFeatures?: string[];
-  emailBlast?: EmailBlast | null;
-  social?: { platform: string; caption: string; hashtags: string[] }[];
-}): string {
+export function buildCopyAllText(
+  output: {
+    headline: string;
+    listing: string;
+    summary?: string;
+    keyFeatures?: string[];
+    emailBlast?: EmailBlast | null;
+    social?: { platform: string; caption: string; hashtags: string[] }[];
+    sellerEmail?: { subject: string; body: string } | null;
+  },
+  opts: { materialInfo?: string } = {},
+): string {
   const features = formatKeyFeaturesBlock(output.keyFeatures);
   const email = formatEmailForPaste(output.emailBlast, { includeFeatures: false });
   const social = (output.social ?? [])
@@ -109,11 +113,23 @@ export function buildCopyAllText(output: {
   return [
     output.headline,
     features ? `\n${features}` : "",
-    `\nDescription:\n${output.listing}`,
-    output.summary ? `\nTeaser: ${output.summary}` : "",
+    `\nDescription:\n${withMaterialInfo(output.listing, opts.materialInfo)}`,
+    output.summary ? `\nStrapline: ${output.summary}` : "",
     email ? `\n--- Email Blast ---\n${email}` : "",
     social ? `\n--- Social pack ---\n${social}` : "",
+    output.sellerEmail
+      ? `\n--- Seller approval email ---\n${formatSellerEmail(output.sellerEmail)}`
+      : "",
   ]
     .filter((s) => s !== "")
     .join("\n");
+}
+
+/** Description with the Material Information block appended after a blank line. */
+export function withMaterialInfo(description: string, block?: string): string {
+  return block && block.trim() ? `${description.trim()}\n\n${block.trim()}` : description;
+}
+
+export function formatSellerEmail(e: { subject: string; body: string }): string {
+  return e.subject ? `Subject: ${e.subject}\n\n${e.body.trim()}` : e.body.trim();
 }

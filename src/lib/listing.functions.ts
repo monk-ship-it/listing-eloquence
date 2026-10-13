@@ -6,6 +6,8 @@ import { MASTER_LISTING_SYSTEM_PROMPT } from "./master-listing-prompt";
 import type { CoreOutput, ListingInput, ListingOutput, MarketingOutput } from "./listing-types";
 import { coerceLegacyOutput, validateCoreOutput, validateMarketingOutput } from "./listing-types";
 import { VOICES } from "./voices";
+import { FIELD_BY_KEY, FIELD_DEFS } from "./listing-fields";
+import { buildMaterialInfoBlock, checkMaterialInfo, summariseChecks } from "./material-info";
 
 /** Max characters accepted per free-text field to keep payloads sane. */
 const MAX_FIELD_LEN = 4000;
@@ -30,142 +32,98 @@ function normaliseInput(input: ListingInput): ListingInput {
     throw new Error("Please choose a valid brand voice.");
   }
   const out = { ...input, market: "uk" } as ListingInput;
-  const stringKeys: (keyof ListingInput)[] = [
-    "voiceNotes",
-    "address",
-    "areaHighlights",
-    "propertyType",
-    "tenure",
-    "leaseYears",
-    "price",
-    "priceQualifier",
-    "bedrooms",
-    "bathrooms",
-    "receptions",
-    "keyFeatures",
-    "dimensions",
-    "epc",
-    "councilTaxBand",
-    "outsideSpace",
-    "parking",
-    "heating",
-    "utilities",
-    "nearby",
-    "periodFeatures",
-    "targetAudience",
-    "yearBuilt",
-    "disclosures",
-    "showingNotes",
-    "mediaNotes",
-  ];
+  const stringKeys: string[] = [...FIELD_DEFS.map((d) => d.key), "utilities"];
   for (const k of stringKeys) {
     const max = k === "voiceNotes" ? MAX_VOICE_NOTES_LEN : MAX_FIELD_LEN;
-    (out as unknown as Record<string, string>)[k as string] = clip(
-      (input as unknown as Record<string, unknown>)[k as string],
+    (out as unknown as Record<string, string>)[k] = clip(
+      (input as unknown as Record<string, unknown>)[k],
       max,
-      String(k),
+      FIELD_BY_KEY[k]?.label ?? k,
     );
   }
+  out.sellerApproved = input.sellerApproved === true;
   return out;
 }
 
-function field(label: string, value: string) {
+function field(label: string, value: string | undefined) {
   return value && value.trim() ? `- ${label}: ${value.trim()}\n` : "";
 }
 
-/** UK labels so the model interprets each structured field correctly. */
-const L = {
-  tenure: "Tenure",
-  lease: "Lease remaining (years)",
-  price: "Asking price (GBP)",
-  receptions: "Reception rooms",
-  dimensions: "Room dimensions",
-  epc: "EPC rating",
-  tax: "Council Tax band",
-  outside: "Outside space / garden",
-  utilities: "Utilities / broadband",
-  nearby: "Nearby (schools, transport, amenities)",
-  periodFeatures: "Period / character features",
-  yearBuilt: "Year built",
-  disclosures: "Disclosures / condition notes",
-  showingNotes: "Viewing / access notes",
-  mediaNotes: "Media / photo / floor-plan notes",
-};
+const PRIVATE_KEYS = new Set(["showingNotes", "mediaNotes"]);
 
 function buildFacts(input: ListingInput): string {
   let details = "";
-  details += field("Address / location", input.address);
-  details += field("Area highlights", input.areaHighlights);
-  details += field("Property type", input.propertyType);
-  details += field(L.yearBuilt, input.yearBuilt);
-  details += field(L.tenure, input.tenure);
-  details += field(L.lease, input.leaseYears);
-  details += field(L.price, input.price);
-  details += field("Price qualifier", input.priceQualifier);
-  details += field("Bedrooms", input.bedrooms);
-  details += field("Bathrooms", input.bathrooms);
-  details += field(L.receptions, input.receptions);
-  details += field("Key features", input.keyFeatures);
-  details += field(L.dimensions, input.dimensions);
-  details += field(L.epc, input.epc);
-  details += field(L.tax, input.councilTaxBand);
-  details += field(L.outside, input.outsideSpace);
-  details += field("Parking", input.parking);
-  details += field("Heating / cooling", input.heating);
-  details += field(L.utilities, input.utilities);
-  details += field(L.nearby, input.nearby);
-  details += field(L.periodFeatures, input.periodFeatures);
-  details += field(L.disclosures, input.disclosures);
-  details += field(L.showingNotes, input.showingNotes);
-  details += field(L.mediaNotes, input.mediaNotes);
-  details += field("Target audience", input.targetAudience);
+  let privateNotes = "";
+  for (const def of FIELD_DEFS) {
+    if (def.key === "voiceNotes") continue;
+    if (def.showIf && !def.showIf(input)) continue;
+    const v = input[def.key];
+    if (PRIVATE_KEYS.has(def.key)) privateNotes += field(def.label, v);
+    else
+      details += field(
+        def.key === "targetAudience"
+          ? "Likely buyer (emphasis only — never exclude anyone)"
+          : def.label,
+        v,
+      );
+  }
+  // Legacy combined supplies field from older saved listings.
+  details += field("Utilities / broadband (legacy)", input.utilities);
 
+  const mi = buildMaterialInfoBlock(input);
   const voiceNotes = input.voiceNotes?.trim()
-    ? `\nAGENT VOICE NOTES (raw, dictated or pasted — treat as supplementary context only):\n${input.voiceNotes.trim()}\n`
+    ? `\nAGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):\n${input.voiceNotes.trim()}\n`
     : "";
 
   return `STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 ${details || "- (none supplied — use the voice notes)\n"}
-${voiceNotes}
-RULES FOR COMBINING SOURCES:
-- The structured property details above are authoritative. Where the agent voice notes conflict with a structured field, ALWAYS use the structured field (e.g. structured "Bedrooms: 4" wins over voice notes saying "five bedrooms").
-- Use the voice notes only to add extra colour, context or facts that are NOT already covered by a structured field. Never invent or upgrade figures from the notes.
-
-GENERAL REQUIREMENTS:
-- Write only from the facts provided; never invent figures, names or features that are not given.
-- Read every detail precisely and do not transfer an adjective from one thing to another. A descriptor attached to a specific feature applies ONLY to that feature — e.g. "Victorian fireplace" means the fireplace is Victorian, NOT that the property is Victorian. Never describe the property's style, era or type unless the property type itself explicitly states it.
-- Do not generalise, upgrade or embellish facts: keep each described attribute scoped exactly to the item it was given for.
-- Use British English and spelling throughout.
-- Do NOT include viewing/access notes anywhere — treat those as internal-only.`;
+MATERIAL INFORMATION (verbatim facts — state these accurately; never contradict or soften):
+${mi || "(none supplied)"}
+${privateNotes ? `\nPRIVATE NOTES (never quote or use in any output; only use photo notes to add a "virtual staging" / "CGI" / "show home" label where images are referenced):\n${privateNotes}` : ""}${voiceNotes}
+Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never invent or upgrade figures from the notes.
+Seller approval of particulars: ${input.sellerApproved ? "confirmed" : "NOT confirmed"}.`;
 }
 
-function buildCorePrompt(input: ListingInput): string {
+const LIMIT_REMINDER =
+  "\n\nIMPORTANT: your previous answer broke the output limits. The strapline must be 250 characters or fewer, and every key feature 80 characters or fewer.";
+
+function buildCorePrompt(input: ListingInput, reminder = false): string {
   return `Create the core copy for a UK property sales listing from the details below.
 
 ${buildFacts(input)}
-- Where Material Information is provided (tenure, price, council tax band, EPC, parking, utilities) weave the key facts in naturally.
-- The full listing should be portal-ready (Rightmove / OnTheMarket style): an opening hook, then well-organised paragraphs covering the property, accommodation, outside space and location. Separate paragraphs with a blank line.
-- Only reference disclosures, condition, year built or media notes when those facts are explicitly provided.
-- Provide a short punchy teaser summary (1–2 sentences).
-- Provide 6–10 concise, factual, portal-ready "keyFeatures" bullets drawn STRICTLY from the supplied facts. Each bullet must be a short phrase (no sentences, no trailing full stops), non-duplicative, and safe for compliance. Order them by usefulness to a buyer.
 
-Return the result by calling the ${CORE_TOOL} tool.`;
+PRODUCE:
+- "headline": brochure / email headline, max 70 characters.
+- "listing": the portal description — plain-text paragraphs separated by a blank line (opening, accommodation, outside space, location, then the material facts per your rules).
+- "summary": the strapline (portal summary), max 250 characters; the first 160 characters must stand alone; don't open with the bedroom count or property type.
+- "keyFeatures": 6–10 bullets, max 80 characters each, one fact per bullet, no full stops; the first three are the most decision-relevant facts.
+
+Return the result by calling the ${CORE_TOOL} tool.${reminder ? LIMIT_REMINDER : ""}`;
 }
 
 function buildMarketingPrompt(input: ListingInput): string {
-  return `Create the marketing copy (applicant email and social posts) for a new UK sales instruction from the details below.
+  const gaps = summariseChecks(checkMaterialInfo(input)).open.filter(
+    (i) => i.severity !== "block" && i.question,
+  );
+  const gapList = gaps.length
+    ? gaps.map((g) => `- ${g.question}`).join("\n")
+    : "- (none — all supplies and Part C items are answered)";
+  return `Create the marketing copy (applicant email, seller approval email and social posts) for a new UK sales instruction from the details below.
 
 ${buildFacts(input)}
 
-EMAIL BLAST (new-instruction email to the agent's applicant database):
-- "subjectLines": exactly 3 unique options, each ideally 60 characters or fewer, no emoji, no ALL CAPS.
-- "previewText": one factual preheader, ideally 90 characters or fewer.
-- "headline": a short campaign headline.
-- "body": plain text, 2–4 short paragraphs separated by a blank line, matching the selected voice, grounded ONLY in the facts above. Include the EPC rating where supplied. Do not include a bullet list (key features are added separately), a greeting name, or a sign-off.
-- "callToAction": a short label such as "View property details" or "Arrange a viewing".
-- NEVER invent an agent name, phone, email, URL, date, availability, urgency or offer deadline.
+EMAIL BLAST (new-instruction email to the agent's registered applicants) — follow your Email Blast limits:
+- "subjectLines": exactly 3, max 60 characters, no urgency or clickbait. "previewText": max 90. "headline". "callToAction": e.g. "View full details" or "Book a viewing".
+- "body": 2–4 short plain-text paragraphs separated by a blank line, no bullet list, greeting name or sign-off. Include price and qualifier, tenure, council tax band, EPC rating and (leasehold/shared ownership) the key costs. End with "Full material information is on the property listing."
 
-SOCIAL: exactly three posts — platform "Instagram", "Facebook" and "X" — each an engaging caption suited to that platform, plus relevant hashtags (words only, no '#').
+SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, asking them to check the draft particulars before they go live.
+- 150–250 words, warm and professional, plain text. Open "Dear [Seller name]," — never invent a name.
+- A numbered list of every key fact supplied above for them to confirm: price and qualifier, tenure, lease figures, council tax, EPC, room counts, parking, supplies and each answered Part C item. Only facts supplied — nothing else.
+- Then ask these questions in plain English so the particulars are complete:
+${gapList}
+- End with "[Your name, branch, phone]".
+
+SOCIAL: exactly three posts — platform "Instagram", "Facebook" and "X" — each caption includes price and qualifier and tenure; add "Full material information on the listing." where space runs out; relevant hashtags (words only, no '#').
 
 Return the result by calling the ${MARKETING_TOOL} tool.`;
 }
@@ -176,18 +134,18 @@ const MARKETING_TOOL = "submit_listing_marketing";
 const CORE_SCHEMA = {
   type: "object",
   properties: {
-    headline: { type: "string", description: "A compelling listing headline" },
+    headline: { type: "string", description: "Brochure / email headline, max 70 characters" },
     listing: {
       type: "string",
-      description: "Full portal description, paragraphs separated by \\n\\n",
+      description: "Portal description, plain-text paragraphs separated by \\n\\n",
     },
-    summary: { type: "string", description: "1–2 sentence teaser" },
+    summary: { type: "string", description: "Strapline (portal summary), max 250 characters" },
     keyFeatures: {
       type: "array",
       items: { type: "string" },
       minItems: 6,
       maxItems: 10,
-      description: "6–10 short factual bullets",
+      description: "6–10 bullets, max 80 characters each",
     },
   },
   required: ["headline", "listing", "summary", "keyFeatures"],
@@ -207,6 +165,11 @@ const MARKETING_SCHEMA = {
       },
       required: ["subjectLines", "previewText", "headline", "body", "callToAction"],
     },
+    sellerEmail: {
+      type: "object",
+      properties: { body: { type: "string" } },
+      required: ["body"],
+    },
     social: {
       type: "array",
       minItems: 3,
@@ -222,7 +185,7 @@ const MARKETING_SCHEMA = {
       },
     },
   },
-  required: ["emailBlast", "social"],
+  required: ["emailBlast", "sellerEmail", "social"],
 };
 
 function systemPromptFor(voiceId: string): string {
@@ -259,30 +222,49 @@ async function logGenerationError(
   }
 }
 
-/** CORE call: retry once on truncation/invalid output (8000 tokens) or timeout. */
+function breaksLimits(o: CoreOutput): boolean {
+  return o.summary.length > 250 || o.keyFeatures.some((f) => f.length > 80);
+}
+
+/**
+ * CORE call: retry once on truncation/invalid output (8000 tokens) or timeout.
+ * If the strapline or a bullet breaks its limit, retry once with a reminder,
+ * then accept (the UI counters flag anything still over).
+ */
 export async function runCore(input: ListingInput, userId: string): Promise<CoreOutput> {
   const system = systemPromptFor(input.voice);
-  const user = buildCorePrompt(input);
-  const attempt = async (maxTokens: number) =>
+  let retried = false;
+  const attempt = async (maxTokens: number, reminder = false) =>
     validateCoreOutput(
       await callClaudeTool({
         system,
-        user,
+        user: buildCorePrompt(input, reminder),
         toolName: CORE_TOOL,
-        toolDescription: "Submit the headline, portal description, teaser and key features.",
+        toolDescription: "Submit the headline, portal description, strapline and key features.",
         inputSchema: CORE_SCHEMA,
         maxTokens,
       }),
     );
+  let out: CoreOutput;
   try {
-    return await attempt(6000);
+    out = await attempt(6000);
   } catch (err) {
     await logGenerationError(userId, "core", err);
     const code = errorCode(err);
-    if (code === "AI_TRUNCATED" || code === "MALFORMED_AI_OUTPUT") return await attempt(8000);
-    if (code === "AI_TIMEOUT") return await attempt(6000);
-    throw err;
+    retried = true;
+    if (code === "AI_TRUNCATED" || code === "MALFORMED_AI_OUTPUT") out = await attempt(8000);
+    else if (code === "AI_TIMEOUT") out = await attempt(6000);
+    else throw err;
   }
+  if (!retried && breaksLimits(out)) {
+    await logGenerationError(userId, "core", new Error("LIMITS_EXCEEDED"));
+    try {
+      out = await attempt(6000, true);
+    } catch (err) {
+      await logGenerationError(userId, "core", err);
+    }
+  }
+  return out;
 }
 
 /** MARKETING call: one retry on any failure. */
@@ -293,17 +275,22 @@ export async function runMarketing(
 ): Promise<MarketingOutput> {
   const system = systemPromptFor(input.voice);
   const user = buildMarketingPrompt(input);
-  const attempt = async () =>
-    validateMarketingOutput(
+  const subject = `Your property details for approval – ${input.address?.trim() || "your property"}`;
+  const attempt = async () => {
+    const out = validateMarketingOutput(
       await callClaudeTool({
         system,
         user,
         toolName: MARKETING_TOOL,
-        toolDescription: "Submit the Email Blast and the three social posts.",
+        toolDescription:
+          "Submit the Email Blast, the seller approval email and three social posts.",
         inputSchema: MARKETING_SCHEMA,
-        maxTokens: 3000,
+        maxTokens: 3500,
       }),
     );
+    if (out.sellerEmail) out.sellerEmail = { ...out.sellerEmail, subject };
+    return out;
+  };
   try {
     return await attempt();
   } catch (err) {
@@ -517,6 +504,7 @@ export const generateMarketingForGeneration = createServerFn({ method: "POST" })
     delete rawOut.marketingStatus;
     rawOut.emailBlast = mkt.emailBlast;
     if (current.social.length === 0) rawOut.social = mkt.social;
+    if (!current.sellerEmail && mkt.sellerEmail) rawOut.sellerEmail = mkt.sellerEmail;
 
     const { error: updateError } = await supabase
       .from("generations")

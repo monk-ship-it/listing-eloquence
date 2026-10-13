@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -27,7 +27,25 @@ import {
   type DictationSink,
 } from "@/components/dictation/DictationProvider";
 import { FieldDictationStatus, FieldMic } from "@/components/dictation/FieldMic";
-import { FIELD_DEFS, fieldRows, type FieldDef, type TextFieldKey } from "@/lib/listing-fields";
+import {
+  FIELD_BY_KEY,
+  FIELD_DEFS,
+  SECTIONS,
+  fieldRows,
+  type FieldDef,
+  type SectionId,
+  type TextFieldKey,
+} from "@/lib/listing-fields";
+import { ListingPack } from "@/components/pack/ListingPack";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { checkMaterialInfo, summariseChecks } from "@/lib/material-info";
 import { extractListingFields } from "@/lib/extract.functions";
 import {
   Dialog,
@@ -37,13 +55,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { EmailBlastCard, GenerateMarketingButton } from "@/components/EmailBlastCard";
-import {
-  copyText,
-  buildCopyAllText,
-  formatKeyFeaturesBlock,
-  formatSocialPost,
-} from "@/lib/clipboard";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -54,7 +65,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Copy, Sparkles, RefreshCw, Lock } from "lucide-react";
+import { Sparkles, RefreshCw, Lock, ChevronDown, ListChecks } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app")({
   head: () => ({
@@ -62,12 +73,6 @@ export const Route = createFileRoute("/_authenticated/app")({
   }),
   component: GeneratorPage,
 });
-
-async function copyToast(text: string, label = "Copied to clipboard.") {
-  const ok = await copyText(text);
-  if (ok) toast.success(label);
-  else toast.error("Couldn't copy — please copy manually.");
-}
 
 function GeneratorPage() {
   return (
@@ -111,6 +116,40 @@ function GeneratorInner() {
   const [fromNotes, setFromNotes] = useState<Record<string, string>>({});
   const [conflicts, setConflicts] = useState<Conflict[]>([]);
   const [filling, setFilling] = useState(false);
+  const [openSections, setOpenSections] = useState<Set<SectionId>>(
+    () => new Set(SECTIONS.map((x) => x.id)),
+  );
+  // On phones only the first two sections start open (after hydration).
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 639px)").matches) {
+      setOpenSections(new Set(SECTIONS.filter((x) => x.mobileOpen).map((x) => x.id)));
+    }
+  }, []);
+
+  function toggleSection(id: SectionId) {
+    setOpenSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function jumpToField(field: string) {
+    const sec = FIELD_BY_KEY[field]?.section;
+    if (sec && sec !== "voice") setOpenSections((prev) => new Set(prev).add(sec));
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        const el =
+          document.getElementById(`field-${field}`) ??
+          document.querySelector<HTMLElement>(`[data-field="${field}"]`);
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
+          el.focus({ preventScroll: true });
+        }
+      }),
+    );
+  }
 
   function setField(key: TextFieldKey, value: string) {
     inputRef.current = { ...inputRef.current, [key]: value };
@@ -319,6 +358,11 @@ function GeneratorInner() {
     queryClient.invalidateQueries({ queryKey: ["generations"] });
   }
 
+  const packInput = useMemo<ListingInput>(
+    () => (generatedFrom ? (JSON.parse(generatedFrom) as ListingInput) : input),
+    [generatedFrom, input],
+  );
+
   const isStale = !!output && generatedFrom !== null && generatedFrom !== JSON.stringify(input);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -423,7 +467,10 @@ function GeneratorInner() {
             />
 
             <Card className="p-5 sm:p-6">
-              <h2 className="font-display text-xl font-semibold">Structured property details</h2>
+              <ReadyMeter input={input} onJump={jumpToField} />
+              <h2 className="mt-4 font-display text-xl font-semibold">
+                Structured property details
+              </h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 Type or paste exact facts below. These are used alongside your voice notes, and take
                 priority if anything conflicts.
@@ -462,37 +509,82 @@ function GeneratorInner() {
                 </div>
               </div>
 
-              <div className="mt-5 grid gap-4">
-                {fieldRows(FIELD_DEFS.filter((d) => d.section === "details")).map((row) =>
-                  row.length === 1 ? (
-                    <DetailField
-                      key={row[0].key}
-                      def={row[0]}
-                      value={String(input[row[0].key] ?? "")}
-                      onChange={(v) => userEdit(row[0].key, v)}
-                      sink={sinks[row[0].key]}
-                      fromNotes={row[0].key in fromNotes}
-                      onUndo={() => undoFromNotes(row[0].key)}
-                    />
-                  ) : (
-                    <div
-                      key={row[0].key}
-                      className={`grid gap-3 ${row.length === 3 ? "grid-cols-3" : "grid-cols-1 sm:grid-cols-2"}`}
+              <div className="mt-5 space-y-3">
+                {SECTIONS.map((sec) => {
+                  const defs = FIELD_DEFS.filter(
+                    (d) => d.section === sec.id && (!d.showIf || d.showIf(input)),
+                  );
+                  const filled = defs.filter((d) => String(input[d.key] ?? "").trim()).length;
+                  const isOpen = openSections.has(sec.id);
+                  return (
+                    <section
+                      key={sec.id}
+                      className="rounded-xl border border-border/60"
+                      aria-labelledby={`sec-${sec.id}`}
                     >
-                      {row.map((def) => (
-                        <DetailField
-                          key={def.key}
-                          def={def}
-                          value={String(input[def.key] ?? "")}
-                          onChange={(v) => userEdit(def.key, v)}
-                          sink={sinks[def.key]}
-                          fromNotes={def.key in fromNotes}
-                          onUndo={() => undoFromNotes(def.key)}
-                        />
-                      ))}
-                    </div>
-                  ),
-                )}
+                      <button
+                        type="button"
+                        id={`sec-${sec.id}`}
+                        aria-expanded={isOpen}
+                        onClick={() => toggleSection(sec.id)}
+                        className="flex min-h-12 w-full items-center justify-between gap-3 rounded-xl px-4 py-2 text-left outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      >
+                        <span className="font-display text-base font-semibold">{sec.title}</span>
+                        <span className="flex items-center gap-2 text-xs text-muted-foreground">
+                          {filled}/{defs.length}
+                          <ChevronDown
+                            className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                          />
+                        </span>
+                      </button>
+                      {isOpen && (
+                        <div className="grid gap-4 px-4 pb-4">
+                          {fieldRows(defs).map((row) => (
+                            <div
+                              key={row[0].key}
+                              className={
+                                row.length === 1
+                                  ? ""
+                                  : `grid gap-3 ${row.length === 3 ? "grid-cols-3" : "grid-cols-1 sm:grid-cols-2"}`
+                              }
+                            >
+                              {row.map((def) => (
+                                <DetailField
+                                  key={def.key}
+                                  def={def}
+                                  value={String(input[def.key] ?? "")}
+                                  onChange={(v) => userEdit(def.key, v)}
+                                  sink={sinks[def.key]}
+                                  fromNotes={def.key in fromNotes}
+                                  onUndo={() => undoFromNotes(def.key)}
+                                />
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </section>
+                  );
+                })}
+              </div>
+
+              <div
+                id="field-sellerApproved"
+                className="mt-5 flex items-start gap-3 rounded-xl border border-border/60 p-4"
+              >
+                <Switch
+                  id="seller-approved"
+                  checked={input.sellerApproved === true}
+                  onCheckedChange={(v) => set("sellerApproved", v)}
+                />
+                <div>
+                  <Label htmlFor="seller-approved" className="text-sm font-medium">
+                    Seller has approved these particulars
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Leave off until they confirm — Quill adds a seller approval email to the pack.
+                  </p>
+                </div>
               </div>
 
               <Button
@@ -539,142 +631,13 @@ function GeneratorInner() {
                   You've changed the details since this pack was generated — Regenerate to update.
                 </div>
               )}
-              <Card className="p-6">
-                <div className="flex items-start justify-between gap-3">
-                  <h2 className="font-display text-xl font-semibold">{output.headline}</h2>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-11 w-11 shrink-0"
-                    aria-label="Copy full listing pack"
-                    onClick={() => copyToast(buildCopyAllText(output), "Full pack copied.")}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-              </Card>
-
-              {output.keyFeatures && output.keyFeatures.length > 0 && (
-                <Card className="p-6">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-display text-lg font-semibold">Key features</h3>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-11 w-11 shrink-0"
-                      aria-label="Copy key features"
-                      onClick={() =>
-                        copyToast(
-                          formatKeyFeaturesBlock(output.keyFeatures),
-                          "Key features copied.",
-                        )
-                      }
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <ul className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
-                    {output.keyFeatures.map((f, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                        <span className="break-words">{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
-              )}
-
-              <Card className="p-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-display text-lg font-semibold">Description</h3>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-11 w-11 shrink-0"
-                    aria-label="Copy description"
-                    onClick={() => copyToast(output.listing, "Description copied.")}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted-foreground">
-                  {output.listing.split("\n\n").map((p, i) => (
-                    <p key={i} className="break-words">
-                      {p}
-                    </p>
-                  ))}
-                </div>
-              </Card>
-
-              <Card className="p-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-display text-lg font-semibold">Teaser</h3>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-11 w-11 shrink-0"
-                    aria-label="Copy teaser"
-                    onClick={() => copyToast(output.summary, "Teaser copied.")}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="mt-2 text-sm text-muted-foreground">{output.summary}</p>
-              </Card>
-
-              <EmailBlastCard
-                emailBlast={output.emailBlast}
-                keyFeatures={output.keyFeatures}
+              <ListingPack
+                output={output}
+                input={packInput}
                 generationId={generationId}
-                marketingStatus={output.marketingStatus}
-                onGenerated={onMarketingGenerated}
+                onOutputChange={onMarketingGenerated}
+                onJumpToField={jumpToField}
               />
-
-              <Card className="p-6">
-                <h3 className="font-display text-lg font-semibold">Social pack</h3>
-                {output.social.length === 0 && (
-                  <>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      The social posts didn't generate this time.
-                    </p>
-                    <GenerateMarketingButton
-                      generationId={generationId}
-                      label="Generate social posts — free, doesn't use a listing"
-                      onGenerated={onMarketingGenerated}
-                    />
-                  </>
-                )}
-                <div className="mt-4 space-y-4">
-                  {output.social.map((post) => (
-                    <div key={post.platform} className="rounded-lg border border-border/70 p-4">
-                      <div className="flex items-center justify-between">
-                        <Badge variant="secondary">{post.platform}</Badge>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-11 w-11 shrink-0"
-                          aria-label={`Copy ${post.platform} post`}
-                          onClick={() => copyToast(formatSocialPost(post), "Post copied.")}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      <p className="mt-2 text-sm text-muted-foreground break-words">
-                        {post.caption}
-                      </p>
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        {post.hashtags.map((h) => (
-                          <span key={h} className="text-xs text-primary">
-                            #{h}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
 
               <Button
                 type="button"
@@ -773,6 +736,194 @@ interface Conflict {
   notes: string;
 }
 
+function ReadyMeter({ input, onJump }: { input: ListingInput; onJump: (field: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const s = summariseChecks(checkMaterialInfo(input));
+  return (
+    <div className="sticky top-16 z-20 -mx-1 rounded-lg border border-border/70 bg-card/95 px-3 py-2 shadow-sm backdrop-blur">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+        className="flex min-h-10 w-full items-center justify-between gap-2 text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
+        <span className="flex items-center gap-2">
+          <ListChecks className="h-4 w-4 text-primary" />
+          <span className="font-medium">Ready to publish?</span>
+        </span>
+        <span className="text-xs text-muted-foreground">
+          Material information {s.done}/{s.total}
+          {s.mustFix > 0 && (
+            <span className="font-semibold text-destructive"> · {s.mustFix} must-fix</span>
+          )}
+        </span>
+      </button>
+      {open && s.open.length > 0 && (
+        <ul className="mt-2 max-h-60 space-y-1 overflow-y-auto border-t border-border/60 pt-2 text-sm">
+          {s.open.map((i) => (
+            <li key={i.id}>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  onJump(i.field);
+                }}
+                className="flex min-h-10 w-full items-center gap-2 rounded px-1 text-left hover:bg-muted"
+              >
+                <Badge
+                  variant={i.severity === "block" ? "destructive" : "secondary"}
+                  className="shrink-0 text-[10px] uppercase"
+                >
+                  {i.severity === "block" ? "Must fix" : i.severity === "warn" ? "Add" : "Confirm"}
+                </Badge>
+                <span className="min-w-0 truncate">{i.label}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {open && s.open.length === 0 && (
+        <p className="mt-2 border-t border-border/60 pt-2 text-sm text-muted-foreground">
+          Everything's in. Nice work.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function SelectControl({
+  def,
+  value,
+  onChange,
+}: {
+  def: FieldDef;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const options = def.options ?? [];
+  // Keep legacy free-text values selectable so old listings still show them.
+  const all = value && !options.includes(value) ? [value, ...options] : options;
+  return (
+    <Select value={value || undefined} onValueChange={onChange}>
+      <SelectTrigger id={`field-${def.key}`} className="min-w-0 flex-1">
+        <SelectValue placeholder={def.placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {all.map((o) => (
+          <SelectItem key={o} value={o}>
+            {o === "From" ? "From (new homes only)" : o}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+function TriControl({
+  def,
+  value,
+  onChange,
+}: {
+  def: FieldDef;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const none = /^none known$/i.test(value);
+  const yes = !!value && !none;
+  const details = yes ? value.replace(/^yes\s*[–\-:]?\s*/i, "") : "";
+  const btn = (active: boolean) =>
+    `min-h-11 rounded-md border px-3 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary sm:min-h-9 ${
+      active
+        ? "border-primary bg-primary/10 font-medium"
+        : "border-border/70 hover:border-primary/50"
+    }`;
+  return (
+    <div className="space-y-2" data-field={def.key}>
+      <div role="radiogroup" aria-label={def.label} className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          role="radio"
+          aria-checked={none}
+          className={btn(none)}
+          onClick={() => onChange(none ? "" : "None known")}
+        >
+          None known
+        </button>
+        <button
+          type="button"
+          role="radio"
+          aria-checked={yes}
+          className={btn(yes)}
+          onClick={() => onChange(yes ? "" : "Yes – ")}
+        >
+          Yes – details
+        </button>
+        {!value && <span className="self-center text-xs text-muted-foreground">Unanswered</span>}
+      </div>
+      {yes && (
+        <Textarea
+          id={`field-${def.key}`}
+          value={details}
+          onChange={(e) => onChange(`Yes – ${e.target.value}`)}
+          placeholder={def.placeholder}
+          rows={2}
+        />
+      )}
+    </div>
+  );
+}
+
+function ChipsControl({
+  def,
+  value,
+  onChange,
+}: {
+  def: FieldDef;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const parts = value
+    .split(",")
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const toggle = (o: string) => {
+    const has = parts.some((p) => p.toLowerCase() === o.toLowerCase());
+    const next = has ? parts.filter((p) => p.toLowerCase() !== o.toLowerCase()) : [...parts, o];
+    onChange(next.join(", "));
+  };
+  const extra = parts.filter(
+    (p) => !(def.options ?? []).some((o) => o.toLowerCase() === p.toLowerCase()),
+  );
+  return (
+    <div data-field={def.key}>
+      <div className="flex flex-wrap gap-2" role="group" aria-label={def.label}>
+        {(def.options ?? []).map((o) => {
+          const on = parts.some((p) => p.toLowerCase() === o.toLowerCase());
+          return (
+            <button
+              key={o}
+              type="button"
+              aria-pressed={on}
+              onClick={() => toggle(o)}
+              className={`min-h-11 rounded-full border px-3 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary sm:min-h-8 ${
+                on
+                  ? "border-primary bg-primary/10 font-medium"
+                  : "border-border/70 hover:border-primary/50"
+              }`}
+            >
+              {o}
+            </button>
+          );
+        })}
+      </div>
+      {extra.length > 0 && (
+        <p className="mt-1.5 text-xs text-muted-foreground">Also noted: {extra.join(", ")}</p>
+      )}
+      <p className="mt-1 text-xs text-muted-foreground">{def.placeholder}</p>
+    </div>
+  );
+}
+
 /** One form field rendered from its FIELD_DEFS entry, with its own mic. */
 function DetailField({
   def,
@@ -791,6 +942,7 @@ function DetailField({
 }) {
   const id = `field-${def.key}`;
   const mic = <FieldMic fieldKey={def.key} label={def.label} sink={sink} mode={def.dictateMode} />;
+  const labelRowMic = def.kind === "textarea" || def.kind === "tri" || def.kind === "chips";
   return (
     <div className="min-w-0 space-y-1.5">
       <div className="flex min-h-5 flex-wrap items-center gap-x-2 gap-y-1">
@@ -811,7 +963,7 @@ function DetailField({
             </button>
           </span>
         )}
-        {def.kind === "textarea" && <span className="ml-auto -my-2">{mic}</span>}
+        {labelRowMic && <span className="-my-2 ml-auto">{mic}</span>}
       </div>
       {def.kind === "textarea" ? (
         <Textarea
@@ -821,6 +973,15 @@ function DetailField({
           placeholder={def.placeholder}
           rows={def.rows ?? 2}
         />
+      ) : def.kind === "select" ? (
+        <div className="flex items-center gap-1">
+          <SelectControl def={def} value={value} onChange={onChange} />
+          {mic}
+        </div>
+      ) : def.kind === "tri" ? (
+        <TriControl def={def} value={value} onChange={onChange} />
+      ) : def.kind === "chips" ? (
+        <ChipsControl def={def} value={value} onChange={onChange} />
       ) : (
         <div className="relative">
           <Input

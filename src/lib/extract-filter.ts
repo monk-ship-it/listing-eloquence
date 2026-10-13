@@ -1,5 +1,4 @@
-import { EXTRACTABLE_FIELDS, FIELD_BY_KEY } from "./listing-fields";
-import { normaliseForField } from "./dictation-normalise";
+import { EXTRACTABLE_FIELDS, normaliseFieldValue } from "./listing-fields";
 
 export interface ExtractResult {
   fields: Record<string, string>;
@@ -38,8 +37,10 @@ export function filterExtraction(raw: unknown, notes: string): ExtractResult {
     if (!value || value.length > max || !quote) continue;
     const nq = norm(quote);
     if (!nq || !haystack.includes(nq)) continue;
-    out.fields[d.key] =
-      FIELD_BY_KEY[d.key].dictateMode === "replace" ? normaliseForField(d.key, value) : value;
+    const normalised =
+      d.dictateMode === "replace" || d.kind !== "input" ? normaliseFieldValue(d.key, value) : value;
+    if (!normalised) continue;
+    out.fields[d.key] = normalised;
     out.evidence[d.key] = quote;
   }
   return out;
