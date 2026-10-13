@@ -32,7 +32,13 @@ export function FieldMic({
       onClick={() => d.toggle(fieldKey, label, sink, mode)}
       disabled={disabled || otherBusy || processing}
       aria-label={
-        listening ? `Stop dictating ${label}` : processing ? "Transcribing…" : `Dictate ${label}`
+        listening
+          ? `Stop dictating ${label}`
+          : processing
+            ? d.status === "processing"
+              ? "Transcribing…"
+              : "Starting microphone…"
+            : `Dictate ${label}`
       }
       aria-pressed={listening}
       className={cn(
@@ -56,6 +62,7 @@ export function FieldMic({
 export function FieldDictationStatus({ fieldKey }: { fieldKey: string }) {
   const d = useDictationContext();
   if (d.activeKey !== fieldKey) return null;
+  if (d.status !== "listening" && d.status !== "processing") return null;
   return (
     <span className="flex items-center gap-1 text-xs font-medium text-destructive" aria-live="polite">
       {d.status === "listening" ? (
