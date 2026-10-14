@@ -3,7 +3,8 @@ import { repairJsonQuotes, unwrapSellerEmail, validateMarketingOutput } from "./
 
 describe("marketing output tolerance", () => {
   it("repairs stray quotes inside stringified JSON", () => {
-    const s = '{\n  "body": "Please reply "Approved" or send corrections.\n\n[Your name, branch, phone]"\n}';
+    const s =
+      '{\n  "body": "Please reply "Approved" or send corrections.\n\n[Your name, branch, phone]"\n}';
     expect(JSON.parse(repairJsonQuotes(s)).body).toContain('reply "Approved" or');
     expect(unwrapSellerEmail(s)).toEqual({ body: expect.stringContaining('"Approved"') });
   });
@@ -20,7 +21,9 @@ describe("marketing output tolerance", () => {
       sellerEmail: '{"body": "Dear [Seller name], reply "Approved"."}',
       social: [{ platform: "X", caption: "c", hashtags: [] }],
     });
-    expect(out.emailBlast?.body.endsWith("Full material information is on the property listing.")).toBe(true);
+    expect(
+      out.emailBlast?.body.endsWith("Full material information is on the property listing."),
+    ).toBe(true);
     expect(out.emailBlast?.personalMessage).toBe("pm");
     expect(out.sellerEmail?.body).toContain('"Approved"');
   });

@@ -46,7 +46,12 @@ export function packFromRaw(core: unknown, mkt: unknown): GradePack {
       return v;
     }
   };
-  const m = { ...m0, emailBlast: un(m0.emailBlast), sellerEmail: unwrapSellerEmail(m0.sellerEmail), social: un(m0.social) };
+  const m = {
+    ...m0,
+    emailBlast: un(m0.emailBlast),
+    sellerEmail: unwrapSellerEmail(m0.sellerEmail),
+    social: un(m0.social),
+  };
   const e =
     m.emailBlast && typeof m.emailBlast === "object"
       ? (m.emailBlast as Record<string, unknown>)
