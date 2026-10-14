@@ -1,0 +1,201 @@
+{
+  "id": "A2-flat-over-shop-streatham-professional",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 10416,
+      "stopReason": "tool_use",
+      "inputTokens": 4927,
+      "outputTokens": 739
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 21579,
+      "stopReason": "tool_use",
+      "inputTokens": 5812,
+      "outputTokens": 1677
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "Two-bedroom maisonette with own entrance, Streatham High Road",
+      "listing": "A two-bedroom leasehold maisonette over the first and second floors with its own entrance, on Streatham High Road. The property has a bay-fronted living room and a kitchen fitted in 2022. A section 42 lease extension notice has been served and can be assigned to the buyer.\n\nThe first floor offers a living room measuring 4.90m x 4.10m into bay (16'1\" x 13'5\" into bay) with a bay window to the front, and a kitchen measuring 3.20m x 2.30m (10'6\" x 7'7\"). On the second floor you will find bedroom one measuring 3.85m x 3.05m (12'8\" x 10'0\"), bedroom two measuring 2.70m x 2.40m (8'10\" x 7'10\"), and a bathroom.\n\nAccess is via a rear service yard shared with the commercial unit, and there is a shared bin store. There is no parking; pay-and-display is available on adjoining roads.\n\nStreatham station is approx. 6 minutes' walk, and Streatham Common is approx. 10 minutes' walk.\n\nOffers in Excess of £375,000. Leasehold with 89 years remaining; ground rent £350 per year (doubles every 25 years; next increase 2034); service charge £960 per year (y/e Dec 2025, includes buildings insurance). Council Tax Band C. EPC rating D. The property is above a dry cleaner's on a main road, and there is some traffic noise to the front. The freeholder owns the shop below. There is a right of access via the rear service yard shared with the commercial unit, and a shared bin store. Chain involved.",
+      "summary": "Own entrance to a first and second floor maisonette on Streatham High Road, with a bay-fronted living room, kitchen fitted 2022, and a section 42 lease extension notice served that can be assigned to the buyer.",
+      "keyFeatures": [
+        "Own entrance to first and second floor maisonette",
+        "Section 42 lease extension notice served, can be assigned to the buyer",
+        "Bay-fronted living room 4.90m x 4.10m into bay (16'1\" x 13'5\" into bay)",
+        "Kitchen fitted 2022, measuring 3.20m x 2.30m (10'6\" x 7'7\")",
+        "Streatham station approx. 6 minutes' walk",
+        "89 years remaining on lease; ground rent £350 per year, doubles every 25 yrs",
+        "Service charge £960 per year (y/e Dec 2025, includes buildings insurance)",
+        "Above a dry cleaner's; some traffic noise to front"
+      ]
+    },
+    "marketing": {
+      "emailBlast": {
+        "subjectLines": [
+          "New instruction: 2-bed maisonette, SW16 – OIEO £375,000",
+          "Just listed: 2-bed maisonette, Streatham – OIEO £375k",
+          "Own entrance maisonette, Streatham High Road – OIEO £375k"
+        ],
+        "previewText": "Leasehold · Bay-fronted living room · Kitchen fitted 2022 · Section 42 served",
+        "headline": "2-bed maisonette, Streatham High Road SW16",
+        "body": "We are pleased to offer this two-bedroom maisonette on Streatham High Road, London SW16, for sale at offers in excess of £375,000. The property is leasehold with 89 years remaining.\n\nThe maisonette occupies the first and second floors above a commercial unit and has its own entrance. The bay-fronted living room measures 4.90m x 4.10m into bay. The kitchen was fitted in 2022. A section 42 lease extension notice has been served and can be assigned to the buyer.\n\nCouncil Tax band C (London Borough of Lambeth). EPC rating D. Ground rent is £350 per year (doubles every 25 years; next increase 2034). Service charge is £960 per year (y/e Dec 2025, includes buildings insurance). Please note: the property is above a dry cleaner's on a main road; some traffic noise to the front. The freeholder owns the shop below. There is access via a rear service yard shared with the commercial unit and a shared bin store. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "Two-bedroom maisonette on Streatham High Road SW16, offers in excess of £375,000, leasehold. Own entrance, bay-fronted living room measuring 4.90m x 4.10m into bay, and a kitchen fitted in 2022. A section 42 lease extension notice has been served and can be assigned to the buyer. Streatham station is approximately 6 minutes' walk. Book a viewing to see this property."
+      },
+      "sellerEmail": "{\n  \"body\": \"Dear [Seller name],\\n\\nThank you for instructing us to market your property; please find the draft details below for checking before we publish anything.\\n\\n1. Price: Offers in Excess of £375,000 – is this correct?\\n2. Property type: Maisonette (first and second floors) above a commercial unit – is this correct?\\n3. Tenure: Leasehold, 89 years remaining – is this correct?\\n4. Ground rent: £350 per year (doubles every 25 years; next increase 2034) – is this correct?\\n5. Service charge: £960 per year (y/e Dec 2025, includes buildings insurance) – is this correct?\\n6. Council Tax: Band C (London Borough of Lambeth) – is this correct?\\n7. EPC rating: D – is this correct?\\n8. Bedrooms: 2 – is this correct?\\n9. Bathrooms: 1 – is this correct?\\n10. Receptions: 1 – is this correct?\\n11. Parking: None; pay-and-display on adjoining roads – is this correct?\\n12. Chain status: Chain involved – is this correct?\\n13. Known issue: Above a dry cleaner's on a main road; some traffic noise to the front. The freeholder owns the shop below – is this correct?\\n14. Rights & easements: Access via rear service yard shared with the commercial unit; shared bin store – is this correct?\\n\\nTo complete the particulars, could you let us know:\\n\\nHow is the mobile signal at the property, indoors and outdoors?\\n\\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\\n\\n[Your name, branch, phone]\"\n}",
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "Two-bedroom maisonette on Streatham High Road, London SW16 – offers in excess of £375,000 🏡\n\nOwn entrance via rear service yard\nBay-fronted living room 4.90m x 4.10m into bay\nKitchen fitted 2022\nSection 42 lease extension notice served, can be assigned to the buyer\nStreatham station approx. 6 minutes' walk\n\nLeasehold · EPC D · Council Tax band C\n\nPlease note: the property is above a dry cleaner's on a main road; some traffic noise to the front. The freeholder owns the shop below. There is access via a rear service yard shared with the commercial unit and a shared bin store.\n\nFull material information on the listing. 🔑",
+          "hashtags": [
+            "Streatham",
+            "SW16",
+            "London",
+            "Lambeth",
+            "Maisonette",
+            "TwoBedroom",
+            "NewInstruction",
+            "PropertyForSale",
+            "LondonProperty"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "Two-bedroom maisonette on Streatham High Road, London SW16, offers in excess of £375,000. The property occupies the first and second floors above a commercial unit and has its own entrance via a rear service yard. The bay-fronted living room measures 4.90m x 4.10m into bay. The kitchen was fitted in 2022. A section 42 lease extension notice has been served and can be assigned to the buyer. Streatham station is approximately 6 minutes' walk and Streatham Common approximately 10 minutes' walk. Leasehold with 89 years remaining. Ground rent £350 per year (doubles every 25 years; next increase 2034). Service charge £960 per year (y/e Dec 2025, includes buildings insurance). Council Tax band C. EPC rating D. Please note: the property is above a dry cleaner's on a main road; some traffic noise to the front. The freeholder owns the shop below. There is access via a rear service yard shared with the commercial unit and a shared bin store. Full material information on the listing. #Streatham #SW16 #NewInstruction",
+          "hashtags": [
+            "Streatham",
+            "SW16",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "2-bed maisonette, Streatham High Road SW16. OIEO £375,000. Leasehold, EPC D. Own entrance, bay-fronted living room, kitchen fitted 2022. Section 42 served. Full material information on listing.",
+          "hashtags": [
+            "Streatham",
+            "SW16"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": true,
+  "findings": [
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "listing: lease years not in the same paragraph as the tenure"
+    },
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "listing: ground rent not in the same paragraph as the tenure"
+    },
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "listing: service charge not in the same paragraph as the tenure"
+    },
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "emailBlast.body: ground rent not in the same paragraph as the tenure"
+    },
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "emailBlast.body: service charge not in the same paragraph as the tenure"
+    }
+  ],
+  "coreMs": 10416,
+  "marketingMs": 21579,
+  "retries": 0,
+  "output": {
+    "headline": "Two-bedroom maisonette with own entrance, Streatham High Road",
+    "listing": "A two-bedroom leasehold maisonette over the first and second floors with its own entrance, on Streatham High Road. The property has a bay-fronted living room and a kitchen fitted in 2022. A section 42 lease extension notice has been served and can be assigned to the buyer.\n\nThe first floor offers a living room measuring 4.90m x 4.10m into bay (16'1\" x 13'5\" into bay) with a bay window to the front, and a kitchen measuring 3.20m x 2.30m (10'6\" x 7'7\"). On the second floor you will find bedroom one measuring 3.85m x 3.05m (12'8\" x 10'0\"), bedroom two measuring 2.70m x 2.40m (8'10\" x 7'10\"), and a bathroom.\n\nAccess is via a rear service yard shared with the commercial unit, and there is a shared bin store. There is no parking; pay-and-display is available on adjoining roads.\n\nStreatham station is approx. 6 minutes' walk, and Streatham Common is approx. 10 minutes' walk.\n\nOffers in Excess of £375,000. Leasehold with 89 years remaining; ground rent £350 per year (doubles every 25 years; next increase 2034); service charge £960 per year (y/e Dec 2025, includes buildings insurance). Council Tax Band C. EPC rating D. The property is above a dry cleaner's on a main road, and there is some traffic noise to the front. The freeholder owns the shop below. There is a right of access via the rear service yard shared with the commercial unit, and a shared bin store. Chain involved.",
+    "summary": "Own entrance to a first and second floor maisonette on Streatham High Road, with a bay-fronted living room, kitchen fitted 2022, and a section 42 lease extension notice served that can be assigned to the buyer.",
+    "keyFeatures": [
+      "Own entrance to first and second floor maisonette",
+      "Section 42 lease extension notice served, can be assigned to the buyer",
+      "Bay-fronted living room 4.90m x 4.10m into bay (16'1\" x 13'5\" into bay)",
+      "Kitchen fitted 2022, measuring 3.20m x 2.30m (10'6\" x 7'7\")",
+      "Streatham station approx. 6 minutes' walk",
+      "89 years remaining on lease; ground rent £350 per year, doubles every 25 yrs",
+      "Service charge £960 per year (y/e Dec 2025, includes buildings insurance)",
+      "Above a dry cleaner's; some traffic noise to front"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "New instruction: 2-bed maisonette, SW16 – OIEO £375,000",
+        "Just listed: 2-bed maisonette, Streatham – OIEO £375k",
+        "Own entrance maisonette, Streatham High Road – OIEO £375k"
+      ],
+      "previewText": "Leasehold · Bay-fronted living room · Kitchen fitted 2022 · Section 42 served",
+      "headline": "2-bed maisonette, Streatham High Road SW16",
+      "body": "We are pleased to offer this two-bedroom maisonette on Streatham High Road, London SW16, for sale at offers in excess of £375,000. The property is leasehold with 89 years remaining.\n\nThe maisonette occupies the first and second floors above a commercial unit and has its own entrance. The bay-fronted living room measures 4.90m x 4.10m into bay. The kitchen was fitted in 2022. A section 42 lease extension notice has been served and can be assigned to the buyer.\n\nCouncil Tax band C (London Borough of Lambeth). EPC rating D. Ground rent is £350 per year (doubles every 25 years; next increase 2034). Service charge is £960 per year (y/e Dec 2025, includes buildings insurance). Please note: the property is above a dry cleaner's on a main road; some traffic noise to the front. The freeholder owns the shop below. There is access via a rear service yard shared with the commercial unit and a shared bin store.\n\nFull material information is on the property listing.",
+      "callToAction": "Book a viewing",
+      "personalMessage": "Two-bedroom maisonette on Streatham High Road SW16, offers in excess of £375,000, leasehold. Own entrance, bay-fronted living room measuring 4.90m x 4.10m into bay, and a kitchen fitted in 2022. A section 42 lease extension notice has been served and can be assigned to the buyer. Streatham station is approximately 6 minutes' walk. Book a viewing to see this property."
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "Two-bedroom maisonette on Streatham High Road, London SW16 – offers in excess of £375,000 🏡\n\nOwn entrance via rear service yard\nBay-fronted living room 4.90m x 4.10m into bay\nKitchen fitted 2022\nSection 42 lease extension notice served, can be assigned to the buyer\nStreatham station approx. 6 minutes' walk\n\nLeasehold · EPC D · Council Tax band C\n\nPlease note: the property is above a dry cleaner's on a main road; some traffic noise to the front. The freeholder owns the shop below. There is access via a rear service yard shared with the commercial unit and a shared bin store.\n\nFull material information on the listing. 🔑",
+        "hashtags": [
+          "Streatham",
+          "SW16",
+          "London",
+          "Lambeth",
+          "Maisonette",
+          "TwoBedroom",
+          "NewInstruction",
+          "PropertyForSale",
+          "LondonProperty"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "Two-bedroom maisonette on Streatham High Road, London SW16, offers in excess of £375,000. The property occupies the first and second floors above a commercial unit and has its own entrance via a rear service yard. The bay-fronted living room measures 4.90m x 4.10m into bay. The kitchen was fitted in 2022. A section 42 lease extension notice has been served and can be assigned to the buyer. Streatham station is approximately 6 minutes' walk and Streatham Common approximately 10 minutes' walk. Leasehold with 89 years remaining. Ground rent £350 per year (doubles every 25 years; next increase 2034). Service charge £960 per year (y/e Dec 2025, includes buildings insurance). Council Tax band C. EPC rating D. Please note: the property is above a dry cleaner's on a main road; some traffic noise to the front. The freeholder owns the shop below. There is access via a rear service yard shared with the commercial unit and a shared bin store. Full material information on the listing. #Streatham #SW16 #NewInstruction",
+        "hashtags": [
+          "Streatham",
+          "SW16",
+          "NewInstruction"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "2-bed maisonette, Streatham High Road SW16. OIEO £375,000. Leasehold, EPC D. Own entrance, bay-fronted living room, kitchen fitted 2022. Section 42 served. Full material information on listing.",
+        "hashtags": [
+          "Streatham",
+          "SW16"
+        ]
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – Streatham High Road, London SW16",
+      "body": "Dear [Seller name],\n\nThank you for instructing us to market your property; please find the draft details below for checking before we publish anything.\n\n1. Price: Offers in Excess of £375,000 – is this correct?\n2. Property type: Maisonette (first and second floors) above a commercial unit – is this correct?\n3. Tenure: Leasehold, 89 years remaining – is this correct?\n4. Ground rent: £350 per year (doubles every 25 years; next increase 2034) – is this correct?\n5. Service charge: £960 per year (y/e Dec 2025, includes buildings insurance) – is this correct?\n6. Council Tax: Band C (London Borough of Lambeth) – is this correct?\n7. EPC rating: D – is this correct?\n8. Bedrooms: 2 – is this correct?\n9. Bathrooms: 1 – is this correct?\n10. Receptions: 1 – is this correct?\n11. Parking: None; pay-and-display on adjoining roads – is this correct?\n12. Chain status: Chain involved – is this correct?\n13. Known issue: Above a dry cleaner's on a main road; some traffic noise to the front. The freeholder owns the shop below – is this correct?\n14. Rights & easements: Access via rear service yard shared with the commercial unit; shared bin store – is this correct?\n\nTo complete the particulars, could you let us know:\n\nHow is the mobile signal at the property, indoors and outdoors?\n\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 5,
+      "2": 5,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 5,
+      "8": 5
+    },
+    "hardFail": false,
+    "verdict": "PASS",
+    "fixes": [],
+    "average": 5
+  }
+}

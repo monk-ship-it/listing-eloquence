@@ -1,0 +1,220 @@
+{
+  "id": "A6-new-build-kings-hill-professional",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 9937,
+      "stopReason": "tool_use",
+      "inputTokens": 4969,
+      "outputTokens": 703
+    },
+    {
+      "call": "core",
+      "attempt": 2,
+      "ms": 10254,
+      "stopReason": "tool_use",
+      "inputTokens": 4990,
+      "outputTokens": 710
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 22257,
+      "stopReason": "tool_use",
+      "inputTokens": 5854,
+      "outputTokens": 1682
+    },
+    {
+      "call": "marketing",
+      "attempt": 2,
+      "ms": 22702,
+      "stopReason": "tool_use",
+      "inputTokens": 5908,
+      "outputTokens": 1737
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "New three-bedroom semi-detached house, Kings Hill",
+      "listing": "A new-build three-bedroom semi-detached house (The Larch) in Kings Hill, West Malling, with completion expected spring 2027. The property includes an air source heat pump with underfloor heating to the ground floor, an EV charging point, two allocated parking spaces and a 10-year NHBC warranty.\n\nThe ground floor comprises a kitchen/dining room measuring 5.80m x 3.40m (19'0\" x 11'2\") and a living room measuring 4.90m x 3.30m (16'1\" x 10'10\"). On the first floor, the principal bedroom measures 4.10m x 3.00m (13'5\" x 9'10\") and has an en-suite, plus two further bedrooms and a family bathroom.\n\nOutside, there is a turfed rear garden with a patio, and two allocated parking spaces with an EV charging point.\n\nWest Malling station is approx. 2 miles away.\n\nFixed Price £410,000 for the freehold. A reservation fee of £1,500 is payable, deducted from the price on completion; refundable less a £250 administration fee if the buyer withdraws within 28 days, otherwise non-refundable. Developer contribution of £5,000 towards flooring for reservations by 30 November 2026. Estate charge £295 per year. Council Tax: not yet banded (Tonbridge and Malling Borough Council). Predicted EPC rating B. Construction: brick and block under a tiled roof. Mains electricity, mains water (metered) and mains sewerage. Heating by air source heat pump; underfloor heating downstairs, radiators upstairs. FTTP broadband available. Building safety, restrictions, rights and easements, flooding, coastal erosion, planning, accessibility and coalfield/mining: none known. The final EPC will be issued on completion. No onward chain.",
+      "summary": "New-build semi-detached house in Kings Hill with air source heat pump, underfloor heating to the ground floor, EV charging point, two allocated parking spaces and a 10-year NHBC warranty. Completion expected spring 2027.",
+      "keyFeatures": [
+        "Air source heat pump with underfloor heating to ground floor",
+        "EV charging point and two allocated parking spaces",
+        "10-year NHBC warranty; completion expected spring 2027",
+        "En-suite to principal bedroom",
+        "Kitchen/dining room 5.80m x 3.40m (19'0\" x 11'2\")",
+        "Turfed rear garden with patio",
+        "Predicted EPC rating B; freehold with no onward chain",
+        "West Malling station approx. 2 miles"
+      ]
+    },
+    "marketing": {
+      "emailBlast": {
+        "subjectLines": [
+          "New instruction: 3-bed semi, Kings Hill – From £410,000",
+          "Just listed: 3-bed new-build, West Malling – From £410,000",
+          "Kings Hill new-build semi, 3 beds – From £410,000"
+        ],
+        "previewText": "Freehold · No onward chain · Completion spring 2027 · Air source heat pump · EV charging",
+        "headline": "New-build 3-bed semi, Kings Hill – completion spring 2027",
+        "body": "From £410,000 for a new-build three-bedroom semi-detached house at Orchard Rise, Kings Hill, West Malling. Freehold. No onward chain. Reservation fee £1,500, deducted from the price on completion; refundable less a £250 administration fee if the buyer withdraws within 28 days, otherwise non-refundable. Developer contribution of £5,000 towards flooring for reservations by 30 November 2026.\n\nPlot 47 is The Larch house type, with completion expected spring 2027. Air source heat pump with underfloor heating to the ground floor, EV charging point, two allocated parking spaces, en-suite to the principal bedroom and a 10-year NHBC warranty. The kitchen/dining room measures 5.80m x 3.40m (19'0\" x 11'2\"), the living room 4.90m x 3.30m (16'1\" x 10'10\") and the principal bedroom 4.10m x 3.00m (13'5\" x 9'10\").\n\nCouncil Tax: not yet banded (Tonbridge and Malling Borough Council). Predicted EPC rating B. Estate charge £295 per year. Please note: The final EPC will be issued on completion. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "New-build three-bedroom semi-detached house at Plot 47, Orchard Rise, Kings Hill, West Malling. From £410,000, freehold, completion expected spring 2027. Air source heat pump, underfloor heating to the ground floor, EV charging point, two allocated parking spaces and a 10-year NHBC warranty. Developer contribution of £5,000 towards flooring for reservations by 30 November 2026. No onward chain. Book a viewing today."
+      },
+      "sellerEmail": "{\n  \"body\": \"Dear [Seller name],\\n\\nThank you for instructing us to market Plot 47 at Orchard Rise. The draft particulars are below for checking before anything goes live.\\n\\n1. Asking price: From £410,000 – is this correct?\\n2. Tenure: Freehold – is this correct?\\n3. Estate charge: £295 per year – is this correct?\\n4. Council Tax: not yet banded – is this correct?\\n5. EPC rating: B (predicted) – is this correct?\\n6. Bedrooms: 3 – is this correct?\\n7. Bathrooms: 2 – is this correct?\\n8. Receptions: 1 – is this correct?\\n9. Parking: Two allocated spaces; EV charging point – is this correct?\\n10. Chain status: No onward chain – is this correct?\\n11. Reservation fee: £1,500, deducted from the price on completion; refundable less a £250 administration fee if the buyer withdraws within 28 days, otherwise non-refundable – is this correct?\\n12. Incentive: Developer contribution of £5,000 towards flooring for reservations by 30 November 2026 – is this correct?\\n13. Known issue: The final EPC will be issued on completion – is this correct?\\n\\nTo complete the particulars, could you let us know:\\n\\n- How is the mobile signal at the property, indoors and outdoors?\\n\\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\\n\\n[Your name, branch, phone]\"\n}",
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "New-build three-bedroom semi-detached house at Plot 47, Orchard Rise, Kings Hill, West Malling 🏡\n\nFrom £410,000 · Completion expected spring 2027\nAir source heat pump with underfloor heating to the ground floor\nEV charging point and two allocated parking spaces\nEn-suite to principal bedroom · 10-year NHBC warranty\nDeveloper contribution of £5,000 towards flooring for reservations by 30 November 2026 ✨\n\nFreehold · Predicted EPC rating B · Council Tax: not yet banded\n\nPlease note: The final EPC will be issued on completion. Estate charge £295 per year.\n\nFull material information on the listing.",
+          "hashtags": [
+            "KingsHill",
+            "WestMalling",
+            "Kent",
+            "NewBuild",
+            "SemiDetached",
+            "NewInstruction",
+            "ThreeBedroom",
+            "FirstTimeBuyer",
+            "Freehold",
+            "NewHome"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "New instruction: three-bedroom semi-detached new-build house at Plot 47, Orchard Rise, Kings Hill, West Malling. From £410,000, freehold, with completion expected spring 2027. The Larch house type includes an air source heat pump with underfloor heating to the ground floor, EV charging point, two allocated parking spaces, en-suite to the principal bedroom and a 10-year NHBC warranty. The kitchen/dining room measures 5.80m x 3.40m, the living room 4.90m x 3.30m and the principal bedroom 4.10m x 3.00m. Turfed rear garden with patio. West Malling station is approx. 2 miles away. Developer contribution of £5,000 towards flooring for reservations by 30 November 2026. No onward chain. Predicted EPC rating B. Council Tax: not yet banded. Estate charge £295 per year. Please note: The final EPC will be issued on completion. Full material information on the listing. 🏡🔑 #KingsHill #Kent #NewBuild",
+          "hashtags": [
+            "KingsHill",
+            "Kent",
+            "NewBuild"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "New: 3-bed semi, Plot 47 Orchard Rise, Kings Hill. From £410,000, freehold. Completion spring 2027. Air source heat pump, EV charging, 2 spaces, NHBC warranty. Predicted EPC B. Estate charge £295 pa. #KingsHill #Kent",
+          "hashtags": [
+            "KingsHill",
+            "Kent"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": false,
+  "findings": [
+    {
+      "grader": "limits",
+      "severity": "fail",
+      "message": "X post 327 > 280 chars incl. hashtags",
+      "text": "New: 3-bed semi, Plot 47 Orchard Rise, Kings Hill. From £410,000, freehold. Completion spring 2027. Air source heat pump, EV charging, 2 spaces, NHBC warranty. Predicted EPC B. Estate charge £295 pa. #KingsHill #Kent\n\nImages are computer-generated (CGI) and indicative only.\nImages show the show home; specification may differ."
+    },
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "listing: council tax band Not yet banded not stated as \"council tax band\""
+    },
+    {
+      "grader": "materialInfo",
+      "severity": "fail",
+      "message": "emailBlast.body: missing \"Fixed Price £410,000\""
+    },
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "emailBlast.body: council tax band Not yet banded not stated as \"council tax band\""
+    }
+  ],
+  "coreMs": 20191,
+  "marketingMs": 44959,
+  "retries": 2,
+  "output": {
+    "headline": "New three-bedroom semi-detached house, Kings Hill",
+    "listing": "A new-build three-bedroom semi-detached house (The Larch) in Kings Hill, West Malling, with completion expected spring 2027. The property includes an air source heat pump with underfloor heating to the ground floor, an EV charging point, two allocated parking spaces and a 10-year NHBC warranty.\n\nThe ground floor comprises a kitchen/dining room measuring 5.80m x 3.40m (19'0\" x 11'2\") and a living room measuring 4.90m x 3.30m (16'1\" x 10'10\"). On the first floor, the principal bedroom measures 4.10m x 3.00m (13'5\" x 9'10\") and has an en-suite, plus two further bedrooms and a family bathroom.\n\nOutside, there is a turfed rear garden with a patio, and two allocated parking spaces with an EV charging point.\n\nWest Malling station is approx. 2 miles away.\n\nFixed Price £410,000 for the freehold. A reservation fee of £1,500 is payable, deducted from the price on completion; refundable less a £250 administration fee if the buyer withdraws within 28 days, otherwise non-refundable. Developer contribution of £5,000 towards flooring for reservations by 30 November 2026. Estate charge £295 per year. Council Tax: not yet banded (Tonbridge and Malling Borough Council). Predicted EPC rating B. Construction: brick and block under a tiled roof. Mains electricity, mains water (metered) and mains sewerage. Heating by air source heat pump; underfloor heating downstairs, radiators upstairs. FTTP broadband available. Building safety, restrictions, rights and easements, flooding, coastal erosion, planning, accessibility and coalfield/mining: none known. The final EPC will be issued on completion. No onward chain.\n\nImages are computer-generated (CGI) and indicative only.\nImages show the show home; specification may differ.",
+    "summary": "New-build semi-detached house in Kings Hill with air source heat pump, underfloor heating to the ground floor, EV charging point, two allocated parking spaces and a 10-year NHBC warranty. Completion expected spring 2027.",
+    "keyFeatures": [
+      "Air source heat pump with underfloor heating to ground floor",
+      "EV charging point and two allocated parking spaces",
+      "10-year NHBC warranty; completion expected spring 2027",
+      "En-suite to principal bedroom",
+      "Kitchen/dining room 5.80m x 3.40m (19'0\" x 11'2\")",
+      "Turfed rear garden with patio",
+      "Predicted EPC rating B; freehold with no onward chain",
+      "West Malling station approx. 2 miles"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "New instruction: 3-bed semi, Kings Hill – From £410,000",
+        "Just listed: 3-bed new-build, West Malling – From £410,000",
+        "Kings Hill new-build semi, 3 beds – From £410,000"
+      ],
+      "previewText": "Freehold · No onward chain · Completion spring 2027 · Air source heat pump · EV charging",
+      "headline": "New-build 3-bed semi, Kings Hill – completion spring 2027",
+      "body": "From £410,000 for a new-build three-bedroom semi-detached house at Orchard Rise, Kings Hill, West Malling. Freehold. No onward chain. Reservation fee £1,500, deducted from the price on completion; refundable less a £250 administration fee if the buyer withdraws within 28 days, otherwise non-refundable. Developer contribution of £5,000 towards flooring for reservations by 30 November 2026.\n\nPlot 47 is The Larch house type, with completion expected spring 2027. Air source heat pump with underfloor heating to the ground floor, EV charging point, two allocated parking spaces, en-suite to the principal bedroom and a 10-year NHBC warranty. The kitchen/dining room measures 5.80m x 3.40m (19'0\" x 11'2\"), the living room 4.90m x 3.30m (16'1\" x 10'10\") and the principal bedroom 4.10m x 3.00m (13'5\" x 9'10\").\n\nCouncil Tax: not yet banded (Tonbridge and Malling Borough Council). Predicted EPC rating B. Estate charge £295 per year. Please note: The final EPC will be issued on completion.\n\nFull material information is on the property listing.",
+      "callToAction": "Book a viewing",
+      "personalMessage": "New-build three-bedroom semi-detached house at Plot 47, Orchard Rise, Kings Hill, West Malling. From £410,000, freehold, completion expected spring 2027. Air source heat pump, underfloor heating to the ground floor, EV charging point, two allocated parking spaces and a 10-year NHBC warranty. Developer contribution of £5,000 towards flooring for reservations by 30 November 2026. No onward chain. Book a viewing today."
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "New-build three-bedroom semi-detached house at Plot 47, Orchard Rise, Kings Hill, West Malling 🏡\n\nFrom £410,000 · Completion expected spring 2027\nAir source heat pump with underfloor heating to the ground floor\nEV charging point and two allocated parking spaces\nEn-suite to principal bedroom · 10-year NHBC warranty\nDeveloper contribution of £5,000 towards flooring for reservations by 30 November 2026 ✨\n\nFreehold · Predicted EPC rating B · Council Tax: not yet banded\n\nPlease note: The final EPC will be issued on completion. Estate charge £295 per year.\n\nFull material information on the listing.\n\nImages are computer-generated (CGI) and indicative only.\nImages show the show home; specification may differ.",
+        "hashtags": [
+          "KingsHill",
+          "WestMalling",
+          "Kent",
+          "NewBuild",
+          "SemiDetached",
+          "NewInstruction",
+          "ThreeBedroom",
+          "FirstTimeBuyer",
+          "Freehold",
+          "NewHome"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "New instruction: three-bedroom semi-detached new-build house at Plot 47, Orchard Rise, Kings Hill, West Malling. From £410,000, freehold, with completion expected spring 2027. The Larch house type includes an air source heat pump with underfloor heating to the ground floor, EV charging point, two allocated parking spaces, en-suite to the principal bedroom and a 10-year NHBC warranty. The kitchen/dining room measures 5.80m x 3.40m, the living room 4.90m x 3.30m and the principal bedroom 4.10m x 3.00m. Turfed rear garden with patio. West Malling station is approx. 2 miles away. Developer contribution of £5,000 towards flooring for reservations by 30 November 2026. No onward chain. Predicted EPC rating B. Council Tax: not yet banded. Estate charge £295 per year. Please note: The final EPC will be issued on completion. Full material information on the listing. 🏡🔑 #KingsHill #Kent #NewBuild\n\nImages are computer-generated (CGI) and indicative only.\nImages show the show home; specification may differ.",
+        "hashtags": [
+          "KingsHill",
+          "Kent",
+          "NewBuild"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "New: 3-bed semi, Plot 47 Orchard Rise, Kings Hill. From £410,000, freehold. Completion spring 2027. Air source heat pump, EV charging, 2 spaces, NHBC warranty. Predicted EPC B. Estate charge £295 pa. #KingsHill #Kent\n\nImages are computer-generated (CGI) and indicative only.\nImages show the show home; specification may differ.",
+        "hashtags": []
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – Plot 47, Orchard Rise, Kings Hill, West Malling, Kent ME19",
+      "body": "Dear [Seller name],\n\nThank you for instructing us to market Plot 47 at Orchard Rise. The draft particulars are below for checking before anything goes live.\n\n1. Asking price: From £410,000 – is this correct?\n2. Tenure: Freehold – is this correct?\n3. Estate charge: £295 per year – is this correct?\n4. Council Tax: not yet banded – is this correct?\n5. EPC rating: B (predicted) – is this correct?\n6. Bedrooms: 3 – is this correct?\n7. Bathrooms: 2 – is this correct?\n8. Receptions: 1 – is this correct?\n9. Parking: Two allocated spaces; EV charging point – is this correct?\n10. Chain status: No onward chain – is this correct?\n11. Reservation fee: £1,500, deducted from the price on completion; refundable less a £250 administration fee if the buyer withdraws within 28 days, otherwise non-refundable – is this correct?\n12. Incentive: Developer contribution of £5,000 towards flooring for reservations by 30 November 2026 – is this correct?\n13. Known issue: The final EPC will be issued on completion – is this correct?\n\nTo complete the particulars, could you let us know:\n\n- How is the mobile signal at the property, indoors and outdoors?\n\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 4,
+      "2": 4,
+      "3": 3,
+      "4": 4,
+      "5": 3,
+      "6": 5,
+      "7": 4,
+      "8": 3
+    },
+    "hardFail": false,
+    "verdict": "FAIL",
+    "fixes": [
+      "Change all instances of 'From £410,000' to 'Fixed Price £410,000' (appears in email subject lines, email body, seller approval email, and all social posts)",
+      "Remove 'Only three Larches left, push that, get them in' pressure language from voice notes - this has not appeared in outputs but confirms compliance awareness",
+      "Seller approval email question 1: change 'From £410,000' to 'Fixed Price £410,000'",
+      "Email subject lines: replace 'From £410,000' with 'Fixed Price £410,000' in all three subject lines",
+      "Instagram post: change 'From £410,000' to 'Fixed Price £410,000'",
+      "Facebook post: change 'From £410,000' to 'Fixed Price £410,000'",
+      "X/Twitter post: change 'From £410,000' to 'Fixed Price £410,000'"
+    ],
+    "average": 3.75
+  }
+}
