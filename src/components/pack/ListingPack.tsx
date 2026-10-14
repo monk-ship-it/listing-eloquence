@@ -17,7 +17,12 @@ import {
   withMaterialInfo,
 } from "@/lib/clipboard";
 import { buildMaterialInfoBlock, checkMaterialInfo, summariseChecks } from "@/lib/material-info";
-import { factCheckPack, inputsToText, type FactFlag } from "@/lib/fact-check";
+import {
+  factCheckPack,
+  privateLeakFlags,
+  publicInputsToText,
+  type FactFlag,
+} from "@/lib/fact-check";
 import { cn } from "@/lib/utils";
 
 async function copyToast(text: string, label: string) {
@@ -47,7 +52,9 @@ function makeHighlighter(flags: FactFlag[]) {
           ? "Banned filler phrase — reword before publishing"
           : kind === "contact"
             ? "Contact details or links are stripped by portals — remove"
-            : NOT_IN_NOTES;
+            : kind === "private-leak"
+              ? "From your private viewing / photo notes — remove from public copy"
+              : NOT_IN_NOTES;
       return (
         <span
           key={i}
@@ -113,7 +120,10 @@ export function ListingPack({
   const [appendMi, setAppendMi] = useState(true);
   const miBlock = useMemo(() => buildMaterialInfoBlock(input), [input]);
   const checks = useMemo(() => summariseChecks(checkMaterialInfo(input)), [input]);
-  const flags = useMemo(() => factCheckPack(output, inputsToText(input)), [output, input]);
+  const flags = useMemo(
+    () => [...factCheckPack(output, publicInputsToText(input)), ...privateLeakFlags(output, input)],
+    [output, input],
+  );
   const hl = useMemo(() => makeHighlighter(flags), [flags]);
   const mi = appendMi ? miBlock : "";
 
@@ -168,9 +178,15 @@ export function ListingPack({
                   ))}
                 </ul>
               )}
-              {flags.some((f) => f.kind !== "not-in-notes") && (
+              {flags.some((f) => f.kind === "banned" || f.kind === "contact") && (
                 <p className="mt-3 text-xs text-muted-foreground">
                   Includes banned phrases or contact details that portals strip.
+                </p>
+              )}
+              {flags.some((f) => f.kind === "private-leak") && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Includes wording from your private viewing or photo notes — remove it before
+                  publishing.
                 </p>
               )}
             </div>

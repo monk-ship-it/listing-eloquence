@@ -37,6 +37,7 @@ import {
   type TextFieldKey,
 } from "@/lib/listing-fields";
 import { ListingPack } from "@/components/pack/ListingPack";
+import { WorkbenchExportMenu } from "@/components/admin/WorkbenchExportMenu";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -468,9 +469,10 @@ function GeneratorInner() {
 
             <Card className="p-5 sm:p-6">
               <ReadyMeter input={input} onJump={jumpToField} />
-              <h2 className="mt-4 font-display text-xl font-semibold">
-                Structured property details
-              </h2>
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="font-display text-xl font-semibold">Structured property details</h2>
+                <WorkbenchExportMenu input={input} />
+              </div>
               <p className="mt-1 text-sm text-muted-foreground">
                 Type or paste exact facts below. These are used alongside your voice notes, and take
                 priority if anything conflicts.

@@ -9,7 +9,11 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "prompts:export": "bun ./scripts/export-workbench.ts",
+    "prompts:check": "bun ./scripts/export-workbench.ts --check",
+    "evals": "bun ./scripts/prompt-evals/run.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

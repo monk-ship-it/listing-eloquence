@@ -24,6 +24,7 @@ import {
   type GenerationRecord,
 } from "@/lib/generations.functions";
 import { ListingPack } from "@/components/pack/ListingPack";
+import { WorkbenchExportMenu } from "@/components/admin/WorkbenchExportMenu";
 import { coerceLegacyInput } from "@/lib/listing-types";
 import { Trash2, FileText, ChevronDown, ChevronUp, Loader2, Plus, RefreshCw } from "lucide-react";
 
@@ -223,6 +224,11 @@ function HistoryItem({
             </span>
           </span>
         </button>
+        <div className="flex items-center gap-1">
+        <WorkbenchExportMenu
+          generationId={item.id}
+          storedPromptVersion={item.output.meta?.promptVersion ?? null}
+        />
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
@@ -258,6 +264,7 @@ function HistoryItem({
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+        </div>
       </div>
 
       {open && (

@@ -1,0 +1,17 @@
+Create the core copy for a UK property sales listing from the details below.
+
+STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
+{{PROPERTY_DETAILS}}
+MATERIAL INFORMATION (verbatim facts — state these accurately; never contradict or soften):
+{{MATERIAL_INFORMATION}}
+{{PRIVATE_NOTES}}{{VOICE_NOTES}}
+Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never invent or upgrade figures from the notes.
+Seller approval of particulars: {{SELLER_APPROVAL}}.
+
+PRODUCE:
+- "headline": brochure / email headline, max 70 characters.
+- "listing": the portal description — plain-text paragraphs separated by a blank line (opening, accommodation, outside space, location, then the material facts per your rules).
+- "summary": the strapline (portal summary), max 250 characters; the first 160 characters must stand alone; don't open with the bedroom count or property type.
+- "keyFeatures": 6–10 bullets, max 80 characters each, one fact per bullet, no full stops; the first three are the most decision-relevant facts.
+
+Return the result by calling the submit_listing_core tool.{{LIMIT_REMINDER}}

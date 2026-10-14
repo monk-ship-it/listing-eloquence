@@ -1,198 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { callClaudeTool } from "./ai-gateway.server";
-import { VOICE_PROMPTS, type VoiceId } from "./voices";
-import { MASTER_LISTING_SYSTEM_PROMPT } from "./master-listing-prompt";
-import type { CoreOutput, ListingInput, ListingOutput, MarketingOutput } from "./listing-types";
-import { coerceLegacyOutput, validateCoreOutput, validateMarketingOutput } from "./listing-types";
-import { VOICES } from "./voices";
-import { FIELD_BY_KEY, FIELD_DEFS } from "./listing-fields";
-import { buildMaterialInfoBlock, checkMaterialInfo, summariseChecks } from "./material-info";
-
-/** Max characters accepted per free-text field to keep payloads sane. */
-const MAX_FIELD_LEN = 4000;
-const MAX_VOICE_NOTES_LEN = 8000;
-
-const VALID_VOICES = new Set(VOICES.map((v) => v.id));
-
-function clip(v: unknown, max: number, label: string): string {
-  if (v === undefined || v === null || v === "") return "";
-  if (typeof v !== "string") throw new Error(`${label} must be text.`);
-  // eslint-disable-next-line no-control-regex
-  const t = v.replace(/\u0000/g, "").trim();
-
-  if (t.length > max) {
-    throw new Error(`${label} is too long (max ${max.toLocaleString()} characters).`);
-  }
-  return t;
-}
-
-function normaliseInput(input: ListingInput): ListingInput {
-  if (!VALID_VOICES.has(input.voice)) {
-    throw new Error("Please choose a valid brand voice.");
-  }
-  const out = { ...input, market: "uk" } as ListingInput;
-  const stringKeys: string[] = [...FIELD_DEFS.map((d) => d.key), "utilities"];
-  for (const k of stringKeys) {
-    const max = k === "voiceNotes" ? MAX_VOICE_NOTES_LEN : MAX_FIELD_LEN;
-    (out as unknown as Record<string, string>)[k] = clip(
-      (input as unknown as Record<string, unknown>)[k],
-      max,
-      FIELD_BY_KEY[k]?.label ?? k,
-    );
-  }
-  out.sellerApproved = input.sellerApproved === true;
-  return out;
-}
-
-function field(label: string, value: string | undefined) {
-  return value && value.trim() ? `- ${label}: ${value.trim()}\n` : "";
-}
-
-const PRIVATE_KEYS = new Set(["showingNotes", "mediaNotes"]);
-
-function buildFacts(input: ListingInput): string {
-  let details = "";
-  let privateNotes = "";
-  for (const def of FIELD_DEFS) {
-    if (def.key === "voiceNotes") continue;
-    if (def.showIf && !def.showIf(input)) continue;
-    const v = input[def.key];
-    if (PRIVATE_KEYS.has(def.key)) privateNotes += field(def.label, v);
-    else
-      details += field(
-        def.key === "targetAudience"
-          ? "Likely buyer (emphasis only — never exclude anyone)"
-          : def.label,
-        v,
-      );
-  }
-  // Legacy combined supplies field from older saved listings.
-  details += field("Utilities / broadband (legacy)", input.utilities);
-
-  const mi = buildMaterialInfoBlock(input);
-  const voiceNotes = input.voiceNotes?.trim()
-    ? `\nAGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):\n${input.voiceNotes.trim()}\n`
-    : "";
-
-  return `STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
-${details || "- (none supplied — use the voice notes)\n"}
-MATERIAL INFORMATION (verbatim facts — state these accurately; never contradict or soften):
-${mi || "(none supplied)"}
-${privateNotes ? `\nPRIVATE NOTES (never quote or use in any output; only use photo notes to add a "virtual staging" / "CGI" / "show home" label where images are referenced):\n${privateNotes}` : ""}${voiceNotes}
-Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never invent or upgrade figures from the notes.
-Seller approval of particulars: ${input.sellerApproved ? "confirmed" : "NOT confirmed"}.`;
-}
-
-const LIMIT_REMINDER =
-  "\n\nIMPORTANT: your previous answer broke the output limits. The strapline must be 250 characters or fewer, and every key feature 80 characters or fewer.";
-
-function buildCorePrompt(input: ListingInput, reminder = false): string {
-  return `Create the core copy for a UK property sales listing from the details below.
-
-${buildFacts(input)}
-
-PRODUCE:
-- "headline": brochure / email headline, max 70 characters.
-- "listing": the portal description — plain-text paragraphs separated by a blank line (opening, accommodation, outside space, location, then the material facts per your rules).
-- "summary": the strapline (portal summary), max 250 characters; the first 160 characters must stand alone; don't open with the bedroom count or property type.
-- "keyFeatures": 6–10 bullets, max 80 characters each, one fact per bullet, no full stops; the first three are the most decision-relevant facts.
-
-Return the result by calling the ${CORE_TOOL} tool.${reminder ? LIMIT_REMINDER : ""}`;
-}
-
-function buildMarketingPrompt(input: ListingInput): string {
-  const gaps = summariseChecks(checkMaterialInfo(input)).open.filter(
-    (i) => i.severity !== "block" && i.question,
-  );
-  const gapList = gaps.length
-    ? gaps.map((g) => `- ${g.question}`).join("\n")
-    : "- (none — all supplies and Part C items are answered)";
-  return `Create the marketing copy (applicant email, seller approval email and social posts) for a new UK sales instruction from the details below.
-
-${buildFacts(input)}
-
-EMAIL BLAST (new-instruction email to the agent's registered applicants) — follow your Email Blast limits:
-- "subjectLines": exactly 3, max 60 characters, no urgency or clickbait. "previewText": max 90. "headline". "callToAction": e.g. "View full details" or "Book a viewing".
-- "body": 2–4 short plain-text paragraphs separated by a blank line, no bullet list, greeting name or sign-off. Include price and qualifier, tenure, council tax band, EPC rating and (leasehold/shared ownership) the key costs. End with "Full material information is on the property listing."
-
-SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, asking them to check the draft particulars before they go live.
-- 150–250 words, warm and professional, plain text. Open "Dear [Seller name]," — never invent a name.
-- A numbered list of every key fact supplied above for them to confirm: price and qualifier, tenure, lease figures, council tax, EPC, room counts, parking, supplies and each answered Part C item. Only facts supplied — nothing else.
-- Then ask these questions in plain English so the particulars are complete:
-${gapList}
-- End with "[Your name, branch, phone]".
-
-SOCIAL: exactly three posts — platform "Instagram", "Facebook" and "X" — each caption includes price and qualifier and tenure; add "Full material information on the listing." where space runs out; relevant hashtags (words only, no '#').
-
-Return the result by calling the ${MARKETING_TOOL} tool.`;
-}
-
-const CORE_TOOL = "submit_listing_core";
-const MARKETING_TOOL = "submit_listing_marketing";
-
-const CORE_SCHEMA = {
-  type: "object",
-  properties: {
-    headline: { type: "string", description: "Brochure / email headline, max 70 characters" },
-    listing: {
-      type: "string",
-      description: "Portal description, plain-text paragraphs separated by \\n\\n",
-    },
-    summary: { type: "string", description: "Strapline (portal summary), max 250 characters" },
-    keyFeatures: {
-      type: "array",
-      items: { type: "string" },
-      minItems: 6,
-      maxItems: 10,
-      description: "6–10 bullets, max 80 characters each",
-    },
-  },
-  required: ["headline", "listing", "summary", "keyFeatures"],
-};
-
-const MARKETING_SCHEMA = {
-  type: "object",
-  properties: {
-    emailBlast: {
-      type: "object",
-      properties: {
-        subjectLines: { type: "array", items: { type: "string" }, minItems: 3, maxItems: 3 },
-        previewText: { type: "string" },
-        headline: { type: "string" },
-        body: { type: "string" },
-        callToAction: { type: "string" },
-      },
-      required: ["subjectLines", "previewText", "headline", "body", "callToAction"],
-    },
-    sellerEmail: {
-      type: "object",
-      properties: { body: { type: "string" } },
-      required: ["body"],
-    },
-    social: {
-      type: "array",
-      minItems: 3,
-      maxItems: 3,
-      items: {
-        type: "object",
-        properties: {
-          platform: { type: "string", enum: ["Instagram", "Facebook", "X"] },
-          caption: { type: "string" },
-          hashtags: { type: "array", items: { type: "string" } },
-        },
-        required: ["platform", "caption", "hashtags"],
-      },
-    },
-  },
-  required: ["emailBlast", "sellerEmail", "social"],
-};
-
-function systemPromptFor(voiceId: string): string {
-  const voice = (voiceId ?? "professional") as VoiceId;
-  const voicePrompt = VOICE_PROMPTS[voice] ?? VOICE_PROMPTS.professional;
-  return `${MASTER_LISTING_SYSTEM_PROMPT}\n\nBRAND VOICE FOR THIS LISTING:\n${voicePrompt}\n\nReturn your answer only by calling the provided tool.`;
-}
+import { getConfiguredClaudeModel } from "./ai-gateway.server";
+import { runCore, runMarketing } from "./generation.server";
+import type { VoiceId } from "./voices";
+import type { ListingInput, ListingOutput, MarketingOutput } from "./listing-types";
+import { coerceLegacyOutput } from "./listing-types";
+import { isValidVoice, normaliseInput } from "./prompts/render";
+import { PROMPT_VERSION } from "./prompts/version.gen";
 
 function errorCode(err: unknown): string {
   const m = err instanceof Error ? err.message : String(err);
@@ -219,88 +33,6 @@ async function logGenerationError(
     await supabaseAdmin.from("generation_errors").insert({ user_id: userId, stage, code });
   } catch (e) {
     console.error("generation_errors insert failed", e);
-  }
-}
-
-function breaksLimits(o: CoreOutput): boolean {
-  return o.summary.length > 250 || o.keyFeatures.some((f) => f.length > 80);
-}
-
-/**
- * CORE call: retry once on truncation/invalid output (8000 tokens) or timeout.
- * If the strapline or a bullet breaks its limit, retry once with a reminder,
- * then accept (the UI counters flag anything still over).
- */
-export async function runCore(input: ListingInput, userId: string): Promise<CoreOutput> {
-  const system = systemPromptFor(input.voice);
-  let retried = false;
-  const attempt = async (maxTokens: number, reminder = false) =>
-    validateCoreOutput(
-      await callClaudeTool({
-        system,
-        user: buildCorePrompt(input, reminder),
-        toolName: CORE_TOOL,
-        toolDescription: "Submit the headline, portal description, strapline and key features.",
-        inputSchema: CORE_SCHEMA,
-        maxTokens,
-      }),
-    );
-  let out: CoreOutput;
-  try {
-    out = await attempt(6000);
-  } catch (err) {
-    await logGenerationError(userId, "core", err);
-    const code = errorCode(err);
-    retried = true;
-    if (code === "AI_TRUNCATED" || code === "MALFORMED_AI_OUTPUT") out = await attempt(8000);
-    else if (code === "AI_TIMEOUT") out = await attempt(6000);
-    else throw err;
-  }
-  if (!retried && breaksLimits(out)) {
-    await logGenerationError(userId, "core", new Error("LIMITS_EXCEEDED"));
-    try {
-      out = await attempt(6000, true);
-    } catch (err) {
-      await logGenerationError(userId, "core", err);
-    }
-  }
-  return out;
-}
-
-/** MARKETING call: one retry on any failure. */
-export async function runMarketing(
-  input: ListingInput,
-  userId: string,
-  stage: "marketing" | "regen" = "marketing",
-): Promise<MarketingOutput> {
-  const system = systemPromptFor(input.voice);
-  const user = buildMarketingPrompt(input);
-  const subject = `Your property details for approval – ${input.address?.trim() || "your property"}`;
-  const attempt = async () => {
-    const out = validateMarketingOutput(
-      await callClaudeTool({
-        system,
-        user,
-        toolName: MARKETING_TOOL,
-        toolDescription:
-          "Submit the Email Blast, the seller approval email and three social posts.",
-        inputSchema: MARKETING_SCHEMA,
-        maxTokens: 3500,
-      }),
-    );
-    if (out.sellerEmail) out.sellerEmail = { ...out.sellerEmail, subject };
-    return out;
-  };
-  try {
-    return await attempt();
-  } catch (err) {
-    await logGenerationError(userId, stage, err);
-    try {
-      return await attempt();
-    } catch (err2) {
-      await logGenerationError(userId, stage, err2);
-      throw err2;
-    }
   }
 }
 
@@ -375,9 +107,12 @@ export const generateListing = createServerFn({ method: "POST" })
     try {
       // Core and marketing run in parallel. Only core success is required
       // (and only it consumes the reserved listing credit).
+      const model = await getConfiguredClaudeModel();
+      const log = (stage: "core" | "marketing" | "regen", e: unknown) =>
+        logGenerationError(userId, stage, e);
       const [coreRes, mktRes] = await Promise.allSettled([
-        runCore(data, userId),
-        runMarketing(data, userId),
+        runCore(data, { log, model }),
+        runMarketing(data, { log, model }),
       ]);
       if (coreRes.status === "rejected") throw coreRes.reason;
 
@@ -385,6 +120,7 @@ export const generateListing = createServerFn({ method: "POST" })
         mktRes.status === "fulfilled"
           ? { ...coreRes.value, ...mktRes.value }
           : { ...coreRes.value, emailBlast: null, social: [], marketingStatus: "failed" };
+      parsed.meta = { promptVersion: PROMPT_VERSION, model };
 
       const voice = (data.voice ?? "professional") as VoiceId;
       const { data: savedGen, error: insertError } = await supabase
@@ -477,7 +213,7 @@ export const generateMarketingForGeneration = createServerFn({ method: "POST" })
     const rawInputs = (row.inputs ?? {}) as Record<string, unknown>;
     const input = {
       ...(rawInputs as unknown as ListingInput),
-      voice: (VALID_VOICES.has(rawInputs.voice as VoiceId)
+      voice: (isValidVoice(rawInputs.voice)
         ? rawInputs.voice
         : row.voice) as VoiceId,
     };
@@ -485,7 +221,7 @@ export const generateMarketingForGeneration = createServerFn({ method: "POST" })
     try {
       safeInput = normaliseInput({
         ...input,
-        voice: VALID_VOICES.has(input.voice) ? input.voice : "professional",
+        voice: isValidVoice(input.voice) ? input.voice : "professional",
       });
     } catch {
       safeInput = { ...input, voice: "professional" };
@@ -493,7 +229,10 @@ export const generateMarketingForGeneration = createServerFn({ method: "POST" })
 
     let mkt: MarketingOutput;
     try {
-      mkt = await runMarketing(safeInput, userId, "regen");
+      mkt = await runMarketing(safeInput, {
+        stage: "regen",
+        log: (stage, e) => logGenerationError(userId, stage, e),
+      });
     } catch (err) {
       const code = errorCode(err);
       throw new Error(code === "UNKNOWN" ? "AI_UNAVAILABLE" : code);

@@ -1,0 +1,85 @@
+{
+  "type": "object",
+  "properties": {
+    "emailBlast": {
+      "type": "object",
+      "properties": {
+        "subjectLines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "previewText": {
+          "type": "string"
+        },
+        "headline": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "callToAction": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "subjectLines",
+        "previewText",
+        "headline",
+        "body",
+        "callToAction"
+      ]
+    },
+    "sellerEmail": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "body"
+      ]
+    },
+    "social": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "type": "string",
+            "enum": [
+              "Instagram",
+              "Facebook",
+              "X"
+            ]
+          },
+          "caption": {
+            "type": "string"
+          },
+          "hashtags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "platform",
+          "caption",
+          "hashtags"
+        ]
+      }
+    }
+  },
+  "required": [
+    "emailBlast",
+    "sellerEmail",
+    "social"
+  ]
+}

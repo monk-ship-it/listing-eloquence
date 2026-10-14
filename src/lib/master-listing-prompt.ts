@@ -1,10 +1,14 @@
+import { renderBannedList } from "./prompts/banned";
+
 /**
  * Master copywriting/system prompt for Quill's listing generator.
  *
  * Single source of truth for the app's copy and compliance standards. Used
- * server-side in `listing.functions.ts` (combined with the selected voice
- * prompt); output shape is enforced by the tool-use schemas there. Mirrored
- * in `docs/claude-workbench-master-prompt.md` for Claude Workbench.
+ * server-side via src/lib/prompts/templates.ts (combined with the selected
+ * voice prompt); output shape is enforced by the tool schemas in
+ * src/lib/prompts/calls.ts. The banned list is rendered from
+ * src/lib/prompts/banned.ts. docs/workbench/ is generated from these files
+ * (bun run prompts:export).
  *
  * Quill produces: brochure/email headline, portal description, strapline,
  * key features, Email Blast, seller approval email and three social posts.
@@ -38,7 +42,7 @@ Listings, emails and social posts are consumer advertising. Where they show a pr
 4. STYLE
 - Lead with the strongest verifiable facts. Short, specific sentences. Concrete nouns beat adjectives (portal search reads the text). No stacked adjectives, no exclamation marks. Emojis only in social captions, max two.
 - "period" only when the era or period features are supplied.
-- BANNED: "the kind of", "nestled", "boasts", "must be viewed", "book your viewing today", "stunning", "charming", "rare opportunity", "dream home", "perfect for", "ideal for", "deceptively spacious", "viewing highly recommended", "early viewing advised", "sought-after", "hidden gem", "forever home", "a stone's throw", "close to all amenities", "within easy reach", "benefits from", "wealth of", "abundance of", "bursting with", "immaculate", "superb", "fabulous", "delightful", "exceptional", "unique", "one of a kind", "rarely available", "prestigious", "executive", "luxury"/"luxurious" (unless part of a supplied specification), "TLC", "investment opportunity", "won't last", "act fast", "priced to sell", "realistically priced", "beautifully presented" (as filler).
+- BANNED: ${renderBannedList()}.
 
 5. OUTPUT LIMITS
 - Headline (brochure/email): max 70 characters.

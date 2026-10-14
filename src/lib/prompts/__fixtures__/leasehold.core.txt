@@ -1,0 +1,53 @@
+Create the core copy for a UK property sales listing from the details below.
+
+STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
+- Address / location: Flat 12, Riverside Court, Chatham, Kent ME4
+- Property type: Second-floor apartment
+- Key features: Open-plan kitchen/living room, balcony with river views, lift, allocated parking
+- Likely buyer (emphasis only — never exclude anyone): First-time buyer, Investor
+- Asking price (£): 235,000
+- Price qualifier: Offers in Excess of
+- Tenure: Leasehold
+- Chain: Chain involved
+- Lease remaining (yrs): 112
+- Ground rent (£ per year): 250
+- Ground rent review: reviewed every 25 years
+- Service charge (£ per year): 1,840
+- Service charge period: y/e Mar 2026
+- Bedrooms: 2
+- Bathrooms: 1
+- Receptions: 1
+- Room dimensions: Kitchen/living room 6.10m x 4.20m; Bedroom 1 3.90m x 3.20m
+- Council Tax band: C
+- Local authority: Medway Council
+- EPC rating: C
+- Electricity: Mains
+- Water: Mains
+- Water metered?: Yes
+- Sewerage: Mains
+- Heating: Electric panel heaters
+- Broadband: FTTP
+- Parking: One allocated space
+- Nearby (schools, transport, amenities): Chatham station
+
+MATERIAL INFORMATION (verbatim facts — state these accurately; never contradict or soften):
+Price: Offers in Excess of £235,000
+Tenure: Leasehold · 112 years remaining
+Ground rent: £250 per year (reviewed every 25 years)
+Service charge: £1,840 per year (y/e Mar 2026)
+Council Tax: Band C (Medway Council)
+EPC rating: C
+Electricity: Mains · Water: Mains (metered) · Sewerage: Mains · Heating: Electric panel heaters
+Broadband: FTTP
+Parking: One allocated space
+
+Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never invent or upgrade figures from the notes.
+Seller approval of particulars: NOT confirmed.
+
+PRODUCE:
+- "headline": brochure / email headline, max 70 characters.
+- "listing": the portal description — plain-text paragraphs separated by a blank line (opening, accommodation, outside space, location, then the material facts per your rules).
+- "summary": the strapline (portal summary), max 250 characters; the first 160 characters must stand alone; don't open with the bedroom count or property type.
+- "keyFeatures": 6–10 bullets, max 80 characters each, one fact per bullet, no full stops; the first three are the most decision-relevant facts.
+
+Return the result by calling the submit_listing_core tool.

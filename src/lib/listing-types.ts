@@ -109,6 +109,8 @@ export interface ListingOutput {
   sellerEmail?: SellerEmail | null;
   /** "failed" when the email/social call failed; can be generated free later. */
   marketingStatus?: "failed";
+  /** Prompt version + model that produced this pack (set from Prompt Lab 1 on). */
+  meta?: { promptVersion: string; model: string };
 }
 
 // Sensible per-field length caps for the Email Blast.
@@ -398,7 +400,16 @@ export function coerceLegacyOutput(raw: unknown): ListingOutput {
     social,
     sellerEmail: coerceSellerEmail(r.sellerEmail),
     ...(r.marketingStatus === "failed" ? { marketingStatus: "failed" as const } : {}),
+    ...(coerceMeta(r.meta) ? { meta: coerceMeta(r.meta)! } : {}),
   };
+}
+
+function coerceMeta(raw: unknown): { promptVersion: string; model: string } | null {
+  if (!raw || typeof raw !== "object") return null;
+  const m = raw as Record<string, unknown>;
+  return typeof m.promptVersion === "string" && typeof m.model === "string"
+    ? { promptVersion: m.promptVersion, model: m.model }
+    : null;
 }
 
 export const EMPTY_INPUT: ListingInput = {

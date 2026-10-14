@@ -1,9 +1,7 @@
-interface ChatMessage {
-  role: "system" | "user" | "assistant";
-  content: string;
-}
+import { DEFAULT_CLAUDE_MODEL, type ClaudeToolOpts } from "./prompts/calls";
 
-export const DEFAULT_CLAUDE_MODEL = "claude-sonnet-4-5-20250929";
+export { DEFAULT_CLAUDE_MODEL };
+export type { ClaudeToolOpts };
 
 /** Reads the configured Claude model id from app_settings, falling back to the default. */
 export async function getConfiguredClaudeModel(): Promise<string> {
@@ -20,72 +18,33 @@ export async function getConfiguredClaudeModel(): Promise<string> {
   }
 }
 
+export interface CallMeta {
+  ms: number;
+  stopReason: string | null;
+  usage: { input_tokens?: number; output_tokens?: number } | null;
+}
+
 /**
- * Calls Anthropic's Claude (Messages API) and returns the model's text content.
- * The prompt asks for JSON, so callers parse the returned string as JSON.
- * When `model` is omitted, the model configured in app_settings is used.
+ * The exact Messages API body for a tool call. Used by callClaudeTool and by
+ * every export (admin "Copy for Workbench", eval --dry) so they serialise
+ * identically.
  */
-export async function callLovableAiJson(messages: ChatMessage[], model?: string): Promise<string> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error("Missing ANTHROPIC_API_KEY");
-
-  const resolvedModel = model || (await getConfiguredClaudeModel());
-
-  const systemPrompt = messages
-    .filter((m) => m.role === "system")
-    .map((m) => m.content)
-    .join("\n\n");
-
-  const conversation = messages
-    .filter((m) => m.role !== "system")
-    .map((m) => ({ role: m.role, content: m.content }));
-
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 60_000);
-  let res: Response;
-  try {
-    res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
+export function toApiBody(opts: ClaudeToolOpts, model: string): Record<string, unknown> {
+  return {
+    model,
+    max_tokens: opts.maxTokens,
+    ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),
+    system: opts.system,
+    messages: [{ role: "user", content: opts.user }],
+    tools: [
+      {
+        name: opts.toolName,
+        description: opts.toolDescription ?? "Return the requested copy.",
+        input_schema: opts.inputSchema,
       },
-      body: JSON.stringify({
-        model: resolvedModel,
-        max_tokens: 4096,
-        system: systemPrompt || undefined,
-        messages: conversation,
-      }),
-    });
-  } catch (err) {
-    clearTimeout(timer);
-    if (err instanceof Error && err.name === "AbortError") {
-      throw new Error("AI_TIMEOUT");
-    }
-    console.error("Claude request failed", err);
-    throw new Error("AI_UNAVAILABLE");
-  }
-
-  try {
-    if (res.status === 429) {
-      throw new Error("RATE_LIMIT");
-    }
-    if (!res.ok) {
-      // Raw provider body stays in server logs only.
-      const text = await res.text().catch(() => "");
-      console.error("Claude API error", res.status, text);
-      throw new Error("AI_UNAVAILABLE");
-    }
-    const data = await res.json();
-    return extractText(data);
-  } catch (err) {
-    if (err instanceof Error && err.name === "AbortError") throw new Error("AI_TIMEOUT");
-    throw err;
-  } finally {
-    clearTimeout(timer);
-  }
+    ],
+    tool_choice: { type: "tool", name: opts.toolName },
+  };
 }
 
 /**
@@ -93,17 +52,9 @@ export async function callLovableAiJson(messages: ChatMessage[], model?: string)
  * Throws friendly codes only: AI_TIMEOUT, RATE_LIMIT, AI_UNAVAILABLE,
  * AI_TRUNCATED (stop_reason max_tokens) or MALFORMED_AI_OUTPUT.
  */
-export async function callClaudeTool(opts: {
-  system: string;
-  user: string;
-  toolName: string;
-  toolDescription?: string;
-  inputSchema: Record<string, unknown>;
-  maxTokens: number;
-  timeoutMs?: number;
-  model?: string;
-  temperature?: number;
-}): Promise<unknown> {
+export async function callClaudeTool(
+  opts: ClaudeToolOpts & { onMeta?: (m: CallMeta) => void },
+): Promise<unknown> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     console.error("Missing ANTHROPIC_API_KEY");
@@ -112,6 +63,14 @@ export async function callClaudeTool(opts: {
   const model = opts.model || (await getConfiguredClaudeModel());
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), opts.timeoutMs ?? 90_000);
+  const started = Date.now();
+  const meta = (stopReason: string | null, usage: CallMeta["usage"]) => {
+    try {
+      opts.onMeta?.({ ms: Date.now() - started, stopReason, usage });
+    } catch {
+      // never let instrumentation break a call
+    }
+  };
   try {
     let res: Response;
     try {
@@ -123,37 +82,30 @@ export async function callClaudeTool(opts: {
           "x-api-key": apiKey,
           "anthropic-version": "2023-06-01",
         },
-        body: JSON.stringify({
-          model,
-          max_tokens: opts.maxTokens,
-          ...(opts.temperature !== undefined ? { temperature: opts.temperature } : {}),
-          system: opts.system,
-          messages: [{ role: "user", content: opts.user }],
-          tools: [
-            {
-              name: opts.toolName,
-              description: opts.toolDescription ?? "Return the requested copy.",
-              input_schema: opts.inputSchema,
-            },
-          ],
-          tool_choice: { type: "tool", name: opts.toolName },
-        }),
+        body: JSON.stringify(toApiBody(opts, model)),
       });
     } catch (err) {
+      meta(null, null);
       if (err instanceof Error && err.name === "AbortError") throw new Error("AI_TIMEOUT");
       console.error("Claude request failed", err);
       throw new Error("AI_UNAVAILABLE");
     }
-    if (res.status === 429) throw new Error("RATE_LIMIT");
+    if (res.status === 429) {
+      meta(null, null);
+      throw new Error("RATE_LIMIT");
+    }
     if (!res.ok) {
       const text = await res.text().catch(() => "");
       console.error("Claude API error", res.status, text);
+      meta(null, null);
       throw new Error("AI_UNAVAILABLE");
     }
     const data = (await res.json()) as {
       stop_reason?: string;
+      usage?: CallMeta["usage"];
       content?: { type?: string; name?: string; input?: unknown }[];
     };
+    meta(data.stop_reason ?? null, data.usage ?? null);
     if (data.stop_reason === "max_tokens") throw new Error("AI_TRUNCATED");
     const block = (data.content ?? []).find(
       (b) => b?.type === "tool_use" && b.name === opts.toolName,
@@ -168,15 +120,6 @@ export async function callClaudeTool(opts: {
   } finally {
     clearTimeout(timer);
   }
-}
-
-function extractText(data: unknown): string {
-  const d = data as { content?: unknown };
-  const blocks = Array.isArray(d?.content) ? d.content : [];
-  return blocks
-    .filter((b: { type?: string }) => b?.type === "text")
-    .map((b: { text?: string }) => b.text ?? "")
-    .join("");
 }
 
 /**
