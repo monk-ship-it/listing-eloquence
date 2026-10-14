@@ -280,7 +280,7 @@ export function priceQualifierProblems(
   const forms = [`£${n.toLocaleString("en-GB")}`];
   if (n % 1000 === 0) forms.push(`£${n / 1000}k`);
   const amountRe = new RegExp(
-    `(${forms.map((f) => f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})(?![\\d,])`,
+    `(${forms.map((f) => f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})(?!,?\\d)`,
     "gi",
   );
   const want = canonical(input.priceQualifier);
