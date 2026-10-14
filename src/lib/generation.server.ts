@@ -99,9 +99,12 @@ export async function runCore(input: ListingInput, opts: RunOpts = {}): Promise<
   if (!retried && (p.limits || p.banned.length)) {
     await opts.log?.(
       "core",
-      new Error(`${p.limits ? "LIMITS_EXCEEDED " : ""}${p.banned.length ? `BANNED: ${p.banned.join(",")}` : ""}`.trim()),
+      new Error(
+        `${p.limits ? "LIMITS_EXCEEDED " : ""}${p.banned.length ? `BANNED: ${p.banned.join(",")}` : ""}`.trim(),
+      ),
     );
-    const reminder = (p.limits ? LIMIT_REMINDER : "") + (p.banned.length ? bannedReminder(p.banned) : "");
+    const reminder =
+      (p.limits ? LIMIT_REMINDER : "") + (p.banned.length ? bannedReminder(p.banned) : "");
     try {
       const second = await attempt(S.maxTokens, reminder);
       if (score(second) <= score(out)) out = second;

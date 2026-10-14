@@ -10,8 +10,12 @@ import type { ListingInput, MarketingOutput } from "./listing-types";
 
 describe("image labels", () => {
   it("one label per trigger, fixed order", () => {
-    expect(imageLabelsFor("Lounge virtually staged; exterior is CGI; show home photos")).toHaveLength(3);
-    expect(imageLabelsFor("Digitally altered sky")).toEqual(["Some images have been digitally enhanced."]);
+    expect(
+      imageLabelsFor("Lounge virtually staged; exterior is CGI; show home photos"),
+    ).toHaveLength(3);
+    expect(imageLabelsFor("Digitally altered sky")).toEqual([
+      "Some images have been digitally enhanced.",
+    ]);
     expect(imageLabelsFor("Photos taken in May")).toEqual([]);
     expect(imageLabelsFor("computer-generated garden")).toHaveLength(1);
   });

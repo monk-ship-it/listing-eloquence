@@ -67,7 +67,7 @@ export const RETRY_RULES = {
   marketing: [
     "Any failure: retry once. If the retry fails the listing is still saved without the email/social pack.",
     "If the X caption + hashtags is over 280 characters, or a caption misses the price or tenure: retry once with marketing.reminder.txt appended to the user message; then accept (the UI counters flag anything still over).",
-    "Merged into that same single retry: banned phrases in any public output (banned-reminder.txt) and a missing \"Please note:\" sentence in the Email Blast body or Instagram/Facebook caption when known issues or Part C Yes items exist (please-note-reminder.txt). The answer with fewer problems is kept.",
+    'Merged into that same single retry: banned phrases in any public output (banned-reminder.txt) and a missing "Please note:" sentence in the Email Blast body or Instagram/Facebook caption when known issues or Part C Yes items exist (please-note-reminder.txt). The answer with fewer problems is kept.',
     "The app appends the fixed image label(s) as the last line of every caption (X: trailing hashtags are dropped to stay within 280).",
   ],
   extract: [
@@ -181,7 +181,8 @@ export function buildCoreRequest(
   input: ListingInput,
   opts: { reminder?: boolean | string; maxTokens?: number } = {},
 ): ClaudeToolOpts {
-  const reminder = typeof opts.reminder === "string" ? opts.reminder : opts.reminder ? LIMIT_REMINDER : "";
+  const reminder =
+    typeof opts.reminder === "string" ? opts.reminder : opts.reminder ? LIMIT_REMINDER : "";
   const vars = { ...promptVars(input), LIMIT_REMINDER: reminder };
   return {
     system: renderSystem(input),
@@ -204,9 +205,7 @@ export function buildMarketingRequest(
     typeof opts.reminder === "string" ? opts.reminder : opts.reminder ? MARKETING_REMINDER : "";
   return {
     system: renderSystem(input),
-    user:
-      fillTemplate(MARKETING_USER_TEMPLATE, varsFor(MARKETING_USER_TEMPLATE, vars)) +
-      reminder,
+    user: fillTemplate(MARKETING_USER_TEMPLATE, varsFor(MARKETING_USER_TEMPLATE, vars)) + reminder,
     toolName: MARKETING_TOOL,
     toolDescription: TOOL_DESCRIPTIONS.marketing,
     inputSchema: MARKETING_SCHEMA,

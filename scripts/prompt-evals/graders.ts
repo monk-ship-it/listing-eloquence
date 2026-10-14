@@ -445,7 +445,6 @@ export function gradeMustInclude(pack: GradePack, c: EvalCase): Finding[] {
   return out;
 }
 
-
 const PART_C = [
   "buildingSafety",
   "restrictions",

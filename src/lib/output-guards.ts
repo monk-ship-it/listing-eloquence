@@ -41,7 +41,11 @@ function xLen(p: SocialPost): number {
 export function labelSocial(posts: SocialPost[], labels: string[]): SocialPost[] {
   if (!labels.length) return posts;
   return posts.map((p) => {
-    const next: SocialPost = { ...p, caption: appendLabels(p.caption, labels), hashtags: [...p.hashtags] };
+    const next: SocialPost = {
+      ...p,
+      caption: appendLabels(p.caption, labels),
+      hashtags: [...p.hashtags],
+    };
     if (p.platform === "X") while (next.hashtags.length && xLen(next) > 280) next.hashtags.pop();
     return next;
   });
@@ -107,9 +111,13 @@ export function hasKnownIssues(input: ListingInput): boolean {
 export function missingPleaseNote(out: MarketingOutput, input: ListingInput): string[] {
   if (!hasKnownIssues(input)) return [];
   const miss: string[] = [];
-  if (out.emailBlast && !/please note:/i.test(out.emailBlast.body)) miss.push("the Email Blast body");
+  if (out.emailBlast && !/please note:/i.test(out.emailBlast.body))
+    miss.push("the Email Blast body");
   for (const p of out.social)
-    if ((p.platform === "Instagram" || p.platform === "Facebook") && !/please note:/i.test(p.caption))
+    if (
+      (p.platform === "Instagram" || p.platform === "Facebook") &&
+      !/please note:/i.test(p.caption)
+    )
       miss.push(`the ${p.platform} caption`);
   return miss;
 }
