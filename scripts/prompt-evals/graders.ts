@@ -36,7 +36,16 @@ const strs = (v: unknown) =>
 /** Lenient view of raw tool output (before validate* patches it). */
 export function packFromRaw(core: unknown, mkt: unknown): GradePack {
   const c = (core ?? {}) as Record<string, unknown>;
-  const m = (mkt ?? {}) as Record<string, unknown>;
+  const m0 = (mkt ?? {}) as Record<string, unknown>;
+  const un = (v: unknown) => {
+    if (typeof v !== "string" || !/^\s*[[{]/.test(v)) return v;
+    try {
+      return JSON.parse(v);
+    } catch {
+      return v;
+    }
+  };
+  const m = { ...m0, emailBlast: un(m0.emailBlast), sellerEmail: un(m0.sellerEmail), social: un(m0.social) };
   const e =
     m.emailBlast && typeof m.emailBlast === "object"
       ? (m.emailBlast as Record<string, unknown>)

@@ -21,6 +21,7 @@ import { PROMPT_VERSION } from "../../src/lib/prompts/version.gen";
 import { caseInput } from "../../src/lib/prompts/workbench-export";
 import { FIELD_DEFS } from "../../src/lib/listing-fields";
 import type { ListingOutput } from "../../src/lib/listing-types";
+import { validateCoreOutput, validateMarketingOutput } from "../../src/lib/listing-types";
 import { gradeExtraction, gradePack, gradeRaw, packFromFinal, packFromRaw } from "./graders";
 import { llmGrade } from "./llm-grader";
 import { loadCases } from "./load-cases";
@@ -123,7 +124,21 @@ if (regradeDir) {
       extraction = { precision: g.precision, recall: g.recall };
     } else {
       const input = caseInput(c);
-      const final = saved.output as ListingOutput;
+      // --revalidate: rebuild the final pack from the saved raw tool output with today's validators.
+      let final = saved.output as ListingOutput;
+      if (flag("revalidate") && raw.core) {
+        try {
+          const core = validateCoreOutput(raw.core);
+          const mkt = raw.marketing ? validateMarketingOutput(raw.marketing) : null;
+          if (mkt?.sellerEmail)
+            mkt.sellerEmail = { ...mkt.sellerEmail, subject: final.sellerEmail?.subject ?? "" };
+          final = mkt
+            ? { ...final, ...core, ...mkt }
+            : { ...final, ...core, emailBlast: null, social: [], marketingStatus: "failed" };
+        } catch {
+          /* keep the saved output */
+        }
+      }
       findings = [
         ...gradePack(packFromFinal(final), input, c),
         ...gradeRaw(packFromRaw(raw.core, raw.marketing), input),
@@ -149,6 +164,7 @@ if (regradeDir) {
     llmGrade: results.some((r) => !!r.llm),
   };
   const out = opt("out") ? join(ROOT, opt("out")!) : `${src}-regraded`;
+  if (flag("revalidate")) h.label += "-revalidated";
   writeReport(out, h, results);
   console.log(`Regraded ${results.length} result(s): ${join(out, "report.md")}`);
   process.exit(0);
