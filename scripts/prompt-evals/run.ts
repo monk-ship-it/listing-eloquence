@@ -6,8 +6,9 @@
  *                    [--model id] [--concurrency 2] [--llm-grade] [--out dir] [--dry]
  */
 import { execSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { basename, join } from "node:path";
+import type { ExtractResult } from "../../src/lib/extract-filter";
 import { runCore, runExtraction, runMarketing } from "../../src/lib/generation.server";
 import { toApiBody } from "../../src/lib/ai-gateway.server";
 import {
@@ -94,6 +95,57 @@ if (dry) {
     writeFileSync(join(outDir, `${c.id}.requests.json`), JSON.stringify(body, null, 2) + "\n");
   }
   console.log(`Dry run: wrote ${cases.length} request file(s) to ${outDir}`);
+  process.exit(0);
+}
+
+// --regrade <dir>: re-run today's deterministic graders over a saved run's
+// outputs (no API calls; LLM grades and timings are kept as saved).
+const regradeDir = opt("regrade");
+if (regradeDir) {
+  const src = join(ROOT, regradeDir);
+  const files = readdirSync(src).filter((f) => /\.run\d+\.json$/.test(f));
+  const byId = new Map([...all.pack, ...all.extract].map((c) => [c.id, c]));
+  const oldReport = existsSync(join(src, "report.md")) ? readFileSync(join(src, "report.md"), "utf8") : "";
+  const results: CaseResult[] = [];
+  for (const f of files.sort()) {
+    const saved = JSON.parse(readFileSync(join(src, f), "utf8")) as CaseResult;
+    const c = byId.get(saved.id);
+    if (!c || (only && !only.includes(c.id))) continue;
+    const raw = saved.raw ?? {};
+    let findings: CaseResult["findings"] = [];
+    let extraction: CaseResult["extraction"];
+    if (saved.error) findings = [];
+    else if (c.call === "extract") {
+      const g = gradeExtraction(c, raw.extract, saved.output as ExtractResult);
+      findings = g.findings;
+      extraction = { precision: g.precision, recall: g.recall };
+    } else {
+      const input = caseInput(c);
+      const final = saved.output as ListingOutput;
+      findings = [...gradePack(packFromFinal(final), input, c), ...gradeRaw(packFromRaw(raw.core, raw.marketing), input)];
+      if (final.marketingStatus === "failed")
+        findings.push({ grader: "marketing", severity: "fail", message: "marketing call failed" });
+    }
+    results.push({
+      ...saved,
+      findings,
+      ...(extraction ? { extraction } : {}),
+      pass: !saved.error && !findings.some((x) => x.severity === "fail"),
+    });
+  }
+  const h: ReportHeader = {
+    ...header,
+    label: `${basename(src)}-regraded`,
+    model: oldReport.match(/Model: `([^`]+)`/)?.[1] ?? model,
+    promptVersion: oldReport.match(/PROMPT_VERSION: `([^`]+)`/)?.[1] ?? "unknown",
+    gitSha: oldReport.match(/Git sha: `([^`]+)`/)?.[1] ?? gitSha,
+    cases: new Set(results.map((r) => r.id)).size,
+    runs: Math.max(1, ...results.map((r) => r.run)),
+    llmGrade: results.some((r) => !!r.llm),
+  };
+  const out = opt("out") ? join(ROOT, opt("out")!) : `${src}-regraded`;
+  writeReport(out, h, results);
+  console.log(`Regraded ${results.length} result(s): ${join(out, "report.md")}`);
   process.exit(0);
 }
 
