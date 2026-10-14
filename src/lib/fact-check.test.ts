@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkText, factCheckPack } from "./fact-check";
+import { checkText, factCheckPack, keyFeatureCaveatFlags } from "./fact-check";
 
 const inputs =
   "Four bed semi on Brenzett Close, Chatham. Guide price 350,000. Living room 5.20m x 4.10m. Victorian fireplace.";
@@ -32,5 +32,52 @@ describe("fact check", () => {
     );
     expect(f.filter((x) => x.kind === "banned").map((x) => x.term)).toContain("stunning");
     expect(f.filter((x) => x.kind === "contact").length).toBeGreaterThan(0);
+  });
+});
+
+describe("list markers", () => {
+  it("ignores numbered-list markers at the start of a line", () => {
+    const f = checkText(
+      "Please check:\n6. Tenure: Freehold\n14) EPC rating\n 7: Parking",
+      "seller email",
+      inputs,
+    );
+    expect(f.filter((x) => x.rule === "number")).toEqual([]);
+  });
+  it("still flags invented numbers inside a line", () => {
+    const f = checkText("1. Please reply within 14 days.", "seller email", inputs);
+    expect(f.map((x) => x.term)).toContain("14");
+  });
+});
+
+describe("keyFeatureCaveatFlags", () => {
+  const issues =
+    "Damp mark on bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated. Seller unaware of planning or building regulations approval for the lean-to utility.";
+  it("flags a feature that names a known-issue item without its caveat", () => {
+    const f = keyFeatureCaveatFlags(
+      ["Lean-to utility", "Gas central heating", "Bathroom with shower over bath"],
+      issues,
+    );
+    expect(f.map((x) => x.term)).toEqual(["Lean-to utility", "Bathroom with shower over bath"]);
+  });
+  it("accepts features that keep their caveat", () => {
+    const f = keyFeatureCaveatFlags(
+      [
+        "Lean-to utility (no known planning or building regulations approval)",
+        "Roof tile repaired August 2026, bathroom ceiling not yet redecorated",
+      ],
+      issues,
+    );
+    expect(f).toEqual([]);
+  });
+  it("does nothing without known issues", () => {
+    expect(keyFeatureCaveatFlags(["Lean-to utility"], "")).toEqual([]);
+  });
+});
+
+describe("price abbreviations", () => {
+  it("accepts £350k for a supplied 350,000 but flags an invented one", () => {
+    expect(checkText("Guide £350k", "email", inputs).filter((x) => x.rule === "number")).toEqual([]);
+    expect(checkText("Guide £360k", "email", inputs).map((x) => x.term)).toContain("£360k");
   });
 });

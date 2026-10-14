@@ -1,5 +1,6 @@
 /** Deterministic graders for eval cases. Each returns Finding[]. */
 import type { ListingInput, ListingOutput } from "../../src/lib/listing-types";
+import { unwrapSellerEmail } from "../../src/lib/listing-types";
 import { isLeasehold, isSharedOwnership, EXTRACTABLE_FIELDS } from "../../src/lib/listing-fields";
 import {
   BANNED_PHRASES,
@@ -23,6 +24,7 @@ export interface GradePack {
     headline: string;
     body: string;
     callToAction?: string;
+    personalMessage?: string;
   } | null;
   sellerEmail: { body: string } | null;
   social: { platform: string; caption: string; hashtags: string[] }[];
@@ -35,7 +37,16 @@ const strs = (v: unknown) =>
 /** Lenient view of raw tool output (before validate* patches it). */
 export function packFromRaw(core: unknown, mkt: unknown): GradePack {
   const c = (core ?? {}) as Record<string, unknown>;
-  const m = (mkt ?? {}) as Record<string, unknown>;
+  const m0 = (mkt ?? {}) as Record<string, unknown>;
+  const un = (v: unknown) => {
+    if (typeof v !== "string" || !/^\s*[[{]/.test(v)) return v;
+    try {
+      return JSON.parse(v);
+    } catch {
+      return v;
+    }
+  };
+  const m = { ...m0, emailBlast: un(m0.emailBlast), sellerEmail: unwrapSellerEmail(m0.sellerEmail), social: un(m0.social) };
   const e =
     m.emailBlast && typeof m.emailBlast === "object"
       ? (m.emailBlast as Record<string, unknown>)
@@ -56,6 +67,7 @@ export function packFromRaw(core: unknown, mkt: unknown): GradePack {
           headline: str(e.headline),
           body: str(e.body),
           callToAction: str(e.callToAction),
+          personalMessage: str(e.personalMessage),
         }
       : null,
     sellerEmail: se ? { body: str(se.body) } : null,
@@ -100,6 +112,8 @@ export function sectionTexts(pack: GradePack, path: string): string[] {
       return [e?.body ?? ""];
     case "emailBlast.headline":
       return [e?.headline ?? ""];
+    case "emailBlast.personalMessage":
+      return [e?.personalMessage ?? ""];
     case "sellerEmail.body":
       return [pack.sellerEmail?.body ?? ""];
     case "social.*":
@@ -127,6 +141,7 @@ export function publicBlocks(pack: GradePack): [string, string][] {
           ["emailBlast.headline", e.headline],
           ["emailBlast.body", e.body],
           ["emailBlast.callToAction", e.callToAction ?? ""],
+          ["emailBlast.personalMessage", e.personalMessage ?? ""],
         ] as [string, string][])
       : []),
     ...pack.social.map((p): [string, string] => [`social.${p.platform}`, socialText(p)]),
@@ -424,6 +439,126 @@ export function gradeMustInclude(pack: GradePack, c: EvalCase): Finding[] {
   return out;
 }
 
+const IMAGE_LABELS: [RegExp, string][] = [
+  [
+    /virtual(ly)?[- ]stag/i,
+    "Some images have been virtually staged to show how rooms could be furnished.",
+  ],
+  [/\bCGI\b|computer[- ]generated/i, "Images are computer-generated (CGI) and indicative only."],
+  [/show home/i, "Images show the show home; specification may differ."],
+  [/digitally (enhanced|altered)/i, "Some images have been digitally enhanced."],
+];
+
+const PART_C = [
+  "buildingSafety",
+  "restrictions",
+  "rightsEasements",
+  "flooding",
+  "coastalErosion",
+  "planning",
+  "accessibility",
+  "coalfieldMining",
+] as const;
+
+/** v2 rules: EPC in captions, "Please note:", image labels, sale method, no draft wording, personal message. */
+export function gradeV2(pack: GradePack, input: ListingInput): Finding[] {
+  const out: Finding[] = [];
+  const f = (message: string, text?: string, severity: "fail" | "warn" = "fail") =>
+    out.push({ grader: "v2", severity, message, text });
+  if (input.epc && /^[A-G]$/.test(input.epc.trim()))
+    for (const p of pack.social)
+      if (!new RegExp(`\\bEPC\\b[^.\\n]{0,30}\\b${esc(input.epc.trim())}\\b`, "i").test(p.caption))
+        f(`social.${p.platform}: no EPC rating ${input.epc}`, p.caption.slice(0, 120));
+  const hasIssues =
+    !!input.disclosures?.trim() || PART_C.some((k) => /^yes/i.test((input[k] ?? "").trim()));
+  if (hasIssues) {
+    const targets: [string, string][] = [
+      ["emailBlast.body", pack.emailBlast?.body ?? ""],
+      ...pack.social
+        .filter((p) => p.platform === "Instagram" || p.platform === "Facebook")
+        .map((p): [string, string] => [`social.${p.platform}`, p.caption]),
+    ];
+    for (const [sec, text] of targets)
+      if (!/please note:/i.test(text)) f(`${sec}: no "Please note:" sentence`);
+  }
+  const media = input.mediaNotes ?? "";
+  for (const [re, label] of IMAGE_LABELS) {
+    if (!re.test(media)) continue;
+    const blocks: [string, string][] = [
+      ["listing", pack.listing],
+      ...pack.social.map((p): [string, string] => [`social.${p.platform}`, p.caption]),
+    ];
+    for (const [sec, text] of blocks)
+      if (!has(text, label)) f(`${sec}: missing image label "${label}"`);
+  }
+  if (/auction/i.test(input.saleMethod ?? "")) {
+    const method = /modern/i.test(input.saleMethod ?? "") ? "Modern Method of Auction" : "auction";
+    const re = new RegExp(`for sale by (traditional )?${method}`, "i");
+    const blocks: [string, string][] = [
+      ["summary", pack.summary],
+      ["listing", pack.listing.split(/\n\s*\n/)[0] ?? ""],
+      ["emailBlast.body", (pack.emailBlast?.body ?? "").split(/\n\s*\n/)[0] ?? ""],
+      ...pack.social.map((p): [string, string] => [`social.${p.platform}`, p.caption]),
+    ];
+    for (const [sec, text] of blocks)
+      if (!re.test(text)) f(`${sec}: no "For sale by ${method}" line`);
+  }
+  for (const [sec, text] of publicBlocks(pack)) {
+    const m = text.match(
+      /\bdraft\b|subject to (seller )?approval|\bapproval of (the )?particulars\b/i,
+    );
+    if (m) f(`Draft/approval wording in ${sec}`, m[0]);
+  }
+  if (pack.emailBlast) {
+    const n = words(pack.emailBlast.personalMessage ?? "");
+    if (!n) f("emailBlast.personalMessage missing");
+    else if (n < 40 || n > 80) f(`personalMessage ${n} words (need 40–80)`);
+  }
+  return out;
+}
+
+/** Case-specific regex checks (EvalCase.patterns). */
+export function gradePatterns(pack: GradePack, c: EvalCase): Finding[] {
+  const out: Finding[] = [];
+  for (const p of c.patterns ?? []) {
+    const re = p.match ? new RegExp(p.match, "i") : null;
+    const nre = p.notMatch ? new RegExp(p.notMatch, "i") : null;
+    if (p.eachKeyFeature) {
+      const cond = new RegExp(p.eachKeyFeature.if, "i");
+      const then = new RegExp(p.eachKeyFeature.then, "i");
+      for (const k of pack.keyFeatures)
+        if (cond.test(k) && !then.test(k))
+          out.push({
+            grader: "patterns",
+            severity: "fail",
+            message: `keyFeature /${p.eachKeyFeature.if}/ lacks /${p.eachKeyFeature.then}/`,
+            text: k,
+          });
+      continue;
+    }
+    for (const sec of p.sections ?? []) {
+      const text = sectionTexts(pack, sec).join("\n");
+      if (re && !re.test(text))
+        out.push({
+          grader: "patterns",
+          severity: "fail",
+          message: `${sec} doesn't match /${p.match}/`,
+        });
+      if (nre) {
+        const m = text.match(nre);
+        if (m)
+          out.push({
+            grader: "patterns",
+            severity: "fail",
+            message: `${sec} matches /${p.notMatch}/`,
+            text: m[0],
+          });
+      }
+    }
+  }
+  return out;
+}
+
 /** Run every pack grader; `prefix` labels raw-output findings. */
 export function gradePack(
   pack: GradePack,
@@ -440,6 +575,8 @@ export function gradePack(
     ...gradeContact(pack),
     ...gradePlaceholders(pack),
     ...gradeMustInclude(pack, c),
+    ...gradeV2(pack, input),
+    ...gradePatterns(pack, c),
   ];
   return prefix ? all.map((f) => ({ ...f, grader: `${prefix}${f.grader}` })) : all;
 }

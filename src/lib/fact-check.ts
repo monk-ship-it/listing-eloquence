@@ -7,7 +7,7 @@
 import { wordsToNumber } from "./dictation-normalise";
 import { BANNED_PHRASES } from "./prompts/banned";
 
-export type FlagKind = "not-in-notes" | "banned" | "contact" | "private-leak";
+export type FlagKind = "not-in-notes" | "banned" | "contact" | "private-leak" | "missing-caveat";
 
 /** What triggered a not-in-notes flag (graders treat names as softer). */
 export type FlagRule = "number" | "storey" | "era" | "name";
@@ -110,6 +110,11 @@ function numberKnown(term: string, nums: Set<string>): boolean {
   return w !== null && nums.has(String(w));
 }
 
+/** Removes numbered-list markers at the start of a line (^\s*\d+[.):]\s). */
+export function stripListMarkers(text: string): string {
+  return text.replace(/^(\s*)\d+[.):](?=\s)/gm, "$1");
+}
+
 /**
  * Check one block of generated text. `portal` adds the contact-details rule.
  */
@@ -131,9 +136,17 @@ export function checkText(
     flags.push(rule ? { term, kind, section, rule } : { term, kind, section });
   };
 
-  // £ amounts and digits
-  for (const m of text.matchAll(/£?\d[\d,]*(?:\.\d+)?(?:st|nd|rd|th)?/g)) {
-    const term = m[0].replace(/[.,]$/, "");
+  // £ amounts and digits — numbered-list markers ("6. ", "14) ") at the start
+  // of a line are formatting, not facts.
+  const numberScan = stripListMarkers(text);
+  for (const m of numberScan.matchAll(/£?\d[\d,]*(?:\.\d+)?(?:st|nd|rd|th|k\b|m\b)?/gi)) {
+    let term = m[0].replace(/[.,]$/, "");
+    // "£195k" / "£1.45m" are price abbreviations: check the full figure.
+    const abbr = term.match(/^(£?)(\d+(?:\.\d+)?)(k|m)$/i);
+    if (abbr && abbr[1]) {
+      const full = Number(abbr[2]) * (/k/i.test(abbr[3]) ? 1000 : 1_000_000);
+      if (numberKnown(String(full), nums)) continue;
+    } else if (/m$/i.test(term)) term = term.slice(0, -1);
     if (!numberKnown(term, nums)) push(term, "not-in-notes", "number");
   }
   // number words (skip "one", too common in prose)
@@ -262,6 +275,14 @@ function leakTokens(s: string): string[] {
  * from the private notes that appear in public copy but nowhere in the public
  * inputs. Guidance only.
  */
+/** The exact image labels the prompt may add from the photo notes. */
+export const IMAGE_LABELS = [
+  "Some images have been virtually staged to show how rooms could be furnished.",
+  "Images are computer-generated (CGI) and indicative only.",
+  "Images show the show home; specification may differ.",
+  "Some images have been digitally enhanced.",
+];
+
 export function privateLeakFlags(pack: PackLike, input: object): FactFlag[] {
   const r = input as Record<string, unknown>;
   const priv = PRIVATE_INPUT_KEYS.map((k) => (typeof r[k] === "string" ? (r[k] as string) : ""))
@@ -301,8 +322,10 @@ export function privateLeakFlags(pack: PackLike, input: object): FactFlag[] {
     sections.push(["social", `${p.caption} ${(p.hashtags ?? []).join(" ")}`]);
   const out: FactFlag[] = [];
   const seen = new Set<string>();
-  for (const [section, text] of sections) {
-    if (!text) continue;
+  for (const [section, text0] of sections) {
+    // The permitted image labels are the one sanctioned use of the photo notes.
+    const text = IMAGE_LABELS.reduce((acc, l) => acc.split(l).join(" "), text0 ?? "");
+    if (!text.trim()) continue;
     const hay = ` ${leakTokens(text).join(" ")} `;
     for (const term of terms) {
       if (hay.includes(` ${term} `) && !seen.has(term)) {
@@ -310,6 +333,49 @@ export function privateLeakFlags(pack: PackLike, input: object): FactFlag[] {
         out.push({ term, kind: "private-leak", section });
       }
     }
+  }
+  return out;
+}
+
+const CAVEAT_RE =
+  /approv|building reg|planning|repaired|not yet|damp|unconfirmed|no known|unaware|subject to|awaiting|tbc by survey|survey/i;
+const ISSUE_NOUN_STOP = new Set(
+  (
+    "seller buyer property house home known issue issues report available recent recently from with without " +
+    "that this there their which about after before above below under over into been have has were was will " +
+    "approval approvals regulations building planning august september october november december january february " +
+    "march april june july year years month months currently still also only"
+  ).split(" "),
+);
+
+/** Nouns in Known issues worth matching against key features ("lean-to", "bathroom", "roof"). */
+export function issueNouns(disclosures: string | undefined): string[] {
+  const toks = normaliseText(disclosures ?? "")
+    .replace(/[^a-z' -]+/g, " ")
+    .split(/\s+/)
+    .map((w) => w.replace(/^['-]+|['-]+$/g, ""))
+    .filter((w) => (w.length >= 4 || w.includes("-")) && !ISSUE_NOUN_STOP.has(w));
+  return [...new Set(toks)];
+}
+
+/**
+ * Key features that share a noun with Known issues but carry no caveat word
+ * (approval, repaired, not yet, damp, unconfirmed…). Guidance only.
+ */
+export function keyFeatureCaveatFlags(
+  keyFeatures: string[] | undefined,
+  disclosures: string | undefined,
+): FactFlag[] {
+  const nouns = issueNouns(disclosures);
+  if (!nouns.length) return [];
+  const out: FactFlag[] = [];
+  for (const f of keyFeatures ?? []) {
+    const n = normaliseText(f);
+    const hit = nouns.find((w) =>
+      new RegExp(`(?<![a-z])${w.replace(/[-]/g, "[- ]?")}s?(?![a-z])`).test(n),
+    );
+    if (hit && !CAVEAT_RE.test(f))
+      out.push({ term: f, kind: "missing-caveat", section: "keyFeatures" });
   }
   return out;
 }

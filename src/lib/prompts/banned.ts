@@ -28,7 +28,8 @@ export const BANNED_ENTRIES: BannedEntry[] = [
   { phrase: "deceptively spacious" },
   { phrase: "viewing highly recommended" },
   { phrase: "early viewing advised" },
-  { phrase: "sought-after", variants: ["sought after"] },
+  { phrase: "sought-after" },
+  { phrase: "sought after" },
   { phrase: "hidden gem" },
   { phrase: "forever home" },
   { phrase: "a stone's throw" },
@@ -55,7 +56,11 @@ export const BANNED_ENTRIES: BannedEntry[] = [
   { phrase: "act fast" },
   { phrase: "priced to sell" },
   { phrase: "realistically priced" },
-  { phrase: "beautifully presented", note: "as filler" },
+  { phrase: "beautifully presented" },
+  { phrase: "chocolate-box" },
+  { phrase: "picture-postcard" },
+  { phrase: "breathtaking" },
+  { phrase: "exclusive" },
 ];
 
 /** Lower-case phrases checked in generated copy (includes alt + variants). */

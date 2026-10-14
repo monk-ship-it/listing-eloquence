@@ -9,12 +9,12 @@ MATERIAL INFORMATION (verbatim facts — state these accurately; never contradic
 AGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):
 Three bed semi on Maple Drive, Gillingham, freehold, guide price two seventy five, new kitchen two years ago, south-facing garden about thirty metres, garage at the back. Vendor says the boiler was replaced in 2022. Council tax C I think.
 
-Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never invent or upgrade figures from the notes.
-Seller approval of particulars: NOT confirmed.
+Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never take a material-information figure from the voice notes.
+Seller approval of particulars: NOT confirmed (for the app only — never mention it in the copy).
 
 PRODUCE:
 - "headline": brochure / email headline, max 70 characters.
-- "listing": the portal description — plain-text paragraphs separated by a blank line (opening, accommodation, outside space, location, then the material facts per your rules).
+- "listing": the portal description — plain-text paragraphs separated by one blank line, in the paragraph order set by the brand voice and within its word range. Paragraph 1 gives the property type, bedroom count and location as supplied, plus the two most decision-relevant facts. For leasehold, give years remaining, ground rent with its review terms, and service charge in the same sentence as the tenure. Mention parking in words when a parking fact is supplied. The final paragraph restates Part A, every known issue and every Part C item answered Yes, copying figures exactly. Don't repeat the key features word for word.
 - "summary": the strapline (portal summary), max 250 characters; the first 160 characters must stand alone; don't open with the bedroom count or property type.
 - "keyFeatures": 6–10 bullets, max 80 characters each, one fact per bullet, no full stops; the first three are the most decision-relevant facts.
 

@@ -10,6 +10,7 @@ import {
   EXTRACT_SYSTEM,
   EXTRACT_USER_TEMPLATE,
   LIMIT_REMINDER,
+  MARKETING_REMINDER,
   MARKETING_USER_TEMPLATE,
   SYSTEM_TEMPLATE,
   fillTemplate,
@@ -43,8 +44,13 @@ export const TOOL_DESCRIPTIONS = {
 } as const;
 
 export const CALL_SETTINGS = {
-  core: { maxTokens: 6000, retryMaxTokens: 8000, timeoutMs: 90_000, temperature: undefined },
-  marketing: { maxTokens: 3500, timeoutMs: 90_000, temperature: undefined },
+  core: {
+    maxTokens: 6000,
+    retryMaxTokens: 8000,
+    timeoutMs: 90_000,
+    temperature: undefined as number | undefined,
+  },
+  marketing: { maxTokens: 3500, timeoutMs: 90_000, temperature: undefined as number | undefined },
   extract: { maxTokens: 1500, temperature: 0, timeoutMs: 30_000 },
 } as const;
 
@@ -53,11 +59,12 @@ export const RETRY_RULES = {
   core: [
     "On AI_TRUNCATED (stop_reason max_tokens) or MALFORMED_AI_OUTPUT: retry once with max_tokens = retryMaxTokens.",
     "On AI_TIMEOUT: retry once with the same max_tokens.",
-    "If the first answer has a strapline > 250 chars or a key feature > 80 chars: retry once with {{LIMIT_REMINDER}} filled from core.limit-reminder.txt; if that retry fails, keep the first answer.",
+    "If the first answer has a headline > 70 chars, a strapline > 250 chars or a key feature > 80 chars: retry once with {{LIMIT_REMINDER}} filled from core.limit-reminder.txt; if that retry fails, keep the first answer.",
     "Any other error (e.g. RATE_LIMIT) is not retried.",
   ],
   marketing: [
     "Any failure: retry once. If the retry fails the listing is still saved without the email/social pack.",
+    "If the X caption + hashtags is over 280 characters, or a caption misses the price or tenure: retry once with marketing.reminder.txt appended to the user message; then accept (the UI counters flag anything still over).",
   ],
   extract: [
     "No retry. Fields whose evidence quote isn't found in the notes are dropped (filterExtraction).",
@@ -95,8 +102,19 @@ export const MARKETING_SCHEMA = {
         headline: { type: "string" },
         body: { type: "string" },
         callToAction: { type: "string" },
+        personalMessage: {
+          type: "string",
+          description: "40–80 words for the CRM property-alert message box",
+        },
       },
-      required: ["subjectLines", "previewText", "headline", "body", "callToAction"],
+      required: [
+        "subjectLines",
+        "previewText",
+        "headline",
+        "body",
+        "callToAction",
+        "personalMessage",
+      ],
     },
     sellerEmail: {
       type: "object",
@@ -168,19 +186,26 @@ export function buildCoreRequest(
     inputSchema: CORE_SCHEMA,
     maxTokens: opts.maxTokens ?? CALL_SETTINGS.core.maxTokens,
     timeoutMs: CALL_SETTINGS.core.timeoutMs,
+    temperature: CALL_SETTINGS.core.temperature,
   };
 }
 
-export function buildMarketingRequest(input: ListingInput): ClaudeToolOpts {
+export function buildMarketingRequest(
+  input: ListingInput,
+  opts: { reminder?: boolean } = {},
+): ClaudeToolOpts {
   const vars = promptVars(input);
   return {
     system: renderSystem(input),
-    user: fillTemplate(MARKETING_USER_TEMPLATE, varsFor(MARKETING_USER_TEMPLATE, vars)),
+    user:
+      fillTemplate(MARKETING_USER_TEMPLATE, varsFor(MARKETING_USER_TEMPLATE, vars)) +
+      (opts.reminder ? MARKETING_REMINDER : ""),
     toolName: MARKETING_TOOL,
     toolDescription: TOOL_DESCRIPTIONS.marketing,
     inputSchema: MARKETING_SCHEMA,
     maxTokens: CALL_SETTINGS.marketing.maxTokens,
     timeoutMs: CALL_SETTINGS.marketing.timeoutMs,
+    temperature: CALL_SETTINGS.marketing.temperature,
   };
 }
 

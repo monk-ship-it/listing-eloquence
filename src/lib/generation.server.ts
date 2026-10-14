@@ -10,7 +10,7 @@ import {
   CALL_SETTINGS,
 } from "./prompts/calls";
 import type { CoreOutput, ListingInput, MarketingOutput } from "./listing-types";
-import { validateCoreOutput, validateMarketingOutput } from "./listing-types";
+import { socialProblems, validateCoreOutput, validateMarketingOutput } from "./listing-types";
 import { filterExtraction, type ExtractResult } from "./extract-filter";
 
 export type GenStage = "core" | "marketing" | "regen";
@@ -38,12 +38,14 @@ function errorCode(err: unknown): string {
 }
 
 function breaksLimits(o: CoreOutput): boolean {
-  return o.summary.length > 250 || o.keyFeatures.some((f) => f.length > 80);
+  return (
+    o.headline.length > 70 || o.summary.length > 250 || o.keyFeatures.some((f) => f.length > 80)
+  );
 }
 
 /**
  * CORE call: retry once on truncation/invalid output (retryMaxTokens) or
- * timeout. If the strapline or a bullet breaks its limit, retry once with a
+ * timeout. If the headline, strapline or a bullet breaks its limit, retry once with a
  * reminder, then accept (the UI counters flag anything still over).
  */
 export async function runCore(input: ListingInput, opts: RunOpts = {}): Promise<CoreOutput> {
@@ -83,19 +85,22 @@ export async function runCore(input: ListingInput, opts: RunOpts = {}): Promise<
   return out;
 }
 
-/** MARKETING call: one retry on any failure. */
+/**
+ * MARKETING call: one retry on any failure. If the answer breaks the social
+ * rules (X > 280 incl. hashtags, a caption without price or tenure), one retry
+ * with MARKETING_REMINDER; then accept (UI counters flag anything left).
+ */
 export async function runMarketing(
   input: ListingInput,
   opts: RunOpts & { stage?: "marketing" | "regen" } = {},
 ): Promise<MarketingOutput> {
   const stage = opts.stage ?? "marketing";
-  const req = buildMarketingRequest(input);
   const subject = `Your property details for approval – ${input.address?.trim() || "your property"}`;
   let n = 0;
-  const attempt = async () => {
+  const attempt = async (reminder = false) => {
     const a = ++n;
     const raw = await callClaudeTool({
-      ...req,
+      ...buildMarketingRequest(input, { reminder }),
       model: opts.model,
       onMeta: (m) => opts.onMeta?.({ ...m, call: "marketing", attempt: a }),
     });
@@ -104,17 +109,30 @@ export async function runMarketing(
     if (out.sellerEmail) out.sellerEmail = { ...out.sellerEmail, subject };
     return out;
   };
+  let out: MarketingOutput;
+  let retried = false;
   try {
-    return await attempt();
+    out = await attempt();
   } catch (err) {
     await opts.log?.(stage, err);
+    retried = true;
     try {
-      return await attempt();
+      out = await attempt();
     } catch (err2) {
       await opts.log?.(stage, err2);
       throw err2;
     }
   }
+  if (!retried && socialProblems(out, input).length) {
+    await opts.log?.(stage, new Error(`SOCIAL_RULES: ${socialProblems(out, input).join(",")}`));
+    try {
+      const second = await attempt(true);
+      if (socialProblems(second, input).length <= socialProblems(out, input).length) out = second;
+    } catch (err) {
+      await opts.log?.(stage, err);
+    }
+  }
+  return out;
 }
 
 /** EXTRACT call + server-side evidence filter. No retry. */

@@ -23,6 +23,10 @@
         },
         "callToAction": {
           "type": "string"
+        },
+        "personalMessage": {
+          "type": "string",
+          "description": "40–80 words for the CRM property-alert message box"
         }
       },
       "required": [
@@ -30,7 +34,8 @@
         "previewText",
         "headline",
         "body",
-        "callToAction"
+        "callToAction",
+        "personalMessage"
       ]
     },
     "sellerEmail": {

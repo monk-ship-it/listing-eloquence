@@ -1,0 +1,104 @@
+{
+  "id": "E1-brenzett",
+  "run": 1,
+  "call": "extract",
+  "timings": [
+    {
+      "call": "extract",
+      "attempt": 1,
+      "ms": 4946,
+      "stopReason": "tool_use",
+      "inputTokens": 3651,
+      "outputTokens": 404
+    }
+  ],
+  "raw": {
+    "extract": {
+      "address": "Brenzett Close, Chatham",
+      "propertyType": "semi",
+      "bedrooms": "4",
+      "bathrooms": "2",
+      "tenure": "Freehold",
+      "price": "350,000",
+      "priceQualifier": "Guide Price",
+      "epc": "C",
+      "councilTaxBand": "D",
+      "parking": "driveway for two cars",
+      "outsideSpace": "south-facing garden",
+      "evidence": {
+        "address": "Brenzett Close, Chatham",
+        "propertyType": "Four bed semi on Brenzett Close",
+        "bedrooms": "Four bed semi",
+        "bathrooms": "two bathrooms",
+        "tenure": "freehold",
+        "price": "guide price three fifty",
+        "priceQualifier": "guide price three fifty",
+        "epc": "EPC C",
+        "councilTaxBand": "council tax band D",
+        "parking": "driveway for two cars",
+        "outsideSpace": "south-facing garden"
+      }
+    }
+  },
+  "pass": true,
+  "findings": [
+    {
+      "grader": "extraction",
+      "severity": "warn",
+      "message": "unexpected field address (not in expectFields)",
+      "text": "Brenzett Close, Chatham"
+    },
+    {
+      "grader": "extraction",
+      "severity": "warn",
+      "message": "unexpected field propertyType (not in expectFields)",
+      "text": "semi"
+    },
+    {
+      "grader": "extraction",
+      "severity": "warn",
+      "message": "unexpected field outsideSpace (not in expectFields)",
+      "text": "south-facing garden"
+    },
+    {
+      "grader": "extraction",
+      "severity": "warn",
+      "message": "unexpected field parking (not in expectFields)",
+      "text": "driveway for two cars"
+    }
+  ],
+  "extractMs": 4946,
+  "retries": 0,
+  "output": {
+    "fields": {
+      "address": "Brenzett Close, Chatham",
+      "propertyType": "semi",
+      "price": "350,000",
+      "priceQualifier": "Guide Price",
+      "tenure": "Freehold",
+      "bedrooms": "4",
+      "bathrooms": "2",
+      "outsideSpace": "south-facing garden",
+      "councilTaxBand": "D",
+      "epc": "C",
+      "parking": "driveway for two cars"
+    },
+    "evidence": {
+      "address": "Brenzett Close, Chatham",
+      "propertyType": "Four bed semi on Brenzett Close",
+      "price": "guide price three fifty",
+      "priceQualifier": "guide price three fifty",
+      "tenure": "freehold",
+      "bedrooms": "Four bed semi",
+      "bathrooms": "two bathrooms",
+      "outsideSpace": "south-facing garden",
+      "councilTaxBand": "council tax band D",
+      "epc": "EPC C",
+      "parking": "driveway for two cars"
+    }
+  },
+  "extraction": {
+    "precision": 1,
+    "recall": 1
+  }
+}

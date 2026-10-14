@@ -5,7 +5,14 @@
  * the legal duty is the DMCC Act 2024 (no omitting material information).
  */
 import type { ListingInput } from "./listing-types";
-import { FIELD_BY_KEY, isLeasehold, isSharedOwnership, type TextFieldKey } from "./listing-fields";
+import {
+  FIELD_BY_KEY,
+  isAuction,
+  isLeasehold,
+  isSharedOwnership,
+  isYes,
+  type TextFieldKey,
+} from "./listing-fields";
 
 const BANNED_VALUES =
   /^(ask agent|tbc|tba|to be confirmed|poa|price on application|n\/a|unknown)$/i;
@@ -37,6 +44,32 @@ function noCapped(s: string): string {
     .trim();
 }
 
+/** Known-issues topics that contradict a Part C "None known" answer. */
+export const PART_C_CONFLICTS: Partial<Record<TextFieldKey, { topic: string; re: RegExp }>> = {
+  planning: {
+    topic: "planning",
+    re: /planning|building reg|without (consent|approval)|unapproved|unaware .*approv/i,
+  },
+  flooding: { topic: "flooding", re: /flood/i },
+  rightsEasements: {
+    topic: "rights of way or shared access",
+    re: /right of way|easement|shared (drive|access|path)/i,
+  },
+  restrictions: {
+    topic: "a restriction",
+    re: /listed|conservation|covenant|tree preservation|TPO/i,
+  },
+};
+
+/** Part C keys answered "None known" whose topic Known issues mentions. */
+export function partCConflicts(input: ListingInput): TextFieldKey[] {
+  const issues = val(input, "disclosures");
+  if (!issues) return [];
+  return (Object.keys(PART_C_CONFLICTS) as TextFieldKey[]).filter(
+    (k) => /^none known$/i.test(val(input, k)) && PART_C_CONFLICTS[k]!.re.test(issues),
+  );
+}
+
 /** Part C answer → printable text ("None known" / details). */
 function partC(v: string): string {
   if (!v) return "";
@@ -62,6 +95,18 @@ export function buildMaterialInfoBlock(input: ListingInput): string {
   const price = val(input, "price");
   const qualifier = val(input, "priceQualifier");
   if (price) lines.push(`Price: ${[qualifier, money(price)].filter(Boolean).join(" ")}`);
+  const status = val(input, "saleStatus");
+  if (status && status !== "Available") lines.push(`Sale status: ${status}`);
+  const method = val(input, "saleMethod");
+  if (method && method !== "Private treaty") lines.push(`Sale method: ${method}`);
+  if (isAuction(input) && val(input, "auctionTerms"))
+    lines.push(`Auction terms: ${val(input, "auctionTerms")}`);
+  if (val(input, "reservationFee")) lines.push(`Reservation fee: ${val(input, "reservationFee")}`);
+  if (val(input, "buyerFees")) lines.push(`Buyer's fees: ${val(input, "buyerFees")}`);
+  if (isYes(val(input, "newBuild"))) lines.push("New home: Yes");
+  if (val(input, "incentives")) lines.push(`Incentive: ${val(input, "incentives")}`);
+  if (val(input, "ageRestriction"))
+    lines.push(`Age / occupancy restriction: ${val(input, "ageRestriction")}`);
 
   if (isSharedOwnership(input)) {
     const share = val(input, "sharePercent").replace(/%$/, "");
@@ -86,22 +131,39 @@ export function buildMaterialInfoBlock(input: ListingInput): string {
     const gr = val(input, "groundRent");
     const review = noCapped(val(input, "groundRentReview"));
     if (gr)
-      lines.push(`Ground rent: ${noCapped(money(gr))} per year${review ? ` (${review})` : ""}`);
+      lines.push(
+        `Ground rent: ${noCapped(money(gr))}${/^£?\d[\d,]*(\.\d+)?$/.test(gr) ? " per year" : ""}${review ? ` (${review})` : ""}`,
+      );
     const sc = val(input, "serviceCharge");
     const period = val(input, "serviceChargePeriod");
     if (sc) lines.push(`Service charge: ${money(sc)} per year${period ? ` (${period})` : ""}`);
     const reserve = val(input, "reserveFund");
     if (reserve) lines.push(`Reserve fund / event fees: ${reserve}`);
   }
+  const estate = val(input, "estateCharge");
+  if (estate)
+    lines.push(
+      `Estate / management charge: ${money(estate)}${/^£?\d[\d,]*(\.\d+)?$/.test(estate) ? " per year" : ""}`,
+    );
+  if (val(input, "eventFees")) lines.push(`Event fees: ${val(input, "eventFees")}`);
 
   const band = val(input, "councilTaxBand");
   const la = val(input, "localAuthority");
   if (band) {
-    const label = /^[A-I]$/.test(band) ? `Band ${band}` : band;
+    const label = /^[A-I]$/.test(band)
+      ? `Band ${band}`
+      : /^not yet banded$/i.test(band)
+        ? "not yet banded"
+        : /^exempt$/i.test(band)
+          ? "Exempt"
+          : band;
     lines.push(`Council Tax: ${label}${la ? ` (${la})` : ""}`);
   }
   const epc = val(input, "epc");
-  if (epc) lines.push(`EPC rating: ${epc}`);
+  if (epc)
+    lines.push(
+      `EPC rating: ${epc}${isYes(val(input, "epcPredicted")) && /^[A-G]$/.test(epc) ? " (predicted)" : ""}`,
+    );
 
   const construction = val(input, "construction");
   const cDetails = val(input, "constructionDetails");
@@ -132,8 +194,9 @@ export function buildMaterialInfoBlock(input: ListingInput): string {
   const parking = val(input, "parking");
   if (parking) lines.push(`Parking: ${parking}`);
 
+  const conflicts = new Set(partCConflicts(input));
   for (const k of PART_C_KEYS) {
-    const v = partC(val(input, k));
+    const v = conflicts.has(k) ? "See known issues" : partC(val(input, k));
     if (v) lines.push(`${FIELD_BY_KEY[k].label}: ${v}`);
   }
   const issues = val(input, "disclosures");
@@ -141,7 +204,7 @@ export function buildMaterialInfoBlock(input: ListingInput): string {
   return lines.join("\n");
 }
 
-export type Severity = "block" | "warn" | "confirm";
+export type Severity = "block" | "conflict" | "warn" | "confirm";
 
 export interface CheckItem {
   id: string;
@@ -151,11 +214,21 @@ export interface CheckItem {
   severity: Severity;
   message: string;
   ok: boolean;
-  /** Plain-English question for the seller (WARN/CONFIRM only). */
+  /** Plain-English question for the seller. */
   question?: string;
 }
 
-const SELLER_QUESTIONS: Partial<Record<TextFieldKey, string>> = {
+export const SELLER_QUESTIONS: Partial<Record<TextFieldKey, string>> = {
+  tenure: "Is the property freehold, leasehold or share of freehold?",
+  leaseYears: "How many years are left on the lease?",
+  groundRent:
+    "What is the current ground rent, how often is it reviewed and when is the next review?",
+  serviceCharge:
+    "What is the current annual service charge, and does it include a reserve-fund contribution?",
+  councilTaxBand: "Which Council Tax band is the property in?",
+  epc: "Do you have a current EPC? If not, one must be commissioned before marketing.",
+  sharePercent: "What percentage share is being sold?",
+  rent: "What is the monthly rent on the unsold share?",
   construction:
     "Is the property of standard construction (e.g. brick or stone under a tiled or slate roof), or something else such as timber frame?",
   electricity:
@@ -209,6 +282,21 @@ export function checkMaterialInfo(input: ListingInput): CheckItem[] {
     "Add the price and its qualifier — never POA.",
     "Price & qualifier",
   );
+  if (/^from$/i.test(val(input, "priceQualifier")))
+    add(
+      "newBuild",
+      "block",
+      isYes(val(input, "newBuild")),
+      '"From" is only allowed for new homes — mark it as a new home or change the qualifier.',
+      'Price "From"',
+    );
+  if (isAuction(input))
+    add(
+      "auctionTerms",
+      "block",
+      !!val(input, "auctionTerms"),
+      "Add the auction terms (reservation period, reserve, fees).",
+    );
   add("tenure", "block", !!val(input, "tenure"), "Add the tenure.");
   add("councilTaxBand", "block", !!val(input, "councilTaxBand"), "Add the Council Tax band.");
   add("epc", "block", !!val(input, "epc"), "Add the EPC rating (or Exempt / Commissioned).");
@@ -232,6 +320,19 @@ export function checkMaterialInfo(input: ListingInput): CheckItem[] {
     input.sellerApproved === true,
     "Particulars must be agreed with the seller or marked draft — TPO Code 7j.",
   );
+
+  for (const k of partCConflicts(input)) {
+    items.push({
+      id: `conflict-${k}`,
+      field: k,
+      label: FIELD_BY_KEY[k].label,
+      severity: "conflict",
+      ok: false,
+      message: `Known issues mentions ${PART_C_CONFLICTS[k]!.topic}, but ${FIELD_BY_KEY[k].label} says "None known".`,
+    });
+  }
+  if (val(input, "ageRestriction"))
+    add("eventFees", "warn", !!val(input, "eventFees"), "Add any event fees (or say none).");
 
   const legacyUtilities = !!val(input, "utilities");
   for (const k of [
@@ -271,6 +372,7 @@ export function summariseChecks(items: CheckItem[]) {
     mustFix: open.filter((i) => i.severity === "block").length,
     open: [
       ...open.filter((i) => i.severity === "block"),
+      ...open.filter((i) => i.severity === "conflict"),
       ...open.filter((i) => i.severity === "warn"),
       ...open.filter((i) => i.severity === "confirm"),
     ],

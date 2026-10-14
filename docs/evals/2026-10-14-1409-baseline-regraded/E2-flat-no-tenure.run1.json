@@ -1,0 +1,72 @@
+{
+  "id": "E2-flat-no-tenure",
+  "run": 1,
+  "call": "extract",
+  "timings": [
+    {
+      "call": "extract",
+      "attempt": 1,
+      "ms": 3639,
+      "stopReason": "tool_use",
+      "inputTokens": 3631,
+      "outputTokens": 225
+    }
+  ],
+  "raw": {
+    "extract": {
+      "bedrooms": "2",
+      "propertyType": "flat",
+      "parking": "allocated parking",
+      "priceQualifier": "Offers Over",
+      "price": "225,000",
+      "flooding": "None known",
+      "evidence": {
+        "bedrooms": "Two bed flat",
+        "propertyType": "Two bed flat on the second floor",
+        "parking": "allocated parking",
+        "priceQualifier": "offers over",
+        "price": "offers over two twenty-five",
+        "flooding": "no flooding as far as they know"
+      }
+    }
+  },
+  "pass": true,
+  "findings": [
+    {
+      "grader": "extraction",
+      "severity": "warn",
+      "message": "unexpected field propertyType (not in expectFields)",
+      "text": "flat"
+    },
+    {
+      "grader": "extraction",
+      "severity": "warn",
+      "message": "unexpected field parking (not in expectFields)",
+      "text": "allocated parking"
+    }
+  ],
+  "extractMs": 3639,
+  "retries": 0,
+  "output": {
+    "fields": {
+      "propertyType": "flat",
+      "price": "225,000",
+      "priceQualifier": "Offers Over",
+      "bedrooms": "2",
+      "parking": "allocated parking",
+      "flooding": "None known"
+    },
+    "evidence": {
+      "propertyType": "Two bed flat on the second floor",
+      "price": "offers over two twenty-five",
+      "priceQualifier": "offers over",
+      "bedrooms": "Two bed flat",
+      "parking": "allocated parking",
+      "flooding": "no flooding as far as they know"
+    }
+  },
+  "extraction": {
+    "precision": 1,
+    "recall": 1
+  }
+}

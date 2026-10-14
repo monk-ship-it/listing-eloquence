@@ -12,7 +12,7 @@ STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 - Bedrooms: 5
 - Bathrooms: 3
 - Receptions: 3
-- Room dimensions: Drawing room 6.8m x 5.1m; Kitchen/breakfast room 7.2m x 4.4m
+- Room dimensions: Drawing room 6.80m x 5.10m (22'4" x 16'9"); Kitchen/breakfast room 7.20m x 4.40m (23'7" x 14'5")
 - Period / character features: Early 18th-century origins, later Georgian additions, retains much original joinery and fireplaces
 - Outside space / garden: Walled garden of around half an acre, mature herbaceous borders, orchard and a stone terrace
 - Council Tax band: G
@@ -61,15 +61,15 @@ Coalfield / mining: None known
 AGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):
 This is the Old Rectory on Church Lane in Burford. Lovely characterful period rectory, Grade II listed, five bedrooms, three bathrooms, inglenook fireplace and flagstone floors. Walled garden about half an acre with an orchard. Guide price one point four five million, freehold.
 
-Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never invent or upgrade figures from the notes.
-Seller approval of particulars: NOT confirmed.
+Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never take a material-information figure from the voice notes.
+Seller approval of particulars: NOT confirmed (for the app only — never mention it in the copy).
 
 PRODUCE:
 - "headline": brochure / email headline, max 70 characters.
-- "listing": the portal description — plain-text paragraphs separated by a blank line (opening, accommodation, outside space, location, then the material facts per your rules).
+- "listing": the portal description — plain-text paragraphs separated by one blank line, in the paragraph order set by the brand voice and within its word range. Paragraph 1 gives the property type, bedroom count and location as supplied, plus the two most decision-relevant facts. For leasehold, give years remaining, ground rent with its review terms, and service charge in the same sentence as the tenure. Mention parking in words when a parking fact is supplied. The final paragraph restates Part A, every known issue and every Part C item answered Yes, copying figures exactly. Don't repeat the key features word for word.
 - "summary": the strapline (portal summary), max 250 characters; the first 160 characters must stand alone; don't open with the bedroom count or property type.
 - "keyFeatures": 6–10 bullets, max 80 characters each, one fact per bullet, no full stops; the first three are the most decision-relevant facts.
 
 Return the result by calling the submit_listing_core tool.
 
-IMPORTANT: your previous answer broke the output limits. The strapline must be 250 characters or fewer, and every key feature 80 characters or fewer.
+IMPORTANT: your previous answer broke the output limits. The headline must be 70 characters or fewer, the strapline 250 characters or fewer, and every key feature 80 characters or fewer.

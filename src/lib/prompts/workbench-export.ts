@@ -23,6 +23,7 @@ import {
   EXTRACT_SYSTEM,
   EXTRACT_USER_TEMPLATE,
   LIMIT_REMINDER,
+  MARKETING_REMINDER,
   MARKETING_USER_TEMPLATE,
   SYSTEM_TEMPLATE,
 } from "./templates";
@@ -89,7 +90,7 @@ function settingsJson(): string {
         tool_choice: { type: "tool", name: CORE_TOOL },
         max_tokens: CALL_SETTINGS.core.maxTokens,
         retry_max_tokens: CALL_SETTINGS.core.retryMaxTokens,
-        temperature: "not sent (API default 1.0)",
+        temperature: CALL_SETTINGS.core.temperature ?? "not sent (API default 1.0)",
         timeout_ms: CALL_SETTINGS.core.timeoutMs,
         system: "system.txt",
         user: "core.user.txt",
@@ -99,7 +100,7 @@ function settingsJson(): string {
         tool: MARKETING_TOOL,
         tool_choice: { type: "tool", name: MARKETING_TOOL },
         max_tokens: CALL_SETTINGS.marketing.maxTokens,
-        temperature: "not sent (API default 1.0)",
+        temperature: CALL_SETTINGS.marketing.temperature ?? "not sent (API default 1.0)",
         timeout_ms: CALL_SETTINGS.marketing.timeoutMs,
         system: "system.txt",
         user: "marketing.user.txt",
@@ -151,7 +152,7 @@ Quill makes **three** Claude calls. Each one is a separate Workbench prompt:
 4. **Tool**: click **Add tool** (or "Tools" → "+"), and paste the matching file from \`tools/\`. It contains the tool name, description and input schema.
 5. **Tool choice**: set it to **Specific tool** and pick the tool you just added (\`${CORE_TOOL}\`, \`${MARKETING_TOOL}\` or \`${EXTRACT_TOOL}\`).
 6. **Model settings** (the settings icon): set the model, **Temperature** and **Max tokens** from \`settings.json\` for that call.
-   Core and Marketing don't send a temperature, so leave the Workbench default (1.0). Extract uses 0.
+   Use the temperature shown in \`settings.json\` for each call ("not sent" means the Workbench default, 1.0). Extract uses 0.
 7. **Variables**: anything in double curly brackets, like \`{{BRAND_VOICE}}\`, is a variable. Workbench detects them and shows a box for each one.
    Fill them by hand, or go to **Evaluate → Import test cases** and choose \`test-cases.csv\`. Each row is one test case with every variable already filled in exactly as the app would.
    The CSV has a column for every variable of all three calls; rows for Extract only fill \`NOTES\`, and rows for Core/Marketing fill the rest.
@@ -177,7 +178,7 @@ ${vars}
 
 - \`system.txt\` — master prompt + brand-voice slot (Core and Marketing)
 - \`voices/*.txt\` — the five brand voices
-- \`core.user.txt\`, \`core.limit-reminder.txt\`, \`marketing.user.txt\` — user templates
+- \`core.user.txt\`, \`core.limit-reminder.txt\`, \`marketing.user.txt\`, \`marketing.reminder.txt\` — user templates (reminders are only added on a retry)
 - \`extract.system.txt\`, \`extract.user.txt\` — "Fill the form" call
 - \`tools/*.json\` — tool definitions; \`settings.json\` — model, max tokens, temperature, tool choice, timeouts and retries
 - \`test-cases.csv\` / \`test-cases.json\` — every eval case with all variables rendered
@@ -199,6 +200,7 @@ export function renderWorkbenchFiles(cases: ExportCase[]): Record<string, string
     [`${W}/core.user.txt`]: CORE_USER_TEMPLATE,
     [`${W}/core.limit-reminder.txt`]: LIMIT_REMINDER,
     [`${W}/marketing.user.txt`]: MARKETING_USER_TEMPLATE,
+    [`${W}/marketing.reminder.txt`]: MARKETING_REMINDER,
     [`${W}/extract.system.txt`]: EXTRACT_SYSTEM,
     [`${W}/extract.user.txt`]: EXTRACT_USER_TEMPLATE,
     [`${W}/tools/core.json`]: tool(CORE_TOOL, TOOL_DESCRIPTIONS.core, CORE_SCHEMA),

@@ -33,6 +33,24 @@ export interface ListingInput {
   sharePercent: string;
   rent: string;
   fullMarketValue: string;
+  /** Private treaty / Traditional auction / Modern Method of Auction. */
+  saleMethod: string;
+  auctionTerms: string;
+  reservationFee: string;
+  buyerFees: string;
+  /** Available / Under offer – still marketing / Sold subject to contract. */
+  saleStatus: string;
+  /** "Yes" when marketed pre-market / coming soon. */
+  preMarket: string;
+  /** "Yes" for a new home ("From" qualifier allowed). */
+  newBuild: string;
+  incentives: string;
+  /** Estate / management charge, £ per year (any tenure). */
+  estateCharge: string;
+  /** "Yes" when the EPC rating is a predicted (SAP) rating. */
+  epcPredicted: string;
+  ageRestriction: string;
+  eventFees: string;
   localAuthority: string;
   chainStatus: string;
   construction: string;
@@ -89,6 +107,8 @@ export interface EmailBlast {
   body: string;
   /** Short CTA label e.g. "View property details" / "Arrange a viewing". */
   callToAction: string;
+  /** 40–80 words for the CRM property-alert message box. Missing on older rows. */
+  personalMessage?: string;
 }
 
 export interface SellerEmail {
@@ -218,10 +238,18 @@ export function coerceLegacyEmailBlast(raw: unknown): EmailBlast | null {
   const headline = typeof e.headline === "string" ? e.headline.trim() : "";
   const body = typeof e.body === "string" ? e.body.trim() : "";
   const callToAction = typeof e.callToAction === "string" ? e.callToAction.trim() : "";
+  const personalMessage = typeof e.personalMessage === "string" ? e.personalMessage.trim() : "";
   if (subjectLines.length === 0 && !previewText && !headline && !body && !callToAction) {
     return null;
   }
-  return { subjectLines, previewText, headline, body, callToAction };
+  return {
+    subjectLines,
+    previewText,
+    headline,
+    body,
+    callToAction,
+    ...(personalMessage ? { personalMessage } : {}),
+  };
 }
 
 /** Canonical platform labels, in output order. */
@@ -298,9 +326,77 @@ export function validateCoreOutput(raw: unknown): CoreOutput {
  * Social: platform labels normalised; unknown/duplicate platforms dropped;
  * fails only if no usable post remains.
  */
+/** The model occasionally returns a nested object as a JSON string — unwrap it. */
+function unwrapJson(v: unknown): unknown {
+  if (typeof v !== "string") return v;
+  const s = v.trim();
+  if (!/^[[{]/.test(s)) return v;
+  try {
+    return JSON.parse(s);
+  } catch {
+    try {
+      return JSON.parse(repairJsonQuotes(s));
+    } catch {
+      return v;
+    }
+  }
+}
+
+/**
+ * Escapes stray double quotes inside JSON string values (e.g. reply
+ * "Approved"): a quote only closes a string when the next non-space
+ * character is , } ] or :.
+ */
+export function repairJsonQuotes(s: string): string {
+  let out = "";
+  let inStr = false;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (inStr && ch === "\\") {
+      out += ch + (s[i + 1] ?? "");
+      i++;
+      continue;
+    }
+    if (ch === '"') {
+      if (!inStr) {
+        inStr = true;
+        out += ch;
+        continue;
+      }
+      const rest = s.slice(i + 1).match(/^\s*(.)/);
+      if (!rest || /[,}\]:]/.test(rest[1])) {
+        inStr = false;
+        out += ch;
+      } else out += '\\"';
+      continue;
+    }
+    out += inStr && ch === "\n" ? "\\n" : ch;
+  }
+  return out;
+}
+
+/**
+ * sellerEmail sometimes arrives as a JSON-ish string with unescaped quotes
+ * (e.g. reply "Approved"). Parse it, or pull the body out leniently.
+ */
+export function unwrapSellerEmail(v: unknown): unknown {
+  const u = unwrapJson(v);
+  if (typeof u !== "string") return u;
+  const m = u.match(/^\s*\{\s*"body"\s*:\s*"([\s\S]*)"\s*\}\s*$/);
+  if (!m) return u.trim() ? { body: u } : u;
+  const body = m[1].replace(/\\n/g, "\n").replace(/\\t/g, "\t").replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+  return { body };
+}
+
 export function validateMarketingOutput(raw: unknown): MarketingOutput {
   if (!raw || typeof raw !== "object") throw new Error("MALFORMED_AI_OUTPUT");
-  const r = raw as Record<string, unknown>;
+  const r0 = raw as Record<string, unknown>;
+  const r: Record<string, unknown> = {
+    ...r0,
+    emailBlast: unwrapJson(r0.emailBlast),
+    sellerEmail: unwrapSellerEmail(r0.sellerEmail),
+    social: unwrapJson(r0.social),
+  };
   const e = (r.emailBlast ?? {}) as Record<string, unknown>;
 
   const seenS = new Set<string>();
@@ -328,6 +424,8 @@ export function validateMarketingOutput(raw: unknown): MarketingOutput {
     body: str(e.body, EMAIL_BODY_MAX),
     callToAction: str(e.callToAction, EMAIL_CTA_MAX),
   };
+  const pm = typeof e.personalMessage === "string" ? e.personalMessage.trim() : "";
+  if (pm && pm.length <= 1200) emailBlast.personalMessage = pm;
 
   const byPlatform = new Map<CanonicalPlatform, SocialPost>();
   for (const p of Array.isArray(r.social) ? r.social : []) {
@@ -356,9 +454,15 @@ export function validateMarketingOutput(raw: unknown): MarketingOutput {
 
   // Email Blast must close with the material-information pointer.
   const MI_LINE = "Full material information is on the property listing.";
-  if (!emailBlast.body.toLowerCase().includes(MI_LINE.toLowerCase())) {
-    emailBlast.body = `${emailBlast.body}\n\n${MI_LINE}`;
-  }
+  // Always last: strip it wherever the model put it, then append.
+  const stripped = emailBlast.body
+    .split(MI_LINE)
+    .join("")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+  emailBlast.body = `${stripped}\n\n${MI_LINE}`;
 
   // Seller approval email is optional — never fails the marketing call.
   let sellerEmail = coerceSellerEmail(r.sellerEmail);
@@ -367,6 +471,37 @@ export function validateMarketingOutput(raw: unknown): MarketingOutput {
     sellerEmail.body = `${sellerEmail.body}\n\n[Your name, branch, phone]`;
   }
   return { emailBlast, social, sellerEmail };
+}
+
+/** X caption + "#tag #tag" length, as the agent would paste it. */
+export function xPostLength(p: SocialPost): number {
+  const tags = p.hashtags.map((h) => `#${h.replace(/^#/, "")}`).join(" ");
+  return `${p.caption}${tags ? `\n\n${tags}` : ""}`.length;
+}
+
+const plainMoney = (v: string) => {
+  const d = v.replace(/[£,\s]/g, "");
+  return /^\d+(\.\d+)?$/.test(d) ? `£${Number(d).toLocaleString("en-GB")}` : v.trim();
+};
+
+/**
+ * Social rule problems worth one marketing retry: X over 280 incl. hashtags,
+ * or a caption without the price or the tenure. Empty array = fine.
+ */
+export function socialProblems(
+  out: MarketingOutput,
+  input: Pick<ListingInput, "price" | "tenure">,
+): string[] {
+  const probs: string[] = [];
+  for (const p of out.social) {
+    if (p.platform === "X" && xPostLength(p) > 280) probs.push("x-length");
+    const text = `${p.caption} ${p.hashtags.join(" ")}`.toLowerCase();
+    if (input.price?.trim() && !text.includes(plainMoney(input.price).toLowerCase()))
+      probs.push(`${p.platform}:price`);
+    if (input.tenure?.trim() && !text.includes(input.tenure.trim().toLowerCase()))
+      probs.push(`${p.platform}:tenure`);
+  }
+  return probs;
 }
 
 /**
@@ -441,6 +576,18 @@ export const EMPTY_INPUT: ListingInput = {
   sharePercent: "",
   rent: "",
   fullMarketValue: "",
+  saleMethod: "",
+  auctionTerms: "",
+  reservationFee: "",
+  buyerFees: "",
+  saleStatus: "",
+  preMarket: "",
+  newBuild: "",
+  incentives: "",
+  estateCharge: "",
+  epcPredicted: "",
+  ageRestriction: "",
+  eventFees: "",
   localAuthority: "",
   chainStatus: "",
   construction: "",

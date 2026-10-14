@@ -45,6 +45,19 @@ export async function copyText(text: string): Promise<boolean> {
   }
 }
 
+/** TPO Code 7j: label on every public copy while the seller hasn't approved. */
+export const DRAFT_LABEL = "DRAFT – subject to seller approval";
+
+/** Prepends the draft label when the particulars aren't approved yet. */
+export function withDraft(text: string, isDraft: boolean | undefined): string {
+  return isDraft && text ? `${DRAFT_LABEL}\n\n${text}` : text;
+}
+
+/** Word count used by the personal-message counter (target 40–80). */
+export function wordCount(s: string | undefined): number {
+  return (s ?? "").trim().split(/\s+/).filter(Boolean).length;
+}
+
 /** Format an array of key-feature bullets as a copyable dashed list. */
 export function formatKeyFeaturesBlock(features: string[] | undefined): string {
   if (!features || features.length === 0) return "";
@@ -100,7 +113,7 @@ export function buildCopyAllText(
     social?: { platform: string; caption: string; hashtags: string[] }[];
     sellerEmail?: { subject: string; body: string } | null;
   },
-  opts: { materialInfo?: string } = {},
+  opts: { materialInfo?: string; draft?: boolean } = {},
 ): string {
   const features = formatKeyFeaturesBlock(output.keyFeatures);
   const email = formatEmailForPaste(output.emailBlast, { includeFeatures: false });
@@ -110,12 +123,14 @@ export function buildCopyAllText(
       return `${p.platform}:\n${p.caption}${tags ? `\n${tags}` : ""}`;
     })
     .join("\n\n");
-  return [
+  const pm = output.emailBlast?.personalMessage?.trim();
+  const text = [
     output.headline,
     features ? `\n${features}` : "",
     `\nDescription:\n${withMaterialInfo(output.listing, opts.materialInfo)}`,
     output.summary ? `\nStrapline: ${output.summary}` : "",
     email ? `\n--- Email Blast ---\n${email}` : "",
+    pm ? `\n--- CRM property-alert message ---\n${pm}` : "",
     social ? `\n--- Social pack ---\n${social}` : "",
     output.sellerEmail
       ? `\n--- Seller approval email ---\n${formatSellerEmail(output.sellerEmail)}`
@@ -123,6 +138,7 @@ export function buildCopyAllText(
   ]
     .filter((s) => s !== "")
     .join("\n");
+  return withDraft(text, opts.draft);
 }
 
 /** Description with the Material Information block appended after a blank line. */
@@ -130,6 +146,23 @@ export function withMaterialInfo(description: string, block?: string): string {
   return block && block.trim() ? `${description.trim()}\n\n${block.trim()}` : description;
 }
 
-export function formatSellerEmail(e: { subject: string; body: string }): string {
-  return e.subject ? `Subject: ${e.subject}\n\n${e.body.trim()}` : e.body.trim();
+/**
+ * Seller approval email. `sellerName` replaces [Seller name]; when a draft
+ * description / key features are given they're appended under
+ * "DRAFT – SUBJECT TO YOUR APPROVAL" so the seller sees what they're approving.
+ */
+export function formatSellerEmail(
+  e: { subject: string; body: string },
+  opts: { sellerName?: string; listing?: string; keyFeatures?: string[] } = {},
+): string {
+  const name = opts.sellerName?.trim();
+  let body = e.body.trim();
+  if (name) body = body.split("[Seller name]").join(name);
+  const draft = [
+    opts.listing?.trim() ?? "",
+    opts.keyFeatures?.length ? formatKeyFeaturesBlock(opts.keyFeatures) : "",
+  ].filter(Boolean);
+  if (draft.length)
+    body = `${body}\n\n---\nDRAFT – SUBJECT TO YOUR APPROVAL\n\n${draft.join("\n\n")}`;
+  return e.subject ? `Subject: ${e.subject}\n\n${body}` : body;
 }

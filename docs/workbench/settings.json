@@ -18,7 +18,7 @@
       "retries": [
         "On AI_TRUNCATED (stop_reason max_tokens) or MALFORMED_AI_OUTPUT: retry once with max_tokens = retryMaxTokens.",
         "On AI_TIMEOUT: retry once with the same max_tokens.",
-        "If the first answer has a strapline > 250 chars or a key feature > 80 chars: retry once with {{LIMIT_REMINDER}} filled from core.limit-reminder.txt; if that retry fails, keep the first answer.",
+        "If the first answer has a headline > 70 chars, a strapline > 250 chars or a key feature > 80 chars: retry once with {{LIMIT_REMINDER}} filled from core.limit-reminder.txt; if that retry fails, keep the first answer.",
         "Any other error (e.g. RATE_LIMIT) is not retried."
       ]
     },
@@ -34,7 +34,8 @@
       "system": "system.txt",
       "user": "marketing.user.txt",
       "retries": [
-        "Any failure: retry once. If the retry fails the listing is still saved without the email/social pack."
+        "Any failure: retry once. If the retry fails the listing is still saved without the email/social pack.",
+        "If the X caption + hashtags is over 280 characters, or a caption misses the price or tenure: retry once with marketing.reminder.txt appended to the user message; then accept (the UI counters flag anything still over)."
       ]
     },
     "extract": {

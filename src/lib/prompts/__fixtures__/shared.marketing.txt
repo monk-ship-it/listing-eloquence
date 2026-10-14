@@ -44,7 +44,7 @@ MATERIAL INFORMATION (verbatim facts — state these accurately; never contradic
 Price: Shared Ownership £130,000
 Shared ownership: 40% share · rent £487 per month on the unsold share · full market value £325,000
 Tenure: Leasehold · 990 years remaining
-Ground rent: Peppercorn per year
+Ground rent: Peppercorn
 Service charge: £312 per year (2026/27 estimate)
 Council Tax: Band C (Dartford Borough Council)
 EPC rating: B
@@ -62,20 +62,29 @@ Accessibility: None known
 Coalfield / mining: None known
 Known issues: Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale
 
-Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never invent or upgrade figures from the notes.
-Seller approval of particulars: confirmed.
+Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never take a material-information figure from the voice notes.
+Seller approval of particulars: confirmed (for the app only — never mention it in the copy).
 
-EMAIL BLAST (new-instruction email to the agent's registered applicants) — follow your Email Blast limits:
-- "subjectLines": exactly 3, max 60 characters, no urgency or clickbait. "previewText": max 90. "headline". "callToAction": e.g. "View full details" or "Book a viewing".
-- "body": 2–4 short plain-text paragraphs separated by a blank line, no bullet list, greeting name or sign-off. Include price and qualifier, tenure, council tax band, EPC rating and (leasehold/shared ownership) the key costs. End with "Full material information is on the property listing."
+EMAIL BLAST (new-instruction email to the agent's registered applicants):
+- "subjectLines": exactly 3, max 60 characters. Each contains the area, the property type with bedrooms, and the price with its qualifier, e.g. "New instruction: 3-bed semi, Lordswood – Guide £285,000". Vary the lead ("New instruction:", "Just listed:", or the standout supplied fact). Never a price without its qualifier. Never "exclusive", "don't miss", "hurry" or emojis.
+- "previewText": max 90 characters — the next facts not in the subject, e.g. "Freehold · No onward chain · EPC C".
+- "headline": max 70 characters.
+- "body": 3–4 short plain-text paragraphs separated by a blank line, no bullet list, greeting name or sign-off. Paragraph 1: the price exactly as in the facts, the tenure, and where they apply the sale method, share %, under-offer status and any reservation or buyer's fee. Paragraph 2: the three strongest specifics. Paragraph 3: council tax band, EPC rating and, for leasehold or shared ownership, years remaining, ground rent, service charge and rent, copied exactly from the MATERIAL INFORMATION block. If there are known issues or Part C items answered Yes, add one sentence starting "Please note:" that states them plainly. End with "Full material information is on the property listing."
+- "personalMessage": 40–80 words for the CRM property-alert message box — what it is, where, price with qualifier, the standout fact, and an invitation to book a viewing. No greeting name, no sign-off.
+- "callToAction": "Book a viewing".
 
-SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, asking them to check the draft particulars before they go live.
-- 150–250 words, warm and professional, plain text. Open "Dear [Seller name]," — never invent a name.
-- A numbered list of every key fact supplied above for them to confirm: price and qualifier, tenure, lease figures, council tax, EPC, room counts, parking, supplies and each answered Part C item. Only facts supplied — nothing else.
-- Then ask these questions in plain English so the particulars are complete:
+SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, written as their negotiator — warm, plain, brief, not salesy, no exclamation marks, 150–250 words.
+- Open exactly "Dear [Seller name]," and keep this placeholder even if a name appears in the notes.
+- Thank them and explain that the draft details are below for checking before anything goes live.
+- Then a numbered list with one supplied fact per line in the form "Tenure: Freehold – is this correct?": price and qualifier, tenure and lease figures, council tax, EPC, room counts, parking, supplies, chain status, every known issue and each answered Part C item. Only facts supplied — nothing from the voice notes or private notes.
+- Then "To complete the particulars, could you let us know:" followed by every one of these questions, word for word:
 - (none — all supplies and Part C items are answered)
-- End with "[Your name, branch, phone]".
+- Close: "Please reply "Approved" or send any corrections — nothing will be published until you confirm." then "[Your name, branch, phone]". Never mention law, Trading Standards or penalties.
 
-SOCIAL: exactly three posts — platform "Instagram", "Facebook" and "X" — each caption includes price and qualifier and tenure; add "Full material information on the listing." where space runs out; relevant hashtags (words only, no '#').
+SOCIAL: exactly three posts — platform "Instagram", "Facebook" and "X". Every caption states the price exactly as in the facts, the tenure and the EPC rating (shared ownership adds "<n>% share"; auction or MMoA adds the sale method and "reservation fee applies"), then "Full material information on the listing."
+- Instagram: 80–150 words. Line 1 max 125 characters (area, type, price with qualifier). Then 3–5 short lines, one supplied fact each. Then "Tenure · EPC X · Council tax band X". A "Please note:" sentence for any known issue or Part C Yes item. Max 2 emojis, none in line 1. 5–10 hashtags (town, county, property type, newinstruction).
+- Facebook: 100–180 words in plain sentences, including tenure, EPC and council tax band, plus the "Please note:" sentence where relevant. Max 3 hashtags, max 2 emojis.
+- X: caption max 200 characters, at most 2 hashtags, no emojis, required items first; caption plus hashtags 280 characters or fewer.
+- Hashtags are words only, no '#'.
 
 Return the result by calling the submit_listing_marketing tool.

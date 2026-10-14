@@ -1,0 +1,62 @@
+{
+  "id": "E4-knotweed-disclosure",
+  "run": 1,
+  "call": "extract",
+  "timings": [
+    {
+      "call": "extract",
+      "attempt": 1,
+      "ms": 2940,
+      "stopReason": "tool_use",
+      "inputTokens": 4460,
+      "outputTokens": 225
+    }
+  ],
+  "raw": {
+    "extract": {
+      "tenure": "Leasehold",
+      "leaseYears": "112",
+      "groundRent": "250",
+      "serviceCharge": "1840",
+      "disclosures": "Knotweed was found by the bins last year, treatment ongoing",
+      "evidence": {
+        "tenure": "Leasehold",
+        "leaseYears": "a hundred and twelve years left",
+        "groundRent": "ground rent two-fifty",
+        "serviceCharge": "service charge eighteen-forty",
+        "disclosures": "Knotweed was found by the bins last year, treatment ongoing"
+      }
+    }
+  },
+  "pass": true,
+  "findings": [
+    {
+      "grader": "extraction",
+      "severity": "warn",
+      "message": "unexpected field disclosures (not in expectFields)",
+      "text": "Knotweed was found by the bins last year, treatment ongoing"
+    }
+  ],
+  "extractMs": 2940,
+  "retries": 0,
+  "output": {
+    "fields": {
+      "tenure": "Leasehold",
+      "leaseYears": "112",
+      "groundRent": "250",
+      "serviceCharge": "1840",
+      "disclosures": "Knotweed was found by the bins last year, treatment ongoing"
+    },
+    "evidence": {
+      "tenure": "Leasehold",
+      "leaseYears": "a hundred and twelve years left",
+      "groundRent": "ground rent two-fifty",
+      "serviceCharge": "service charge eighteen-forty",
+      "disclosures": "Knotweed was found by the bins last year, treatment ongoing"
+    }
+  },
+  "extraction": {
+    "precision": 1,
+    "recall": 1
+  }
+}
