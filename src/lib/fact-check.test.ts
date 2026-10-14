@@ -74,3 +74,10 @@ describe("keyFeatureCaveatFlags", () => {
     expect(keyFeatureCaveatFlags(["Lean-to utility"], "")).toEqual([]);
   });
 });
+
+describe("price abbreviations", () => {
+  it("accepts £350k for a supplied 350,000 but flags an invented one", () => {
+    expect(checkText("Guide £350k", "email", inputs).filter((x) => x.rule === "number")).toEqual([]);
+    expect(checkText("Guide £360k", "email", inputs).map((x) => x.term)).toContain("£360k");
+  });
+});

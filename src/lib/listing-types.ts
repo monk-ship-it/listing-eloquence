@@ -326,9 +326,27 @@ export function validateCoreOutput(raw: unknown): CoreOutput {
  * Social: platform labels normalised; unknown/duplicate platforms dropped;
  * fails only if no usable post remains.
  */
+/** The model occasionally returns a nested object as a JSON string — unwrap it. */
+function unwrapJson(v: unknown): unknown {
+  if (typeof v !== "string") return v;
+  const s = v.trim();
+  if (!/^[[{]/.test(s)) return v;
+  try {
+    return JSON.parse(s);
+  } catch {
+    return v;
+  }
+}
+
 export function validateMarketingOutput(raw: unknown): MarketingOutput {
   if (!raw || typeof raw !== "object") throw new Error("MALFORMED_AI_OUTPUT");
-  const r = raw as Record<string, unknown>;
+  const r0 = raw as Record<string, unknown>;
+  const r: Record<string, unknown> = {
+    ...r0,
+    emailBlast: unwrapJson(r0.emailBlast),
+    sellerEmail: unwrapJson(r0.sellerEmail),
+    social: unwrapJson(r0.social),
+  };
   const e = (r.emailBlast ?? {}) as Record<string, unknown>;
 
   const seenS = new Set<string>();
@@ -386,9 +404,15 @@ export function validateMarketingOutput(raw: unknown): MarketingOutput {
 
   // Email Blast must close with the material-information pointer.
   const MI_LINE = "Full material information is on the property listing.";
-  if (!emailBlast.body.toLowerCase().includes(MI_LINE.toLowerCase())) {
-    emailBlast.body = `${emailBlast.body}\n\n${MI_LINE}`;
-  }
+  // Always last: strip it wherever the model put it, then append.
+  const stripped = emailBlast.body
+    .split(MI_LINE)
+    .join("")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+  emailBlast.body = `${stripped}\n\n${MI_LINE}`;
 
   // Seller approval email is optional — never fails the marketing call.
   let sellerEmail = coerceSellerEmail(r.sellerEmail);

@@ -139,8 +139,14 @@ export function checkText(
   // £ amounts and digits — numbered-list markers ("6. ", "14) ") at the start
   // of a line are formatting, not facts.
   const numberScan = stripListMarkers(text);
-  for (const m of numberScan.matchAll(/£?\d[\d,]*(?:\.\d+)?(?:st|nd|rd|th)?/g)) {
-    const term = m[0].replace(/[.,]$/, "");
+  for (const m of numberScan.matchAll(/£?\d[\d,]*(?:\.\d+)?(?:st|nd|rd|th|k\b|m\b)?/gi)) {
+    let term = m[0].replace(/[.,]$/, "");
+    // "£195k" / "£1.45m" are price abbreviations: check the full figure.
+    const abbr = term.match(/^(£?)(\d+(?:\.\d+)?)(k|m)$/i);
+    if (abbr && abbr[1]) {
+      const full = Number(abbr[2]) * (/k/i.test(abbr[3]) ? 1000 : 1_000_000);
+      if (numberKnown(String(full), nums)) continue;
+    } else if (/m$/i.test(term)) term = term.slice(0, -1);
     if (!numberKnown(term, nums)) push(term, "not-in-notes", "number");
   }
   // number words (skip "one", too common in prose)
