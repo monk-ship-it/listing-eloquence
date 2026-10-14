@@ -60,7 +60,11 @@ Return the result by calling the submit_listing_marketing tool.`;
 
 /** Appended (as {{LIMIT_REMINDER}}) on the one retry after a limit breach. */
 export const LIMIT_REMINDER =
-  "\n\nIMPORTANT: your previous answer broke the output limits. The strapline must be 250 characters or fewer, and every key feature 80 characters or fewer.";
+  "\n\nIMPORTANT: your previous answer broke the output limits. The headline must be 70 characters or fewer, the strapline 250 characters or fewer, and every key feature 80 characters or fewer.";
+
+/** Appended to the marketing user message on its one retry after an X-length or price/tenure miss. */
+export const MARKETING_REMINDER =
+  "\n\nIMPORTANT: your previous answer broke the social rules. The X caption plus its hashtags (each written with #, separated by spaces) must be 280 characters or fewer, and every caption must state the price exactly as in the facts and the tenure.";
 
 export const EXTRACT_SYSTEM = `You extract property facts that a UK estate agent explicitly stated in dictated notes, to pre-fill a listing form.
 
