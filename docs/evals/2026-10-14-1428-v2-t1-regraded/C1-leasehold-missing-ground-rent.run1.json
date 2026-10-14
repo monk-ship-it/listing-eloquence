@@ -89,30 +89,15 @@
   "pass": false,
   "findings": [
     {
-      "grader": "limits",
-      "severity": "fail",
-      "message": "Seller email missing"
-    },
-    {
       "grader": "materialInfo",
       "severity": "warn",
       "message": "emailBlast.body: service charge not in the same paragraph as the tenure"
-    },
-    {
-      "grader": "mustInclude",
-      "severity": "fail",
-      "message": "\"ground rent\" missing from sellerEmail.body"
     },
     {
       "grader": "raw:limits",
       "severity": "fail",
       "message": "Email body doesn't end with the material-information line",
       "text": "r ending March 2026). Full material information is on the property listing.\n\nBook a viewing to see this flat in Chatham."
-    },
-    {
-      "grader": "raw:limits",
-      "severity": "fail",
-      "message": "Seller email missing"
     }
   ],
   "coreMs": 8638,

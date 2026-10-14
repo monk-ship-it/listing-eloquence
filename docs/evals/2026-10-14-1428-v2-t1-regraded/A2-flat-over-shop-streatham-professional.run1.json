@@ -85,12 +85,13 @@
       ]
     }
   },
-  "pass": false,
+  "pass": true,
   "findings": [
     {
-      "grader": "limits",
-      "severity": "fail",
-      "message": "Seller email missing"
+      "grader": "factCheck",
+      "severity": "warn",
+      "message": "\"How\" (name) in seller email is not in the inputs",
+      "text": "How"
     },
     {
       "grader": "materialInfo",
@@ -106,11 +107,6 @@
       "grader": "materialInfo",
       "severity": "warn",
       "message": "emailBlast.body: service charge not in the same paragraph as the tenure"
-    },
-    {
-      "grader": "raw:limits",
-      "severity": "fail",
-      "message": "Seller email missing"
     }
   ],
   "coreMs": 10215,

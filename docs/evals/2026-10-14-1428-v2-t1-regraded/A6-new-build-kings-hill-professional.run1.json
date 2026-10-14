@@ -91,11 +91,6 @@
   "pass": false,
   "findings": [
     {
-      "grader": "limits",
-      "severity": "fail",
-      "message": "Seller email missing"
-    },
-    {
       "grader": "materialInfo",
       "severity": "warn",
       "message": "listing: council tax band Not yet banded not stated as \"council tax band\""
@@ -157,11 +152,6 @@
       "grader": "v2",
       "severity": "fail",
       "message": "social.X: missing image label \"Images show the show home; specification may differ.\""
-    },
-    {
-      "grader": "raw:limits",
-      "severity": "fail",
-      "message": "Seller email missing"
     }
   ],
   "coreMs": 11763,

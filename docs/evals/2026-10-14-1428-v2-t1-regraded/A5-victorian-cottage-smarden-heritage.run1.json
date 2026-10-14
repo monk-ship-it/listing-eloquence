@@ -100,7 +100,7 @@
     {
       "grader": "raw:limits",
       "severity": "fail",
-      "message": "Seller email missing"
+      "message": "Seller email 303 words (need 150–250)"
     },
     {
       "grader": "raw:limits",

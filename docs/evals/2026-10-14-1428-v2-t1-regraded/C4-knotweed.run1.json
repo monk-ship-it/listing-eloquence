@@ -113,16 +113,6 @@
       "severity": "warn",
       "message": "\"London\" (name) in description is not in the inputs",
       "text": "London"
-    },
-    {
-      "grader": "limits",
-      "severity": "fail",
-      "message": "Seller email missing"
-    },
-    {
-      "grader": "raw:limits",
-      "severity": "fail",
-      "message": "Seller email missing"
     }
   ],
   "coreMs": 12055,

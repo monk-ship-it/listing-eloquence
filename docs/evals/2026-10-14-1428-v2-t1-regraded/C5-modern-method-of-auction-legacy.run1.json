@@ -88,19 +88,9 @@
   "pass": false,
   "findings": [
     {
-      "grader": "limits",
-      "severity": "fail",
-      "message": "Seller email missing"
-    },
-    {
       "grader": "v2",
       "severity": "fail",
       "message": "emailBlast.body: no \"Please note:\" sentence"
-    },
-    {
-      "grader": "raw:limits",
-      "severity": "fail",
-      "message": "Seller email missing"
     }
   ],
   "coreMs": 6911,

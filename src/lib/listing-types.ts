@@ -338,13 +338,26 @@ function unwrapJson(v: unknown): unknown {
   }
 }
 
+/**
+ * sellerEmail sometimes arrives as a JSON-ish string with unescaped quotes
+ * (e.g. reply "Approved"). Parse it, or pull the body out leniently.
+ */
+export function unwrapSellerEmail(v: unknown): unknown {
+  const u = unwrapJson(v);
+  if (typeof u !== "string") return u;
+  const m = u.match(/^\s*\{\s*"body"\s*:\s*"([\s\S]*)"\s*\}\s*$/);
+  if (!m) return u.trim() ? { body: u } : u;
+  const body = m[1].replace(/\\n/g, "\n").replace(/\\t/g, "\t").replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+  return { body };
+}
+
 export function validateMarketingOutput(raw: unknown): MarketingOutput {
   if (!raw || typeof raw !== "object") throw new Error("MALFORMED_AI_OUTPUT");
   const r0 = raw as Record<string, unknown>;
   const r: Record<string, unknown> = {
     ...r0,
     emailBlast: unwrapJson(r0.emailBlast),
-    sellerEmail: unwrapJson(r0.sellerEmail),
+    sellerEmail: unwrapSellerEmail(r0.sellerEmail),
     social: unwrapJson(r0.social),
   };
   const e = (r.emailBlast ?? {}) as Record<string, unknown>;

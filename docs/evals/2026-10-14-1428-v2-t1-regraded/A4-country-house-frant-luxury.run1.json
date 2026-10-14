@@ -98,12 +98,12 @@
     {
       "grader": "limits",
       "severity": "fail",
-      "message": "Seller email missing"
+      "message": "Seller email 270 words (need 150–250)"
     },
     {
       "grader": "raw:limits",
       "severity": "fail",
-      "message": "Seller email missing"
+      "message": "Seller email 270 words (need 150–250)"
     }
   ],
   "coreMs": 11621,

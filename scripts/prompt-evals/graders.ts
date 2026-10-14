@@ -1,5 +1,6 @@
 /** Deterministic graders for eval cases. Each returns Finding[]. */
 import type { ListingInput, ListingOutput } from "../../src/lib/listing-types";
+import { unwrapSellerEmail } from "../../src/lib/listing-types";
 import { isLeasehold, isSharedOwnership, EXTRACTABLE_FIELDS } from "../../src/lib/listing-fields";
 import {
   BANNED_PHRASES,
@@ -45,7 +46,7 @@ export function packFromRaw(core: unknown, mkt: unknown): GradePack {
       return v;
     }
   };
-  const m = { ...m0, emailBlast: un(m0.emailBlast), sellerEmail: un(m0.sellerEmail), social: un(m0.social) };
+  const m = { ...m0, emailBlast: un(m0.emailBlast), sellerEmail: unwrapSellerEmail(m0.sellerEmail), social: un(m0.social) };
   const e =
     m.emailBlast && typeof m.emailBlast === "object"
       ? (m.emailBlast as Record<string, unknown>)

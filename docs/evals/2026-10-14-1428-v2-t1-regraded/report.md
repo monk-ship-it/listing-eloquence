@@ -6,24 +6,24 @@
 - Cases × runs: 19 × 1
 - LLM grader: on
 - Tokens: 194,496 in / 42,357 out
-- Started: 2026-10-14T14:31:58.207Z
-- Result: **5/19 passed**
+- Started: 2026-10-14T14:32:18.789Z
+- Result: **7/19 passed**
 
 | Case | Result | Fails | Warns | Core s | Marketing s | Extract s | Retries | LLM |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | A1-ex-la-terrace-medway-plain | FAIL | 3 | 0 | 13.5 | 23.0 | – | 0 | FAIL 3.75 |
-| A2-flat-over-shop-streatham-professional | FAIL | 2 | 3 | 10.2 | 21.8 | – | 0 | PASS 4.88 |
+| A2-flat-over-shop-streatham-professional | PASS | 0 | 4 | 10.2 | 21.8 | – | 0 | PASS 4.88 |
 | A3-1930s-semi-sevenoaks-premium | FAIL | 5 | 0 | 15.7 | 21.6 | – | 0 | PASS 5.00 |
 | A4-country-house-frant-luxury | FAIL | 2 | 0 | 11.6 | 61.7 | – | 1 | PASS 4.50 |
 | A5-victorian-cottage-smarden-heritage | FAIL | 12 | 0 | 11.4 | 65.4 | – | 1 | FAIL 3.38 |
 | A6-new-build-kings-hill-professional-legacy | FAIL | 10 | 2 | 12.4 | 25.7 | – | 0 | PASS 5.00 |
-| A6-new-build-kings-hill-professional | FAIL | 12 | 2 | 11.8 | 28.4 | – | 0 | PASS 4.88 |
+| A6-new-build-kings-hill-professional | FAIL | 10 | 2 | 11.8 | 28.4 | – | 0 | PASS 4.88 |
 | A7-lordswood-planning-conflict | FAIL | 3 | 0 | 11.8 | 46.8 | – | 1 | FAIL 3.88 |
-| C1-leasehold-missing-ground-rent | FAIL | 4 | 1 | 8.6 | 20.9 | – | 0 | PASS 4.75 |
-| C2-shared-ownership | FAIL | 2 | 0 | 10.0 | 20.5 | – | 0 | PASS 4.25 |
+| C1-leasehold-missing-ground-rent | FAIL | 1 | 1 | 8.6 | 20.9 | – | 0 | PASS 4.75 |
+| C2-shared-ownership | PASS | 0 | 0 | 10.0 | 20.5 | – | 0 | PASS 4.25 |
 | C3-flood-history | FAIL | 7 | 0 | 8.8 | 25.2 | – | 0 | PASS 5.00 |
-| C4-knotweed | FAIL | 5 | 1 | 12.1 | 21.2 | – | 0 | PASS 4.75 |
-| C5-modern-method-of-auction-legacy | FAIL | 3 | 0 | 6.9 | 19.8 | – | 0 | PASS 4.75 |
+| C4-knotweed | FAIL | 3 | 1 | 12.1 | 21.2 | – | 0 | PASS 4.75 |
+| C5-modern-method-of-auction-legacy | FAIL | 1 | 0 | 6.9 | 19.8 | – | 0 | PASS 4.75 |
 | C5-modern-method-of-auction | FAIL | 2 | 0 | 7.9 | 43.2 | – | 1 | PASS 5.00 |
 | C6-voice-note-conflicts-and-private-leak | PASS | 0 | 0 | 11.2 | 23.1 | – | 0 | FAIL 4.38 |
 | E1-brenzett | PASS | 0 | 4 | – | – | 5.2 | 0 | – |
@@ -35,16 +35,16 @@
 
 | # cases | Failure | Cases |
 | ---: | --- | --- |
-| 8 | limits: Seller email missing | A2-flat-over-shop-streatham-professional, A4-country-house-frant-luxury, A5-victorian-cottage-smarden-heritage, A6-new-build-kings-hill-professional, C1-leasehold-missing-ground-rent, C2-shared-ownership, C4-knotweed, C5-modern-method-of-auction-legacy |
-| 8 | raw:limits: Seller email missing | A2-flat-over-shop-streatham-professional, A4-country-house-frant-luxury, A5-victorian-cottage-smarden-heritage, A6-new-build-kings-hill-professional, C1-leasehold-missing-ground-rent, C2-shared-ownership, C4-knotweed, C5-modern-method-of-auction-legacy |
+| 5 | raw:limits: Seller email N words (need N–N) | A1-ex-la-terrace-medway-plain, A4-country-house-frant-luxury, A5-victorian-cottage-smarden-heritage, A6-new-build-kings-hill-professional-legacy, A7-lordswood-planning-conflict |
+| 4 | limits: Seller email N words (need N–N) | A1-ex-la-terrace-medway-plain, A4-country-house-frant-luxury, A6-new-build-kings-hill-professional-legacy, A7-lordswood-planning-conflict |
 | 4 | raw:limits: Email body doesn't end with the material-information line | A1-ex-la-terrace-medway-plain, A7-lordswood-planning-conflict, C1-leasehold-missing-ground-rent, C3-flood-history |
-| 3 | limits: Seller email N words (need N–N) | A1-ex-la-terrace-medway-plain, A6-new-build-kings-hill-professional-legacy, A7-lordswood-planning-conflict |
-| 3 | raw:limits: Seller email N words (need N–N) | A1-ex-la-terrace-medway-plain, A6-new-build-kings-hill-professional-legacy, A7-lordswood-planning-conflict |
 | 3 | v2: emailBlast.body: no "…" sentence | A3-1930s-semi-sevenoaks-premium, A5-victorian-cottage-smarden-heritage, C5-modern-method-of-auction-legacy |
 | 2 | banned: Banned phrase "…" in listing | A3-1930s-semi-sevenoaks-premium, C5-modern-method-of-auction |
 | 2 | raw:banned: Banned phrase "…" in listing | A3-1930s-semi-sevenoaks-premium, C5-modern-method-of-auction |
 | 2 | v2: listing: missing image label "…" | A6-new-build-kings-hill-professional-legacy, A6-new-build-kings-hill-professional |
 | 2 | v2: social.Instagram: missing image label "…" | A6-new-build-kings-hill-professional-legacy, A6-new-build-kings-hill-professional |
+| 2 | v2: social.Facebook: missing image label "…" | A6-new-build-kings-hill-professional-legacy, A6-new-build-kings-hill-professional |
+| 2 | v2: social.X: missing image label "…" | A6-new-build-kings-hill-professional-legacy, A6-new-build-kings-hill-professional |
 
 ## Details
 
@@ -63,11 +63,9 @@
   - Facebook post: same issue with date – change to 'repaired August 2024'.
   - X/Twitter post: add brief mention of known issues or state 'See listing for known issues' to ensure material information is flagged even on short-form social.
 
-### A2-flat-over-shop-streatham-professional — FAIL
+### A2-flat-over-shop-streatham-professional — PASS
 
-- FAIL `limits` Seller email missing
-- FAIL `raw:limits` Seller email missing
-- 3 warning(s): `materialInfo` emailBlast.body: lease years not in the same paragraph as the tenure; `materialInfo` emailBlast.body: ground rent not in the same paragraph as the tenure; `materialInfo` emailBlast.body: service charge not in the same paragraph as the tenure
+- 4 warning(s): `factCheck` "How" (name) in seller email is not in the inputs; `materialInfo` emailBlast.body: lease years not in the same paragraph as the tenure; `materialInfo` emailBlast.body: ground rent not in the same paragraph as the tenure; `materialInfo` emailBlast.body: service charge not in the same paragraph as the tenure
 - LLM: PASS (avg 4.88; 1:5 2:5 3:5 4:4 5:5 6:5 7:5 8:5)
   - Add seller approval email (currently missing) – required output per format specification
   - Preview line is 91 characters ('Leasehold · Section 42 lease extension served · Bay-fronted living room · EPC D') – trim to ≤90, e.g. 'Leasehold · Section 42 lease extension served · Bay living room · EPC D'
@@ -85,8 +83,8 @@
 
 ### A4-country-house-frant-luxury — FAIL
 
-- FAIL `limits` Seller email missing
-- FAIL `raw:limits` Seller email missing
+- FAIL `limits` Seller email 270 words (need 150–250)
+- FAIL `raw:limits` Seller email 270 words (need 150–250)
 - LLM: PASS (avg 4.50; 1:4 2:4 3:5 4:4 5:5 6:5 7:4 8:5)
   - Add the missing SELLER APPROVAL EMAIL (150–250 words) – this is a required output in the pack.
   - Key feature 8: Move 'Council tax banding of the annexe has not been confirmed' to the material information block only; it doesn't belong in key features as it's not a selling point.
@@ -106,7 +104,7 @@
 - FAIL `materialInfo` emailBlast.body: missing EPC E
 - FAIL `v2` emailBlast.body: no "Please note:" sentence
 - FAIL `raw:limits` Email Blast missing
-- FAIL `raw:limits` Seller email missing
+- FAIL `raw:limits` Seller email 303 words (need 150–250)
 - FAIL `raw:limits` 0 social posts (need 3)
 - FAIL `marketing` marketing call failed
 - LLM: FAIL (avg 3.38; 1:4 2:3 3:5 4:1 5:5 6:4 7:4 8:1)
@@ -136,7 +134,6 @@
 
 ### A6-new-build-kings-hill-professional — FAIL
 
-- FAIL `limits` Seller email missing
 - FAIL `privateLeak` Private-note wording "exterior" in description — `exterior`
 - FAIL `privateLeak` Private-note wording "image" in description — `image`
 - FAIL `privateLeak` Private-note wording "exterior image is" in description — `exterior image is`
@@ -147,7 +144,6 @@
 - FAIL `v2` social.Instagram: missing image label "Images show the show home; specification may differ."
 - FAIL `v2` social.Facebook: missing image label "Images show the show home; specification may differ."
 - FAIL `v2` social.X: missing image label "Images show the show home; specification may differ."
-- FAIL `raw:limits` Seller email missing
 - 2 warning(s): `materialInfo` listing: council tax band Not yet banded not stated as "council tax band"; `materialInfo` emailBlast.body: council tax band Not yet banded not stated as "council tax band"
 - LLM: PASS (avg 4.88; 1:5 2:5 3:5 4:4 5:5 6:5 7:5 8:5)
   - Add seller approval email (currently missing) – required output per format specification
@@ -171,20 +167,15 @@
 
 ### C1-leasehold-missing-ground-rent — FAIL
 
-- FAIL `limits` Seller email missing
-- FAIL `mustInclude` "ground rent" missing from sellerEmail.body
 - FAIL `raw:limits` Email body doesn't end with the material-information line — `r ending March 2026). Full material information is on the property listing.  Book a viewing to see this flat in Chatham.`
-- FAIL `raw:limits` Seller email missing
 - 1 warning(s): `materialInfo` emailBlast.body: service charge not in the same paragraph as the tenure
 - LLM: PASS (avg 4.75; 1:5 2:5 3:5 4:4 5:5 6:5 7:5 8:4)
   - Add seller approval email (150–250 words) – currently missing entirely
   - Key features: remove full stop after 'Council Tax Band B, EPC rating C' to comply with format requirement
   - Consider adding ground rent (£300 per year mentioned in voice notes) to material information disclosures throughout if confirmed
 
-### C2-shared-ownership — FAIL
+### C2-shared-ownership — PASS
 
-- FAIL `limits` Seller email missing
-- FAIL `raw:limits` Seller email missing
 - LLM: PASS (avg 4.25; 1:5 2:5 3:5 4:2 5:5 6:5 7:5 8:2)
   - Add the missing SELLER APPROVAL EMAIL section (150–250 words required)
   - Key features: remove full stop after 'apply' in '8-week nomination period' line (max 80 chars, no full stops rule)
@@ -207,8 +198,6 @@
 - FAIL `factCheck` "21" (number) in description is not in the inputs — `21`
 - FAIL `factCheck` "25" (number) in description is not in the inputs — `25`
 - FAIL `factCheck` "Three" (number) in description is not in the inputs — `Three`
-- FAIL `limits` Seller email missing
-- FAIL `raw:limits` Seller email missing
 - 1 warning(s): `factCheck` "London" (name) in description is not in the inputs
 - LLM: PASS (avg 4.75; 1:5 2:5 3:5 4:4 5:5 6:5 7:5 8:4)
   - Add the missing SELLER APPROVAL EMAIL (150–250 words required by format specification)
@@ -218,9 +207,7 @@
 
 ### C5-modern-method-of-auction-legacy — FAIL
 
-- FAIL `limits` Seller email missing
 - FAIL `v2` emailBlast.body: no "Please note:" sentence
-- FAIL `raw:limits` Seller email missing
 - LLM: PASS (avg 4.75; 1:5 2:5 3:5 4:4 5:5 6:5 7:5 8:4)
   - Add seller approval email (150–250 words) – currently missing entirely
   - Facebook social post: remove duplicate '#Sheerness #Kent #PropertyForSale' hashtags at the end
