@@ -23,6 +23,16 @@ import {
   marketingTexts,
   missingPleaseNote,
   pleaseNoteReminder,
+  coreTextsLabelled,
+  imageLabelsFor,
+  marketingShapeProblems,
+  marketingTextsLabelled,
+  normaliseCaptions,
+  priceQualifierProblems,
+  priceReminder,
+  shapeReminder,
+  trimPreview,
+  xOverBudget,
 } from "./output-guards";
 
 export type GenStage = "core" | "marketing" | "regen";
@@ -68,10 +78,11 @@ export async function runCore(input: ListingInput, opts: RunOpts = {}): Promise<
   const problems = (o: CoreOutput) => ({
     limits: breaksLimits(o),
     banned: bannedIn(coreTexts(o), inputsText),
+    price: priceQualifierProblems(coreTextsLabelled(o), input),
   });
   const score = (o: CoreOutput) => {
     const p = problems(o);
-    return (p.limits ? 1 : 0) + p.banned.length;
+    return (p.limits ? 1 : 0) + p.banned.length + p.price.length;
   };
   const attempt = async (maxTokens: number, reminder: boolean | string = false) => {
     const a = ++n;
@@ -96,7 +107,7 @@ export async function runCore(input: ListingInput, opts: RunOpts = {}): Promise<
     else throw err;
   }
   const p = problems(out);
-  if (!retried && (p.limits || p.banned.length)) {
+  if (!retried && (p.limits || p.banned.length || p.price.length)) {
     await opts.log?.(
       "core",
       new Error(
@@ -128,14 +139,23 @@ export async function runMarketing(
   const subject = `Your property details for approval – ${input.address?.trim() || "your property"}`;
   let n = 0;
   const inputsText = inputsToText(input);
-  const problems = (o: MarketingOutput) => ({
-    social: socialProblems(o, input),
-    banned: bannedIn(marketingTexts(o), inputsText),
-    pleaseNote: missingPleaseNote(o, input),
-  });
+  const labels = imageLabelsFor(input.mediaNotes);
+  // X measured against the label-aware budget, before the app appends labels/trims.
+  const overBudget = new WeakMap<MarketingOutput, boolean>();
+  const problems = (o: MarketingOutput) => {
+    const social = socialProblems(o, input);
+    if (overBudget.get(o) && !social.includes("x-length")) social.push("x-length");
+    return {
+      social,
+      banned: bannedIn(marketingTexts(o), inputsText),
+      pleaseNote: missingPleaseNote(o, input),
+      price: priceQualifierProblems(marketingTextsLabelled(o), input),
+      shape: marketingShapeProblems(o),
+    };
+  };
   const score = (o: MarketingOutput) => {
     const p = problems(o);
-    return p.social.length + p.banned.length + p.pleaseNote.length;
+    return p.social.length + p.banned.length + p.pleaseNote.length + p.price.length + p.shape.length;
   };
   const attempt = async (reminder: boolean | string = false) => {
     const a = ++n;
@@ -147,7 +167,10 @@ export async function runMarketing(
     opts.onRaw?.("marketing", raw, a);
     const out = validateMarketingOutput(raw);
     if (out.sellerEmail) out.sellerEmail = { ...out.sellerEmail, subject };
-    return labelMarketing(out, input);
+    const over = xOverBudget(normaliseCaptions(out.social), labels);
+    const labelled = labelMarketing(out, input);
+    overBudget.set(labelled, over);
+    return labelled;
   };
   let out: MarketingOutput;
   let retried = false;
@@ -164,17 +187,24 @@ export async function runMarketing(
     }
   }
   const p = problems(out);
-  if (!retried && (p.social.length || p.banned.length || p.pleaseNote.length)) {
+  if (
+    !retried &&
+    (p.social.length || p.banned.length || p.pleaseNote.length || p.price.length || p.shape.length)
+  ) {
     const tags = [
       p.social.length ? `SOCIAL_RULES: ${p.social.join(",")}` : "",
       p.banned.length ? `BANNED: ${p.banned.join(",")}` : "",
       p.pleaseNote.length ? "PLEASE_NOTE_MISSING" : "",
+      p.price.length ? "PRICE_QUALIFIER" : "",
+      p.shape.length ? `SHAPE: ${p.shape.join(",")}` : "",
     ].filter(Boolean);
     await opts.log?.(stage, new Error(tags.join(" ")));
     const reminder =
       (p.social.length ? MARKETING_REMINDER : "") +
       (p.banned.length ? bannedReminder(p.banned) : "") +
-      (p.pleaseNote.length ? pleaseNoteReminder(p.pleaseNote) : "");
+      (p.pleaseNote.length ? pleaseNoteReminder(p.pleaseNote) : "") +
+      (p.price.length ? priceReminder(p.price, input) : "") +
+      shapeReminder(p.shape);
     try {
       const second = await attempt(reminder);
       if (score(second) <= score(out)) out = second;
