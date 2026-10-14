@@ -1,3 +1,4 @@
+import { imageLabelsFor } from "../../src/lib/output-guards";
 /** Deterministic graders for eval cases. Each returns Finding[]. */
 import type { ListingInput, ListingOutput } from "../../src/lib/listing-types";
 import { unwrapSellerEmail } from "../../src/lib/listing-types";
@@ -444,15 +445,6 @@ export function gradeMustInclude(pack: GradePack, c: EvalCase): Finding[] {
   return out;
 }
 
-const IMAGE_LABELS: [RegExp, string][] = [
-  [
-    /virtual(ly)?[- ]stag/i,
-    "Some images have been virtually staged to show how rooms could be furnished.",
-  ],
-  [/\bCGI\b|computer[- ]generated/i, "Images are computer-generated (CGI) and indicative only."],
-  [/show home/i, "Images show the show home; specification may differ."],
-  [/digitally (enhanced|altered)/i, "Some images have been digitally enhanced."],
-];
 
 const PART_C = [
   "buildingSafety",
@@ -486,16 +478,15 @@ export function gradeV2(pack: GradePack, input: ListingInput): Finding[] {
     for (const [sec, text] of targets)
       if (!/please note:/i.test(text)) f(`${sec}: no "Please note:" sentence`);
   }
-  // The prompt asks for exactly one label: any triggered label satisfies it.
-  const media = input.mediaNotes ?? "";
-  const triggered = IMAGE_LABELS.filter(([re]) => re.test(media)).map(([, l]) => l);
+  // The app appends one fixed label per trigger: every triggered label must be present.
+  const triggered = imageLabelsFor(input.mediaNotes);
   if (triggered.length) {
     const blocks: [string, string][] = [
       ["listing", pack.listing],
       ...pack.social.map((p): [string, string] => [`social.${p.platform}`, p.caption]),
     ];
     for (const [sec, text] of blocks)
-      if (!triggered.some((l) => has(text, l)))
+      if (!triggered.every((l) => has(text, l)))
         f(`${sec}: missing image label (${triggered.length} triggered)`);
   }
   if (/auction/i.test(input.saleMethod ?? "")) {
@@ -592,6 +583,8 @@ export function gradePack(
 export function gradeRaw(pack: GradePack, input: ListingInput): Finding[] {
   return [...gradeLimits(pack, input), ...gradeBanned(pack, input)].map((f) => ({
     ...f,
+    // validateMarketingOutput always moves the material-information line to the end.
+    severity: /material-information line/.test(f.message) ? ("warn" as const) : f.severity,
     grader: `raw:${f.grader}`,
   }));
 }

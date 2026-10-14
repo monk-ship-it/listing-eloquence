@@ -12,6 +12,18 @@ import {
 import type { CoreOutput, ListingInput, MarketingOutput } from "./listing-types";
 import { socialProblems, validateCoreOutput, validateMarketingOutput } from "./listing-types";
 import { filterExtraction, type ExtractResult } from "./extract-filter";
+import { LIMIT_REMINDER, MARKETING_REMINDER } from "./prompts/templates";
+import { inputsToText } from "./fact-check";
+import {
+  bannedIn,
+  bannedReminder,
+  coreTexts,
+  labelCore,
+  labelMarketing,
+  marketingTexts,
+  missingPleaseNote,
+  pleaseNoteReminder,
+} from "./output-guards";
 
 export type GenStage = "core" | "marketing" | "regen";
 
@@ -52,7 +64,16 @@ export async function runCore(input: ListingInput, opts: RunOpts = {}): Promise<
   const S = CALL_SETTINGS.core;
   let retried = false;
   let n = 0;
-  const attempt = async (maxTokens: number, reminder = false) => {
+  const inputsText = inputsToText(input);
+  const problems = (o: CoreOutput) => ({
+    limits: breaksLimits(o),
+    banned: bannedIn(coreTexts(o), inputsText),
+  });
+  const score = (o: CoreOutput) => {
+    const p = problems(o);
+    return (p.limits ? 1 : 0) + p.banned.length;
+  };
+  const attempt = async (maxTokens: number, reminder: boolean | string = false) => {
     const a = ++n;
     const raw = await callClaudeTool({
       ...buildCoreRequest(input, { reminder, maxTokens }),
@@ -60,7 +81,7 @@ export async function runCore(input: ListingInput, opts: RunOpts = {}): Promise<
       onMeta: (m) => opts.onMeta?.({ ...m, call: "core", attempt: a }),
     });
     opts.onRaw?.("core", raw, a);
-    return validateCoreOutput(raw);
+    return labelCore(validateCoreOutput(raw), input);
   };
   let out: CoreOutput;
   try {
@@ -74,10 +95,16 @@ export async function runCore(input: ListingInput, opts: RunOpts = {}): Promise<
     else if (code === "AI_TIMEOUT") out = await attempt(S.maxTokens);
     else throw err;
   }
-  if (!retried && breaksLimits(out)) {
-    await opts.log?.("core", new Error("LIMITS_EXCEEDED"));
+  const p = problems(out);
+  if (!retried && (p.limits || p.banned.length)) {
+    await opts.log?.(
+      "core",
+      new Error(`${p.limits ? "LIMITS_EXCEEDED " : ""}${p.banned.length ? `BANNED: ${p.banned.join(",")}` : ""}`.trim()),
+    );
+    const reminder = (p.limits ? LIMIT_REMINDER : "") + (p.banned.length ? bannedReminder(p.banned) : "");
     try {
-      out = await attempt(S.maxTokens, true);
+      const second = await attempt(S.maxTokens, reminder);
+      if (score(second) <= score(out)) out = second;
     } catch (err) {
       await opts.log?.("core", err);
     }
@@ -97,7 +124,17 @@ export async function runMarketing(
   const stage = opts.stage ?? "marketing";
   const subject = `Your property details for approval – ${input.address?.trim() || "your property"}`;
   let n = 0;
-  const attempt = async (reminder = false) => {
+  const inputsText = inputsToText(input);
+  const problems = (o: MarketingOutput) => ({
+    social: socialProblems(o, input),
+    banned: bannedIn(marketingTexts(o), inputsText),
+    pleaseNote: missingPleaseNote(o, input),
+  });
+  const score = (o: MarketingOutput) => {
+    const p = problems(o);
+    return p.social.length + p.banned.length + p.pleaseNote.length;
+  };
+  const attempt = async (reminder: boolean | string = false) => {
     const a = ++n;
     const raw = await callClaudeTool({
       ...buildMarketingRequest(input, { reminder }),
@@ -107,7 +144,7 @@ export async function runMarketing(
     opts.onRaw?.("marketing", raw, a);
     const out = validateMarketingOutput(raw);
     if (out.sellerEmail) out.sellerEmail = { ...out.sellerEmail, subject };
-    return out;
+    return labelMarketing(out, input);
   };
   let out: MarketingOutput;
   let retried = false;
@@ -123,11 +160,21 @@ export async function runMarketing(
       throw err2;
     }
   }
-  if (!retried && socialProblems(out, input).length) {
-    await opts.log?.(stage, new Error(`SOCIAL_RULES: ${socialProblems(out, input).join(",")}`));
+  const p = problems(out);
+  if (!retried && (p.social.length || p.banned.length || p.pleaseNote.length)) {
+    const tags = [
+      p.social.length ? `SOCIAL_RULES: ${p.social.join(",")}` : "",
+      p.banned.length ? `BANNED: ${p.banned.join(",")}` : "",
+      p.pleaseNote.length ? "PLEASE_NOTE_MISSING" : "",
+    ].filter(Boolean);
+    await opts.log?.(stage, new Error(tags.join(" ")));
+    const reminder =
+      (p.social.length ? MARKETING_REMINDER : "") +
+      (p.banned.length ? bannedReminder(p.banned) : "") +
+      (p.pleaseNote.length ? pleaseNoteReminder(p.pleaseNote) : "");
     try {
-      const second = await attempt(true);
-      if (socialProblems(second, input).length <= socialProblems(out, input).length) out = second;
+      const second = await attempt(reminder);
+      if (score(second) <= score(out)) out = second;
     } catch (err) {
       await opts.log?.(stage, err);
     }
