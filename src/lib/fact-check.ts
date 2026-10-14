@@ -233,7 +233,9 @@ export const PRIVATE_INPUT_KEYS = ["showingNotes", "mediaNotes"] as const;
 export function publicInputsToText(input: object): string {
   const r = input as Record<string, unknown>;
   return Object.entries(r)
-    .filter(([k, v]) => typeof v === "string" && !(PRIVATE_INPUT_KEYS as readonly string[]).includes(k))
+    .filter(
+      ([k, v]) => typeof v === "string" && !(PRIVATE_INPUT_KEYS as readonly string[]).includes(k),
+    )
     .map(([, v]) => v as string)
     .join(" \n ");
 }
@@ -289,7 +291,11 @@ export function privateLeakFlags(pack: PackLike, input: object): FactFlag[] {
   const e = pack.emailBlast;
   if (e) {
     for (const s of e.subjectLines ?? []) sections.push(["email", s]);
-    sections.push(["email", e.previewText ?? ""], ["email", e.headline ?? ""], ["email", e.body ?? ""]);
+    sections.push(
+      ["email", e.previewText ?? ""],
+      ["email", e.headline ?? ""],
+      ["email", e.body ?? ""],
+    );
   }
   for (const p of pack.social ?? [])
     sections.push(["social", `${p.caption} ${(p.hashtags ?? []).join(" ")}`]);

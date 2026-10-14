@@ -10,7 +10,12 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { runCore, runExtraction, runMarketing } from "../../src/lib/generation.server";
 import { toApiBody } from "../../src/lib/ai-gateway.server";
-import { buildCoreRequest, buildExtractRequest, buildMarketingRequest, DEFAULT_CLAUDE_MODEL } from "../../src/lib/prompts/calls";
+import {
+  buildCoreRequest,
+  buildExtractRequest,
+  buildMarketingRequest,
+  DEFAULT_CLAUDE_MODEL,
+} from "../../src/lib/prompts/calls";
 import { PROMPT_VERSION } from "../../src/lib/prompts/version.gen";
 import { caseInput } from "../../src/lib/prompts/workbench-export";
 import { FIELD_DEFS } from "../../src/lib/listing-fields";
@@ -31,7 +36,9 @@ const opt = (n: string, d?: string) => {
 
 const label = opt("label", "run")!.replace(/[^a-z0-9-]+/gi, "-");
 const which = opt("cases", "all")!;
-const only = opt("only")?.split(",").map((s) => s.trim());
+const only = opt("only")
+  ?.split(",")
+  .map((s) => s.trim());
 const runs = Math.max(1, Number(opt("runs", "1")));
 const model = opt("model", process.env.EVAL_MODEL || DEFAULT_CLAUDE_MODEL)!;
 const concurrency = Math.max(1, Number(opt("concurrency", "2")));
@@ -46,7 +53,11 @@ let cases: EvalCase[] = [
 if (only) cases = cases.filter((c) => only.includes(c.id));
 
 // Validate every input key against FIELD_DEFS.
-const known = new Set<string>([...FIELD_DEFS.map((d) => d.key as string), "voice", "sellerApproved"]);
+const known = new Set<string>([
+  ...FIELD_DEFS.map((d) => d.key as string),
+  "voice",
+  "sellerApproved",
+]);
 for (const c of cases)
   for (const k of Object.keys(c.input ?? {}))
     if (!known.has(k)) throw new Error(`Case ${c.id}: unknown input key "${k}"`);
@@ -93,7 +104,13 @@ if (!process.env.ANTHROPIC_API_KEY) {
 
 async function runCase(c: EvalCase, run: number): Promise<CaseResult> {
   const timings: CallTiming[] = [];
-  const onMeta = (m: { call: CallTiming["call"]; attempt: number; ms: number; stopReason: string | null; usage: { input_tokens?: number; output_tokens?: number } | null }) =>
+  const onMeta = (m: {
+    call: CallTiming["call"];
+    attempt: number;
+    ms: number;
+    stopReason: string | null;
+    usage: { input_tokens?: number; output_tokens?: number } | null;
+  }) =>
     timings.push({
       call: m.call,
       attempt: m.attempt,
@@ -132,7 +149,14 @@ async function runCase(c: EvalCase, run: number): Promise<CaseResult> {
         extraction: { precision: g.precision, recall: g.recall },
       };
     } catch (e) {
-      return { ...base, pass: false, findings: [], retries: retries(), error: String((e as Error).message ?? e), extractMs: sum("extract") };
+      return {
+        ...base,
+        pass: false,
+        findings: [],
+        retries: retries(),
+        error: String((e as Error).message ?? e),
+        extractMs: sum("extract"),
+      };
     }
   }
 
@@ -142,16 +166,31 @@ async function runCase(c: EvalCase, run: number): Promise<CaseResult> {
     runMarketing(input, { model, onMeta, onRaw }),
   ]);
   if (coreRes.status === "rejected") {
-    return { ...base, pass: false, findings: [], retries: retries(), error: `core: ${(coreRes.reason as Error)?.message}`, coreMs: sum("core"), marketingMs: sum("marketing") };
+    return {
+      ...base,
+      pass: false,
+      findings: [],
+      retries: retries(),
+      error: `core: ${(coreRes.reason as Error)?.message}`,
+      coreMs: sum("core"),
+      marketingMs: sum("marketing"),
+    };
   }
   const final: ListingOutput =
     mktRes.status === "fulfilled"
       ? { ...coreRes.value, ...mktRes.value }
       : { ...coreRes.value, emailBlast: null, social: [], marketingStatus: "failed" };
   const finalPack = packFromFinal(final);
-  const findings = [...gradePack(finalPack, input, c), ...gradeRaw(packFromRaw(raw.core, raw.marketing), input)];
+  const findings = [
+    ...gradePack(finalPack, input, c),
+    ...gradeRaw(packFromRaw(raw.core, raw.marketing), input),
+  ];
   if (mktRes.status === "rejected")
-    findings.push({ grader: "marketing", severity: "fail", message: `marketing call failed: ${(mktRes.reason as Error)?.message}` });
+    findings.push({
+      grader: "marketing",
+      severity: "fail",
+      message: `marketing call failed: ${(mktRes.reason as Error)?.message}`,
+    });
   let llm: CaseResult["llm"];
   if (doLlm) {
     try {
@@ -183,7 +222,9 @@ await Promise.all(
       const [c, r] = jobs[i];
       const t0 = Date.now();
       results[i] = await runCase(c, r);
-      console.log(`${results[i].pass ? "PASS" : "FAIL"} ${c.id}#${r} (${((Date.now() - t0) / 1000).toFixed(1)}s)`);
+      console.log(
+        `${results[i].pass ? "PASS" : "FAIL"} ${c.id}#${r} (${((Date.now() - t0) / 1000).toFixed(1)}s)`,
+      );
     }
   }),
 );

@@ -99,7 +99,11 @@ export function WorkbenchExportMenu({
           className="min-h-11 gap-1.5 sm:min-h-9"
           disabled={busy}
         >
-          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <FlaskConical className="h-4 w-4" />}
+          {busy ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <FlaskConical className="h-4 w-4" />
+          )}
           Copy for Workbench
         </Button>
       </DropdownMenuTrigger>

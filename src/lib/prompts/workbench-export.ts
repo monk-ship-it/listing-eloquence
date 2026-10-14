@@ -27,7 +27,13 @@ import {
   SYSTEM_TEMPLATE,
 } from "./templates";
 import { VARIABLE_SOURCES, normaliseInput, promptVars, type PromptVarName } from "./render";
-import { GRADER_SCHEMA, GRADER_SETTINGS, GRADER_SYSTEM, GRADER_TOOL, GRADER_USER_TEMPLATE } from "./grader";
+import {
+  GRADER_SCHEMA,
+  GRADER_SETTINGS,
+  GRADER_SYSTEM,
+  GRADER_TOOL,
+  GRADER_USER_TEMPLATE,
+} from "./grader";
 
 export interface ExportCase {
   id: string;
@@ -114,7 +120,8 @@ function settingsJson(): string {
       core: "validateCoreOutput() in src/lib/listing-types.ts",
       marketing:
         "validateMarketingOutput() in src/lib/listing-types.ts; the seller email subject is set by the app",
-      extract: "filterExtraction() in src/lib/extract-filter.ts (drops fields without a verbatim quote)",
+      extract:
+        "filterExtraction() in src/lib/extract-filter.ts (drops fields without a verbatim quote)",
     },
   });
 }
@@ -195,8 +202,16 @@ export function renderWorkbenchFiles(cases: ExportCase[]): Record<string, string
     [`${W}/extract.system.txt`]: EXTRACT_SYSTEM,
     [`${W}/extract.user.txt`]: EXTRACT_USER_TEMPLATE,
     [`${W}/tools/core.json`]: tool(CORE_TOOL, TOOL_DESCRIPTIONS.core, CORE_SCHEMA),
-    [`${W}/tools/marketing.json`]: tool(MARKETING_TOOL, TOOL_DESCRIPTIONS.marketing, MARKETING_SCHEMA),
-    [`${W}/tools/extract.json`]: tool(EXTRACT_TOOL, TOOL_DESCRIPTIONS.extract, buildExtractSchema()),
+    [`${W}/tools/marketing.json`]: tool(
+      MARKETING_TOOL,
+      TOOL_DESCRIPTIONS.marketing,
+      MARKETING_SCHEMA,
+    ),
+    [`${W}/tools/extract.json`]: tool(
+      EXTRACT_TOOL,
+      TOOL_DESCRIPTIONS.extract,
+      buildExtractSchema(),
+    ),
     [`${W}/settings.json`]: settingsJson(),
   };
   for (const v of VOICES) prompt[`${W}/voices/${v.id}.txt`] = VOICE_PROMPTS[v.id];

@@ -12,6 +12,7 @@ async function stripeRequest(
   path: string,
   method: "GET" | "POST",
   form?: Record<string, string>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- untyped Stripe JSON
 ): Promise<any> {
   const res = await fetch(`${STRIPE_API}${path}`, {
     method,
