@@ -1,0 +1,177 @@
+{
+  "id": "C3-flood-history",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 8902,
+      "stopReason": "tool_use",
+      "inputTokens": 4407,
+      "outputTokens": 566
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 20431,
+      "stopReason": "tool_use",
+      "inputTokens": 5335,
+      "outputTokens": 1578
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "Detached cottage with riverbank garden, Yalding",
+      "summary": "A detached cottage dating from c.1850 with a garden running to the River Beult, wood-burning stove, exposed beams, driveway parking and oil-fired central heating, in a village with a pub and primary school",
+      "listing": "Mill Cottage is a detached three-bedroom cottage dating from c.1850, set on Riverside Lane in Yalding with a garden that runs to the River Beult. The cottage has a wood-burning stove, exposed beams and driveway parking.\n\nThe ground floor has two reception rooms. One reception room contains a wood-burning stove and exposed beams. The ground floor also has a kitchen and a bathroom.\n\nOn the first floor are three bedrooms and a second bathroom.\n\nThe garden runs to the riverbank of the River Beult.\n\nYalding is a village with a pub and primary school.\n\nOffers in Excess of £575,000. Freehold. Council Tax Band E (Maidstone Borough Council). EPC rating E. Construction: standard. Electricity: mains. Water: mains (metered). Sewerage: septic tank. Heating: oil-fired central heating. Broadband: FTTC. Mobile signal: good outdoor coverage on major networks. Parking: driveway. Building safety, restrictions, rights and easements, coastal erosion, planning, accessibility and coalfield/mining: none known. Flooding: the ground floor flooded from the River Beult in December 2013 and February 2020; flood doors and non-return valves fitted 2021; insured through a Flood Re-backed policy.",
+      "keyFeatures": [
+        "Garden running to the River Beult",
+        "Detached cottage dating from c.1850",
+        "Wood-burning stove and exposed beams",
+        "Three bedrooms and two bathrooms",
+        "Driveway parking",
+        "Oil-fired central heating",
+        "Village location with pub and primary school",
+        "Flood doors and non-return valves fitted 2021 (flooded 2013 and 2020)"
+      ]
+    },
+    "marketing": {
+      "emailBlast": {
+        "subjectLines": [
+          "New instruction: 3-bed cottage, Yalding – OIEO £575,000",
+          "Just listed: Mill Cottage, Yalding – OIEO £575,000",
+          "Riverside cottage, Yalding – OIEO £575,000"
+        ],
+        "previewText": "Freehold · c.1850 · Exposed beams · Wood-burning stove · Garden to riverbank · EPC E",
+        "headline": "Mill Cottage, Riverside Lane, Yalding ME18",
+        "body": "We are pleased to offer Mill Cottage, Riverside Lane, Yalding ME18, for sale at offers in excess of £575,000. The property is freehold.\n\nThis detached cottage dates from c.1850 and has exposed beams, a wood-burning stove and a garden extending to the riverbank. There is a driveway for parking, oil-fired central heating and a septic tank for sewerage.\n\nCouncil Tax band E (Maidstone Borough Council), EPC rating E. Please note: the ground floor flooded from the River Beult in December 2013 and February 2020; flood doors and non-return valves were fitted in 2021; the property is insured through a Flood Re-backed policy. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "Mill Cottage is a three-bedroom detached cottage in Yalding, dating from c.1850, with exposed beams, a wood-burning stove and a garden to the riverbank. Offers in excess of £575,000, freehold. The village has a pub and primary school. I'd be pleased to arrange a viewing for you."
+      },
+      "sellerEmail": "{\n  \"body\": \"Dear [Seller name],\\n\\nThank you for instructing us to market Mill Cottage. Please find below the draft particulars for your approval. Nothing will be published until you confirm these details are correct.\\n\\n1. Address: Mill Cottage, Riverside Lane, Yalding ME18 – is this correct?\\n2. Property type: Detached cottage – is this correct?\\n3. Year built: c.1850 – is this correct?\\n4. Asking price: Offers in Excess of £575,000 – is this correct?\\n5. Tenure: Freehold – is this correct?\\n6. Bedrooms: 3 – is this correct?\\n7. Bathrooms: 2 – is this correct?\\n8. Receptions: 2 – is this correct?\\n9. Council Tax: Band E (Maidstone Borough Council) – is this correct?\\n10. EPC rating: E – is this correct?\\n11. Construction: Standard – is this correct?\\n12. Electricity: Mains – is this correct?\\n13. Water: Mains (metered) – is this correct?\\n14. Sewerage: Septic tank – is this correct?\\n15. Heating: Oil-fired central heating – is this correct?\\n16. Broadband: FTTC – is this correct?\\n17. Mobile signal: Good outdoor coverage on major networks – is this correct?\\n18. Parking: Driveway – is this correct?\\n19. Flooding: ground floor flooded from the River Beult in December 2013 and February 2020; flood doors and non-return valves fitted 2021; insured through a Flood Re-backed policy – is this correct?\\n20. Key features: Wood-burning stove, exposed beams, garden to the riverbank – is this correct?\\n\\nPlease reply \"Approved\" or send any corrections – nothing will be published until you confirm.\\n\\n[Your name, branch, phone]\"\n}",
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "Mill Cottage, Riverside Lane, Yalding ME18 – offers in excess of £575,000\n\nDetached cottage dating from c.1850 with three bedrooms and two bathrooms.\n\nExposed beams and wood-burning stove.\n\nGarden extending to the riverbank.\n\nDriveway parking. Oil-fired central heating. Septic tank.\n\nFreehold · EPC E · Council Tax band E\n\nPlease note: the ground floor flooded from the River Beult in December 2013 and February 2020; flood doors and non-return valves were fitted in 2021; the property is insured through a Flood Re-backed policy.\n\nFull material information on the listing. 🏡🌿",
+          "hashtags": [
+            "Yalding",
+            "Kent",
+            "Cottage",
+            "DetachedCottage",
+            "NewInstruction",
+            "ForSale",
+            "Maidstone",
+            "RiversideProperty",
+            "PeriodCottage",
+            "CountryCottage"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "Mill Cottage is a detached cottage in Riverside Lane, Yalding ME18, dating from c.1850. The property has three bedrooms, two bathrooms and two reception rooms. There are exposed beams and a wood-burning stove. The garden extends to the riverbank. Parking is on the driveway. Heating is oil-fired central heating and sewerage is via a septic tank. The village has a pub and primary school. Offers in excess of £575,000. Freehold. Council Tax band E (Maidstone Borough Council). EPC rating E. Please note: the ground floor flooded from the River Beult in December 2013 and February 2020; flood doors and non-return valves were fitted in 2021; the property is insured through a Flood Re-backed policy. Full material information on the listing. 🏡",
+          "hashtags": [
+            "Yalding",
+            "Kent",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "Mill Cottage, Yalding ME18: detached cottage c.1850, 3 bed, 2 bath, exposed beams, wood-burning stove, garden to riverbank. OIEO £575,000. Freehold. EPC E. Full material information on listing.",
+          "hashtags": [
+            "Yalding",
+            "Kent"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": true,
+  "findings": [],
+  "coreMs": 8902,
+  "marketingMs": 20431,
+  "retries": 0,
+  "output": {
+    "headline": "Detached cottage with riverbank garden, Yalding",
+    "listing": "Mill Cottage is a detached three-bedroom cottage dating from c.1850, set on Riverside Lane in Yalding with a garden that runs to the River Beult. The cottage has a wood-burning stove, exposed beams and driveway parking.\n\nThe ground floor has two reception rooms. One reception room contains a wood-burning stove and exposed beams. The ground floor also has a kitchen and a bathroom.\n\nOn the first floor are three bedrooms and a second bathroom.\n\nThe garden runs to the riverbank of the River Beult.\n\nYalding is a village with a pub and primary school.\n\nOffers in Excess of £575,000. Freehold. Council Tax Band E (Maidstone Borough Council). EPC rating E. Construction: standard. Electricity: mains. Water: mains (metered). Sewerage: septic tank. Heating: oil-fired central heating. Broadband: FTTC. Mobile signal: good outdoor coverage on major networks. Parking: driveway. Building safety, restrictions, rights and easements, coastal erosion, planning, accessibility and coalfield/mining: none known. Flooding: the ground floor flooded from the River Beult in December 2013 and February 2020; flood doors and non-return valves fitted 2021; insured through a Flood Re-backed policy.",
+    "summary": "A detached cottage dating from c.1850 with a garden running to the River Beult, wood-burning stove, exposed beams, driveway parking and oil-fired central heating, in a village with a pub and primary school",
+    "keyFeatures": [
+      "Garden running to the River Beult",
+      "Detached cottage dating from c.1850",
+      "Wood-burning stove and exposed beams",
+      "Three bedrooms and two bathrooms",
+      "Driveway parking",
+      "Oil-fired central heating",
+      "Village location with pub and primary school",
+      "Flood doors and non-return valves fitted 2021 (flooded 2013 and 2020)"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "New instruction: 3-bed cottage, Yalding – OIEO £575,000",
+        "Just listed: Mill Cottage, Yalding – OIEO £575,000",
+        "Riverside cottage, Yalding – OIEO £575,000"
+      ],
+      "previewText": "Freehold · c.1850 · Exposed beams · Wood-burning stove · Garden to riverbank · EPC E",
+      "headline": "Mill Cottage, Riverside Lane, Yalding ME18",
+      "body": "We are pleased to offer Mill Cottage, Riverside Lane, Yalding ME18, for sale at offers in excess of £575,000. The property is freehold.\n\nThis detached cottage dates from c.1850 and has exposed beams, a wood-burning stove and a garden extending to the riverbank. There is a driveway for parking, oil-fired central heating and a septic tank for sewerage.\n\nCouncil Tax band E (Maidstone Borough Council), EPC rating E. Please note: the ground floor flooded from the River Beult in December 2013 and February 2020; flood doors and non-return valves were fitted in 2021; the property is insured through a Flood Re-backed policy.\n\nFull material information is on the property listing.",
+      "callToAction": "Book a viewing",
+      "personalMessage": "Mill Cottage is a three-bedroom detached cottage in Yalding, dating from c.1850, with exposed beams, a wood-burning stove and a garden to the riverbank. Offers in excess of £575,000, freehold. The village has a pub and primary school. I'd be pleased to arrange a viewing for you."
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "Mill Cottage, Riverside Lane, Yalding ME18 – offers in excess of £575,000\n\nDetached cottage dating from c.1850 with three bedrooms and two bathrooms.\n\nExposed beams and wood-burning stove.\n\nGarden extending to the riverbank.\n\nDriveway parking. Oil-fired central heating. Septic tank.\n\nFreehold · EPC E · Council Tax band E\n\nPlease note: the ground floor flooded from the River Beult in December 2013 and February 2020; flood doors and non-return valves were fitted in 2021; the property is insured through a Flood Re-backed policy.\n\nFull material information on the listing. 🏡🌿",
+        "hashtags": [
+          "Yalding",
+          "Kent",
+          "Cottage",
+          "DetachedCottage",
+          "NewInstruction",
+          "ForSale",
+          "Maidstone",
+          "RiversideProperty",
+          "PeriodCottage",
+          "CountryCottage"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "Mill Cottage is a detached cottage in Riverside Lane, Yalding ME18, dating from c.1850. The property has three bedrooms, two bathrooms and two reception rooms. There are exposed beams and a wood-burning stove. The garden extends to the riverbank. Parking is on the driveway. Heating is oil-fired central heating and sewerage is via a septic tank. The village has a pub and primary school. Offers in excess of £575,000. Freehold. Council Tax band E (Maidstone Borough Council). EPC rating E. Please note: the ground floor flooded from the River Beult in December 2013 and February 2020; flood doors and non-return valves were fitted in 2021; the property is insured through a Flood Re-backed policy. Full material information on the listing. 🏡",
+        "hashtags": [
+          "Yalding",
+          "Kent",
+          "NewInstruction"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "Mill Cottage, Yalding ME18: detached cottage c.1850, 3 bed, 2 bath, exposed beams, wood-burning stove, garden to riverbank. OIEO £575,000. Freehold. EPC E. Full material information on listing.",
+        "hashtags": [
+          "Yalding",
+          "Kent"
+        ]
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – Mill Cottage, Riverside Lane, Yalding ME18",
+      "body": "Dear [Seller name],\n\nThank you for instructing us to market Mill Cottage. Please find below the draft particulars for your approval. Nothing will be published until you confirm these details are correct.\n\n1. Address: Mill Cottage, Riverside Lane, Yalding ME18 – is this correct?\n2. Property type: Detached cottage – is this correct?\n3. Year built: c.1850 – is this correct?\n4. Asking price: Offers in Excess of £575,000 – is this correct?\n5. Tenure: Freehold – is this correct?\n6. Bedrooms: 3 – is this correct?\n7. Bathrooms: 2 – is this correct?\n8. Receptions: 2 – is this correct?\n9. Council Tax: Band E (Maidstone Borough Council) – is this correct?\n10. EPC rating: E – is this correct?\n11. Construction: Standard – is this correct?\n12. Electricity: Mains – is this correct?\n13. Water: Mains (metered) – is this correct?\n14. Sewerage: Septic tank – is this correct?\n15. Heating: Oil-fired central heating – is this correct?\n16. Broadband: FTTC – is this correct?\n17. Mobile signal: Good outdoor coverage on major networks – is this correct?\n18. Parking: Driveway – is this correct?\n19. Flooding: ground floor flooded from the River Beult in December 2013 and February 2020; flood doors and non-return valves fitted 2021; insured through a Flood Re-backed policy – is this correct?\n20. Key features: Wood-burning stove, exposed beams, garden to the riverbank – is this correct?\n\nPlease reply \"Approved\" or send any corrections – nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 5,
+      "2": 5,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 5,
+      "8": 5
+    },
+    "hardFail": false,
+    "verdict": "PASS",
+    "fixes": [],
+    "average": 5
+  }
+}
