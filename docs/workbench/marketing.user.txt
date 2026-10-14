@@ -16,7 +16,7 @@ EMAIL BLAST (new-instruction email to the agent's registered applicants):
 - "personalMessage": 40–80 words for the CRM property-alert message box — what it is, where, price with qualifier, the standout fact, and an invitation to book a viewing. No greeting name, no sign-off.
 - "callToAction": "Book a viewing".
 
-SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, written as their negotiator — warm, plain, brief, not salesy, no exclamation marks, 150–250 words.
+SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, written as their negotiator — warm, plain, brief, not salesy, no exclamation marks, 150–250 words in total including the list and the questions — so keep the thanks to one sentence and each list line to just the fact and "– is this correct?".
 - Open exactly "Dear [Seller name]," and keep this placeholder even if a name appears in the notes.
 - Thank them and explain that the draft details are below for checking before anything goes live.
 - Then a numbered list with one supplied fact per line in the form "Tenure: Freehold – is this correct?": price and qualifier, tenure and lease figures, council tax, EPC, room counts, parking, supplies, chain status, every known issue and each answered Part C item. Only facts supplied — nothing from the voice notes or private notes.
