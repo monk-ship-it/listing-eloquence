@@ -1,0 +1,184 @@
+{
+  "id": "A5-victorian-cottage-smarden-heritage",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 10370,
+      "stopReason": "tool_use",
+      "inputTokens": 5046,
+      "outputTokens": 696
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 23216,
+      "stopReason": "tool_use",
+      "inputTokens": 5934,
+      "outputTokens": 1925
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "End-of-terrace Victorian cottage, Smarden",
+      "summary": "A two-bedroom end-of-terrace Victorian cottage in Smarden with cast-iron fireplace, quarry-tiled kitchen floor and cottage garden. Guide Price £425,000 freehold. Within the conservation area.",
+      "listing": "An end-of-terrace Victorian cottage built circa 1880, constructed of red brick under a clay-tiled roof. The cottage has two bedrooms and stands on The Street in the centre of Smarden.\n\nThe sitting room measures 3.90m x 3.60m (12'10\" x 11'10\") and has a cast-iron fireplace. The kitchen/dining room measures 4.30m x 3.20m (14'1\" x 10'6\") and has a quarry-tiled floor, reclaimed beams and a range alcove. Ledged-and-braced doors are fitted throughout the ground floor.\n\nOn the first floor, bedroom one measures 3.80m x 3.30m (12'6\" x 10'10\") and bedroom two measures 2.90m x 2.40m (9'6\" x 7'10\"). There is one bathroom. Head height at the top of the stairs is restricted to approximately 1.88m (6'2\").\n\nTo the rear is a cottage garden of approximately 12m (40ft) with a brick path and timber shed.\n\nSmarden village has a pub approximately 2 minutes' walk from the cottage. Parking is on-street.\n\nGuide Price £425,000. Freehold. Council Tax Band C (Ashford Borough Council). EPC rating E. The property is within the Smarden Conservation Area. The septic tank is shared with 1 Forge Cottages and located in its garden; access rights for maintenance; emptying costs shared. The rear of the garden is in Flood Zone 2 (Environment Agency map); the house has not flooded. The seller does not know whether the shared septic tank meets the Environment Agency's 2020 general binding rules. Restricted head height at top of stairs, approximately 1.88m (6'2\").",
+      "keyFeatures": [
+        "End-of-terrace Victorian cottage built circa 1880",
+        "Cast-iron fireplace in sitting room",
+        "Quarry-tiled kitchen floor with range alcove and reclaimed beams",
+        "Ledged-and-braced doors",
+        "Cottage garden approx. 12m (40ft) with brick path and shed",
+        "Within Smarden Conservation Area",
+        "Village pub approx. 2 minutes' walk",
+        "Septic tank shared with no. 1; emptying costs shared"
+      ]
+    },
+    "marketing": {
+      "emailBlast": "{\n  \"subjectLines\": [\n    \"New instruction: 2-bed cottage, Smarden – Guide £425,000\",\n    \"Just listed: End-terrace Victorian, Smarden – £425,000\",\n    \"Smarden: 2-bed cottage with garden – Guide £425,000\"\n  ],\n  \"previewText\": \"Freehold · Cast-iron fireplace · Cottage garden · Conservation area · EPC E\",\n  \"headline\": \"End-of-terrace Victorian cottage, Smarden\",\n  \"body\": \"Guide Price £425,000. Freehold.\\n\\nAn end-of-terrace Victorian cottage built c.1880 in red brick under a clay-tiled roof. The sitting room has a cast-iron fireplace; the kitchen retains a quarry-tiled floor and ledged-and-braced doors throughout. The rear cottage garden measures approx. 12m (40ft) with a brick path and timber shed. The village pub is approx. 2 minutes' walk.\\n\\nCouncil Tax: Band C (Ashford Borough Council). EPC rating: E. Sewerage: Septic tank. Heating: Oil-fired central heating. Parking: On-street. The property is within the Smarden Conservation Area. Septic tank shared with 1 Forge Cottages and located in its garden; access rights for maintenance; emptying costs shared. The rear of garden is in Flood Zone 2 (Environment Agency map); the house has not flooded. Please note: Seller does not know whether the shared septic tank meets the Environment Agency's 2020 general binding rules. Restricted head height at top of stairs, approx. 1.88m (6'2\"). Full material information is on the property listing.\",\n  \"callToAction\": \"Book a viewing\",\n  \"personalMessage\": \"An end-of-terrace Victorian cottage in Smarden, Guide Price £425,000, freehold. Built c.1880 with a cast-iron fireplace, quarry-tiled kitchen floor and ledged-and-braced doors. Two bedrooms, cottage garden approx. 12m with brick path and shed. The village pub is approx. 2 minutes' walk. The property is within the Smarden Conservation Area. Please book a viewing.\"\n}",
+      "sellerEmail": {
+        "body": "Dear [Seller name],\n\nThank you for instructing us to market 2 Forge Cottages; the draft particulars are below for your approval before we publish anything.\n\n1. Asking price: Guide Price £425,000 – is this correct?\n2. Tenure: Freehold – is this correct?\n3. Council Tax: Band C (Ashford Borough Council) – is this correct?\n4. EPC rating: E – is this correct?\n5. Property type: End-of-terrace Victorian cottage, c.1880 – is this correct?\n6. Bedrooms: 2 – is this correct?\n7. Bathrooms: 1 – is this correct?\n8. Receptions: 1 – is this correct?\n9. Chain: Chain involved – is this correct?\n10. Parking: On-street – is this correct?\n11. Electricity: Mains – is this correct?\n12. Water: Mains (not metered) – is this correct?\n13. Sewerage: Septic tank – is this correct?\n14. Heating: Oil-fired central heating – is this correct?\n15. Broadband: FTTC – is this correct?\n16. Mobile signal: Good outdoors, variable indoors – is this correct?\n17. Restrictions: Within the Smarden Conservation Area – is this correct?\n18. Rights & easements: Septic tank shared with 1 Forge Cottages and located in its garden; access rights for maintenance; emptying costs shared – is this correct?\n19. Flooding: Rear of garden in Flood Zone 2 (Environment Agency map); the house has not flooded – is this correct?\n20. Known issue: Seller does not know whether the shared septic tank meets the Environment Agency's 2020 general binding rules – is this correct?\n21. Known issue: Restricted head height at top of stairs, approx. 1.88m (6'2\") – is this correct?\n\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+      },
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "End-of-terrace Victorian cottage, Smarden – Guide Price £425,000 🏡\n\nBuilt c.1880 in red brick under a clay-tiled roof.\nCast-iron fireplace in the sitting room.\nQuarry-tiled kitchen floor and ledged-and-braced doors.\nTwo bedrooms, one bathroom.\nRear cottage garden approx. 12m (40ft) with brick path and timber shed.\nVillage pub approx. 2 minutes' walk.\n\nFreehold · EPC E · Council Tax Band C\n\nThe property is within the Smarden Conservation Area. Septic tank shared with 1 Forge Cottages; access rights for maintenance; emptying costs shared. Rear of garden in Flood Zone 2; the house has not flooded.\n\nPlease note: Seller does not know whether the shared septic tank meets the Environment Agency's 2020 general binding rules. Restricted head height at top of stairs, approx. 1.88m (6'2\").\n\nFull material information on the listing. 🔑",
+          "hashtags": [
+            "Smarden",
+            "Kent",
+            "Ashford",
+            "VictorianCottage",
+            "EndOfTerrace",
+            "NewInstruction",
+            "ForSale",
+            "CottageGarden",
+            "ConservationArea",
+            "TwoBedCottage"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "New instruction: End-of-terrace Victorian cottage, Smarden – Guide Price £425,000 🏡\n\nAn end-of-terrace Victorian cottage built c.1880 in red brick under a clay-tiled roof. The sitting room has a cast-iron fireplace. The kitchen retains a quarry-tiled floor, and ledged-and-braced doors feature throughout. Two bedrooms and one bathroom. The rear cottage garden measures approx. 12m (40ft) with a brick path and timber shed. The village pub is approx. 2 minutes' walk.\n\nFreehold. EPC rating E. Council Tax Band C (Ashford Borough Council). Sewerage: Septic tank. Heating: Oil-fired central heating. Parking: On-street. The property is within the Smarden Conservation Area. Septic tank shared with 1 Forge Cottages and located in its garden; access rights for maintenance; emptying costs shared. The rear of garden is in Flood Zone 2 (Environment Agency map); the house has not flooded.\n\nPlease note: Seller does not know whether the shared septic tank meets the Environment Agency's 2020 general binding rules. Restricted head height at top of stairs, approx. 1.88m (6'2\"). 🔑\n\nFull material information on the listing.",
+          "hashtags": [
+            "Smarden",
+            "Kent",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "End-terrace Victorian cottage, Smarden. Guide Price £425,000, freehold, EPC E. Cast-iron fireplace, quarry tiles, cottage garden. Conservation area. Septic tank shared; Flood Zone 2 rear garden. Full material information on listing.",
+          "hashtags": [
+            "Smarden",
+            "Kent"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": false,
+  "findings": [
+    {
+      "grader": "limits",
+      "severity": "fail",
+      "message": "Seller email 279 words (need 150–250)"
+    },
+    {
+      "grader": "raw:limits",
+      "severity": "fail",
+      "message": "Email Blast missing"
+    },
+    {
+      "grader": "raw:limits",
+      "severity": "fail",
+      "message": "Seller email 279 words (need 150–250)"
+    }
+  ],
+  "coreMs": 10370,
+  "marketingMs": 23216,
+  "retries": 0,
+  "output": {
+    "headline": "End-of-terrace Victorian cottage, Smarden",
+    "listing": "An end-of-terrace Victorian cottage built circa 1880, constructed of red brick under a clay-tiled roof. The cottage has two bedrooms and stands on The Street in the centre of Smarden.\n\nThe sitting room measures 3.90m x 3.60m (12'10\" x 11'10\") and has a cast-iron fireplace. The kitchen/dining room measures 4.30m x 3.20m (14'1\" x 10'6\") and has a quarry-tiled floor, reclaimed beams and a range alcove. Ledged-and-braced doors are fitted throughout the ground floor.\n\nOn the first floor, bedroom one measures 3.80m x 3.30m (12'6\" x 10'10\") and bedroom two measures 2.90m x 2.40m (9'6\" x 7'10\"). There is one bathroom. Head height at the top of the stairs is restricted to approximately 1.88m (6'2\").\n\nTo the rear is a cottage garden of approximately 12m (40ft) with a brick path and timber shed.\n\nSmarden village has a pub approximately 2 minutes' walk from the cottage. Parking is on-street.\n\nGuide Price £425,000. Freehold. Council Tax Band C (Ashford Borough Council). EPC rating E. The property is within the Smarden Conservation Area. The septic tank is shared with 1 Forge Cottages and located in its garden; access rights for maintenance; emptying costs shared. The rear of the garden is in Flood Zone 2 (Environment Agency map); the house has not flooded. The seller does not know whether the shared septic tank meets the Environment Agency's 2020 general binding rules. Restricted head height at top of stairs, approximately 1.88m (6'2\").",
+    "summary": "A two-bedroom end-of-terrace Victorian cottage in Smarden with cast-iron fireplace, quarry-tiled kitchen floor and cottage garden. Guide Price £425,000 freehold. Within the conservation area.",
+    "keyFeatures": [
+      "End-of-terrace Victorian cottage built circa 1880",
+      "Cast-iron fireplace in sitting room",
+      "Quarry-tiled kitchen floor with range alcove and reclaimed beams",
+      "Ledged-and-braced doors",
+      "Cottage garden approx. 12m (40ft) with brick path and shed",
+      "Within Smarden Conservation Area",
+      "Village pub approx. 2 minutes' walk",
+      "Septic tank shared with no. 1; emptying costs shared"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "New instruction: 2-bed cottage, Smarden – Guide £425,000",
+        "Just listed: End-terrace Victorian, Smarden – £425,000",
+        "Smarden: 2-bed cottage with garden – Guide £425,000"
+      ],
+      "previewText": "Freehold · Cast-iron fireplace · Cottage garden · Conservation area · EPC E",
+      "headline": "End-of-terrace Victorian cottage, Smarden",
+      "body": "Guide Price £425,000. Freehold.\n\nAn end-of-terrace Victorian cottage built c.1880 in red brick under a clay-tiled roof. The sitting room has a cast-iron fireplace; the kitchen retains a quarry-tiled floor and ledged-and-braced doors throughout. The rear cottage garden measures approx. 12m (40ft) with a brick path and timber shed. The village pub is approx. 2 minutes' walk.\n\nCouncil Tax: Band C (Ashford Borough Council). EPC rating: E. Sewerage: Septic tank. Heating: Oil-fired central heating. Parking: On-street. The property is within the Smarden Conservation Area. Septic tank shared with 1 Forge Cottages and located in its garden; access rights for maintenance; emptying costs shared. The rear of garden is in Flood Zone 2 (Environment Agency map); the house has not flooded. Please note: Seller does not know whether the shared septic tank meets the Environment Agency's 2020 general binding rules. Restricted head height at top of stairs, approx. 1.88m (6'2\").\n\nFull material information is on the property listing.",
+      "callToAction": "Book a viewing",
+      "personalMessage": "An end-of-terrace Victorian cottage in Smarden, Guide Price £425,000, freehold. Built c.1880 with a cast-iron fireplace, quarry-tiled kitchen floor and ledged-and-braced doors. Two bedrooms, cottage garden approx. 12m with brick path and shed. The village pub is approx. 2 minutes' walk. The property is within the Smarden Conservation Area. Please book a viewing."
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "End-of-terrace Victorian cottage, Smarden – Guide Price £425,000 🏡\n\nBuilt c.1880 in red brick under a clay-tiled roof.\nCast-iron fireplace in the sitting room.\nQuarry-tiled kitchen floor and ledged-and-braced doors.\nTwo bedrooms, one bathroom.\nRear cottage garden approx. 12m (40ft) with brick path and timber shed.\nVillage pub approx. 2 minutes' walk.\n\nFreehold · EPC E · Council Tax Band C\n\nThe property is within the Smarden Conservation Area. Septic tank shared with 1 Forge Cottages; access rights for maintenance; emptying costs shared. Rear of garden in Flood Zone 2; the house has not flooded.\n\nPlease note: Seller does not know whether the shared septic tank meets the Environment Agency's 2020 general binding rules. Restricted head height at top of stairs, approx. 1.88m (6'2\").\n\nFull material information on the listing. 🔑",
+        "hashtags": [
+          "Smarden",
+          "Kent",
+          "Ashford",
+          "VictorianCottage",
+          "EndOfTerrace",
+          "NewInstruction",
+          "ForSale",
+          "CottageGarden",
+          "ConservationArea",
+          "TwoBedCottage"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "New instruction: End-of-terrace Victorian cottage, Smarden – Guide Price £425,000 🏡\n\nAn end-of-terrace Victorian cottage built c.1880 in red brick under a clay-tiled roof. The sitting room has a cast-iron fireplace. The kitchen retains a quarry-tiled floor, and ledged-and-braced doors feature throughout. Two bedrooms and one bathroom. The rear cottage garden measures approx. 12m (40ft) with a brick path and timber shed. The village pub is approx. 2 minutes' walk.\n\nFreehold. EPC rating E. Council Tax Band C (Ashford Borough Council). Sewerage: Septic tank. Heating: Oil-fired central heating. Parking: On-street. The property is within the Smarden Conservation Area. Septic tank shared with 1 Forge Cottages and located in its garden; access rights for maintenance; emptying costs shared. The rear of garden is in Flood Zone 2 (Environment Agency map); the house has not flooded.\n\nPlease note: Seller does not know whether the shared septic tank meets the Environment Agency's 2020 general binding rules. Restricted head height at top of stairs, approx. 1.88m (6'2\"). 🔑\n\nFull material information on the listing.",
+        "hashtags": [
+          "Smarden",
+          "Kent",
+          "NewInstruction"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "End-terrace Victorian cottage, Smarden. Guide Price £425,000, freehold, EPC E. Cast-iron fireplace, quarry tiles, cottage garden. Conservation area. Septic tank shared; Flood Zone 2 rear garden. Full material information on listing.",
+        "hashtags": [
+          "Smarden",
+          "Kent"
+        ]
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – 2 Forge Cottages, The Street, Smarden, Ashford, Kent TN27",
+      "body": "Dear [Seller name],\n\nThank you for instructing us to market 2 Forge Cottages; the draft particulars are below for your approval before we publish anything.\n\n1. Asking price: Guide Price £425,000 – is this correct?\n2. Tenure: Freehold – is this correct?\n3. Council Tax: Band C (Ashford Borough Council) – is this correct?\n4. EPC rating: E – is this correct?\n5. Property type: End-of-terrace Victorian cottage, c.1880 – is this correct?\n6. Bedrooms: 2 – is this correct?\n7. Bathrooms: 1 – is this correct?\n8. Receptions: 1 – is this correct?\n9. Chain: Chain involved – is this correct?\n10. Parking: On-street – is this correct?\n11. Electricity: Mains – is this correct?\n12. Water: Mains (not metered) – is this correct?\n13. Sewerage: Septic tank – is this correct?\n14. Heating: Oil-fired central heating – is this correct?\n15. Broadband: FTTC – is this correct?\n16. Mobile signal: Good outdoors, variable indoors – is this correct?\n17. Restrictions: Within the Smarden Conservation Area – is this correct?\n18. Rights & easements: Septic tank shared with 1 Forge Cottages and located in its garden; access rights for maintenance; emptying costs shared – is this correct?\n19. Flooding: Rear of garden in Flood Zone 2 (Environment Agency map); the house has not flooded – is this correct?\n20. Known issue: Seller does not know whether the shared septic tank meets the Environment Agency's 2020 general binding rules – is this correct?\n21. Known issue: Restricted head height at top of stairs, approx. 1.88m (6'2\") – is this correct?\n\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 5,
+      "2": 5,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 5,
+      "8": 5
+    },
+    "hardFail": false,
+    "verdict": "PASS",
+    "fixes": [],
+    "average": 5
+  }
+}
