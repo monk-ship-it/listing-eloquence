@@ -52,3 +52,72 @@ describe("retry triggers", () => {
     expect(missingPleaseNote(out, {} as ListingInput)).toEqual([]);
   });
 });
+
+import {
+  labelSocialFor,
+  normaliseCaptions as normCaps,
+  priceQualifierProblems,
+  sellerEmailShape,
+  trimPreview,
+  xBudget,
+  renderImageLabelsLine,
+} from "./output-guards";
+
+describe("price qualifier", () => {
+  const fixed = { price: "410,000", priceQualifier: "Fixed Price" };
+  it("flags a swapped qualifier", () => {
+    const p = priceQualifierProblems([["a caption", "New home, From £410,000, freehold"]], fixed);
+    expect(p).toEqual([{ where: "a caption", wrote: "From £410,000" }]);
+    expect(priceQualifierProblems([["x", "Fixed Price £410k"]], fixed)).toEqual([]);
+  });
+  const oieo = { price: "375000", priceQualifier: "Offers in Excess of" };
+  it("accepts lowercase and subject-line abbreviations", () => {
+    expect(priceQualifierProblems([["x", "offers in excess of £375,000"]], oieo)).toEqual([]);
+    expect(priceQualifierProblems([["s", "Just listed: 2-bed flat – OIEO £375k"]], oieo)).toEqual(
+      [],
+    );
+    expect(priceQualifierProblems([["s", "Guide £375,000"]], oieo)).toHaveLength(1);
+  });
+});
+
+describe("X with show home + CGI labels", () => {
+  const labels = imageLabelsFor("show home photos and CGI exterior");
+  const input = { price: "410,000", tenure: "Freehold", epc: "B" } as ListingInput;
+  it("budget line", () => {
+    expect(labels).toHaveLength(2);
+    expect(renderImageLabelsLine("CGI exterior; show home")).toContain(
+      `at most ${xBudget(labels)} characters`,
+    );
+  });
+  it("moves inline hashtags, then fits 280 without cutting protected sentences", () => {
+    const caption =
+      "Plot 47, Kings Hill – Fixed Price £410,000, Freehold, EPC B. Air source heat pump and EV charging. Two parking spaces and a garden. Completion spring 2027 with a ten-year warranty. Full material information on the listing. #KingsHill #NewHome";
+    const [p] = normCaps([{ platform: "X", caption, hashtags: ["kingshill"] }]);
+    expect(p.caption.endsWith("listing.")).toBe(true);
+    expect(p.hashtags).toEqual(["kingshill", "NewHome"]);
+    const [x] = labelSocialFor([p], labels, input);
+    const len =
+      `${x.caption}${x.hashtags.length ? `\n\n${x.hashtags.map((h) => `#${h}`).join(" ")}` : ""}`
+        .length;
+    expect(len).toBeLessThanOrEqual(280);
+    expect(x.caption).toContain("Fixed Price £410,000");
+    expect(x.caption).toContain("Full material information on the listing.");
+    for (const l of labels) expect(x.caption).toContain(l);
+  });
+});
+
+describe("preview + seller email", () => {
+  it("trims preview at a separator", () => {
+    const t = trimPreview(
+      "Freehold · No onward chain · EPC B · Completion spring 2027 · EV charging · Two parking spaces",
+    );
+    expect(t).toBe("Freehold · No onward chain · EPC B · Completion spring 2027 · EV charging");
+    expect(t.length).toBeLessThanOrEqual(90);
+  });
+  it("counts prose only", () => {
+    const s = sellerEmailShape(
+      "Dear [Seller name],\n\nThanks.\n\n1. Tenure: Freehold – is this correct?\n2. What is the EPC?",
+    );
+    expect(s.proseWords).toBe(4);
+  });
+});

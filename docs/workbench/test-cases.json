@@ -11,7 +11,8 @@
     "SELLER_APPROVAL": "confirmed",
     "GAP_QUESTIONS": "- What is the current ground rent, how often is it reviewed and when is the next review?",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": ""
   },
   {
     "id": "C2-shared-ownership",
@@ -25,7 +26,8 @@
     "SELLER_APPROVAL": "confirmed",
     "GAP_QUESTIONS": "- (none — all supplies and Part C items are answered)",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": ""
   },
   {
     "id": "C3-flood-history",
@@ -39,7 +41,8 @@
     "SELLER_APPROVAL": "confirmed",
     "GAP_QUESTIONS": "- (none — all supplies and Part C items are answered)",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": ""
   },
   {
     "id": "C4-knotweed",
@@ -53,7 +56,8 @@
     "SELLER_APPROVAL": "confirmed",
     "GAP_QUESTIONS": "- (none — all supplies and Part C items are answered)",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": ""
   },
   {
     "id": "C5-modern-method-of-auction",
@@ -67,7 +71,8 @@
     "SELLER_APPROVAL": "confirmed",
     "GAP_QUESTIONS": "- (none — all supplies and Part C items are answered)",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": ""
   },
   {
     "id": "C5-modern-method-of-auction-legacy",
@@ -81,7 +86,8 @@
     "SELLER_APPROVAL": "confirmed",
     "GAP_QUESTIONS": "- (none — all supplies and Part C items are answered)",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": ""
   },
   {
     "id": "C6-voice-note-conflicts-and-private-leak",
@@ -95,7 +101,8 @@
     "SELLER_APPROVAL": "NOT confirmed",
     "GAP_QUESTIONS": "- (none — all supplies and Part C items are answered)",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": ""
   },
   {
     "id": "A1-ex-la-terrace-medway-plain",
@@ -109,7 +116,8 @@
     "SELLER_APPROVAL": "NOT confirmed",
     "GAP_QUESTIONS": "- How is the mobile signal at the property, indoors and outdoors?",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": ""
   },
   {
     "id": "A7-lordswood-planning-conflict",
@@ -123,7 +131,8 @@
     "SELLER_APPROVAL": "NOT confirmed",
     "GAP_QUESTIONS": "- How is the mobile signal at the property, indoors and outdoors?",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": ""
   },
   {
     "id": "A2-flat-over-shop-streatham-professional",
@@ -137,7 +146,8 @@
     "SELLER_APPROVAL": "NOT confirmed",
     "GAP_QUESTIONS": "- How is the mobile signal at the property, indoors and outdoors?",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": ""
   },
   {
     "id": "A3-1930s-semi-sevenoaks-premium",
@@ -151,7 +161,8 @@
     "SELLER_APPROVAL": "NOT confirmed",
     "GAP_QUESTIONS": "- (none — all supplies and Part C items are answered)",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": ""
   },
   {
     "id": "A4-country-house-frant-luxury",
@@ -165,7 +176,8 @@
     "SELLER_APPROVAL": "NOT confirmed",
     "GAP_QUESTIONS": "- (none — all supplies and Part C items are answered)",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": ""
   },
   {
     "id": "A5-victorian-cottage-smarden-heritage",
@@ -179,7 +191,8 @@
     "SELLER_APPROVAL": "NOT confirmed",
     "GAP_QUESTIONS": "- (none — all supplies and Part C items are answered)",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": ""
   },
   {
     "id": "A6-new-build-kings-hill-professional",
@@ -193,7 +206,8 @@
     "SELLER_APPROVAL": "NOT confirmed",
     "GAP_QUESTIONS": "- How is the mobile signal at the property, indoors and outdoors?",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": "\nIMAGE LABELS — the app adds these exact lines to the end of every caption after you answer; don't write them yourself: \"Images are computer-generated (CGI) and indicative only.\" \"Images show the show home; specification may differ.\". So your X caption plus hashtags must be at most 169 characters.\n"
   },
   {
     "id": "A6-new-build-kings-hill-professional-legacy",
@@ -207,7 +221,8 @@
     "SELLER_APPROVAL": "NOT confirmed",
     "GAP_QUESTIONS": "- How is the mobile signal at the property, indoors and outdoors?",
     "LIMIT_REMINDER": "",
-    "NOTES": ""
+    "NOTES": "",
+    "IMAGE_LABELS": "\nIMAGE LABELS — the app adds these exact lines to the end of every caption after you answer; don't write them yourself: \"Images are computer-generated (CGI) and indicative only.\" \"Images show the show home; specification may differ.\". So your X caption plus hashtags must be at most 169 characters.\n"
   },
   {
     "id": "E1-brenzett",

@@ -69,11 +69,11 @@ EMAIL BLAST (new-instruction email to the agent's registered applicants):
 - "subjectLines": exactly 3, max 60 characters. Each contains the area, the property type with bedrooms, and the price with its qualifier, e.g. "New instruction: 3-bed semi, Lordswood – Guide £285,000". Vary the lead ("New instruction:", "Just listed:", or the standout supplied fact). Never a price without its qualifier. Never "exclusive", "don't miss", "hurry" or emojis.
 - "previewText": max 90 characters — the next facts not in the subject, e.g. "Freehold · No onward chain · EPC C".
 - "headline": max 70 characters.
-- "body": 3–4 short plain-text paragraphs separated by a blank line, no bullet list, greeting name or sign-off. Paragraph 1: the price exactly as in the facts, the tenure, and where they apply the sale method, share %, under-offer status and any reservation or buyer's fee. Paragraph 2: the three strongest specifics. Paragraph 3: council tax band, EPC rating and, for leasehold or shared ownership, years remaining, ground rent, service charge and rent, copied exactly from the MATERIAL INFORMATION block. If there are known issues or Part C items answered Yes, add one sentence starting "Please note:" that states them plainly. End with "Full material information is on the property listing."
+- "body": 3–4 short plain-text paragraphs separated by a blank line, no bullet list, greeting name or sign-off. Paragraph 1: the price exactly as in the facts, the tenure, and where they apply the sale method, share %, under-offer status and any reservation or buyer's fee. Paragraph 2: the three strongest specifics. Paragraph 3: council tax band, EPC rating and, for leasehold or shared ownership, years remaining, ground rent, service charge and rent, copied exactly from the MATERIAL INFORMATION block. If there are known issues or Part C items answered Yes, add one sentence starting "Please note:" that states them plainly. For leasehold/share of freehold, keep years remaining, ground rent and service charge in the same sentence as the tenure. End with "Full material information is on the property listing."
 - "personalMessage": 40–80 words for the CRM property-alert message box — what it is, where, price with qualifier, the standout fact, and an invitation to book a viewing. No greeting name, no sign-off.
 - "callToAction": "Book a viewing".
 
-SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, written as their negotiator — warm, plain, brief, not salesy, no exclamation marks, 150–300 words in total including the list and the questions — so keep the thanks to one sentence and each list line to just the fact and "– is this correct?".
+SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, written as their negotiator — warm, plain, brief, not salesy, no exclamation marks. Keep the greeting, opening and sign-off under 100 words in total. Then one numbered line per fact to confirm (one line each, under 30 words), then numbered questions for anything missing.
 - Open exactly "Dear [Seller name]," and keep this placeholder even if a name appears in the notes.
 - Thank them and explain that the draft details are below for checking before anything goes live.
 - Then a numbered list with one supplied fact per line in the form "Tenure: Freehold – is this correct?": price and qualifier, tenure and lease figures, council tax, EPC, room counts, parking, supplies, chain status, every known issue (in its supplied wording) and each answered Part C item. Only facts supplied — nothing from the voice notes or private notes.
@@ -85,6 +85,7 @@ SOCIAL: exactly three posts — platform "Instagram", "Facebook" and "X". Every 
 - Instagram: 80–150 words. Line 1 max 125 characters (area, type, price with qualifier). Then 3–5 short lines, one supplied fact each. Then "Tenure · EPC X · Council tax band X". A "Please note:" sentence for any known issue or Part C Yes item. Max 2 emojis, none in line 1. 5–10 hashtags (town, county, property type, newinstruction).
 - Facebook: 100–180 words in plain sentences, including tenure, EPC and council tax band, plus the "Please note:" sentence where relevant. Max 3 hashtags, max 2 emojis.
 - X: caption max 200 characters, at most 2 hashtags, no emojis, required items first; caption plus hashtags 280 characters or fewer.
-- Hashtags are words only, no '#'.
+- Hashtags are words only, no '#', and only in the hashtags list — never inside the caption.
+
 
 Return the result by calling the submit_listing_marketing tool.

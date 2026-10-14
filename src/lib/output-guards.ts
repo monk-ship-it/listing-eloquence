@@ -184,7 +184,8 @@ export function protectedTerms(input: ListingInput): string[] {
   const amt = (input.price ?? "").replace(/[^\d]/g, "");
   if (amt) terms.push(`£${Number(amt).toLocaleString("en-GB")}`.toLowerCase());
   if (input.tenure?.trim()) terms.push(input.tenure.trim().toLowerCase());
-  if (r.saleMethod?.trim() && !/private/i.test(r.saleMethod)) terms.push(r.saleMethod.trim().toLowerCase(), "auction");
+  if (r.saleMethod?.trim() && !/private/i.test(r.saleMethod))
+    terms.push(r.saleMethod.trim().toLowerCase(), "auction");
   return terms;
 }
 
@@ -196,7 +197,10 @@ function dropSentences(body: string, protect: string[], fits: (b: string) => boo
     if (!s.trim() || protect.some((t) => s.includes(t))) continue;
     parts.splice(i, 1);
   }
-  return parts.join("").replace(/\n{3,}/g, "\n\n").trim();
+  return parts
+    .join("")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 /** Label every caption; X: drop hashtags, then whole droppable sentences, to stay ≤ 280. */
@@ -289,7 +293,8 @@ export function priceQualifierProblems(
       const last = quals[quals.length - 1];
       if (!last) continue;
       const got = canonical(last[0]);
-      if (got && got !== want) out.push({ where, wrote: `${last[0]} ${m[0]}`.replace(/\s+/g, " ") });
+      if (got && got !== want)
+        out.push({ where, wrote: `${last[0]} ${m[0]}`.replace(/\s+/g, " ") });
     }
   }
   return out;
@@ -333,7 +338,10 @@ const wc = (s: string) => (s.match(/\S+/g) ?? []).length;
 export function sellerEmailShape(body: string): { proseWords: number; longLines: string[] } {
   let prose = 0;
   const longLines: string[] = [];
-  for (const line of body.split("\n").map((l) => l.trim()).filter(Boolean)) {
+  for (const line of body
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean)) {
     const numbered = /^(\d+[.)]|[-•*])\s/.test(line);
     if (numbered) {
       if (wc(line) > 35) longLines.push(line);
@@ -346,7 +354,8 @@ export const personalMessageWords = (o: MarketingOutput) => wc(o.emailBlast?.per
 
 export function marketingShapeProblems(o: MarketingOutput): string[] {
   const p: string[] = [];
-  if (o.sellerEmail && sellerEmailShape(o.sellerEmail.body).proseWords > 120) p.push("seller-prose");
+  if (o.sellerEmail && sellerEmailShape(o.sellerEmail.body).proseWords > 120)
+    p.push("seller-prose");
   const n = personalMessageWords(o);
   if (o.emailBlast && (n < 30 || n > 100)) p.push("personal-message");
   return p;

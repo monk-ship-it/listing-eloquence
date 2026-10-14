@@ -3,4 +3,4 @@
 
 The Workbench kit moved to [docs/workbench/README.md](workbench/README.md). It contains the
 exact system prompt, brand voices, user templates, tool schemas, settings and test cases for all
-three calls (core, marketing, extract), generated from the app's code. Prompt version `e47cc44cd5af`.
+three calls (core, marketing, extract), generated from the app's code. Prompt version `74b47076ee3c`.
