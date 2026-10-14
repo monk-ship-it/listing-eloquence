@@ -1,0 +1,1106 @@
+[
+  {
+    "id": "C1-leasehold-missing-ground-rent",
+    "call": "pack",
+    "tags": [
+      "compliance",
+      "leasehold"
+    ],
+    "input": {
+      "voice": "professional",
+      "sellerApproved": true,
+      "construction": "Standard",
+      "electricity": "Mains",
+      "water": "Mains",
+      "waterMetered": "Yes",
+      "sewerage": "Mains",
+      "heating": "Gas central heating",
+      "broadband": "FTTC",
+      "mobileSignal": "Good outdoor coverage on major networks",
+      "parking": "One allocated space",
+      "buildingSafety": "None known",
+      "restrictions": "None known",
+      "rightsEasements": "None known",
+      "flooding": "None known",
+      "coastalErosion": "None known",
+      "planning": "None known",
+      "accessibility": "None known",
+      "coalfieldMining": "None known",
+      "address": "Flat 4, Albion House, New Road, Chatham ME4",
+      "propertyType": "First-floor purpose-built flat",
+      "price": "195,000",
+      "priceQualifier": "Guide Price",
+      "tenure": "Leasehold",
+      "leaseYears": "99",
+      "serviceCharge": "1,450",
+      "serviceChargePeriod": "y/e Mar 2026",
+      "bedrooms": "2",
+      "bathrooms": "1",
+      "receptions": "1",
+      "keyFeatures": "Open-plan kitchen/living room, Juliet balcony, lift",
+      "councilTaxBand": "B",
+      "localAuthority": "Medway Council",
+      "epc": "C",
+      "voiceNotes": "Ground rent's about 300 a year I think, not sure on the review."
+    },
+    "mustInclude": [
+      {
+        "text": "Leasehold",
+        "sections": [
+          "listing",
+          "emailBlast.body"
+        ]
+      },
+      {
+        "text": "99 years",
+        "sections": [
+          "listing",
+          "emailBlast.body"
+        ]
+      },
+      {
+        "text": "£1,450",
+        "sections": [
+          "listing",
+          "emailBlast.body"
+        ]
+      },
+      {
+        "text": "ground rent",
+        "sections": [
+          "sellerEmail.body"
+        ]
+      }
+    ],
+    "mustNotInclude": [
+      "£300",
+      "300 a year",
+      "peppercorn",
+      "no ground rent",
+      "TBC",
+      "Ask agent",
+      "capped"
+    ]
+  },
+  {
+    "id": "C2-shared-ownership",
+    "call": "pack",
+    "tags": [
+      "compliance",
+      "shared-ownership"
+    ],
+    "input": {
+      "voice": "plain",
+      "sellerApproved": true,
+      "construction": "Standard",
+      "electricity": "Mains",
+      "water": "Mains",
+      "waterMetered": "Yes",
+      "sewerage": "Mains",
+      "heating": "Gas central heating",
+      "broadband": "FTTC",
+      "mobileSignal": "Good outdoor coverage on major networks",
+      "parking": "Driveway",
+      "buildingSafety": "None known",
+      "restrictions": "None known",
+      "rightsEasements": "None known",
+      "flooding": "None known",
+      "coastalErosion": "None known",
+      "planning": "None known",
+      "accessibility": "None known",
+      "coalfieldMining": "None known",
+      "address": "14 Wren Close, Dartford DA1",
+      "propertyType": "Mid-terrace house",
+      "price": "130,000",
+      "priceQualifier": "Shared Ownership",
+      "sharePercent": "40",
+      "rent": "487",
+      "fullMarketValue": "325,000",
+      "tenure": "Leasehold",
+      "leaseYears": "990",
+      "groundRent": "Peppercorn",
+      "serviceCharge": "312",
+      "serviceChargePeriod": "2026/27 estimate",
+      "bedrooms": "2",
+      "bathrooms": "1",
+      "receptions": "1",
+      "keyFeatures": "Rear garden, two parking spaces",
+      "councilTaxBand": "C",
+      "localAuthority": "Dartford Borough Council",
+      "epc": "B",
+      "disclosures": "Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale",
+      "targetAudience": "First-time buyer"
+    },
+    "mustInclude": [
+      {
+        "text": "40% share",
+        "sections": [
+          "summary",
+          "listing",
+          "emailBlast.body",
+          "social.*"
+        ]
+      },
+      {
+        "text": "£325,000",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "£487",
+        "sections": [
+          "listing",
+          "emailBlast.body"
+        ]
+      },
+      {
+        "text": "990 years",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "eligibility criteria",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "nomination period",
+        "sections": [
+          "listing"
+        ]
+      }
+    ],
+    "mustNotInclude": [
+      "Freehold",
+      "cheaper than renting",
+      "first-time buyer",
+      "Peppercorn per year",
+      "deposit"
+    ]
+  },
+  {
+    "id": "C3-flood-history",
+    "call": "pack",
+    "tags": [
+      "compliance",
+      "known-issue"
+    ],
+    "input": {
+      "voice": "heritage",
+      "sellerApproved": true,
+      "construction": "Standard",
+      "electricity": "Mains",
+      "water": "Mains",
+      "waterMetered": "Yes",
+      "sewerage": "Septic tank",
+      "heating": "Oil-fired central heating",
+      "broadband": "FTTC",
+      "mobileSignal": "Good outdoor coverage on major networks",
+      "parking": "Driveway",
+      "buildingSafety": "None known",
+      "restrictions": "None known",
+      "rightsEasements": "None known",
+      "flooding": "Yes – ground floor flooded from the River Beult in December 2013 and February 2020; flood doors and non-return valves fitted 2021; insured through a Flood Re-backed policy",
+      "coastalErosion": "None known",
+      "planning": "None known",
+      "accessibility": "None known",
+      "coalfieldMining": "None known",
+      "address": "Mill Cottage, Riverside Lane, Yalding ME18",
+      "propertyType": "Detached cottage",
+      "yearBuilt": "c.1850",
+      "price": "575,000",
+      "priceQualifier": "Offers in Excess of",
+      "tenure": "Freehold",
+      "bedrooms": "3",
+      "bathrooms": "2",
+      "receptions": "2",
+      "keyFeatures": "Wood-burning stove, exposed beams, garden to the riverbank",
+      "councilTaxBand": "E",
+      "localAuthority": "Maidstone Borough Council",
+      "epc": "E",
+      "areaHighlights": "Village with a pub and primary school"
+    },
+    "mustInclude": [
+      {
+        "text": "December 2013",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "February 2020",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "River Beult",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "flood doors",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "Flood Re",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "flood",
+        "sections": [
+          "emailBlast.body"
+        ]
+      }
+    ],
+    "mustNotInclude": [
+      "minor",
+      "historic flood",
+      "no longer",
+      "flood-proof",
+      "fully protected",
+      "tranquil",
+      "idyllic",
+      "sound of the river",
+      "listed building",
+      "Grade II"
+    ]
+  },
+  {
+    "id": "C4-knotweed",
+    "call": "pack",
+    "tags": [
+      "compliance",
+      "known-issue"
+    ],
+    "input": {
+      "voice": "premium",
+      "sellerApproved": true,
+      "construction": "Standard",
+      "electricity": "Mains",
+      "water": "Mains",
+      "waterMetered": "Yes",
+      "sewerage": "Mains",
+      "heating": "Gas central heating",
+      "broadband": "FTTC",
+      "mobileSignal": "Good outdoor coverage on major networks",
+      "parking": "Driveway",
+      "buildingSafety": "None known",
+      "restrictions": "None known",
+      "rightsEasements": "None known",
+      "flooding": "None known",
+      "coastalErosion": "None known",
+      "planning": "None known",
+      "accessibility": "None known",
+      "coalfieldMining": "None known",
+      "address": "27 Beech Avenue, Sevenoaks TN13",
+      "propertyType": "Detached house",
+      "yearBuilt": "1968",
+      "price": "850,000",
+      "priceQualifier": "Guide Price",
+      "tenure": "Freehold",
+      "bedrooms": "4",
+      "bathrooms": "2",
+      "receptions": "2",
+      "keyFeatures": "Extended kitchen/family room, double garage, 0.3-acre plot",
+      "councilTaxBand": "G",
+      "localAuthority": "Sevenoaks District Council",
+      "epc": "D",
+      "disclosures": "Japanese knotweed found in the rear garden near the boundary in 2025; herbicide treatment plan by a PCA-registered contractor in progress, with a 10-year insurance-backed guarantee"
+    },
+    "mustInclude": [
+      {
+        "text": "Japanese knotweed",
+        "sections": [
+          "listing",
+          "emailBlast.body"
+        ]
+      },
+      {
+        "text": "in progress",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "10-year insurance-backed guarantee",
+        "sections": [
+          "listing"
+        ]
+      }
+    ],
+    "mustNotInclude": [
+      "eradicated",
+      "has been treated",
+      "resolved",
+      "minor",
+      "under control",
+      "no impact",
+      "mortgage"
+    ]
+  },
+  {
+    "id": "C5-modern-method-of-auction",
+    "call": "pack",
+    "tags": [
+      "compliance",
+      "auction"
+    ],
+    "input": {
+      "voice": "professional",
+      "sellerApproved": true,
+      "construction": "Standard",
+      "electricity": "Mains",
+      "water": "Mains",
+      "waterMetered": "Yes",
+      "sewerage": "Mains",
+      "heating": "Gas central heating",
+      "broadband": "FTTC",
+      "mobileSignal": "Good outdoor coverage on major networks",
+      "parking": "On-street, no permit required",
+      "buildingSafety": "None known",
+      "restrictions": "None known",
+      "rightsEasements": "None known",
+      "flooding": "None known",
+      "coastalErosion": "None known",
+      "planning": "None known",
+      "accessibility": "None known",
+      "coalfieldMining": "None known",
+      "address": "3 Station Terrace, Sheerness ME12",
+      "propertyType": "Mid-terrace house",
+      "price": "150,000",
+      "priceQualifier": "Guide Price",
+      "tenure": "Freehold",
+      "bedrooms": "2",
+      "bathrooms": "1",
+      "receptions": "1",
+      "chainStatus": "No onward chain",
+      "keyFeatures": "For sale by Modern Method of Auction, rear yard, requires modernisation",
+      "councilTaxBand": "A",
+      "localAuthority": "Swale Borough Council",
+      "epc": "E",
+      "disclosures": "Modern Method of Auction: the buyer pays a non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT, in addition to the purchase price; 56-day reservation period. The guide price indicates the seller's minimum expectation; the reserve will be within 10% of the guide."
+    },
+    "mustInclude": [
+      {
+        "text": "Modern Method of Auction",
+        "sections": [
+          "summary",
+          "listing",
+          "emailBlast.body",
+          "social.*"
+        ]
+      },
+      {
+        "text": "4.2%",
+        "sections": [
+          "listing",
+          "emailBlast.body"
+        ]
+      },
+      {
+        "text": "£6,000",
+        "sections": [
+          "listing",
+          "emailBlast.body"
+        ]
+      },
+      {
+        "text": "non-refundable",
+        "sections": [
+          "listing",
+          "emailBlast.body"
+        ]
+      },
+      {
+        "text": "in addition to the purchase price",
+        "sections": [
+          "listing"
+        ]
+      }
+    ],
+    "mustNotInclude": [
+      "starting bid",
+      "buy it now",
+      "bargain",
+      "below market value",
+      "deposit",
+      "investment",
+      "yield",
+      "cash buyers",
+      "From £"
+    ]
+  },
+  {
+    "id": "C6-voice-note-conflicts-and-private-leak",
+    "call": "pack",
+    "tags": [
+      "compliance",
+      "conflict",
+      "privacy"
+    ],
+    "input": {
+      "voice": "luxury",
+      "sellerApproved": false,
+      "construction": "Standard",
+      "electricity": "Mains",
+      "water": "Mains",
+      "waterMetered": "Yes",
+      "sewerage": "Mains",
+      "heating": "Oil-fired central heating",
+      "broadband": "FTTC",
+      "mobileSignal": "Good outdoor coverage on major networks",
+      "parking": "Driveway",
+      "buildingSafety": "None known",
+      "restrictions": "Yes – within the Kent Downs National Landscape and the Metropolitan Green Belt",
+      "rightsEasements": "None known",
+      "flooding": "None known",
+      "coastalErosion": "None known",
+      "planning": "None known",
+      "accessibility": "None known",
+      "coalfieldMining": "None known",
+      "address": "Hollybank, Pilgrims Way, Wrotham TN15",
+      "propertyType": "Detached house",
+      "yearBuilt": "1987",
+      "price": "1,250,000",
+      "priceQualifier": "Guide Price",
+      "tenure": "Freehold",
+      "bedrooms": "4",
+      "bathrooms": "3",
+      "receptions": "3",
+      "keyFeatures": "Indoor swimming pool, triple garage, 2.1-acre plot",
+      "councilTaxBand": "G",
+      "localAuthority": "Tonbridge and Malling Borough Council",
+      "epc": "D",
+      "voiceNotes": "Five-bed detached on about three acres, guide one point three million, EPC C now the windows are done. Owners are divorcing and want a quick sale, would take one point one five. Stunning views to London. Lockbox 4471, dog in the kitchen."
+    },
+    "mustInclude": [
+      {
+        "text": "£1,250,000",
+        "sections": [
+          "listing",
+          "emailBlast.body"
+        ]
+      },
+      {
+        "text": "2.1",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "Kent Downs",
+        "sections": [
+          "listing"
+        ]
+      }
+    ],
+    "mustNotInclude": [
+      "five-bed",
+      "5 bed",
+      "five bedroom",
+      "three acres",
+      "3 acres",
+      "1,300,000",
+      "1.3 million",
+      "EPC C",
+      "EPC rating C",
+      "1,150,000",
+      "1.15",
+      "divorc",
+      "quick sale",
+      "motivated",
+      "4471",
+      "lockbox",
+      "dog",
+      "stunning",
+      "luxury",
+      "luxurious",
+      "subject to seller approval",
+      "views to London"
+    ]
+  },
+  {
+    "id": "A1-ex-la-terrace-medway-plain",
+    "call": "pack",
+    "tags": [
+      "agent",
+      "plain"
+    ],
+    "input": {
+      "voice": "plain",
+      "sellerApproved": false,
+      "voiceNotes": "Right, so this is Fernhill Close up in Lordswood, ex-council, three-bed mid-terrace, standard brick, it's not a Cornish unit or anything. Downstairs lounge at the front, kitchen-diner across the back, er, and a lean-to utility, no planning on that as far as she knows, been there years. Upstairs two doubles and a box room, shower over the bath. Bit of a damp mark on the bathroom ceiling, roofer found a cracked tile, fixed in August, mark's still there. Garden about thirty foot, gate onto the back path. No drive, on-street, no permits. Probate, so no chain. Gas, Worcester boiler 2019. Honestly an investor's dream, would rent for fifteen hundred easy. Guide two-eight-five. Keys in the office, executor's in Leeds.",
+      "address": "Fernhill Close, Lordswood, Chatham, Kent ME5",
+      "propertyType": "Ex-local-authority mid-terrace house",
+      "bedrooms": "3",
+      "bathrooms": "1",
+      "receptions": "1",
+      "price": "285,000",
+      "priceQualifier": "Guide Price",
+      "tenure": "Freehold",
+      "chainStatus": "No onward chain",
+      "keyFeatures": "Kitchen/diner; lean-to utility; gas central heating, Worcester boiler 2019; rear garden with gate to rear path",
+      "dimensions": "Lounge 4.62m x 3.48m; Kitchen/diner 5.45m x 2.90m; Bedroom 1 3.80m x 3.10m; Bedroom 2 3.30m x 2.95m; Bedroom 3 2.40m x 2.05m",
+      "epc": "C",
+      "councilTaxBand": "B",
+      "localAuthority": "Medway Council",
+      "construction": "Standard",
+      "constructionDetails": "Brick under a concrete tiled roof",
+      "electricity": "Mains",
+      "water": "Mains",
+      "waterMetered": "Yes",
+      "sewerage": "Mains",
+      "heating": "Gas central heating",
+      "broadband": "FTTC",
+      "parking": "On-street, no permit required",
+      "outsideSpace": "Rear garden approx. 9m (30ft) with gate to shared rear path",
+      "buildingSafety": "None known",
+      "restrictions": "None known",
+      "rightsEasements": "Yes – pedestrian right of way along the shared rear path",
+      "flooding": "None known",
+      "coastalErosion": "None known",
+      "planning": "None known",
+      "accessibility": "None known",
+      "coalfieldMining": "None known",
+      "disclosures": "Damp mark on bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated. Seller unaware of planning or building regulations approval for the lean-to utility.",
+      "targetAudience": "First-time buyer, Investor",
+      "showingNotes": "Vacant, keys in branch. Executor in Leeds, email only.",
+      "mediaNotes": "Photos Thursday, floorplan to follow"
+    },
+    "mustInclude": [
+      {
+        "text": "Guide Price £285,000",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "damp",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "lean-to",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "ex-local-authority",
+        "sections": [
+          "listing"
+        ]
+      }
+    ],
+    "mustNotInclude": [
+      "investor's dream",
+      "yield",
+      "£1,500",
+      "1,500",
+      "probate",
+      "executor",
+      "Leeds",
+      "driveway",
+      "keys in branch"
+    ]
+  },
+  {
+    "id": "A2-flat-over-shop-streatham-professional",
+    "call": "pack",
+    "tags": [
+      "agent",
+      "professional",
+      "leasehold"
+    ],
+    "input": {
+      "voice": "professional",
+      "sellerApproved": false,
+      "voiceNotes": "Okay, flat above the dry cleaner's on Streatham High Road, well, maisonette, first and second floor, own front door round the back off the service yard, you share the yard with the shop for bins. Two beds, second's small, vendor calls it a double, it's two-seven by two-four so it's a single. Living room's big, bay onto the High Road, bit of traffic noise obviously. Kitchen's 2022. Bathroom top floor. Lease eighty-nine left, solicitor's served the section 42, buyer can take it over. Ground rent three-fifty, doubles every twenty-five, next one 2034. Service charge about nine-sixty, includes buildings insurance. Shop owner's the freeholder. OIEO three-seven-five. Station six minutes, Common ten. Gas combi. Basically a three-bed if you do the loft. Don't put that in, there's no permission.",
+      "address": "Streatham High Road, London SW16",
+      "propertyType": "Maisonette (first and second floors) above a commercial unit",
+      "bedrooms": "2",
+      "bathrooms": "1",
+      "receptions": "1",
+      "price": "375,000",
+      "priceQualifier": "Offers in Excess of",
+      "tenure": "Leasehold",
+      "leaseYears": "89",
+      "groundRent": "350",
+      "groundRentReview": "Doubles every 25 years; next increase 2034",
+      "serviceCharge": "960",
+      "serviceChargePeriod": "y/e Dec 2025, includes buildings insurance",
+      "chainStatus": "Chain involved",
+      "keyFeatures": "Own entrance; bay-fronted living room; kitchen fitted 2022; section 42 lease extension notice served, can be assigned to the buyer",
+      "dimensions": "Living room 4.90m x 4.10m into bay; Kitchen 3.20m x 2.30m; Bedroom 1 3.85m x 3.05m; Bedroom 2 2.70m x 2.40m",
+      "epc": "D",
+      "councilTaxBand": "C",
+      "localAuthority": "London Borough of Lambeth",
+      "construction": "Standard",
+      "constructionDetails": "Brick under a slate roof",
+      "electricity": "Mains",
+      "water": "Mains",
+      "waterMetered": "No",
+      "sewerage": "Mains",
+      "heating": "Gas combination boiler",
+      "broadband": "FTTP",
+      "parking": "None; pay-and-display on adjoining roads",
+      "buildingSafety": "None known",
+      "restrictions": "None known",
+      "rightsEasements": "Yes – access via rear service yard shared with the commercial unit; shared bin store",
+      "flooding": "None known",
+      "coastalErosion": "None known",
+      "planning": "None known",
+      "accessibility": "None known",
+      "coalfieldMining": "None known",
+      "disclosures": "Above a dry cleaner's on a main road; some traffic noise to the front. The freeholder owns the shop below.",
+      "nearby": "Streatham station approx. 6 minutes' walk; Streatham Common approx. 10 minutes' walk",
+      "targetAudience": "First-time buyer",
+      "showingNotes": "Vendor works from home Tue/Thu; viewings after 5pm",
+      "mediaNotes": "Wide-angle lens in bedroom 2"
+    },
+    "mustInclude": [
+      {
+        "text": "89 years",
+        "sections": [
+          "listing",
+          "emailBlast.body"
+        ]
+      },
+      {
+        "text": "£350",
+        "sections": [
+          "listing",
+          "emailBlast.body"
+        ]
+      },
+      {
+        "text": "2034",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "£960",
+        "sections": [
+          "listing",
+          "emailBlast.body"
+        ]
+      },
+      {
+        "text": "Offers in Excess of £375,000",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "commercial",
+        "sections": [
+          "listing"
+        ]
+      }
+    ],
+    "mustNotInclude": [
+      "three-bed",
+      "3-bed",
+      "loft",
+      "capped",
+      "vibrant",
+      "buzzing",
+      "after 5pm",
+      "works from home",
+      "wide-angle"
+    ]
+  },
+  {
+    "id": "A3-1930s-semi-sevenoaks-premium",
+    "call": "pack",
+    "tags": [
+      "agent",
+      "premium"
+    ],
+    "input": {
+      "voice": "premium",
+      "sellerApproved": false,
+      "voiceNotes": "Right, Oak Lane, Sevenoaks. 1930s semi, big rear extension 2021, kitchen-family room, bifolds, island, Quooker. Loft conversion 2019 with en-suite, building regs signed off, I've seen the completion cert. Four beds, three baths counting the en-suite, family bathroom and the ground-floor shower room. Original stained glass in the front door and hall window. Log burner in the sitting room. Garden south-west, about a hundred foot, garden office at the end with power. Drive for two, garage converted to utility and shower room. Station point eight of a mile, London Bridge about twenty-five. It's in the Sevenoaks School and grammar annexe area, families love it, careful how you word that. Guide nine-seven-five. They've found somewhere so there's a chain.",
+      "address": "Oak Lane, Sevenoaks, Kent TN13",
+      "propertyType": "Semi-detached house",
+      "yearBuilt": "1930s",
+      "bedrooms": "4",
+      "bathrooms": "3",
+      "receptions": "2",
+      "price": "975,000",
+      "priceQualifier": "Guide Price",
+      "tenure": "Freehold",
+      "chainStatus": "Chain involved",
+      "keyFeatures": "Kitchen/family room (2021 extension) with island and bi-fold doors; loft conversion (2019) with en-suite, building regulations completion certificate; log burner; garden office with power; ground-floor shower room and utility (former garage)",
+      "periodFeatures": "Original stained-glass front door and hall window",
+      "dimensions": "Sitting room 4.55m x 3.70m into bay; Dining room 3.60m x 3.40m; Kitchen/family room 7.80m x 5.10m max; Principal bedroom 4.20m x 3.60m; Bedroom 4 (loft) 5.20m x 3.30m max",
+      "epc": "D",
+      "councilTaxBand": "F",
+      "localAuthority": "Sevenoaks District Council",
+      "construction": "Standard",
+      "constructionDetails": "Brick and render under a clay-tiled roof",
+      "electricity": "Mains",
+      "water": "Mains",
+      "waterMetered": "Yes",
+      "sewerage": "Mains",
+      "heating": "Gas central heating; underfloor heating in kitchen/family room",
+      "broadband": "FTTP",
+      "broadbandSpeed": "Up to 900Mbps",
+      "mobileSignal": "Good indoor and outdoor coverage",
+      "parking": "Driveway for two cars",
+      "outsideSpace": "South-west-facing rear garden approx. 30m (100ft) with patio and garden office",
+      "buildingSafety": "None known",
+      "restrictions": "None known",
+      "rightsEasements": "None known",
+      "flooding": "None known",
+      "coastalErosion": "None known",
+      "planning": "Yes – 2021 rear extension built with planning permission",
+      "accessibility": "None known",
+      "coalfieldMining": "None known",
+      "nearby": "Sevenoaks station approx. 0.8 miles (London Bridge approx. 25 minutes by train); Sevenoaks School; Knole Park",
+      "targetAudience": "Growing family, Commuter",
+      "showingNotes": "Dog in the house, call ahead",
+      "mediaNotes": "Twilight exterior shot"
+    },
+    "mustInclude": [
+      {
+        "text": "completion certificate",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "0.8 miles",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "Guide Price £975,000",
+        "sections": [
+          "listing"
+        ]
+      }
+    ],
+    "mustNotInclude": [
+      "catchment",
+      "grammar",
+      "wealth of",
+      "sought-after",
+      "sought after",
+      "dog",
+      "twilight",
+      "families love"
+    ]
+  },
+  {
+    "id": "A4-country-house-frant-luxury",
+    "call": "pack",
+    "tags": [
+      "agent",
+      "luxury"
+    ],
+    "input": {
+      "voice": "luxury",
+      "sellerApproved": false,
+      "voiceNotes": "Right so Brook Hall, outside Frant, about four miles from Tunbridge Wells. Detached Edwardian, 1908 on the datestone, tile-hung, five beds, four baths. Gated drive, about four and a half acres all in including a three-acre paddock. Outdoor pool heated off an air source, and the oak-framed triple cart lodge, permission last year, it's built. Annexe over it, one bed, the mum lived there, not sure if it's separately banded, TBC. Honestly best view in the High Weald, absolutely stunning, write that. Oil in the main house, treatment plant 2022. Public footpath across the bottom of the paddock. High Weald National Landscape. Frant station two miles, London Bridge about an hour. Guide two-point-one. Mobile's patchy indoors.",
+      "address": "Brook Hall, Wadhurst Road, near Frant, East Sussex TN3",
+      "propertyType": "Detached Edwardian country house",
+      "yearBuilt": "1908",
+      "bedrooms": "5",
+      "bathrooms": "4",
+      "receptions": "4",
+      "price": "2,100,000",
+      "priceQualifier": "Guide Price",
+      "tenure": "Freehold",
+      "chainStatus": "Not known",
+      "keyFeatures": "Gated drive; approx. 4.5 acres including a 3-acre paddock; heated outdoor pool (air source heat pump); oak-framed triple cart lodge (2025) with one-bedroom annexe above",
+      "dimensions": "Drawing room 7.10m x 5.20m; Dining room 5.40m x 4.60m; Kitchen/breakfast room 8.20m x 4.90m; Principal bedroom 5.60m x 4.80m",
+      "epc": "E",
+      "councilTaxBand": "H",
+      "localAuthority": "Wealden District Council",
+      "construction": "Standard",
+      "constructionDetails": "Brick with tile-hung upper elevations under a clay-tiled roof",
+      "electricity": "Mains",
+      "water": "Mains",
+      "waterMetered": "No",
+      "sewerage": "Treatment plant",
+      "heating": "Oil-fired central heating",
+      "broadband": "FTTC",
+      "mobileSignal": "Limited indoors; good outdoor coverage",
+      "parking": "Gated drive with parking for several cars; triple cart lodge",
+      "outsideSpace": "Gardens, terrace, heated outdoor pool and 3-acre paddock; approx. 4.5 acres in all",
+      "buildingSafety": "None known",
+      "restrictions": "Yes – within the High Weald National Landscape",
+      "rightsEasements": "Yes – public footpath crosses the southern edge of the paddock",
+      "flooding": "None known",
+      "coastalErosion": "None known",
+      "planning": "Yes – permission granted 2025 for the cart lodge with annexe above (built)",
+      "accessibility": "None known",
+      "coalfieldMining": "None known",
+      "disclosures": "Council tax banding of the annexe has not been confirmed.",
+      "nearby": "Frant station approx. 2 miles (London Bridge approx. 1 hour); Royal Tunbridge Wells approx. 4 miles",
+      "targetAudience": "Growing family",
+      "showingNotes": "Owners abroad in November; housekeeper holds keys",
+      "mediaNotes": "Drone footage; pool photographed in summer"
+    },
+    "mustInclude": [
+      {
+        "text": "4.5 acres",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "footpath",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "High Weald National Landscape",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "treatment plant",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "annexe",
+        "sections": [
+          "listing"
+        ]
+      }
+    ],
+    "mustNotInclude": [
+      "stunning",
+      "best view",
+      "luxury",
+      "luxurious",
+      "TBC",
+      "Ask agent",
+      "housekeeper",
+      "abroad",
+      "breathtaking",
+      "panoramic"
+    ]
+  },
+  {
+    "id": "A5-victorian-cottage-smarden-heritage",
+    "call": "pack",
+    "tags": [
+      "agent",
+      "heritage"
+    ],
+    "input": {
+      "voice": "heritage",
+      "sellerApproved": false,
+      "voiceNotes": "So, Forge Cottages, Smarden, number two, end of terrace, Victorian, about 1880, red brick, clay tiles. Two beds, bathroom upstairs. Cast-iron fireplace in the sitting room, vendor says original, I can't swear to it, so just cast-iron fireplace. Quarry tiles in the kitchen, beams are reclaimed, nineties, not original. Ledged and braced doors throughout. There's a range alcove, it is NOT an inglenook. Low ceiling at the top of the stairs, about six-two, mention it. Cottage garden about forty foot, brick path, shed. Septic tank shared with number one, it's in their garden, emptied yearly, split the cost, vendor doesn't know if it meets the 2020 rules, so say that. Bottom of the garden's flood zone two on the EA map, house never flooded. Conservation area. Oil heating. On-street parking. Guide four-two-five. Lovely chocolate-box village, pub's two minutes.",
+      "address": "2 Forge Cottages, The Street, Smarden, Ashford, Kent TN27",
+      "propertyType": "End-of-terrace Victorian cottage",
+      "yearBuilt": "c.1880",
+      "bedrooms": "2",
+      "bathrooms": "1",
+      "receptions": "1",
+      "price": "425,000",
+      "priceQualifier": "Guide Price",
+      "tenure": "Freehold",
+      "chainStatus": "Chain involved",
+      "keyFeatures": "Cast-iron fireplace; quarry-tiled kitchen floor; ledged-and-braced doors; cottage garden with brick path and shed",
+      "periodFeatures": "Cast-iron fireplace in sitting room; quarry-tiled kitchen floor; ledged-and-braced doors. Kitchen beams are reclaimed (1990s), not original. The kitchen has a range alcove, not an inglenook.",
+      "dimensions": "Sitting room 3.90m x 3.60m; Kitchen/dining room 4.30m x 3.20m; Bedroom 1 3.80m x 3.30m; Bedroom 2 2.90m x 2.40m",
+      "epc": "E",
+      "councilTaxBand": "C",
+      "localAuthority": "Ashford Borough Council",
+      "construction": "Standard",
+      "constructionDetails": "Red brick under a clay-tiled roof",
+      "electricity": "Mains",
+      "water": "Mains",
+      "waterMetered": "No",
+      "sewerage": "Septic tank",
+      "heating": "Oil-fired central heating",
+      "broadband": "FTTC",
+      "mobileSignal": "Good outdoors, variable indoors",
+      "parking": "On-street",
+      "outsideSpace": "Rear cottage garden approx. 12m (40ft), brick path, timber shed",
+      "buildingSafety": "None known",
+      "restrictions": "Yes – within the Smarden Conservation Area",
+      "rightsEasements": "Yes – septic tank shared with 1 Forge Cottages and located in its garden; access rights for maintenance; emptying costs shared",
+      "flooding": "Yes – rear of garden in Flood Zone 2 (Environment Agency map); the house has not flooded",
+      "coastalErosion": "None known",
+      "planning": "None known",
+      "accessibility": "None known",
+      "coalfieldMining": "None known",
+      "disclosures": "Seller does not know whether the shared septic tank meets the Environment Agency's 2020 general binding rules. Restricted head height at top of stairs, approx. 1.88m (6'2\").",
+      "nearby": "Village pub approx. 2 minutes' walk",
+      "targetAudience": "Downsizer, First-time buyer"
+    },
+    "mustInclude": [
+      {
+        "text": "cast-iron fireplace",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "septic tank",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "2020",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "Flood Zone 2",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "Conservation Area",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "head height",
+        "sections": [
+          "listing"
+        ]
+      }
+    ],
+    "mustNotInclude": [
+      "inglenook",
+      "original beams",
+      "original fireplace",
+      "chocolate-box",
+      "nestled",
+      "picture-postcard",
+      "bygone"
+    ]
+  },
+  {
+    "id": "A6-new-build-kings-hill-professional",
+    "call": "pack",
+    "tags": [
+      "agent",
+      "new-build"
+    ],
+    "input": {
+      "voice": "professional",
+      "sellerApproved": false,
+      "voiceNotes": "Right, new build, Plot 47 Orchard Rise, Kings Hill, the Larch, three-bed semi, completes spring 2027. Fixed price four-ten. Reservation fee fifteen hundred, comes off the price at completion, refundable less two-fifty admin if they pull out within twenty-eight days, otherwise not. Freehold but there's an estate charge, two-nine-five a year to the management company for the open space. EPC predicted B off the SAP, so say predicted. Council tax not banded yet. Ten-year NHBC. Air source, underfloor downstairs, EV charger, two allocated spaces. Photos are the show home, plot 12, and the outside's a CGI. Developer's doing five grand towards flooring, ends 30 November. Only three Larches left, push that, get them in.",
+      "address": "Plot 47, Orchard Rise, Kings Hill, West Malling, Kent ME19",
+      "propertyType": "New-build semi-detached house (The Larch)",
+      "yearBuilt": "Completion expected spring 2027",
+      "bedrooms": "3",
+      "bathrooms": "2",
+      "receptions": "1",
+      "price": "410,000",
+      "priceQualifier": "Fixed Price",
+      "tenure": "Freehold",
+      "chainStatus": "No onward chain",
+      "keyFeatures": "Air source heat pump; underfloor heating to ground floor; EV charging point; two allocated parking spaces; 10-year NHBC warranty; en-suite to principal bedroom",
+      "dimensions": "Kitchen/dining room 5.80m x 3.40m; Living room 4.90m x 3.30m; Principal bedroom 4.10m x 3.00m",
+      "epc": "B",
+      "councilTaxBand": "Not yet banded",
+      "localAuthority": "Tonbridge and Malling Borough Council",
+      "construction": "Standard",
+      "constructionDetails": "Brick and block under a tiled roof",
+      "electricity": "Mains",
+      "water": "Mains",
+      "waterMetered": "Yes",
+      "sewerage": "Mains",
+      "heating": "Air source heat pump; underfloor heating downstairs, radiators upstairs",
+      "broadband": "FTTP",
+      "parking": "Two allocated spaces; EV charging point",
+      "outsideSpace": "Turfed rear garden with patio",
+      "buildingSafety": "None known",
+      "restrictions": "None known",
+      "rightsEasements": "None known",
+      "flooding": "None known",
+      "coastalErosion": "None known",
+      "planning": "None known",
+      "accessibility": "None known",
+      "coalfieldMining": "None known",
+      "disclosures": "EPC B is a predicted rating (SAP); the final EPC will be issued on completion. Reservation fee £1,500, deducted from the price on completion; refundable less a £250 administration fee if the buyer withdraws within 28 days, otherwise non-refundable. Estate charge £295 per year to the management company for communal open space. Developer contribution of £5,000 towards flooring for reservations by 30 November 2026.",
+      "nearby": "West Malling station approx. 2 miles",
+      "targetAudience": "First-time buyer, Growing family",
+      "showingNotes": "Sales office open Thu–Mon 10–5",
+      "mediaNotes": "Interior photos are of the show home (Plot 12, same house type); exterior image is a CGI"
+    },
+    "mustInclude": [
+      {
+        "text": "£1,500",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "£295",
+        "sections": [
+          "listing",
+          "emailBlast.body"
+        ]
+      },
+      {
+        "text": "predicted",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "not yet banded",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "show home",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "CGI",
+        "sections": [
+          "listing"
+        ]
+      },
+      {
+        "text": "30 November 2026",
+        "sections": [
+          "listing"
+        ]
+      }
+    ],
+    "mustNotInclude": [
+      "only three",
+      "three left",
+      "last few",
+      "hurry",
+      "Thu–Mon",
+      "10–5",
+      "sales office"
+    ]
+  }
+]
