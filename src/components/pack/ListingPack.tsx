@@ -157,9 +157,11 @@ export function ListingPack({
                       >
                         {i.severity === "block"
                           ? "Must fix"
-                          : i.severity === "warn"
-                            ? "Add"
-                            : "Confirm"}
+                          : i.severity === "conflict"
+                            ? "Conflict"
+                            : i.severity === "warn"
+                              ? "Add"
+                              : "Confirm"}
                       </Badge>
                       {onJumpToField ? (
                         <button

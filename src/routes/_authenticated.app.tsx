@@ -776,7 +776,13 @@ function ReadyMeter({ input, onJump }: { input: ListingInput; onJump: (field: st
                   variant={i.severity === "block" ? "destructive" : "secondary"}
                   className="shrink-0 text-[10px] uppercase"
                 >
-                  {i.severity === "block" ? "Must fix" : i.severity === "warn" ? "Add" : "Confirm"}
+                  {i.severity === "block"
+                    ? "Must fix"
+                    : i.severity === "conflict"
+                      ? "Conflict"
+                      : i.severity === "warn"
+                        ? "Add"
+                        : "Confirm"}
                 </Badge>
                 <span className="min-w-0 truncate">{i.label}</span>
               </button>

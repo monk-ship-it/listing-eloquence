@@ -7,6 +7,7 @@ import type { ListingInput } from "../listing-types";
 import { VOICE_PROMPTS, VOICES, type VoiceId } from "../voices";
 import { FIELD_BY_KEY, FIELD_DEFS } from "../listing-fields";
 import { buildMaterialInfoBlock, checkMaterialInfo, summariseChecks } from "../material-info";
+import { addImperial } from "../measurements";
 
 /** Max characters accepted per free-text field to keep payloads sane. */
 const MAX_FIELD_LEN = 4000;
@@ -66,7 +67,7 @@ function walkFields(input: ListingInput): { details: string; privateNotes: strin
   for (const def of FIELD_DEFS) {
     if (def.key === "voiceNotes") continue;
     if (def.showIf && !def.showIf(input)) continue;
-    const v = input[def.key];
+    const v = def.key === "dimensions" ? addImperial(input[def.key] ?? "") : input[def.key];
     if (PRIVATE_KEYS.has(def.key)) privateNotes += field(def.label, v);
     else
       details += field(
@@ -116,10 +117,14 @@ export function renderSellerApproval(input: ListingInput): string {
   return input.sellerApproved ? "confirmed" : "NOT confirmed";
 }
 
-/** {{GAP_QUESTIONS}} — open supply / Part C questions for the seller email. */
+/**
+ * {{GAP_QUESTIONS}} — every open checklist item with a seller question: blank
+ * material facts (except price and approval), Part B supplies incl. mobile
+ * signal, and unanswered Part C items.
+ */
 export function renderGapQuestions(input: ListingInput): string {
   const gaps = summariseChecks(checkMaterialInfo(input)).open.filter(
-    (i) => i.severity !== "block" && i.question,
+    (i) => i.question && i.field !== "price" && i.field !== "sellerApproved",
   );
   return gaps.length
     ? gaps.map((g) => `- ${g.question}`).join("\n")
@@ -162,7 +167,7 @@ export const VARIABLE_SOURCES: Record<PromptVarName | "NOTES", string> = {
   VOICE_NOTES: "renderVoiceNotes(input) — dictated notes with their header, or empty",
   SELLER_APPROVAL: 'renderSellerApproval(input) — "confirmed" or "NOT confirmed"',
   GAP_QUESTIONS:
-    "renderGapQuestions(input) — unanswered supply / Part C questions (marketing only)",
+    "renderGapQuestions(input) — seller questions for every open checklist item except price/approval (marketing only)",
   LIMIT_REMINDER:
     "empty, or core.limit-reminder.txt on the one retry after a limit breach (core only)",
   NOTES: "the agent's voice notes, trimmed (extraction only)",
