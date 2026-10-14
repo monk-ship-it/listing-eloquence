@@ -55,7 +55,11 @@ export const BANNED_ENTRIES: BannedEntry[] = [
   { phrase: "act fast" },
   { phrase: "priced to sell" },
   { phrase: "realistically priced" },
-  { phrase: "beautifully presented", note: "as filler" },
+  { phrase: "beautifully presented" },
+  { phrase: "chocolate-box" },
+  { phrase: "picture-postcard" },
+  { phrase: "breathtaking" },
+  { phrase: "exclusive" },
 ];
 
 /** Lower-case phrases checked in generated copy (includes alt + variants). */
