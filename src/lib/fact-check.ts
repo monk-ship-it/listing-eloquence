@@ -110,6 +110,11 @@ function numberKnown(term: string, nums: Set<string>): boolean {
   return w !== null && nums.has(String(w));
 }
 
+/** Removes numbered-list markers at the start of a line (^\s*\d+[.):]\s). */
+export function stripListMarkers(text: string): string {
+  return text.replace(/^(\s*)\d+[.):](?=\s)/gm, "$1");
+}
+
 /**
  * Check one block of generated text. `portal` adds the contact-details rule.
  */
@@ -131,8 +136,10 @@ export function checkText(
     flags.push(rule ? { term, kind, section, rule } : { term, kind, section });
   };
 
-  // £ amounts and digits
-  for (const m of text.matchAll(/£?\d[\d,]*(?:\.\d+)?(?:st|nd|rd|th)?/g)) {
+  // £ amounts and digits — numbered-list markers ("6. ", "14) ") at the start
+  // of a line are formatting, not facts.
+  const numberScan = stripListMarkers(text);
+  for (const m of numberScan.matchAll(/£?\d[\d,]*(?:\.\d+)?(?:st|nd|rd|th)?/g)) {
     const term = m[0].replace(/[.,]$/, "");
     if (!numberKnown(term, nums)) push(term, "not-in-notes", "number");
   }
