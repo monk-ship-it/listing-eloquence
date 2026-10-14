@@ -1,3 +1,5 @@
+import { sellerEmailShape } from "../../src/lib/output-guards";
+import { unwrapJson } from "../../src/lib/listing-types";
 import { imageLabelsFor } from "../../src/lib/output-guards";
 /** Deterministic graders for eval cases. Each returns Finding[]. */
 import type { ListingInput, ListingOutput } from "../../src/lib/listing-types";
@@ -39,14 +41,8 @@ const strs = (v: unknown) =>
 export function packFromRaw(core: unknown, mkt: unknown): GradePack {
   const c = (core ?? {}) as Record<string, unknown>;
   const m0 = (mkt ?? {}) as Record<string, unknown>;
-  const un = (v: unknown) => {
-    if (typeof v !== "string" || !/^\s*[[{]/.test(v)) return v;
-    try {
-      return JSON.parse(v);
-    } catch {
-      return v;
-    }
-  };
+  // Same stringified-JSON repair the app applies (validateMarketingOutput).
+  const un = unwrapJson;
   const m = {
     ...m0,
     emailBlast: un(m0.emailBlast),
@@ -249,7 +245,9 @@ export function gradeLimits(pack: GradePack, input: ListingInput): Finding[] {
   if (!se) f("Seller email missing");
   else {
     const n = words(se);
-    if (n < 150 || n > 300) f(`Seller email ${n} words (need 150–300)`);
+    const shape = sellerEmailShape(se);
+    if (shape.proseWords > 120) f(`Seller email prose ${shape.proseWords} words (max 120, list excluded)`);
+    for (const l of shape.longLines) out.push({ grader: "limits", severity: "warn", message: `Seller email list line ${words(l)} words (max 35)`, text: l.slice(0, 120) });
     if (!se.trim().startsWith("Dear [Seller name],"))
       f('Seller email doesn\'t start "Dear [Seller name],"', se.slice(0, 60));
     if (!se.trim().endsWith("[Your name, branch, phone]"))
@@ -301,7 +299,10 @@ export function gradeMaterialInfo(pack: GradePack, input: ListingInput): Finding
     }
     if (input.tenure && !has(text, input.tenure))
       f("fail", `${name}: missing tenure "${input.tenure}"`);
-    if (input.councilTaxBand) {
+    if (input.councilTaxBand && /not yet banded|exempt/i.test(input.councilTaxBand)) {
+      if (!new RegExp(`council tax[^.\\n]{0,20}${esc(input.councilTaxBand.trim())}`, "i").test(text))
+        f("fail", `${name}: missing "Council Tax: ${input.councilTaxBand}"`);
+    } else if (input.councilTaxBand) {
       const ok =
         /council tax/i.test(text) &&
         new RegExp(`\\bband\\s*${esc(input.councilTaxBand)}\\b`, "i").test(text);
@@ -324,10 +325,10 @@ export function gradeMaterialInfo(pack: GradePack, input: ListingInput): Finding
       if (input.groundRent) items.push(["ground rent", "ground rent"]);
       if (input.serviceCharge) items.push(["service charge", "service charge"]);
       const paras = text.split(/\n\s*\n/);
-      const leasePara = paras.find((p) => /leasehold|share of freehold/i.test(p)) ?? "";
+      const leaseParas = paras.filter((p) => /leasehold|share of freehold/i.test(p));
       for (const [label, term] of items) {
         if (!has(text, term)) f("fail", `${name}: missing ${label} ("${term}")`);
-        else if (!has(leasePara, term))
+        else if (!leaseParas.some((p) => has(p, term)))
           f("warn", `${name}: ${label} not in the same paragraph as the tenure`);
       }
       if (input.serviceCharge && !has(text, fmtMoney(input.serviceCharge)))
@@ -509,7 +510,8 @@ export function gradeV2(pack: GradePack, input: ListingInput): Finding[] {
   if (pack.emailBlast) {
     const n = words(pack.emailBlast.personalMessage ?? "");
     if (!n) f("emailBlast.personalMessage missing");
-    else if (n < 40 || n > 80) f(`personalMessage ${n} words (need 40–80)`);
+    else if (n < 30 || n > 100) f(`personalMessage ${n} words (need 30–100; target 40–80)`);
+    else if (n < 40 || n > 80) f(`personalMessage ${n} words (target 40–80)`, undefined, "warn");
   }
   return out;
 }
@@ -580,10 +582,11 @@ export function gradePack(
 
 /** Raw output: only the checks validate* could hide (limits + banned). */
 export function gradeRaw(pack: GradePack, input: ListingInput): Finding[] {
+  // Pass/fail is decided on the final output only; raw findings are informational.
   return [...gradeLimits(pack, input), ...gradeBanned(pack, input)].map((f) => ({
     ...f,
-    // validateMarketingOutput always moves the material-information line to the end.
-    severity: /material-information line/.test(f.message) ? ("warn" as const) : f.severity,
+    message: f.severity === "fail" ? `${f.message} (fixed by the app before the agent sees it)` : f.message,
+    severity: "warn" as const,
     grader: `raw:${f.grader}`,
   }));
 }

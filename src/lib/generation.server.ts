@@ -212,6 +212,8 @@ export async function runMarketing(
       await opts.log?.(stage, err);
     }
   }
+  if (out.emailBlast && out.emailBlast.previewText.length > 90)
+    out = { ...out, emailBlast: { ...out.emailBlast, previewText: trimPreview(out.emailBlast.previewText) } };
   return out;
 }
 
