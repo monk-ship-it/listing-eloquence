@@ -107,6 +107,8 @@ export interface EmailBlast {
   body: string;
   /** Short CTA label e.g. "View property details" / "Arrange a viewing". */
   callToAction: string;
+  /** 40–80 words for the CRM property-alert message box. Missing on older rows. */
+  personalMessage?: string;
 }
 
 export interface SellerEmail {
@@ -236,10 +238,18 @@ export function coerceLegacyEmailBlast(raw: unknown): EmailBlast | null {
   const headline = typeof e.headline === "string" ? e.headline.trim() : "";
   const body = typeof e.body === "string" ? e.body.trim() : "";
   const callToAction = typeof e.callToAction === "string" ? e.callToAction.trim() : "";
+  const personalMessage = typeof e.personalMessage === "string" ? e.personalMessage.trim() : "";
   if (subjectLines.length === 0 && !previewText && !headline && !body && !callToAction) {
     return null;
   }
-  return { subjectLines, previewText, headline, body, callToAction };
+  return {
+    subjectLines,
+    previewText,
+    headline,
+    body,
+    callToAction,
+    ...(personalMessage ? { personalMessage } : {}),
+  };
 }
 
 /** Canonical platform labels, in output order. */
@@ -346,6 +356,8 @@ export function validateMarketingOutput(raw: unknown): MarketingOutput {
     body: str(e.body, EMAIL_BODY_MAX),
     callToAction: str(e.callToAction, EMAIL_CTA_MAX),
   };
+  const pm = typeof e.personalMessage === "string" ? e.personalMessage.trim() : "";
+  if (pm && pm.length <= 1200) emailBlast.personalMessage = pm;
 
   const byPlatform = new Map<CanonicalPlatform, SocialPost>();
   for (const p of Array.isArray(r.social) ? r.social : []) {
@@ -385,6 +397,37 @@ export function validateMarketingOutput(raw: unknown): MarketingOutput {
     sellerEmail.body = `${sellerEmail.body}\n\n[Your name, branch, phone]`;
   }
   return { emailBlast, social, sellerEmail };
+}
+
+/** X caption + "#tag #tag" length, as the agent would paste it. */
+export function xPostLength(p: SocialPost): number {
+  const tags = p.hashtags.map((h) => `#${h.replace(/^#/, "")}`).join(" ");
+  return `${p.caption}${tags ? `\n\n${tags}` : ""}`.length;
+}
+
+const plainMoney = (v: string) => {
+  const d = v.replace(/[£,\s]/g, "");
+  return /^\d+(\.\d+)?$/.test(d) ? `£${Number(d).toLocaleString("en-GB")}` : v.trim();
+};
+
+/**
+ * Social rule problems worth one marketing retry: X over 280 incl. hashtags,
+ * or a caption without the price or the tenure. Empty array = fine.
+ */
+export function socialProblems(
+  out: MarketingOutput,
+  input: Pick<ListingInput, "price" | "tenure">,
+): string[] {
+  const probs: string[] = [];
+  for (const p of out.social) {
+    if (p.platform === "X" && xPostLength(p) > 280) probs.push("x-length");
+    const text = `${p.caption} ${p.hashtags.join(" ")}`.toLowerCase();
+    if (input.price?.trim() && !text.includes(plainMoney(input.price).toLowerCase()))
+      probs.push(`${p.platform}:price`);
+    if (input.tenure?.trim() && !text.includes(input.tenure.trim().toLowerCase()))
+      probs.push(`${p.platform}:tenure`);
+  }
+  return probs;
 }
 
 /**
