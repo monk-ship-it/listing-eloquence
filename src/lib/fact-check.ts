@@ -7,7 +7,7 @@
 import { wordsToNumber } from "./dictation-normalise";
 import { BANNED_PHRASES } from "./prompts/banned";
 
-export type FlagKind = "not-in-notes" | "banned" | "contact" | "private-leak";
+export type FlagKind = "not-in-notes" | "banned" | "contact" | "private-leak" | "missing-caveat";
 
 /** What triggered a not-in-notes flag (graders treat names as softer). */
 export type FlagRule = "number" | "storey" | "era" | "name";
@@ -317,6 +317,46 @@ export function privateLeakFlags(pack: PackLike, input: object): FactFlag[] {
         out.push({ term, kind: "private-leak", section });
       }
     }
+  }
+  return out;
+}
+
+const CAVEAT_RE =
+  /approv|building reg|planning|repaired|not yet|damp|unconfirmed|no known|unaware|subject to|awaiting|tbc by survey|survey/i;
+const ISSUE_NOUN_STOP = new Set(
+  (
+    "seller buyer property house home known issue issues report available recent recently from with without " +
+    "that this there their which about after before above below under over into been have has were was will " +
+    "approval approvals regulations building planning august september october november december january february " +
+    "march april june july year years month months currently still also only"
+  ).split(" "),
+);
+
+/** Nouns in Known issues worth matching against key features ("lean-to", "bathroom", "roof"). */
+export function issueNouns(disclosures: string | undefined): string[] {
+  const toks = normaliseText(disclosures ?? "")
+    .replace(/[^a-z' -]+/g, " ")
+    .split(/\s+/)
+    .map((w) => w.replace(/^['-]+|['-]+$/g, ""))
+    .filter((w) => (w.length >= 4 || w.includes("-")) && !ISSUE_NOUN_STOP.has(w));
+  return [...new Set(toks)];
+}
+
+/**
+ * Key features that share a noun with Known issues but carry no caveat word
+ * (approval, repaired, not yet, damp, unconfirmed…). Guidance only.
+ */
+export function keyFeatureCaveatFlags(
+  keyFeatures: string[] | undefined,
+  disclosures: string | undefined,
+): FactFlag[] {
+  const nouns = issueNouns(disclosures);
+  if (!nouns.length) return [];
+  const out: FactFlag[] = [];
+  for (const f of keyFeatures ?? []) {
+    const n = normaliseText(f);
+    const hit = nouns.find((w) => new RegExp(`(?<![a-z])${w.replace(/[-]/g, "[- ]?")}s?(?![a-z])`).test(n));
+    if (hit && !CAVEAT_RE.test(f)) out.push({ term: f, kind: "missing-caveat", section: "keyFeatures" });
   }
   return out;
 }
