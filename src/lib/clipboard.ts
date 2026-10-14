@@ -1,4 +1,5 @@
-import type { EmailBlast } from "./listing-types";
+import type { EmailBlast, SocialPost } from "./listing-types";
+import { normaliseCaptions } from "./output-guards";
 import { EMAIL_LINK_PLACEHOLDER, EMAIL_SIGNOFF_PLACEHOLDER } from "./listing-types";
 
 /**
@@ -93,7 +94,11 @@ export function formatEmailBodyOnly(emailBlast: EmailBlast | null | undefined): 
 }
 
 /** Caption plus hashtags, with no trailing blank line when there are none. */
-export function formatSocialPost(p: { caption: string; hashtags?: string[] }): string {
+export function formatSocialPost(p0: { caption: string; hashtags?: string[] }): string {
+  // Older saved posts may repeat their hashtags inline at the end of the caption.
+  const [p] = normaliseCaptions([
+    { platform: "", caption: p0.caption, hashtags: p0.hashtags ?? [] },
+  ]);
   const tags = (p.hashtags ?? []).map((t) => `#${t.replace(/^#/, "")}`).join(" ");
   return tags ? `${p.caption}\n\n${tags}` : p.caption;
 }
@@ -117,7 +122,7 @@ export function buildCopyAllText(
 ): string {
   const features = formatKeyFeaturesBlock(output.keyFeatures);
   const email = formatEmailForPaste(output.emailBlast, { includeFeatures: false });
-  const social = (output.social ?? [])
+  const social = normaliseCaptions((output.social ?? []) as SocialPost[])
     .map((p) => {
       const tags = (p.hashtags ?? []).map((t) => `#${t.replace(/^#/, "")}`).join(" ");
       return `${p.platform}:\n${p.caption}${tags ? `\n${tags}` : ""}`;
