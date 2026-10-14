@@ -1,0 +1,66 @@
+{
+  "id": "E3-contradiction",
+  "run": 1,
+  "call": "extract",
+  "timings": [
+    {
+      "call": "extract",
+      "attempt": 1,
+      "ms": 2599,
+      "stopReason": "tool_use",
+      "inputTokens": 4453,
+      "outputTokens": 151
+    }
+  ],
+  "raw": {
+    "extract": {
+      "bedrooms": "4",
+      "price": "395,000",
+      "priceQualifier": "Offers in Excess of",
+      "evidence": {
+        "bedrooms": "actually it's four bed if you count the study",
+        "price": "offers in excess of three ninety-five",
+        "priceQualifier": "offers in excess of three ninety-five"
+      }
+    }
+  },
+  "pass": true,
+  "findings": [
+    {
+      "grader": "extraction",
+      "severity": "warn",
+      "message": "unexpected field price (not in expectFields)",
+      "text": "395,000"
+    },
+    {
+      "grader": "extraction",
+      "severity": "warn",
+      "message": "unexpected field priceQualifier (not in expectFields)",
+      "text": "Offers in Excess of"
+    },
+    {
+      "grader": "extraction",
+      "severity": "warn",
+      "message": "unexpected field bedrooms (not in expectFields)",
+      "text": "4"
+    }
+  ],
+  "extractMs": 2599,
+  "retries": 0,
+  "output": {
+    "fields": {
+      "price": "395,000",
+      "priceQualifier": "Offers in Excess of",
+      "bedrooms": "4"
+    },
+    "evidence": {
+      "price": "offers in excess of three ninety-five",
+      "priceQualifier": "offers in excess of three ninety-five",
+      "bedrooms": "actually it's four bed if you count the study"
+    }
+  },
+  "extraction": {
+    "precision": 1,
+    "recall": 1
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "id": "A7-lordswood-planning-conflict",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 20605,
+      "stopReason": "tool_use",
+      "inputTokens": 4830,
+      "outputTokens": 747
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 22506,
+      "stopReason": "tool_use",
+      "inputTokens": 5690,
+      "outputTokens": 1783
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "Ex-local-authority mid-terrace house, Lordswood, Chatham",
+      "listing": "An ex-local-authority mid-terrace house with three bedrooms in Fernhill Close, Lordswood, Chatham. Guide Price £285,000. Freehold. No onward chain.\n\nThe ground floor has a lounge 4.62m x 3.48m (15'2\" x 11'5\"). The kitchen/diner measures 5.45m x 2.90m (17'11\" x 9'6\"). A lean-to utility is accessed from the kitchen.\n\nThe first floor has bedroom one 3.80m x 3.10m (12'6\" x 10'2\"). Bedroom two measures 3.30m x 2.95m (10'10\" x 9'8\"). Bedroom three is 2.40m x 2.05m (7'10\" x 6'9\"). The bathroom has a shower over the bath.\n\nThe rear garden is approx. 9m (30ft) with a gate to the shared rear path. On-street parking is available, no permit required.\n\nFernhill Close is in Lordswood, Chatham, Kent ME5.\n\nGuide Price £285,000. Freehold. Council Tax Band B (Medway Council). EPC rating C. Construction: Standard – Brick under a concrete tiled roof. Gas central heating (Worcester boiler 2019). Mains electricity, mains water (metered) and mains sewerage. Broadband: FTTC. There is a pedestrian right of way along the shared rear path. Damp mark on bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated. Seller unaware of planning or building regulations approval for the lean-to utility.",
+      "summary": "Ex-local-authority mid-terrace house in Lordswood, Chatham, offered with no onward chain. Gas central heating with Worcester boiler fitted 2019. Rear garden with gate to shared path. Guide Price £285,000 freehold.",
+      "keyFeatures": [
+        "Ex-local-authority mid-terrace house in Fernhill Close, Lordswood",
+        "No onward chain",
+        "Gas central heating, Worcester boiler 2019",
+        "Kitchen/diner 5.45m x 2.90m (17'11\" x 9'6\")",
+        "Lounge 4.62m x 3.48m (15'2\" x 11'5\")",
+        "Rear garden approx. 9m (30ft) with gate to shared rear path",
+        "On-street parking, no permit required",
+        "Lean-to utility (seller unaware of planning or building regs approval)",
+        "Council Tax Band B, EPC rating C",
+        "Damp mark bathroom ceiling, tile repaired Aug 2026, not redecorated"
+      ]
+    },
+    "marketing": {
+      "emailBlast": {
+        "subjectLines": [
+          "New instruction: 3-bed house, Lordswood – Guide £285,000",
+          "Just listed: 3-bed mid-terrace, Chatham – Guide £285,000",
+          "Freehold 3-bed, Lordswood, no chain – Guide £285,000"
+        ],
+        "previewText": "Freehold · No onward chain · EPC C · Council Tax Band B · Kitchen/diner · Rear garden",
+        "headline": "3-bed ex-local-authority house, Lordswood, Chatham",
+        "body": "Guide Price £285,000. Freehold. No onward chain.\n\nAn ex-local-authority mid-terrace house in Fernhill Close, Lordswood. The property has a lounge 4.62m x 3.48m (15'2\" x 11'5\"), a kitchen/diner 5.45m x 2.90m (17'11\" x 9'6\") and a lean-to utility. Three bedrooms and a bathroom. Gas central heating with a Worcester boiler installed in 2019. A rear garden approx. 9m (30ft) with a gate to the shared rear path.\n\nCouncil Tax Band B (Medway Council). EPC rating C. Please note: there is a pedestrian right of way along the shared rear path. There is a damp mark on the bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated. The seller is unaware of planning or building regulations approval for the lean-to utility. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "An ex-local-authority mid-terrace house in Fernhill Close, Lordswood, Chatham. Guide Price £285,000, freehold, no onward chain. Three bedrooms, kitchen/diner, lean-to utility, gas central heating with a Worcester boiler from 2019, and a rear garden with gate access to a shared path. On-street parking, no permit required. EPC C, Council Tax Band B. Book a viewing to see this property."
+      },
+      "sellerEmail": {
+        "body": "Dear [Seller name],\n\nThank you for instructing us to market the property at Fernhill Close. Before we publish anything, please check the draft details below and confirm they are accurate.\n\n1. Asking price: Guide Price £285,000 – is this correct?\n2. Tenure: Freehold – is this correct?\n3. Council Tax: Band B (Medway Council) – is this correct?\n4. EPC rating: C – is this correct?\n5. Property type: Ex-local-authority mid-terrace house – is this correct?\n6. Bedrooms: 3 – is this correct?\n7. Bathrooms: 1 – is this correct?\n8. Receptions: 1 – is this correct?\n9. Chain status: No onward chain – is this correct?\n10. Parking: On-street, no permit required – is this correct?\n11. Electricity: Mains – is this correct?\n12. Water: Mains (metered) – is this correct?\n13. Sewerage: Mains – is this correct?\n14. Heating: Gas central heating – is this correct?\n15. Broadband: FTTC – is this correct?\n16. Rights & easements: Pedestrian right of way along the shared rear path – is this correct?\n17. Known issue: Damp mark on bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated – is this correct?\n18. Known issue: Seller unaware of planning or building regulations approval for the lean-to utility – is this correct?\n\nTo complete the particulars, could you let us know:\n\n- How is the mobile signal at the property, indoors and outdoors?\n\nPlease reply \"Approved\" or send any corrections – nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+      },
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "Ex-local-authority mid-terrace house, Fernhill Close, Lordswood, Chatham. Guide Price £285,000.\n\nThree bedrooms, kitchen/diner and lean-to utility.\nLounge 4.62m x 3.48m (15'2\" x 11'5\").\nGas central heating, Worcester boiler 2019.\nRear garden approx. 9m (30ft) with gate to shared rear path.\nNo onward chain. On-street parking, no permit required.\n\nFreehold · EPC C · Council Tax Band B.\n\nPlease note: there is a pedestrian right of way along the shared rear path. There is a damp mark on the bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated. The seller is unaware of planning or building regulations approval for the lean-to utility.\n\nFull material information on the listing. 🏡🔑",
+          "hashtags": [
+            "Lordswood",
+            "Chatham",
+            "Kent",
+            "Medway",
+            "NewInstruction",
+            "ForSale",
+            "Freehold",
+            "MidTerrace",
+            "ThreeBed"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "Guide Price £285,000. An ex-local-authority mid-terrace house in Fernhill Close, Lordswood, Chatham. Freehold with no onward chain. The property has three bedrooms, one bathroom and one reception room. The ground floor has a lounge 4.62m x 3.48m (15'2\" x 11'5\") and a kitchen/diner 5.45m x 2.90m (17'11\" x 9'6\") with a lean-to utility. Gas central heating with a Worcester boiler installed in 2019. Outside there is a rear garden approx. 9m (30ft) with a gate to the shared rear path. On-street parking, no permit required. Freehold. EPC C. Council Tax Band B (Medway Council). Please note: there is a pedestrian right of way along the shared rear path. There is a damp mark on the bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated. The seller is unaware of planning or building regulations approval for the lean-to utility. Full material information on the listing. 🏡🔑 #Lordswood #Chatham #NewInstruction",
+          "hashtags": [
+            "Lordswood",
+            "Chatham",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "Guide Price £285,000. Ex-local-authority mid-terrace, Fernhill Close, Lordswood, Chatham. 3 bed, freehold, no chain. Kitchen/diner, rear garden. EPC C, Council Tax B. Full material information on listing.",
+          "hashtags": [
+            "Lordswood",
+            "Chatham"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": false,
+  "findings": [
+    {
+      "grader": "limits",
+      "severity": "fail",
+      "message": "Seller email 254 words (need 150–250)"
+    },
+    {
+      "grader": "patterns",
+      "severity": "fail",
+      "message": "keyFeature /damp/ lacks /not yet redecorated/",
+      "text": "Damp mark bathroom ceiling, tile repaired Aug 2026, not redecorated"
+    },
+    {
+      "grader": "raw:limits",
+      "severity": "fail",
+      "message": "Seller email 254 words (need 150–250)"
+    }
+  ],
+  "coreMs": 20605,
+  "marketingMs": 22506,
+  "retries": 0,
+  "output": {
+    "headline": "Ex-local-authority mid-terrace house, Lordswood, Chatham",
+    "listing": "An ex-local-authority mid-terrace house with three bedrooms in Fernhill Close, Lordswood, Chatham. Guide Price £285,000. Freehold. No onward chain.\n\nThe ground floor has a lounge 4.62m x 3.48m (15'2\" x 11'5\"). The kitchen/diner measures 5.45m x 2.90m (17'11\" x 9'6\"). A lean-to utility is accessed from the kitchen.\n\nThe first floor has bedroom one 3.80m x 3.10m (12'6\" x 10'2\"). Bedroom two measures 3.30m x 2.95m (10'10\" x 9'8\"). Bedroom three is 2.40m x 2.05m (7'10\" x 6'9\"). The bathroom has a shower over the bath.\n\nThe rear garden is approx. 9m (30ft) with a gate to the shared rear path. On-street parking is available, no permit required.\n\nFernhill Close is in Lordswood, Chatham, Kent ME5.\n\nGuide Price £285,000. Freehold. Council Tax Band B (Medway Council). EPC rating C. Construction: Standard – Brick under a concrete tiled roof. Gas central heating (Worcester boiler 2019). Mains electricity, mains water (metered) and mains sewerage. Broadband: FTTC. There is a pedestrian right of way along the shared rear path. Damp mark on bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated. Seller unaware of planning or building regulations approval for the lean-to utility.",
+    "summary": "Ex-local-authority mid-terrace house in Lordswood, Chatham, offered with no onward chain. Gas central heating with Worcester boiler fitted 2019. Rear garden with gate to shared path. Guide Price £285,000 freehold.",
+    "keyFeatures": [
+      "Ex-local-authority mid-terrace house in Fernhill Close, Lordswood",
+      "No onward chain",
+      "Gas central heating, Worcester boiler 2019",
+      "Kitchen/diner 5.45m x 2.90m (17'11\" x 9'6\")",
+      "Lounge 4.62m x 3.48m (15'2\" x 11'5\")",
+      "Rear garden approx. 9m (30ft) with gate to shared rear path",
+      "On-street parking, no permit required",
+      "Lean-to utility (seller unaware of planning or building regs approval)",
+      "Council Tax Band B, EPC rating C",
+      "Damp mark bathroom ceiling, tile repaired Aug 2026, not redecorated"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "New instruction: 3-bed house, Lordswood – Guide £285,000",
+        "Just listed: 3-bed mid-terrace, Chatham – Guide £285,000",
+        "Freehold 3-bed, Lordswood, no chain – Guide £285,000"
+      ],
+      "previewText": "Freehold · No onward chain · EPC C · Council Tax Band B · Kitchen/diner · Rear garden",
+      "headline": "3-bed ex-local-authority house, Lordswood, Chatham",
+      "body": "Guide Price £285,000. Freehold. No onward chain.\n\nAn ex-local-authority mid-terrace house in Fernhill Close, Lordswood. The property has a lounge 4.62m x 3.48m (15'2\" x 11'5\"), a kitchen/diner 5.45m x 2.90m (17'11\" x 9'6\") and a lean-to utility. Three bedrooms and a bathroom. Gas central heating with a Worcester boiler installed in 2019. A rear garden approx. 9m (30ft) with a gate to the shared rear path.\n\nCouncil Tax Band B (Medway Council). EPC rating C. Please note: there is a pedestrian right of way along the shared rear path. There is a damp mark on the bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated. The seller is unaware of planning or building regulations approval for the lean-to utility.\n\nFull material information is on the property listing.",
+      "callToAction": "Book a viewing",
+      "personalMessage": "An ex-local-authority mid-terrace house in Fernhill Close, Lordswood, Chatham. Guide Price £285,000, freehold, no onward chain. Three bedrooms, kitchen/diner, lean-to utility, gas central heating with a Worcester boiler from 2019, and a rear garden with gate access to a shared path. On-street parking, no permit required. EPC C, Council Tax Band B. Book a viewing to see this property."
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "Ex-local-authority mid-terrace house, Fernhill Close, Lordswood, Chatham. Guide Price £285,000.\n\nThree bedrooms, kitchen/diner and lean-to utility.\nLounge 4.62m x 3.48m (15'2\" x 11'5\").\nGas central heating, Worcester boiler 2019.\nRear garden approx. 9m (30ft) with gate to shared rear path.\nNo onward chain. On-street parking, no permit required.\n\nFreehold · EPC C · Council Tax Band B.\n\nPlease note: there is a pedestrian right of way along the shared rear path. There is a damp mark on the bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated. The seller is unaware of planning or building regulations approval for the lean-to utility.\n\nFull material information on the listing. 🏡🔑",
+        "hashtags": [
+          "Lordswood",
+          "Chatham",
+          "Kent",
+          "Medway",
+          "NewInstruction",
+          "ForSale",
+          "Freehold",
+          "MidTerrace",
+          "ThreeBed"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "Guide Price £285,000. An ex-local-authority mid-terrace house in Fernhill Close, Lordswood, Chatham. Freehold with no onward chain. The property has three bedrooms, one bathroom and one reception room. The ground floor has a lounge 4.62m x 3.48m (15'2\" x 11'5\") and a kitchen/diner 5.45m x 2.90m (17'11\" x 9'6\") with a lean-to utility. Gas central heating with a Worcester boiler installed in 2019. Outside there is a rear garden approx. 9m (30ft) with a gate to the shared rear path. On-street parking, no permit required. Freehold. EPC C. Council Tax Band B (Medway Council). Please note: there is a pedestrian right of way along the shared rear path. There is a damp mark on the bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated. The seller is unaware of planning or building regulations approval for the lean-to utility. Full material information on the listing. 🏡🔑 #Lordswood #Chatham #NewInstruction",
+        "hashtags": [
+          "Lordswood",
+          "Chatham",
+          "NewInstruction"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "Guide Price £285,000. Ex-local-authority mid-terrace, Fernhill Close, Lordswood, Chatham. 3 bed, freehold, no chain. Kitchen/diner, rear garden. EPC C, Council Tax B. Full material information on listing.",
+        "hashtags": [
+          "Lordswood",
+          "Chatham"
+        ]
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – Fernhill Close, Lordswood, Chatham, Kent ME5",
+      "body": "Dear [Seller name],\n\nThank you for instructing us to market the property at Fernhill Close. Before we publish anything, please check the draft details below and confirm they are accurate.\n\n1. Asking price: Guide Price £285,000 – is this correct?\n2. Tenure: Freehold – is this correct?\n3. Council Tax: Band B (Medway Council) – is this correct?\n4. EPC rating: C – is this correct?\n5. Property type: Ex-local-authority mid-terrace house – is this correct?\n6. Bedrooms: 3 – is this correct?\n7. Bathrooms: 1 – is this correct?\n8. Receptions: 1 – is this correct?\n9. Chain status: No onward chain – is this correct?\n10. Parking: On-street, no permit required – is this correct?\n11. Electricity: Mains – is this correct?\n12. Water: Mains (metered) – is this correct?\n13. Sewerage: Mains – is this correct?\n14. Heating: Gas central heating – is this correct?\n15. Broadband: FTTC – is this correct?\n16. Rights & easements: Pedestrian right of way along the shared rear path – is this correct?\n17. Known issue: Damp mark on bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated – is this correct?\n18. Known issue: Seller unaware of planning or building regulations approval for the lean-to utility – is this correct?\n\nTo complete the particulars, could you let us know:\n\n- How is the mobile signal at the property, indoors and outdoors?\n\nPlease reply \"Approved\" or send any corrections – nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 1,
+      "2": 3,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 4,
+      "8": 1
+    },
+    "hardFail": true,
+    "verdict": "FAIL",
+    "fixes": [
+      "Change 'repaired August 2026' to 'repaired August 2024' throughout all outputs (appears in key features, portal description, email blast, seller email, and all social posts) – the repair date is in the future and impossible",
+      "Remove 'Honestly an investor's dream, would rent for fifteen hundred easy' inference – no rental value appears in FACTS or MATERIAL INFORMATION, this is from voice notes opinion only",
+      "Verify and correct the repair date in FACTS section – currently states 'August 2026' which appears to be a typo for 2024 or another past year",
+      "Ensure consistency check across all outputs once date is corrected – currently the impossible future date appears in 6+ places",
+      "Consider whether 'Ex-local-authority' should lead every piece or whether 'Three-bedroom freehold house' would be stronger selling language while remaining factual",
+      "Email blast body could strengthen opening by leading with 'Three-bedroom freehold house' before property type detail",
+      "Portal description could reorder to lead with bedroom count and freehold status before ex-local-authority detail",
+      "Seller email question 18 should match the exact wording used in material information for consistency"
+    ],
+    "average": 3.63
+  }
+}
