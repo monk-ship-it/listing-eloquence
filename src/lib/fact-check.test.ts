@@ -37,7 +37,11 @@ describe("fact check", () => {
 
 describe("list markers", () => {
   it("ignores numbered-list markers at the start of a line", () => {
-    const f = checkText("Please check:\n6. Tenure: Freehold\n14) EPC rating\n 7: Parking", "seller email", inputs);
+    const f = checkText(
+      "Please check:\n6. Tenure: Freehold\n14) EPC rating\n 7: Parking",
+      "seller email",
+      inputs,
+    );
     expect(f.filter((x) => x.rule === "number")).toEqual([]);
   });
   it("still flags invented numbers inside a line", () => {
@@ -50,7 +54,10 @@ describe("keyFeatureCaveatFlags", () => {
   const issues =
     "Damp mark on bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated. Seller unaware of planning or building regulations approval for the lean-to utility.";
   it("flags a feature that names a known-issue item without its caveat", () => {
-    const f = keyFeatureCaveatFlags(["Lean-to utility", "Gas central heating", "Bathroom with shower over bath"], issues);
+    const f = keyFeatureCaveatFlags(
+      ["Lean-to utility", "Gas central heating", "Bathroom with shower over bath"],
+      issues,
+    );
     expect(f.map((x) => x.term)).toEqual(["Lean-to utility", "Bathroom with shower over bath"]);
   });
   it("accepts features that keep their caveat", () => {

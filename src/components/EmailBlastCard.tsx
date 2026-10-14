@@ -336,7 +336,9 @@ function EmailBlastBody({
               </p>
               <span
                 className={`text-xs tabular-nums ${
-                  pmWords < 40 || pmWords > 80 ? "font-semibold text-warning" : "text-muted-foreground"
+                  pmWords < 40 || pmWords > 80
+                    ? "font-semibold text-warning"
+                    : "text-muted-foreground"
                 }`}
               >
                 {pmWords} words (40–80)

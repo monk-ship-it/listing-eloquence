@@ -430,7 +430,10 @@ export function gradeMustInclude(pack: GradePack, c: EvalCase): Finding[] {
 }
 
 const IMAGE_LABELS: [RegExp, string][] = [
-  [/virtual(ly)?[- ]stag/i, "Some images have been virtually staged to show how rooms could be furnished."],
+  [
+    /virtual(ly)?[- ]stag/i,
+    "Some images have been virtually staged to show how rooms could be furnished.",
+  ],
   [/\bCGI\b|computer[- ]generated/i, "Images are computer-generated (CGI) and indicative only."],
   [/show home/i, "Images show the show home; specification may differ."],
   [/digitally (enhanced|altered)/i, "Some images have been digitally enhanced."],
@@ -465,7 +468,8 @@ export function gradeV2(pack: GradePack, input: ListingInput): Finding[] {
         .filter((p) => p.platform === "Instagram" || p.platform === "Facebook")
         .map((p): [string, string] => [`social.${p.platform}`, p.caption]),
     ];
-    for (const [sec, text] of targets) if (!/please note:/i.test(text)) f(`${sec}: no "Please note:" sentence`);
+    for (const [sec, text] of targets)
+      if (!/please note:/i.test(text)) f(`${sec}: no "Please note:" sentence`);
   }
   const media = input.mediaNotes ?? "";
   for (const [re, label] of IMAGE_LABELS) {
@@ -474,7 +478,8 @@ export function gradeV2(pack: GradePack, input: ListingInput): Finding[] {
       ["listing", pack.listing],
       ...pack.social.map((p): [string, string] => [`social.${p.platform}`, p.caption]),
     ];
-    for (const [sec, text] of blocks) if (!has(text, label)) f(`${sec}: missing image label "${label}"`);
+    for (const [sec, text] of blocks)
+      if (!has(text, label)) f(`${sec}: missing image label "${label}"`);
   }
   if (/auction/i.test(input.saleMethod ?? "")) {
     const method = /modern/i.test(input.saleMethod ?? "") ? "Modern Method of Auction" : "auction";
@@ -485,10 +490,13 @@ export function gradeV2(pack: GradePack, input: ListingInput): Finding[] {
       ["emailBlast.body", (pack.emailBlast?.body ?? "").split(/\n\s*\n/)[0] ?? ""],
       ...pack.social.map((p): [string, string] => [`social.${p.platform}`, p.caption]),
     ];
-    for (const [sec, text] of blocks) if (!re.test(text)) f(`${sec}: no "For sale by ${method}" line`);
+    for (const [sec, text] of blocks)
+      if (!re.test(text)) f(`${sec}: no "For sale by ${method}" line`);
   }
   for (const [sec, text] of publicBlocks(pack)) {
-    const m = text.match(/\bdraft\b|subject to (seller )?approval|\bapproval of (the )?particulars\b/i);
+    const m = text.match(
+      /\bdraft\b|subject to (seller )?approval|\bapproval of (the )?particulars\b/i,
+    );
     if (m) f(`Draft/approval wording in ${sec}`, m[0]);
   }
   if (pack.emailBlast) {
@@ -510,16 +518,31 @@ export function gradePatterns(pack: GradePack, c: EvalCase): Finding[] {
       const then = new RegExp(p.eachKeyFeature.then, "i");
       for (const k of pack.keyFeatures)
         if (cond.test(k) && !then.test(k))
-          out.push({ grader: "patterns", severity: "fail", message: `keyFeature /${p.eachKeyFeature.if}/ lacks /${p.eachKeyFeature.then}/`, text: k });
+          out.push({
+            grader: "patterns",
+            severity: "fail",
+            message: `keyFeature /${p.eachKeyFeature.if}/ lacks /${p.eachKeyFeature.then}/`,
+            text: k,
+          });
       continue;
     }
     for (const sec of p.sections ?? []) {
       const text = sectionTexts(pack, sec).join("\n");
       if (re && !re.test(text))
-        out.push({ grader: "patterns", severity: "fail", message: `${sec} doesn't match /${p.match}/` });
+        out.push({
+          grader: "patterns",
+          severity: "fail",
+          message: `${sec} doesn't match /${p.match}/`,
+        });
       if (nre) {
         const m = text.match(nre);
-        if (m) out.push({ grader: "patterns", severity: "fail", message: `${sec} matches /${p.notMatch}/`, text: m[0] });
+        if (m)
+          out.push({
+            grader: "patterns",
+            severity: "fail",
+            message: `${sec} matches /${p.notMatch}/`,
+            text: m[0],
+          });
       }
     }
   }

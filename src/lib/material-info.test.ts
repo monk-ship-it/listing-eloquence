@@ -122,7 +122,11 @@ describe("Part C conflicts with Known issues", () => {
 
 describe("v2 material-info fixes", () => {
   it("only appends 'per year' to numeric ground rent", () => {
-    const peppercorn = buildMaterialInfoBlock({ ...LEASEHOLD_EXAMPLE, groundRent: "Peppercorn", groundRentReview: "" });
+    const peppercorn = buildMaterialInfoBlock({
+      ...LEASEHOLD_EXAMPLE,
+      groundRent: "Peppercorn",
+      groundRentReview: "",
+    });
     expect(peppercorn).toContain("Ground rent: Peppercorn\n");
     expect(buildMaterialInfoBlock(LEASEHOLD_EXAMPLE)).toContain("Ground rent: £250 per year");
   });
@@ -130,7 +134,9 @@ describe("v2 material-info fixes", () => {
     expect(buildMaterialInfoBlock({ ...freehold, councilTaxBand: "Not yet banded" })).toContain(
       "Council Tax: not yet banded",
     );
-    expect(buildMaterialInfoBlock({ ...freehold, councilTaxBand: "Exempt" })).toContain("Council Tax: Exempt");
+    expect(buildMaterialInfoBlock({ ...freehold, councilTaxBand: "Exempt" })).toContain(
+      "Council Tax: Exempt",
+    );
   });
   it("treats a filled share % as shared ownership", () => {
     const b = buildMaterialInfoBlock({ ...freehold, sharePercent: "40", rent: "520" });

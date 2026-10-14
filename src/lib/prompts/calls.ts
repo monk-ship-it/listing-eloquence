@@ -107,7 +107,14 @@ export const MARKETING_SCHEMA = {
           description: "40–80 words for the CRM property-alert message box",
         },
       },
-      required: ["subjectLines", "previewText", "headline", "body", "callToAction", "personalMessage"],
+      required: [
+        "subjectLines",
+        "previewText",
+        "headline",
+        "body",
+        "callToAction",
+        "personalMessage",
+      ],
     },
     sellerEmail: {
       type: "object",

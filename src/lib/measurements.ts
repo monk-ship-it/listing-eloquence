@@ -33,6 +33,10 @@ export function addImperial(text: string): string {
   if (!text) return text;
   return text
     .split(/(;|\n)/)
-    .map((seg) => (seg === ";" || seg === "\n" || HAS_IMPERIAL.test(seg) ? seg : seg.replace(DIM_RE, (m) => convertOne(m))))
+    .map((seg) =>
+      seg === ";" || seg === "\n" || HAS_IMPERIAL.test(seg)
+        ? seg
+        : seg.replace(DIM_RE, (m) => convertOne(m)),
+    )
     .join("");
 }

@@ -355,8 +355,11 @@ export function keyFeatureCaveatFlags(
   const out: FactFlag[] = [];
   for (const f of keyFeatures ?? []) {
     const n = normaliseText(f);
-    const hit = nouns.find((w) => new RegExp(`(?<![a-z])${w.replace(/[-]/g, "[- ]?")}s?(?![a-z])`).test(n));
-    if (hit && !CAVEAT_RE.test(f)) out.push({ term: f, kind: "missing-caveat", section: "keyFeatures" });
+    const hit = nouns.find((w) =>
+      new RegExp(`(?<![a-z])${w.replace(/[-]/g, "[- ]?")}s?(?![a-z])`).test(n),
+    );
+    if (hit && !CAVEAT_RE.test(f))
+      out.push({ term: f, kind: "missing-caveat", section: "keyFeatures" });
   }
   return out;
 }

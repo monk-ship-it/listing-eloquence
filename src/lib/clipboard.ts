@@ -162,6 +162,7 @@ export function formatSellerEmail(
     opts.listing?.trim() ?? "",
     opts.keyFeatures?.length ? formatKeyFeaturesBlock(opts.keyFeatures) : "",
   ].filter(Boolean);
-  if (draft.length) body = `${body}\n\n---\nDRAFT – SUBJECT TO YOUR APPROVAL\n\n${draft.join("\n\n")}`;
+  if (draft.length)
+    body = `${body}\n\n---\nDRAFT – SUBJECT TO YOUR APPROVAL\n\n${draft.join("\n\n")}`;
   return e.subject ? `Subject: ${e.subject}\n\n${body}` : body;
 }

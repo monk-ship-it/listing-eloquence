@@ -14,7 +14,9 @@ describe("metresToFeetInches", () => {
 
 describe("addImperial", () => {
   it("formats metric to 2dp and adds imperial in brackets", () => {
-    expect(addImperial("Living room 5.2m x 4.1m")).toBe(`Living room 5.20m x 4.10m (17'1" x 13'5")`);
+    expect(addImperial("Living room 5.2m x 4.1m")).toBe(
+      `Living room 5.20m x 4.10m (17'1" x 13'5")`,
+    );
   });
   it("handles several rooms and keeps qualifiers", () => {
     expect(addImperial("Lounge 4.52m x 3.61m into bay; Kitchen 5.2m (max) x 4.1m")).toBe(

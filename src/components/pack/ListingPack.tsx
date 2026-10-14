@@ -460,7 +460,10 @@ function SellerEmailCard({
           </p>
           <p className="mt-1 break-words text-sm font-medium">{e.subject}</p>
           <div className="mt-4 max-w-sm space-y-1.5">
-            <Label htmlFor={`seller-name-${generationId ?? "new"}`} className="text-xs text-muted-foreground">
+            <Label
+              htmlFor={`seller-name-${generationId ?? "new"}`}
+              className="text-xs text-muted-foreground"
+            >
               Seller name (replaces [Seller name] when you copy)
             </Label>
             <Input

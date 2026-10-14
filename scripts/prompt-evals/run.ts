@@ -105,7 +105,9 @@ if (regradeDir) {
   const src = join(ROOT, regradeDir);
   const files = readdirSync(src).filter((f) => /\.run\d+\.json$/.test(f));
   const byId = new Map([...all.pack, ...all.extract].map((c) => [c.id, c]));
-  const oldReport = existsSync(join(src, "report.md")) ? readFileSync(join(src, "report.md"), "utf8") : "";
+  const oldReport = existsSync(join(src, "report.md"))
+    ? readFileSync(join(src, "report.md"), "utf8")
+    : "";
   const results: CaseResult[] = [];
   for (const f of files.sort()) {
     const saved = JSON.parse(readFileSync(join(src, f), "utf8")) as CaseResult;
@@ -122,7 +124,10 @@ if (regradeDir) {
     } else {
       const input = caseInput(c);
       const final = saved.output as ListingOutput;
-      findings = [...gradePack(packFromFinal(final), input, c), ...gradeRaw(packFromRaw(raw.core, raw.marketing), input)];
+      findings = [
+        ...gradePack(packFromFinal(final), input, c),
+        ...gradeRaw(packFromRaw(raw.core, raw.marketing), input),
+      ];
       if (final.marketingStatus === "failed")
         findings.push({ grader: "marketing", severity: "fail", message: "marketing call failed" });
     }

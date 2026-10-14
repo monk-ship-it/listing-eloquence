@@ -79,7 +79,11 @@ export const SEWERAGE_OPTIONS = ["Mains", "Septic tank", "Cesspit", "Treatment p
 export const BROADBAND_OPTIONS = ["FTTP", "FTTC", "Cable", "ADSL", "Other"];
 export const YES_NO = ["Yes", "No"];
 export const SALE_METHODS = ["Private treaty", "Traditional auction", "Modern Method of Auction"];
-export const SALE_STATUSES = ["Available", "Under offer – still marketing", "Sold subject to contract"];
+export const SALE_STATUSES = [
+  "Available",
+  "Under offer – still marketing",
+  "Sold subject to contract",
+];
 export const LIKELY_BUYERS = [
   "First-time buyer",
   "Growing family",
@@ -392,7 +396,7 @@ export const FIELD_DEFS: FieldDef[] = [
     dictateMode: "replace",
     extractable: true,
     group: "toggles",
-    hint: 'Yes only when the agent says it is a new build / new home.',
+    hint: "Yes only when the agent says it is a new build / new home.",
   },
   {
     key: "incentives",
@@ -536,7 +540,7 @@ export const FIELD_DEFS: FieldDef[] = [
     dictateMode: "replace",
     extractable: true,
     group: "epc",
-    hint: 'Yes only when the agent says the EPC is predicted (SAP / new build).',
+    hint: "Yes only when the agent says the EPC is predicted (SAP / new build).",
   },
   {
     key: "construction",
@@ -791,9 +795,18 @@ const OPTION_SYNONYMS: Record<string, [RegExp, string][]> = {
     [/\b(sold stc|sold subject to contract|stc)\b/i, "Sold subject to contract"],
     [/\bavailable\b/i, "Available"],
   ],
-  newBuild: [[/\b(yes|new build|new home)\b/i, "Yes"], [/\bno\b/i, "No"]],
-  epcPredicted: [[/\b(yes|predicted|sap)\b/i, "Yes"], [/\bno\b/i, "No"]],
-  preMarket: [[/\b(yes|pre-?market|coming soon)\b/i, "Yes"], [/\bno\b/i, "No"]],
+  newBuild: [
+    [/\b(yes|new build|new home)\b/i, "Yes"],
+    [/\bno\b/i, "No"],
+  ],
+  epcPredicted: [
+    [/\b(yes|predicted|sap)\b/i, "Yes"],
+    [/\bno\b/i, "No"],
+  ],
+  preMarket: [
+    [/\b(yes|pre-?market|coming soon)\b/i, "Yes"],
+    [/\bno\b/i, "No"],
+  ],
   waterMetered: [
     [/\b(not metered|unmetered|no)\b/i, "No"],
     [/\b(metered|yes)\b/i, "Yes"],
