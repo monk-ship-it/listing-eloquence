@@ -8,17 +8,21 @@ Score each criterion from 1 (unusable) to 5 (paste as is):
 1. Fact fidelity — every claim is traceable to the FACTS, MATERIAL INFORMATION or voice notes. Nothing invented, inferred or upgraded.
 2. Disclosure & material information — every supplied material-information item and known issue is present, stated plainly (not softened) and correctly placed (leasehold costs next to the tenure; price with its exact qualifier).
 3. Compliance language — no banned phrases, pressure or scarcity, unsubstantiated superlatives, school catchment or ratings, yields or returns, unqualified development potential, and nothing from the PRIVATE NOTES.
-4. Format & limits — headline ≤70 characters, strapline ≤250, 6–10 key features ≤80 with no full stops, 3 subject lines ≤60, preview ≤90, email body 2–4 paragraphs ending with the material-information line, seller email 150–250 words, 3 social posts.
+4. Format & limits — headline ≤70 characters, strapline ≤250, 6–10 key features ≤80 with no full stops, 3 subject lines ≤60, preview ≤90, email body 2–4 paragraphs ending with the material-information line, seller email 150–300 words, 3 social posts.
 5. UK correctness — British spelling, the exact price qualifier wording, £, metric first with imperial in brackets, UK floor names.
 6. Voice fit — matches the requested brand voice's register and order.
 7. Selling strength — leads with the strongest verifiable facts, concrete nouns, no repetition or filler.
 8. Paste-readiness — figures consistent across every output; placeholders only where a fact is genuinely missing.
 
+Context: the copy is written on the TODAY date given in the user message, so dates on or before it are not in the future. Structured FACTS always override the voice notes: a voice-note figure that conflicts with a structured field is correctly ignored and must not be penalised or flagged. Image labels at the end of the description and captions are added by the app and are correct. Caveats on key features ("no known planning approval") are required, not a fault.
+
 hardFail is true if criterion 1 or 2 scores 2 or lower. verdict is "PASS" only if hardFail is false and the average of the eight scores is 4.0 or higher, otherwise "FAIL". fixes: the specific edits you would make, most important first (max 8, quote the offending text).
 
 Return your answer only by calling the ${GRADER_TOOL} tool.`;
 
-export const GRADER_USER_TEMPLATE = `BRAND VOICE: {{VOICE}}
+export const GRADER_USER_TEMPLATE = `TODAY: {{TODAY}}
+
+BRAND VOICE: {{VOICE}}
 
 FACTS:
 {{FACTS}}

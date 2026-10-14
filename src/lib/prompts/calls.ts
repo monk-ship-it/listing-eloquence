@@ -60,11 +60,15 @@ export const RETRY_RULES = {
     "On AI_TRUNCATED (stop_reason max_tokens) or MALFORMED_AI_OUTPUT: retry once with max_tokens = retryMaxTokens.",
     "On AI_TIMEOUT: retry once with the same max_tokens.",
     "If the first answer has a headline > 70 chars, a strapline > 250 chars or a key feature > 80 chars: retry once with {{LIMIT_REMINDER}} filled from core.limit-reminder.txt; if that retry fails, keep the first answer.",
+    "If any public output contains a banned phrase (not in the inputs): the same single retry also lists the offending phrases (banned-reminder.txt); the answer with fewer problems is kept and the fact check flags anything left.",
+    "When the photo notes mention virtual staging, CGI, a show home or digital enhancement, the app appends the fixed image label(s) as the last line of the description.",
     "Any other error (e.g. RATE_LIMIT) is not retried.",
   ],
   marketing: [
     "Any failure: retry once. If the retry fails the listing is still saved without the email/social pack.",
     "If the X caption + hashtags is over 280 characters, or a caption misses the price or tenure: retry once with marketing.reminder.txt appended to the user message; then accept (the UI counters flag anything still over).",
+    'Merged into that same single retry: banned phrases in any public output (banned-reminder.txt) and a missing "Please note:" sentence in the Email Blast body or Instagram/Facebook caption when known issues or Part C Yes items exist (please-note-reminder.txt). The answer with fewer problems is kept.',
+    "The app appends the fixed image label(s) as the last line of every caption (X: trailing hashtags are dropped to stay within 280).",
   ],
   extract: [
     "No retry. Fields whose evidence quote isn't found in the notes are dropped (filterExtraction).",
@@ -175,9 +179,11 @@ export function renderSystem(input: ListingInput): string {
 
 export function buildCoreRequest(
   input: ListingInput,
-  opts: { reminder?: boolean; maxTokens?: number } = {},
+  opts: { reminder?: boolean | string; maxTokens?: number } = {},
 ): ClaudeToolOpts {
-  const vars = { ...promptVars(input), LIMIT_REMINDER: opts.reminder ? LIMIT_REMINDER : "" };
+  const reminder =
+    typeof opts.reminder === "string" ? opts.reminder : opts.reminder ? LIMIT_REMINDER : "";
+  const vars = { ...promptVars(input), LIMIT_REMINDER: reminder };
   return {
     system: renderSystem(input),
     user: fillTemplate(CORE_USER_TEMPLATE, varsFor(CORE_USER_TEMPLATE, vars)),
@@ -192,14 +198,14 @@ export function buildCoreRequest(
 
 export function buildMarketingRequest(
   input: ListingInput,
-  opts: { reminder?: boolean } = {},
+  opts: { reminder?: boolean | string } = {},
 ): ClaudeToolOpts {
   const vars = promptVars(input);
+  const reminder =
+    typeof opts.reminder === "string" ? opts.reminder : opts.reminder ? MARKETING_REMINDER : "";
   return {
     system: renderSystem(input),
-    user:
-      fillTemplate(MARKETING_USER_TEMPLATE, varsFor(MARKETING_USER_TEMPLATE, vars)) +
-      (opts.reminder ? MARKETING_REMINDER : ""),
+    user: fillTemplate(MARKETING_USER_TEMPLATE, varsFor(MARKETING_USER_TEMPLATE, vars)) + reminder,
     toolName: MARKETING_TOOL,
     toolDescription: TOOL_DESCRIPTIONS.marketing,
     inputSchema: MARKETING_SCHEMA,

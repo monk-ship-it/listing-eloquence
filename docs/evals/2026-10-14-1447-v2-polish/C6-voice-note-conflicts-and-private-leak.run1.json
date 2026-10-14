@@ -1,0 +1,179 @@
+{
+  "id": "C6-voice-note-conflicts-and-private-leak",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 9720,
+      "stopReason": "tool_use",
+      "inputTokens": 4385,
+      "outputTokens": 513
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 18326,
+      "stopReason": "tool_use",
+      "inputTokens": 5267,
+      "outputTokens": 1368
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "Detached house with indoor pool and triple garage, 2.1 acres",
+      "summary": "Set within 2.1 acres in the Kent Downs National Landscape, a detached house with indoor swimming pool, triple garage and three reception rooms. Guide Price £1,250,000 freehold.",
+      "listing": "Hollybank stands within approximately 2.1 acres in the Kent Downs National Landscape on Pilgrims Way, Wrotham. The plot includes a driveway, triple garage and grounds extending to the boundaries.\n\nThe detached house was built in 1987 and provides four bedrooms, three bathrooms and three reception rooms. The ground floor comprises the principal reception rooms.\n\nThe kitchen opens to family space. An indoor swimming pool is housed separately.\n\nThe first floor accommodates four bedrooms and three bathrooms.\n\nThe grounds extend to approximately 2.1 acres. The triple garage provides storage and vehicle space.\n\nWrotham lies in Tonbridge and Malling Borough.\n\nGuide Price £1,250,000. Freehold. Council Tax Band G (Tonbridge and Malling Borough Council). EPC rating D. Construction: standard. Mains electricity, mains water (metered), mains sewerage and oil-fired central heating. Broadband: FTTC. Mobile signal: good outdoor coverage on major networks. Parking: driveway. The property is within the Kent Downs National Landscape and the Metropolitan Green Belt. Building safety, rights and easements, flooding, coastal erosion, planning, accessibility and coalfield/mining: none known.",
+      "keyFeatures": [
+        "Set within approximately 2.1 acres in the Kent Downs National Landscape",
+        "Indoor swimming pool",
+        "Triple garage and driveway parking",
+        "Four bedrooms and three bathrooms",
+        "Three reception rooms",
+        "Built 1987",
+        "Oil-fired central heating",
+        "Within the Metropolitan Green Belt"
+      ]
+    },
+    "marketing": {
+      "emailBlast": {
+        "subjectLines": [
+          "New instruction: 4-bed detached, Wrotham – Guide £1.25m",
+          "Just listed: 2.1-acre estate, Pilgrims Way – Guide £1.25m",
+          "Indoor pool & triple garage, Wrotham TN15 – Guide £1.25m"
+        ],
+        "previewText": "Freehold · 2.1-acre plot · Indoor swimming pool · Triple garage · EPC D",
+        "headline": "Hollybank, Pilgrims Way, Wrotham TN15",
+        "body": "Guide Price £1,250,000. Freehold.\n\nA detached house built in 1987 on a 2.1-acre plot, with indoor swimming pool, triple garage, oil-fired central heating and driveway parking. Four bedrooms, three bathrooms and three reception rooms.\n\nCouncil Tax Band G (Tonbridge and Malling Borough Council). EPC rating D. Please note: the property is within the Kent Downs National Landscape and the Metropolitan Green Belt. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "A detached house on a 2.1-acre plot in Wrotham, Guide Price £1,250,000, freehold. Built in 1987 with indoor swimming pool, triple garage, four bedrooms and three reception rooms. The property is within the Kent Downs National Landscape and the Metropolitan Green Belt. Please book a viewing to see the house and grounds."
+      },
+      "sellerEmail": "{\n  \"body\": \"Dear [Seller name],\\n\\nThank you for instructing us to market Hollybank — the draft particulars are below for your approval before we publish anything.\\n\\n1. Price: Guide Price £1,250,000 – is this correct?\\n2. Tenure: Freehold – is this correct?\\n3. Council Tax: Band G (Tonbridge and Malling Borough Council) – is this correct?\\n4. EPC rating: D – is this correct?\\n5. Bedrooms: 4 – is this correct?\\n6. Bathrooms: 3 – is this correct?\\n7. Reception rooms: 3 – is this correct?\\n8. Year built: 1987 – is this correct?\\n9. Plot: 2.1 acres – is this correct?\\n10. Indoor swimming pool – is this correct?\\n11. Triple garage – is this correct?\\n12. Parking: Driveway – is this correct?\\n13. Heating: Oil-fired central heating – is this correct?\\n14. Water: Mains (metered) – is this correct?\\n15. Electricity: Mains – is this correct?\\n16. Sewerage: Mains – is this correct?\\n17. Broadband: FTTC – is this correct?\\n18. Mobile signal: Good outdoor coverage on major networks – is this correct?\\n19. Restrictions: within the Kent Downs National Landscape and the Metropolitan Green Belt – is this correct?\\n\\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\\n\\n[Your name, branch, phone]\"\n}",
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "Detached house on Pilgrims Way, Wrotham, Guide Price £1,250,000\n\nBuilt in 1987 on a 2.1-acre plot 🏡\nIndoor swimming pool\nTriple garage\nFour bedrooms, three bathrooms, three reception rooms\nOil-fired central heating and driveway parking\n\nFreehold · EPC D · Council Tax Band G\n\nPlease note: the property is within the Kent Downs National Landscape and the Metropolitan Green Belt.\n\nFull material information on the listing.",
+          "hashtags": [
+            "Wrotham",
+            "Kent",
+            "DetachedHouse",
+            "NewInstruction",
+            "KentProperty",
+            "PilgrimsWay",
+            "TonbridgeandMalling",
+            "KentDowns"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "A detached house on Pilgrims Way, Wrotham TN15. Guide Price £1,250,000.\n\nBuilt in 1987 on a 2.1-acre plot. Indoor swimming pool, triple garage, four bedrooms, three bathrooms and three reception rooms. Oil-fired central heating. Driveway parking. Mains electricity, mains water (metered) and mains sewerage.\n\nFreehold. EPC rating D. Council Tax Band G (Tonbridge and Malling Borough Council).\n\nPlease note: the property is within the Kent Downs National Landscape and the Metropolitan Green Belt.\n\nFull material information on the listing. 🏡\n\n#Wrotham #Kent #NewInstruction",
+          "hashtags": [
+            "Wrotham",
+            "Kent",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "Detached house, Pilgrims Way, Wrotham TN15. Guide Price £1,250,000. Freehold, EPC D. 2.1-acre plot, indoor pool, triple garage. Within Kent Downs National Landscape & Green Belt. Full info on listing.",
+          "hashtags": [
+            "Wrotham",
+            "Kent"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": true,
+  "findings": [],
+  "coreMs": 9720,
+  "marketingMs": 18326,
+  "retries": 0,
+  "output": {
+    "headline": "Detached house with indoor pool and triple garage, 2.1 acres",
+    "listing": "Hollybank stands within approximately 2.1 acres in the Kent Downs National Landscape on Pilgrims Way, Wrotham. The plot includes a driveway, triple garage and grounds extending to the boundaries.\n\nThe detached house was built in 1987 and provides four bedrooms, three bathrooms and three reception rooms. The ground floor comprises the principal reception rooms.\n\nThe kitchen opens to family space. An indoor swimming pool is housed separately.\n\nThe first floor accommodates four bedrooms and three bathrooms.\n\nThe grounds extend to approximately 2.1 acres. The triple garage provides storage and vehicle space.\n\nWrotham lies in Tonbridge and Malling Borough.\n\nGuide Price £1,250,000. Freehold. Council Tax Band G (Tonbridge and Malling Borough Council). EPC rating D. Construction: standard. Mains electricity, mains water (metered), mains sewerage and oil-fired central heating. Broadband: FTTC. Mobile signal: good outdoor coverage on major networks. Parking: driveway. The property is within the Kent Downs National Landscape and the Metropolitan Green Belt. Building safety, rights and easements, flooding, coastal erosion, planning, accessibility and coalfield/mining: none known.",
+    "summary": "Set within 2.1 acres in the Kent Downs National Landscape, a detached house with indoor swimming pool, triple garage and three reception rooms. Guide Price £1,250,000 freehold.",
+    "keyFeatures": [
+      "Set within approximately 2.1 acres in the Kent Downs National Landscape",
+      "Indoor swimming pool",
+      "Triple garage and driveway parking",
+      "Four bedrooms and three bathrooms",
+      "Three reception rooms",
+      "Built 1987",
+      "Oil-fired central heating",
+      "Within the Metropolitan Green Belt"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "New instruction: 4-bed detached, Wrotham – Guide £1.25m",
+        "Just listed: 2.1-acre estate, Pilgrims Way – Guide £1.25m",
+        "Indoor pool & triple garage, Wrotham TN15 – Guide £1.25m"
+      ],
+      "previewText": "Freehold · 2.1-acre plot · Indoor swimming pool · Triple garage · EPC D",
+      "headline": "Hollybank, Pilgrims Way, Wrotham TN15",
+      "body": "Guide Price £1,250,000. Freehold.\n\nA detached house built in 1987 on a 2.1-acre plot, with indoor swimming pool, triple garage, oil-fired central heating and driveway parking. Four bedrooms, three bathrooms and three reception rooms.\n\nCouncil Tax Band G (Tonbridge and Malling Borough Council). EPC rating D. Please note: the property is within the Kent Downs National Landscape and the Metropolitan Green Belt.\n\nFull material information is on the property listing.",
+      "callToAction": "Book a viewing",
+      "personalMessage": "A detached house on a 2.1-acre plot in Wrotham, Guide Price £1,250,000, freehold. Built in 1987 with indoor swimming pool, triple garage, four bedrooms and three reception rooms. The property is within the Kent Downs National Landscape and the Metropolitan Green Belt. Please book a viewing to see the house and grounds."
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "Detached house on Pilgrims Way, Wrotham, Guide Price £1,250,000\n\nBuilt in 1987 on a 2.1-acre plot 🏡\nIndoor swimming pool\nTriple garage\nFour bedrooms, three bathrooms, three reception rooms\nOil-fired central heating and driveway parking\n\nFreehold · EPC D · Council Tax Band G\n\nPlease note: the property is within the Kent Downs National Landscape and the Metropolitan Green Belt.\n\nFull material information on the listing.",
+        "hashtags": [
+          "Wrotham",
+          "Kent",
+          "DetachedHouse",
+          "NewInstruction",
+          "KentProperty",
+          "PilgrimsWay",
+          "TonbridgeandMalling",
+          "KentDowns"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "A detached house on Pilgrims Way, Wrotham TN15. Guide Price £1,250,000.\n\nBuilt in 1987 on a 2.1-acre plot. Indoor swimming pool, triple garage, four bedrooms, three bathrooms and three reception rooms. Oil-fired central heating. Driveway parking. Mains electricity, mains water (metered) and mains sewerage.\n\nFreehold. EPC rating D. Council Tax Band G (Tonbridge and Malling Borough Council).\n\nPlease note: the property is within the Kent Downs National Landscape and the Metropolitan Green Belt.\n\nFull material information on the listing. 🏡\n\n#Wrotham #Kent #NewInstruction",
+        "hashtags": [
+          "Wrotham",
+          "Kent",
+          "NewInstruction"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "Detached house, Pilgrims Way, Wrotham TN15. Guide Price £1,250,000. Freehold, EPC D. 2.1-acre plot, indoor pool, triple garage. Within Kent Downs National Landscape & Green Belt. Full info on listing.",
+        "hashtags": [
+          "Wrotham",
+          "Kent"
+        ]
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – Hollybank, Pilgrims Way, Wrotham TN15",
+      "body": "Dear [Seller name],\n\nThank you for instructing us to market Hollybank — the draft particulars are below for your approval before we publish anything.\n\n1. Price: Guide Price £1,250,000 – is this correct?\n2. Tenure: Freehold – is this correct?\n3. Council Tax: Band G (Tonbridge and Malling Borough Council) – is this correct?\n4. EPC rating: D – is this correct?\n5. Bedrooms: 4 – is this correct?\n6. Bathrooms: 3 – is this correct?\n7. Reception rooms: 3 – is this correct?\n8. Year built: 1987 – is this correct?\n9. Plot: 2.1 acres – is this correct?\n10. Indoor swimming pool – is this correct?\n11. Triple garage – is this correct?\n12. Parking: Driveway – is this correct?\n13. Heating: Oil-fired central heating – is this correct?\n14. Water: Mains (metered) – is this correct?\n15. Electricity: Mains – is this correct?\n16. Sewerage: Mains – is this correct?\n17. Broadband: FTTC – is this correct?\n18. Mobile signal: Good outdoor coverage on major networks – is this correct?\n19. Restrictions: within the Kent Downs National Landscape and the Metropolitan Green Belt – is this correct?\n\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 4,
+      "2": 5,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 4,
+      "8": 5
+    },
+    "hardFail": false,
+    "verdict": "PASS",
+    "fixes": [
+      "Voice notes mention 'five-bed' and 'three acres' but structured FACTS show 4 bedrooms and 2.1 acres - copy correctly uses structured data (4 bed, 2.1 acres) throughout, no fix needed but verify bedroom count is definitely 4",
+      "Voice notes mention 'EPC C now the windows are done' but structured FACTS show EPC D - copy correctly uses D throughout, confirm current certificate rating",
+      "Voice notes mention 'guide one point three million' but structured FACTS show £1,250,000 - copy correctly uses £1.25m, confirm asking price",
+      "Portal description 'The kitchen opens to family space' is vague filler - consider more concrete detail or remove if not verifiable",
+      "Portal description 'An indoor swimming pool is housed separately' - verify location/structure detail is factual"
+    ],
+    "average": 4.75
+  }
+}

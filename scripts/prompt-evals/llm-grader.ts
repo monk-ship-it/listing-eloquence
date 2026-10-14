@@ -38,6 +38,11 @@ export async function llmGrade(
   const v = promptVars(input);
   const voice = VOICES.find((x) => x.id === input.voice);
   const user = fillTemplate(GRADER_USER_TEMPLATE, {
+    TODAY: new Date().toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
     VOICE: `${voice?.name ?? input.voice} — ${voice?.descriptor ?? ""}`,
     FACTS: v.PROPERTY_DETAILS,
     MATERIAL_INFORMATION: v.MATERIAL_INFORMATION,

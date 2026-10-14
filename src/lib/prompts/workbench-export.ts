@@ -6,6 +6,7 @@
 import { createHash } from "node:crypto";
 import { EMPTY_INPUT, type ListingInput } from "../listing-types";
 import { VOICE_PROMPTS, VOICES } from "../voices";
+import { bannedReminder, pleaseNoteReminder } from "../output-guards";
 import {
   CALL_SETTINGS,
   CORE_SCHEMA,
@@ -201,6 +202,8 @@ export function renderWorkbenchFiles(cases: ExportCase[]): Record<string, string
     [`${W}/core.limit-reminder.txt`]: LIMIT_REMINDER,
     [`${W}/marketing.user.txt`]: MARKETING_USER_TEMPLATE,
     [`${W}/marketing.reminder.txt`]: MARKETING_REMINDER,
+    [`${W}/banned-reminder.txt`]: bannedReminder(["<phrase>", "<phrase>"]),
+    [`${W}/please-note-reminder.txt`]: pleaseNoteReminder(["<where>"]),
     [`${W}/extract.system.txt`]: EXTRACT_SYSTEM,
     [`${W}/extract.user.txt`]: EXTRACT_USER_TEMPLATE,
     [`${W}/tools/core.json`]: tool(CORE_TOOL, TOOL_DESCRIPTIONS.core, CORE_SCHEMA),
