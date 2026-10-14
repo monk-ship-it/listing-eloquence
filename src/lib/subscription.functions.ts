@@ -94,6 +94,7 @@ const SUBSCRIBER_COLUMNS =
  * no subscription required).
  */
 export async function readReconciledSubscriber(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accepts user or admin client
   supabase: { from: (t: string) => any },
   userId: string,
 ) {
@@ -125,6 +126,7 @@ export const getMySubscription = createServerFn({ method: "GET" })
  * Comped accounts are unlimited. Limits come from the plan in PLANS.
  */
 export async function computeUsage(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accepts user or admin client
   supabase: { from: (t: string) => any },
   userId: string,
   plan: PlanId,
