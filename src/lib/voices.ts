@@ -13,17 +13,17 @@ export const VOICES: VoiceMeta[] = [
     id: "professional",
     name: "Professional",
     tagline: "Clear · Polished · Direct",
-    descriptor: "Refined, confident, lifestyle-aware",
+    descriptor: "Clear, specific, well-structured",
     description:
-      "The everyday voice for high-street and independent agencies. Confident, well-structured copy that reads like a senior negotiator wrote it.",
+      "Everyday homes, about £150k–£450k. Well-structured copy that reads like a senior negotiator wrote it.",
   },
   {
     id: "premium",
     name: "Premium",
     tagline: "Restrained · Understated · Considered",
-    descriptor: "Restrained, understated, considered",
+    descriptor: "Measured, assured, specific",
     description:
-      "For agencies selling at the upper end of the market. Slightly more lifestyle-led, with care taken over rhythm and phrasing.",
+      "Town and suburban homes, about £400k–£1m. Quality shown through materials, layout and fittings, not adjectives.",
   },
   {
     id: "luxury",
@@ -31,15 +31,15 @@ export const VOICES: VoiceMeta[] = [
     tagline: "Quiet authority · Considered language",
     descriptor: "Quiet authority, understated",
     description:
-      "For prime and country homes where less is more. Quiet authority, considered language, no overblown adjectives.",
+      "Prime and country homes, about £1m+. Setting, land and accommodation carry the weight — no overblown adjectives.",
   },
   {
     id: "heritage",
     name: "Heritage",
-    tagline: "Atmosphere · Detail · Local charm",
-    descriptor: "Warm, cinematic, story-led",
+    tagline: "Character · Craftsmanship · Setting",
+    descriptor: "Warm, grounded walk-through",
     description:
-      "For homes with character, period features, history, mature gardens or village settings. A guided walk-through with atmosphere and local charm — premium but never overblown.",
+      "Period, listed, cottage or village homes — any price. A measured walk-through of supplied character, gardens and setting.",
   },
   {
     id: "plain",
@@ -47,7 +47,7 @@ export const VOICES: VoiceMeta[] = [
     tagline: "Clear · Factual · Quick",
     descriptor: "Clear, no lifestyle language",
     description:
-      "Straight facts in short sentences, with no lifestyle language. Suits investors, flats and quick turnarounds.",
+      "Ex-local-authority, flats, investor and probate stock. Straight facts in short sentences, no lifestyle language.",
   },
 ];
 
