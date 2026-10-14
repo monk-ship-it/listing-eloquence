@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { EmailBlastCard, GenerateMarketingButton } from "@/components/EmailBlastCard";
 import type { ListingInput, ListingOutput } from "@/lib/listing-types";
 import {
@@ -14,11 +15,13 @@ import {
   formatKeyFeaturesBlock,
   formatSellerEmail,
   formatSocialPost,
+  withDraft,
   withMaterialInfo,
 } from "@/lib/clipboard";
 import { buildMaterialInfoBlock, checkMaterialInfo, summariseChecks } from "@/lib/material-info";
 import {
   factCheckPack,
+  keyFeatureCaveatFlags,
   privateLeakFlags,
   publicInputsToText,
   type FactFlag,
@@ -54,7 +57,9 @@ function makeHighlighter(flags: FactFlag[]) {
             ? "Contact details or links are stripped by portals — remove"
             : kind === "private-leak"
               ? "From your private viewing / photo notes — remove from public copy"
-              : NOT_IN_NOTES;
+              : kind === "missing-caveat"
+                ? "Matches a known issue — keep its caveat (e.g. no approval, not yet redecorated)"
+                : NOT_IN_NOTES;
       return (
         <span
           key={i}
@@ -121,13 +126,19 @@ export function ListingPack({
   const miBlock = useMemo(() => buildMaterialInfoBlock(input), [input]);
   const checks = useMemo(() => summariseChecks(checkMaterialInfo(input)), [input]);
   const flags = useMemo(
-    () => [...factCheckPack(output, publicInputsToText(input)), ...privateLeakFlags(output, input)],
+    () => [
+      ...factCheckPack(output, publicInputsToText(input)),
+      ...privateLeakFlags(output, input),
+      ...keyFeatureCaveatFlags(output.keyFeatures, input.disclosures),
+    ],
     [output, input],
   );
   const hl = useMemo(() => makeHighlighter(flags), [flags]);
   const mi = appendMi ? miBlock : "";
 
   const fixCount = checks.open.length;
+  const draft = input.sellerApproved !== true;
+  const copy = (text: string, label: string) => copyToast(withDraft(text, draft), label);
   const strapLen = output.summary?.length ?? 0;
 
   return (
@@ -204,6 +215,15 @@ export function ListingPack({
                 Brochure / email headline
               </p>
               <Counter n={output.headline.length} max={70} />
+              {draft && (
+                <Badge
+                  variant="outline"
+                  className="border-warning/60 text-[10px] uppercase text-warning"
+                  title="Seller approval not confirmed — copies are labelled draft (TPO Code 7j)"
+                >
+                  Draft
+                </Badge>
+              )}
             </div>
             <h2 className="mt-1 break-words font-display text-xl font-semibold">
               {hl(output.headline)}
@@ -212,7 +232,7 @@ export function ListingPack({
           <CopyIcon
             label="Copy full listing pack"
             onClick={() =>
-              copyToast(buildCopyAllText(output, { materialInfo: mi }), "Full pack copied.")
+              copyToast(buildCopyAllText(output, { materialInfo: mi, draft }), "Full pack copied.")
             }
           />
         </div>
@@ -225,7 +245,7 @@ export function ListingPack({
             <CopyIcon
               label="Copy key features"
               onClick={() =>
-                copyToast(formatKeyFeaturesBlock(output.keyFeatures), "Key features copied.")
+                copy(formatKeyFeaturesBlock(output.keyFeatures), "Key features copied.")
               }
             />
           </div>
@@ -257,7 +277,7 @@ export function ListingPack({
           </div>
           <CopyIcon
             label="Copy description"
-            onClick={() => copyToast(withMaterialInfo(output.listing, mi), "Description copied.")}
+            onClick={() => copy(withMaterialInfo(output.listing, mi), "Description copied.")}
           />
         </div>
         <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted-foreground">
@@ -277,7 +297,7 @@ export function ListingPack({
           </div>
           <CopyIcon
             label="Copy strapline"
-            onClick={() => copyToast(output.summary, "Strapline copied.")}
+            onClick={() => copy(output.summary, "Strapline copied.")}
           />
         </div>
         <p className="mt-2 break-words text-sm text-muted-foreground">{hl(output.summary)}</p>
@@ -297,7 +317,7 @@ export function ListingPack({
           {miBlock && (
             <CopyIcon
               label="Copy Material Information"
-              onClick={() => copyToast(miBlock, "Material Information copied.")}
+              onClick={() => copy(miBlock, "Material Information copied.")}
             />
           )}
         </div>
@@ -327,6 +347,7 @@ export function ListingPack({
         marketingStatus={output.marketingStatus}
         onGenerated={onOutputChange}
         renderText={hl}
+        draft={draft}
       />
 
       <SellerEmailCard
@@ -357,7 +378,7 @@ export function ListingPack({
                 <Badge variant="secondary">{post.platform}</Badge>
                 <CopyIcon
                   label={`Copy ${post.platform} post`}
-                  onClick={() => copyToast(formatSocialPost(post), "Post copied.")}
+                  onClick={() => copy(formatSocialPost(post), "Post copied.")}
                 />
               </div>
               <p className="mt-2 break-words text-sm text-muted-foreground">{hl(post.caption)}</p>
@@ -390,6 +411,7 @@ function SellerEmailCard({
   onGenerated: (o: ListingOutput) => void;
 }) {
   const [open, setOpen] = useState(!sellerApproved);
+  const [sellerName, setSellerName] = useState("");
   const e = output.sellerEmail;
 
   return (
@@ -437,6 +459,18 @@ function SellerEmailCard({
             Subject
           </p>
           <p className="mt-1 break-words text-sm font-medium">{e.subject}</p>
+          <div className="mt-4 max-w-sm space-y-1.5">
+            <Label htmlFor={`seller-name-${generationId ?? "new"}`} className="text-xs text-muted-foreground">
+              Seller name (replaces [Seller name] when you copy)
+            </Label>
+            <Input
+              id={`seller-name-${generationId ?? "new"}`}
+              value={sellerName}
+              onChange={(ev) => setSellerName(ev.target.value)}
+              placeholder="Mrs Patel"
+              autoComplete="off"
+            />
+          </div>
           <div className="mt-3 space-y-2 whitespace-pre-wrap break-words text-sm leading-relaxed text-muted-foreground">
             {e.body}
           </div>
@@ -445,8 +479,14 @@ function SellerEmailCard({
             className="mt-4 min-h-11 sm:min-h-10"
             onClick={() =>
               copyToast(
-                formatSellerEmail(e),
-                "Email copied — add the seller's name and your sign-off, then send.",
+                formatSellerEmail(e, {
+                  sellerName,
+                  listing: output.listing,
+                  keyFeatures: output.keyFeatures,
+                }),
+                sellerName.trim()
+                  ? "Email copied with the draft details — add your sign-off, then send."
+                  : "Email copied — no seller name yet, so replace [Seller name] before sending.",
               )
             }
           >
