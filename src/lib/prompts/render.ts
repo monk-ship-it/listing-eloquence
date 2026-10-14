@@ -96,7 +96,7 @@ export function renderMaterialInfo(input: ListingInput): string {
 export function renderPrivateNotes(input: ListingInput): string {
   const { privateNotes } = walkFields(input);
   return privateNotes
-    ? `\nPRIVATE NOTES (never quote or use in any output; only use photo notes to add a "virtual staging" / "CGI" / "show home" label where images are referenced):\n${privateNotes}`
+    ? `\nPRIVATE NOTES (never quote or use in any output; the app adds any image label itself):\n${privateNotes}`
     : "";
 }
 

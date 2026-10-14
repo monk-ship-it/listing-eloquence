@@ -248,7 +248,7 @@ export function gradeLimits(pack: GradePack, input: ListingInput): Finding[] {
   if (!se) f("Seller email missing");
   else {
     const n = words(se);
-    if (n < 150 || n > 250) f(`Seller email ${n} words (need 150–250)`);
+    if (n < 150 || n > 300) f(`Seller email ${n} words (need 150–300)`);
     if (!se.trim().startsWith("Dear [Seller name],"))
       f('Seller email doesn\'t start "Dear [Seller name],"', se.slice(0, 60));
     if (!se.trim().endsWith("[Your name, branch, phone]"))

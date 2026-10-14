@@ -6,6 +6,7 @@
  */
 import { wordsToNumber } from "./dictation-normalise";
 import { BANNED_PHRASES } from "./prompts/banned";
+import { IMAGE_LABELS } from "./output-guards";
 
 export type FlagKind = "not-in-notes" | "banned" | "contact" | "private-leak" | "missing-caveat";
 
@@ -259,7 +260,9 @@ const LEAK_STOPWORDS = new Set(
     "can could did does doing down during each few for from further had has have having her here hers him his how into its just " +
     "more most must not now off once only other our out over own same she should some such than that the their them then there " +
     "these they this those through too under until very was were what when where which while who whom why will with would you your " +
-    "please note notes viewing viewings photo photos floorplan agent vendor seller property house home flat room rooms "
+    "please note notes viewing viewings photo photos floorplan floorplans image images exterior interior picture pictures agent vendor seller property house home flat room rooms " +
+    // words of the fixed image labels (the app adds those itself)
+    "some been virtually staged staging show could furnished computer-generated computer generated cgi indicative specification differ digitally enhanced "
   ).split(" "),
 );
 
@@ -275,13 +278,8 @@ function leakTokens(s: string): string[] {
  * from the private notes that appear in public copy but nowhere in the public
  * inputs. Guidance only.
  */
-/** The exact image labels the prompt may add from the photo notes. */
-export const IMAGE_LABELS = [
-  "Some images have been virtually staged to show how rooms could be furnished.",
-  "Images are computer-generated (CGI) and indicative only.",
-  "Images show the show home; specification may differ.",
-  "Some images have been digitally enhanced.",
-];
+/** The exact image labels the app adds from the photo notes. */
+export { IMAGE_LABELS };
 
 export function privateLeakFlags(pack: PackLike, input: object): FactFlag[] {
   const r = input as Record<string, unknown>;

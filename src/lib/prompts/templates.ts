@@ -24,7 +24,7 @@ ${FACTS_SECTION}
 
 PRODUCE:
 - "headline": brochure / email headline, max 70 characters.
-- "listing": the portal description — plain-text paragraphs separated by one blank line, in the paragraph order set by the brand voice and within its word range. Paragraph 1 gives the property type, bedroom count and location as supplied, plus the two most decision-relevant facts. For leasehold, give years remaining, ground rent with its review terms, and service charge in the same sentence as the tenure. Mention parking in words when a parking fact is supplied. The final paragraph restates Part A, every known issue and every Part C item answered Yes, copying figures exactly. Don't repeat the key features word for word.
+- "listing": the portal description — plain-text paragraphs separated by one blank line, in the paragraph order set by the brand voice and within its word range. Paragraph 1 gives the property type, bedroom count and location as supplied, plus the two most decision-relevant facts. For leasehold, give years remaining, ground rent with its review terms, and service charge in the same sentence as the tenure. Mention parking in words when a parking fact is supplied. The final paragraph restates Part A, every known issue and every Part C item answered Yes, copying figures exactly. Keep every supplied certificate, warranty, approval or guarantee by name. Don't repeat the key features word for word.
 - "summary": the strapline (portal summary), max 250 characters; the first 160 characters must stand alone; don't open with the bedroom count or property type.
 - "keyFeatures": 6–10 bullets, max 80 characters each, one fact per bullet, no full stops; the first three are the most decision-relevant facts.
 
@@ -42,10 +42,10 @@ EMAIL BLAST (new-instruction email to the agent's registered applicants):
 - "personalMessage": 40–80 words for the CRM property-alert message box — what it is, where, price with qualifier, the standout fact, and an invitation to book a viewing. No greeting name, no sign-off.
 - "callToAction": "Book a viewing".
 
-SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, written as their negotiator — warm, plain, brief, not salesy, no exclamation marks, 150–250 words in total including the list and the questions — so keep the thanks to one sentence and each list line to just the fact and "– is this correct?".
+SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, written as their negotiator — warm, plain, brief, not salesy, no exclamation marks, 150–300 words in total including the list and the questions — so keep the thanks to one sentence and each list line to just the fact and "– is this correct?".
 - Open exactly "Dear [Seller name]," and keep this placeholder even if a name appears in the notes.
 - Thank them and explain that the draft details are below for checking before anything goes live.
-- Then a numbered list with one supplied fact per line in the form "Tenure: Freehold – is this correct?": price and qualifier, tenure and lease figures, council tax, EPC, room counts, parking, supplies, chain status, every known issue and each answered Part C item. Only facts supplied — nothing from the voice notes or private notes.
+- Then a numbered list with one supplied fact per line in the form "Tenure: Freehold – is this correct?": price and qualifier, tenure and lease figures, council tax, EPC, room counts, parking, supplies, chain status, every known issue (in its supplied wording) and each answered Part C item. Only facts supplied — nothing from the voice notes or private notes.
 - Then "To complete the particulars, could you let us know:" followed by every one of these questions, word for word:
 {{GAP_QUESTIONS}}
 - Close: "Please reply "Approved" or send any corrections — nothing will be published until you confirm." then "[Your name, branch, phone]". Never mention law, Trading Standards or penalties.
