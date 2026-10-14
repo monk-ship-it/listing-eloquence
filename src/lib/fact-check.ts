@@ -52,6 +52,7 @@ const CONTACT_RE =
 const CAP_STOPWORDS = new Set(
   (
     "i a an the this that these those it its in on at by for from with of and or but to as is are be " +
+    "i've i'm i'll i'd we've we're we'll we'd you've you're you'll you'd they've they're they'll they'd he's she's it's that's there's let's " +
     "monday tuesday wednesday thursday friday saturday sunday january february march april may june july august september october november december " +
     "epc council tax band guide price offers excess region over fixed freehold leasehold share commonhold ownership " +
     "instagram facebook x rightmove zoopla onthemarket full material information listing property details subject " +

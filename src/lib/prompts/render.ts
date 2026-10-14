@@ -1,3 +1,4 @@
+import { renderImageLabelsLine } from "../output-guards";
 /**
  * Renders ListingInput into the {{VARIABLES}} used by templates.ts. Pure
  * (relative imports only). The app, the eval harness and the Workbench export
@@ -139,7 +140,8 @@ export type PromptVarName =
   | "VOICE_NOTES"
   | "SELLER_APPROVAL"
   | "GAP_QUESTIONS"
-  | "LIMIT_REMINDER";
+  | "LIMIT_REMINDER"
+  | "IMAGE_LABELS";
 
 /** Every variable used by SYSTEM_TEMPLATE, CORE_USER_TEMPLATE and MARKETING_USER_TEMPLATE. */
 export function promptVars(input: ListingInput): Record<PromptVarName, string> {
@@ -152,6 +154,7 @@ export function promptVars(input: ListingInput): Record<PromptVarName, string> {
     SELLER_APPROVAL: renderSellerApproval(input),
     GAP_QUESTIONS: renderGapQuestions(input),
     LIMIT_REMINDER: "",
+    IMAGE_LABELS: renderImageLabelsLine(input.mediaNotes),
   };
 }
 
@@ -170,5 +173,7 @@ export const VARIABLE_SOURCES: Record<PromptVarName | "NOTES", string> = {
     "renderGapQuestions(input) — seller questions for every open checklist item except price/approval (marketing only)",
   LIMIT_REMINDER:
     "empty, or core.limit-reminder.txt on the one retry after a limit breach (core only)",
+  IMAGE_LABELS:
+    "renderImageLabelsLine(input.mediaNotes) — the image labels the app will append and the X budget, or empty (marketing only)",
   NOTES: "the agent's voice notes, trimmed (extraction only)",
 };

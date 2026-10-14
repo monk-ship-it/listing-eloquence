@@ -327,7 +327,7 @@ export function validateCoreOutput(raw: unknown): CoreOutput {
  * fails only if no usable post remains.
  */
 /** The model occasionally returns a nested object as a JSON string — unwrap it. */
-function unwrapJson(v: unknown): unknown {
+export function unwrapJson(v: unknown): unknown {
   if (typeof v !== "string") return v;
   const s = v.trim();
   if (!/^[[{]/.test(s)) return v;
