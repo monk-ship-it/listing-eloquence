@@ -3,7 +3,12 @@
  * bun scripts (eval harness) run exactly the code the app runs.
  */
 import { callClaudeTool, type CallMeta } from "./ai-gateway.server";
-import { buildCoreRequest, buildExtractRequest, buildMarketingRequest, CALL_SETTINGS } from "./prompts/calls";
+import {
+  buildCoreRequest,
+  buildExtractRequest,
+  buildMarketingRequest,
+  CALL_SETTINGS,
+} from "./prompts/calls";
 import type { CoreOutput, ListingInput, MarketingOutput } from "./listing-types";
 import { validateCoreOutput, validateMarketingOutput } from "./listing-types";
 import { filterExtraction, type ExtractResult } from "./extract-filter";
@@ -22,7 +27,13 @@ export interface RunOpts {
 
 function errorCode(err: unknown): string {
   const m = err instanceof Error ? err.message : String(err);
-  const known = ["AI_TRUNCATED", "AI_TIMEOUT", "RATE_LIMIT", "AI_UNAVAILABLE", "MALFORMED_AI_OUTPUT"];
+  const known = [
+    "AI_TRUNCATED",
+    "AI_TIMEOUT",
+    "RATE_LIMIT",
+    "AI_UNAVAILABLE",
+    "MALFORMED_AI_OUTPUT",
+  ];
   return known.find((k) => m.includes(k)) ?? "UNKNOWN";
 }
 
@@ -56,7 +67,8 @@ export async function runCore(input: ListingInput, opts: RunOpts = {}): Promise<
     await opts.log?.("core", err);
     const code = errorCode(err);
     retried = true;
-    if (code === "AI_TRUNCATED" || code === "MALFORMED_AI_OUTPUT") out = await attempt(S.retryMaxTokens);
+    if (code === "AI_TRUNCATED" || code === "MALFORMED_AI_OUTPUT")
+      out = await attempt(S.retryMaxTokens);
     else if (code === "AI_TIMEOUT") out = await attempt(S.maxTokens);
     else throw err;
   }

@@ -152,14 +152,18 @@ export function promptVars(input: ListingInput): Record<PromptVarName, string> {
 
 /** Where each variable comes from — used in the Workbench README. */
 export const VARIABLE_SOURCES: Record<PromptVarName | "NOTES", string> = {
-  BRAND_VOICE: "renderBrandVoice(input.voice) — VOICE_PROMPTS in src/lib/voices.ts (see voices/*.txt)",
+  BRAND_VOICE:
+    "renderBrandVoice(input.voice) — VOICE_PROMPTS in src/lib/voices.ts (see voices/*.txt)",
   PROPERTY_DETAILS:
     "renderFactsBlock(input) — one '- Label: value' line per supplied public field in FIELD_DEFS",
   MATERIAL_INFORMATION: "renderMaterialInfo(input) — buildMaterialInfoBlock() in material-info.ts",
-  PRIVATE_NOTES: "renderPrivateNotes(input) — viewing + photo notes with the warning header, or empty",
+  PRIVATE_NOTES:
+    "renderPrivateNotes(input) — viewing + photo notes with the warning header, or empty",
   VOICE_NOTES: "renderVoiceNotes(input) — dictated notes with their header, or empty",
   SELLER_APPROVAL: 'renderSellerApproval(input) — "confirmed" or "NOT confirmed"',
-  GAP_QUESTIONS: "renderGapQuestions(input) — unanswered supply / Part C questions (marketing only)",
-  LIMIT_REMINDER: "empty, or core.limit-reminder.txt on the one retry after a limit breach (core only)",
+  GAP_QUESTIONS:
+    "renderGapQuestions(input) — unanswered supply / Part C questions (marketing only)",
+  LIMIT_REMINDER:
+    "empty, or core.limit-reminder.txt on the one retry after a limit breach (core only)",
   NOTES: "the agent's voice notes, trimmed (extraction only)",
 };

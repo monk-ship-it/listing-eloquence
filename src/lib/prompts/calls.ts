@@ -56,8 +56,12 @@ export const RETRY_RULES = {
     "If the first answer has a strapline > 250 chars or a key feature > 80 chars: retry once with {{LIMIT_REMINDER}} filled from core.limit-reminder.txt; if that retry fails, keep the first answer.",
     "Any other error (e.g. RATE_LIMIT) is not retried.",
   ],
-  marketing: ["Any failure: retry once. If the retry fails the listing is still saved without the email/social pack."],
-  extract: ["No retry. Fields whose evidence quote isn't found in the notes are dropped (filterExtraction)."],
+  marketing: [
+    "Any failure: retry once. If the retry fails the listing is still saved without the email/social pack.",
+  ],
+  extract: [
+    "No retry. Fields whose evidence quote isn't found in the notes are dropped (filterExtraction).",
+  ],
 };
 
 export const CORE_SCHEMA = {

@@ -225,45 +225,45 @@ function HistoryItem({
           </span>
         </button>
         <div className="flex items-center gap-1">
-        <WorkbenchExportMenu
-          generationId={item.id}
-          storedPromptVersion={item.output.meta?.promptVersion ?? null}
-        />
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-11 w-11 shrink-0 text-muted-foreground hover:text-destructive"
-              aria-label={`Delete listing: ${item.propertyTitle ?? "Untitled property"}`}
-              disabled={deleting}
-            >
-              {deleting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Trash2 className="h-4 w-4" />
-              )}
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete this listing?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This permanently removes the saved listing. Your monthly usage stays the same —
-                deletion doesn't refund a generation. This cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={onDelete}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          <WorkbenchExportMenu
+            generationId={item.id}
+            storedPromptVersion={item.output.meta?.promptVersion ?? null}
+          />
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-11 w-11 shrink-0 text-muted-foreground hover:text-destructive"
+                aria-label={`Delete listing: ${item.propertyTitle ?? "Untitled property"}`}
+                disabled={deleting}
               >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+                {deleting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete this listing?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This permanently removes the saved listing. Your monthly usage stays the same —
+                  deletion doesn't refund a generation. This cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={onDelete}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 

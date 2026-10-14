@@ -213,9 +213,7 @@ export const generateMarketingForGeneration = createServerFn({ method: "POST" })
     const rawInputs = (row.inputs ?? {}) as Record<string, unknown>;
     const input = {
       ...(rawInputs as unknown as ListingInput),
-      voice: (isValidVoice(rawInputs.voice)
-        ? rawInputs.voice
-        : row.voice) as VoiceId,
+      voice: (isValidVoice(rawInputs.voice) ? rawInputs.voice : row.voice) as VoiceId,
     };
     let safeInput: ListingInput;
     try {

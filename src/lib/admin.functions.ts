@@ -103,7 +103,8 @@ export const exportWorkbenchRequest = createServerFn({ method: "POST" })
   .inputValidator((raw: { generationId?: string; input?: unknown }) => {
     if (raw?.generationId !== undefined) {
       const id = raw.generationId;
-      if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Invalid listing.");
+      if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id))
+        throw new Error("Invalid listing.");
       return { generationId: id, input: null as unknown };
     }
     if (!raw?.input || typeof raw.input !== "object") throw new Error("Nothing to export.");
@@ -113,9 +114,8 @@ export const exportWorkbenchRequest = createServerFn({ method: "POST" })
     await assertAdmin(context as unknown as AdminContext);
     const { coerceLegacyInput } = await import("./listing-types");
     const { normaliseInput, promptVars } = await import("./prompts/render");
-    const { buildCoreRequest, buildExtractRequest, buildMarketingRequest } = await import(
-      "./prompts/calls"
-    );
+    const { buildCoreRequest, buildExtractRequest, buildMarketingRequest } =
+      await import("./prompts/calls");
     const { PROMPT_VERSION } = await import("./prompts/version.gen");
     const { toApiBody, getConfiguredClaudeModel } = await import("./ai-gateway.server");
 

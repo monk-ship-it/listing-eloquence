@@ -33,7 +33,9 @@ describe("golden prompts (byte-identical to pre-refactor app)", () => {
       expect(buildCoreRequest(input).system).toBe(read(`${name}.system.txt`));
       expect(buildMarketingRequest(input).system).toBe(read(`${name}.system.txt`));
       expect(buildCoreRequest(input).user).toBe(read(`${name}.core.txt`));
-      expect(buildCoreRequest(input, { reminder: true }).user).toBe(read(`${name}.core-reminder.txt`));
+      expect(buildCoreRequest(input, { reminder: true }).user).toBe(
+        read(`${name}.core-reminder.txt`),
+      );
       expect(buildMarketingRequest(input).user).toBe(read(`${name}.marketing.txt`));
     });
   }
