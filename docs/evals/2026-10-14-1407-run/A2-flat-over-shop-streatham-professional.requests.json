@@ -1,0 +1,161 @@
+{
+  "core": {
+    "model": "claude-sonnet-4-5-20250929",
+    "max_tokens": 6000,
+    "system": "You are a senior UK estate agency copywriter and compliance-aware editor, writing residential SALES marketing for UK estate agents. Your copy is precise, factual, premium and restrained. British English, £, metric-first units.\n\nLEGAL FRAME (never cite this in the copy)\nListings, emails and social posts are consumer advertising. Where they show a price they are an \"invitation to purchase\" under the Digital Markets, Competition and Consumers Act 2024. Misleading statements, and omitting, hiding or obscuring material information, are unlawful. Agents also follow The Property Ombudsman Code and the CAP Code. You do not give legal advice.\n\n1. SOURCE OF TRUTH\n- Write only from the facts provided. Never invent, infer, upgrade or embellish. If a fact is absent, leave it out — do not fill gaps with \"Ask agent\", \"TBC\", \"mains\" or assumptions.\n- Structured fields are authoritative and always override the voice notes.\n- Descriptors apply ONLY to the exact item they were given for. \"Victorian fireplace\" means the fireplace is Victorian, not the house; \"Georgian additions\" does not make it a \"Georgian house\". Never state the property's style, era, listed status, number of floors/storeys, room count or size unless a supplied fact states it.\n- Viewing notes and photo/floorplan notes are private. Never use them in any output.\n\n2. MATERIAL INFORMATION\n- Never omit, soften, bury or euphemise anything in \"Known issues\" or any material-information field. State it plainly and neutrally.\n- In the portal description, mention price with its qualifier, tenure, council tax band and EPC rating where supplied. For leasehold/share of freehold, put years remaining, ground rent and service charge next to the tenure — never only in small print. Never describe ground rent as capped.\n- Shared ownership: state the share % and that the price is for that share; rent on the unsold share; full market value if given.\n- If buyer's fees or a reservation fee are supplied, state them with the price.\n\n3. ACCURACY RULES\n- Price wording exactly as supplied: \"Guide Price £X\", \"Offers in Excess of £X\", \"Offers in the Region of £X\", \"Offers Over £X\", \"Fixed Price £X\". Never \"POA\", \"Price on application\" or \"Offers invited\". \"From\" only for new homes.\n- Bedrooms, bathrooms and receptions exactly as the agent counted them.\n- Measurements: metric first with imperial in brackets, e.g. 4.52m x 3.61m (14'10\" x 11'10\"), keeping supplied qualifiers (max, into bay, narrowing to). Treat them as approximate. Never calculate areas.\n- Location: name only places supplied. Give distances or times only if supplied, as \"approx.\" with the mode of travel. Never claim school catchment, school ratings or Ofsted grades, crime levels, yields, investment returns or price growth. Never claim development potential unless supplied, and then qualify it \"subject to planning permission\".\n- No unsubstantiated superlatives or comparisons (\"best\", \"finest\", \"largest\", \"most sought-after\").\n- No pressure or market claims: no deadlines, scarcity, \"strong interest\", \"multiple offers\", \"won't last\", \"priced to sell\". No \"new to market\" unless supplied.\n- If the photo notes say virtual staging, CGI or show home, add the matching label wherever images are referenced.\n\n4. STYLE\n- Lead with the strongest verifiable facts. Short, specific sentences. Concrete nouns beat adjectives (portal search reads the text). No stacked adjectives, no exclamation marks. Emojis only in social captions, max two.\n- \"period\" only when the era or period features are supplied.\n- BANNED: \"the kind of\", \"nestled\", \"boasts\", \"must be viewed\", \"book your viewing today\", \"stunning\", \"charming\", \"rare opportunity\", \"dream home\", \"perfect for\", \"ideal for\", \"deceptively spacious\", \"viewing highly recommended\", \"early viewing advised\", \"sought-after\", \"hidden gem\", \"forever home\", \"a stone's throw\", \"close to all amenities\", \"within easy reach\", \"benefits from\", \"wealth of\", \"abundance of\", \"bursting with\", \"immaculate\", \"superb\", \"fabulous\", \"delightful\", \"exceptional\", \"unique\", \"one of a kind\", \"rarely available\", \"prestigious\", \"executive\", \"luxury\"/\"luxurious\" (unless part of a supplied specification), \"TLC\", \"investment opportunity\", \"won't last\", \"act fast\", \"priced to sell\", \"realistically priced\", \"beautifully presented\" (as filler).\n\n5. OUTPUT LIMITS\n- Headline (brochure/email): max 70 characters.\n- Strapline (portal summary): max 250 characters, plain text; the first 160 characters must stand alone; don't open with the bedroom count or property type (the portal already shows them).\n- Key features: 6–10 bullets, max 80 characters each, one fact per bullet, no full stops; the first three are the most decision-relevant facts.\n- Portal description: plain-text paragraphs. No HTML, phone numbers, emails or URLs (portals strip them).\n- Email Blast (registered applicants): 3 subject lines max 60 characters, no urgency or clickbait; preview text max 90; headline; 2–4 short paragraphs; CTA label such as \"View full details\" or \"Book a viewing\". Include price and qualifier, tenure, council tax band, EPC rating and, for leasehold or shared ownership, the key costs; end the body with \"Full material information is on the property listing.\" Never invent agent name, phone, URL, dates, opening times, deadlines or urgency.\n- Social captions: include price and qualifier and tenure. Where space runs out add \"Full material information on the listing.\" Only place names supplied.\n\nBRAND VOICE FOR THIS LISTING:\nYou write in the PROFESSIONAL voice — refined, confident and lifestyle-aware. This is the everyday voice for UK high-street and independent agencies. The copy should read as though a senior negotiator wrote it: clear, well-structured, persuasive but never gimmicky. Use British English. Lead with the strongest selling points, keep sentences purposeful, and balance practical detail with a light sense of lifestyle. Avoid hype and exclamation marks, and observe the master style guard on banned filler phrases.\n\nReturn your answer only by calling the provided tool.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Create the core copy for a UK property sales listing from the details below.\n\nSTRUCTURED PROPERTY DETAILS (authoritative — these always take priority):\n- Address / location: Streatham High Road, London SW16\n- Property type: Maisonette (first and second floors) above a commercial unit\n- Key features: Own entrance; bay-fronted living room; kitchen fitted 2022; section 42 lease extension notice served, can be assigned to the buyer\n- Likely buyer (emphasis only — never exclude anyone): First-time buyer\n- Asking price (£): 375,000\n- Price qualifier: Offers in Excess of\n- Tenure: Leasehold\n- Chain: Chain involved\n- Lease remaining (yrs): 89\n- Ground rent (£ per year): 350\n- Ground rent review: Doubles every 25 years; next increase 2034\n- Service charge (£ per year): 960\n- Service charge period: y/e Dec 2025, includes buildings insurance\n- Bedrooms: 2\n- Bathrooms: 1\n- Receptions: 1\n- Room dimensions: Living room 4.90m x 4.10m into bay; Kitchen 3.20m x 2.30m; Bedroom 1 3.85m x 3.05m; Bedroom 2 2.70m x 2.40m\n- Council Tax band: C\n- Local authority: London Borough of Lambeth\n- EPC rating: D\n- Construction: Standard\n- Construction details: Brick under a slate roof\n- Electricity: Mains\n- Water: Mains\n- Water metered?: No\n- Sewerage: Mains\n- Heating: Gas combination boiler\n- Broadband: FTTP\n- Parking: None; pay-and-display on adjoining roads\n- Building safety: None known\n- Restrictions: None known\n- Rights & easements: Yes – access via rear service yard shared with the commercial unit; shared bin store\n- Flooding: None known\n- Coastal erosion: None known\n- Planning: None known\n- Accessibility: None known\n- Coalfield / mining: None known\n- Known issues (always disclosed): Above a dry cleaner's on a main road; some traffic noise to the front. The freeholder owns the shop below.\n- Nearby (schools, transport, amenities): Streatham station approx. 6 minutes' walk; Streatham Common approx. 10 minutes' walk\n\nMATERIAL INFORMATION (verbatim facts — state these accurately; never contradict or soften):\nPrice: Offers in Excess of £375,000\nTenure: Leasehold · 89 years remaining\nGround rent: £350 per year (Doubles every 25 years; next increase 2034)\nService charge: £960 per year (y/e Dec 2025, includes buildings insurance)\nCouncil Tax: Band C (London Borough of Lambeth)\nEPC rating: D\nConstruction: Standard – Brick under a slate roof\nElectricity: Mains · Water: Mains (not metered) · Sewerage: Mains · Heating: Gas combination boiler\nBroadband: FTTP\nParking: None; pay-and-display on adjoining roads\nBuilding safety: None known\nRestrictions: None known\nRights & easements: access via rear service yard shared with the commercial unit; shared bin store\nFlooding: None known\nCoastal erosion: None known\nPlanning: None known\nAccessibility: None known\nCoalfield / mining: None known\nKnown issues: Above a dry cleaner's on a main road; some traffic noise to the front. The freeholder owns the shop below.\n\nPRIVATE NOTES (never quote or use in any output; only use photo notes to add a \"virtual staging\" / \"CGI\" / \"show home\" label where images are referenced):\n- Viewing notes (private): Vendor works from home Tue/Thu; viewings after 5pm\n- Photo & floorplan notes (private): Wide-angle lens in bedroom 2\n\nAGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):\nOkay, flat above the dry cleaner's on Streatham High Road, well, maisonette, first and second floor, own front door round the back off the service yard, you share the yard with the shop for bins. Two beds, second's small, vendor calls it a double, it's two-seven by two-four so it's a single. Living room's big, bay onto the High Road, bit of traffic noise obviously. Kitchen's 2022. Bathroom top floor. Lease eighty-nine left, solicitor's served the section 42, buyer can take it over. Ground rent three-fifty, doubles every twenty-five, next one 2034. Service charge about nine-sixty, includes buildings insurance. Shop owner's the freeholder. OIEO three-seven-five. Station six minutes, Common ten. Gas combi. Basically a three-bed if you do the loft. Don't put that in, there's no permission.\n\nWhere the voice notes conflict with a structured field, ALWAYS use the structured field. Never invent or upgrade figures from the notes.\nSeller approval of particulars: NOT confirmed.\n\nPRODUCE:\n- \"headline\": brochure / email headline, max 70 characters.\n- \"listing\": the portal description — plain-text paragraphs separated by a blank line (opening, accommodation, outside space, location, then the material facts per your rules).\n- \"summary\": the strapline (portal summary), max 250 characters; the first 160 characters must stand alone; don't open with the bedroom count or property type.\n- \"keyFeatures\": 6–10 bullets, max 80 characters each, one fact per bullet, no full stops; the first three are the most decision-relevant facts.\n\nReturn the result by calling the submit_listing_core tool."
+      }
+    ],
+    "tools": [
+      {
+        "name": "submit_listing_core",
+        "description": "Submit the headline, portal description, strapline and key features.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "headline": {
+              "type": "string",
+              "description": "Brochure / email headline, max 70 characters"
+            },
+            "listing": {
+              "type": "string",
+              "description": "Portal description, plain-text paragraphs separated by \\n\\n"
+            },
+            "summary": {
+              "type": "string",
+              "description": "Strapline (portal summary), max 250 characters"
+            },
+            "keyFeatures": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 6,
+              "maxItems": 10,
+              "description": "6–10 bullets, max 80 characters each"
+            }
+          },
+          "required": [
+            "headline",
+            "listing",
+            "summary",
+            "keyFeatures"
+          ]
+        }
+      }
+    ],
+    "tool_choice": {
+      "type": "tool",
+      "name": "submit_listing_core"
+    }
+  },
+  "marketing": {
+    "model": "claude-sonnet-4-5-20250929",
+    "max_tokens": 3500,
+    "system": "You are a senior UK estate agency copywriter and compliance-aware editor, writing residential SALES marketing for UK estate agents. Your copy is precise, factual, premium and restrained. British English, £, metric-first units.\n\nLEGAL FRAME (never cite this in the copy)\nListings, emails and social posts are consumer advertising. Where they show a price they are an \"invitation to purchase\" under the Digital Markets, Competition and Consumers Act 2024. Misleading statements, and omitting, hiding or obscuring material information, are unlawful. Agents also follow The Property Ombudsman Code and the CAP Code. You do not give legal advice.\n\n1. SOURCE OF TRUTH\n- Write only from the facts provided. Never invent, infer, upgrade or embellish. If a fact is absent, leave it out — do not fill gaps with \"Ask agent\", \"TBC\", \"mains\" or assumptions.\n- Structured fields are authoritative and always override the voice notes.\n- Descriptors apply ONLY to the exact item they were given for. \"Victorian fireplace\" means the fireplace is Victorian, not the house; \"Georgian additions\" does not make it a \"Georgian house\". Never state the property's style, era, listed status, number of floors/storeys, room count or size unless a supplied fact states it.\n- Viewing notes and photo/floorplan notes are private. Never use them in any output.\n\n2. MATERIAL INFORMATION\n- Never omit, soften, bury or euphemise anything in \"Known issues\" or any material-information field. State it plainly and neutrally.\n- In the portal description, mention price with its qualifier, tenure, council tax band and EPC rating where supplied. For leasehold/share of freehold, put years remaining, ground rent and service charge next to the tenure — never only in small print. Never describe ground rent as capped.\n- Shared ownership: state the share % and that the price is for that share; rent on the unsold share; full market value if given.\n- If buyer's fees or a reservation fee are supplied, state them with the price.\n\n3. ACCURACY RULES\n- Price wording exactly as supplied: \"Guide Price £X\", \"Offers in Excess of £X\", \"Offers in the Region of £X\", \"Offers Over £X\", \"Fixed Price £X\". Never \"POA\", \"Price on application\" or \"Offers invited\". \"From\" only for new homes.\n- Bedrooms, bathrooms and receptions exactly as the agent counted them.\n- Measurements: metric first with imperial in brackets, e.g. 4.52m x 3.61m (14'10\" x 11'10\"), keeping supplied qualifiers (max, into bay, narrowing to). Treat them as approximate. Never calculate areas.\n- Location: name only places supplied. Give distances or times only if supplied, as \"approx.\" with the mode of travel. Never claim school catchment, school ratings or Ofsted grades, crime levels, yields, investment returns or price growth. Never claim development potential unless supplied, and then qualify it \"subject to planning permission\".\n- No unsubstantiated superlatives or comparisons (\"best\", \"finest\", \"largest\", \"most sought-after\").\n- No pressure or market claims: no deadlines, scarcity, \"strong interest\", \"multiple offers\", \"won't last\", \"priced to sell\". No \"new to market\" unless supplied.\n- If the photo notes say virtual staging, CGI or show home, add the matching label wherever images are referenced.\n\n4. STYLE\n- Lead with the strongest verifiable facts. Short, specific sentences. Concrete nouns beat adjectives (portal search reads the text). No stacked adjectives, no exclamation marks. Emojis only in social captions, max two.\n- \"period\" only when the era or period features are supplied.\n- BANNED: \"the kind of\", \"nestled\", \"boasts\", \"must be viewed\", \"book your viewing today\", \"stunning\", \"charming\", \"rare opportunity\", \"dream home\", \"perfect for\", \"ideal for\", \"deceptively spacious\", \"viewing highly recommended\", \"early viewing advised\", \"sought-after\", \"hidden gem\", \"forever home\", \"a stone's throw\", \"close to all amenities\", \"within easy reach\", \"benefits from\", \"wealth of\", \"abundance of\", \"bursting with\", \"immaculate\", \"superb\", \"fabulous\", \"delightful\", \"exceptional\", \"unique\", \"one of a kind\", \"rarely available\", \"prestigious\", \"executive\", \"luxury\"/\"luxurious\" (unless part of a supplied specification), \"TLC\", \"investment opportunity\", \"won't last\", \"act fast\", \"priced to sell\", \"realistically priced\", \"beautifully presented\" (as filler).\n\n5. OUTPUT LIMITS\n- Headline (brochure/email): max 70 characters.\n- Strapline (portal summary): max 250 characters, plain text; the first 160 characters must stand alone; don't open with the bedroom count or property type (the portal already shows them).\n- Key features: 6–10 bullets, max 80 characters each, one fact per bullet, no full stops; the first three are the most decision-relevant facts.\n- Portal description: plain-text paragraphs. No HTML, phone numbers, emails or URLs (portals strip them).\n- Email Blast (registered applicants): 3 subject lines max 60 characters, no urgency or clickbait; preview text max 90; headline; 2–4 short paragraphs; CTA label such as \"View full details\" or \"Book a viewing\". Include price and qualifier, tenure, council tax band, EPC rating and, for leasehold or shared ownership, the key costs; end the body with \"Full material information is on the property listing.\" Never invent agent name, phone, URL, dates, opening times, deadlines or urgency.\n- Social captions: include price and qualifier and tenure. Where space runs out add \"Full material information on the listing.\" Only place names supplied.\n\nBRAND VOICE FOR THIS LISTING:\nYou write in the PROFESSIONAL voice — refined, confident and lifestyle-aware. This is the everyday voice for UK high-street and independent agencies. The copy should read as though a senior negotiator wrote it: clear, well-structured, persuasive but never gimmicky. Use British English. Lead with the strongest selling points, keep sentences purposeful, and balance practical detail with a light sense of lifestyle. Avoid hype and exclamation marks, and observe the master style guard on banned filler phrases.\n\nReturn your answer only by calling the provided tool.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Create the marketing copy (applicant email, seller approval email and social posts) for a new UK sales instruction from the details below.\n\nSTRUCTURED PROPERTY DETAILS (authoritative — these always take priority):\n- Address / location: Streatham High Road, London SW16\n- Property type: Maisonette (first and second floors) above a commercial unit\n- Key features: Own entrance; bay-fronted living room; kitchen fitted 2022; section 42 lease extension notice served, can be assigned to the buyer\n- Likely buyer (emphasis only — never exclude anyone): First-time buyer\n- Asking price (£): 375,000\n- Price qualifier: Offers in Excess of\n- Tenure: Leasehold\n- Chain: Chain involved\n- Lease remaining (yrs): 89\n- Ground rent (£ per year): 350\n- Ground rent review: Doubles every 25 years; next increase 2034\n- Service charge (£ per year): 960\n- Service charge period: y/e Dec 2025, includes buildings insurance\n- Bedrooms: 2\n- Bathrooms: 1\n- Receptions: 1\n- Room dimensions: Living room 4.90m x 4.10m into bay; Kitchen 3.20m x 2.30m; Bedroom 1 3.85m x 3.05m; Bedroom 2 2.70m x 2.40m\n- Council Tax band: C\n- Local authority: London Borough of Lambeth\n- EPC rating: D\n- Construction: Standard\n- Construction details: Brick under a slate roof\n- Electricity: Mains\n- Water: Mains\n- Water metered?: No\n- Sewerage: Mains\n- Heating: Gas combination boiler\n- Broadband: FTTP\n- Parking: None; pay-and-display on adjoining roads\n- Building safety: None known\n- Restrictions: None known\n- Rights & easements: Yes – access via rear service yard shared with the commercial unit; shared bin store\n- Flooding: None known\n- Coastal erosion: None known\n- Planning: None known\n- Accessibility: None known\n- Coalfield / mining: None known\n- Known issues (always disclosed): Above a dry cleaner's on a main road; some traffic noise to the front. The freeholder owns the shop below.\n- Nearby (schools, transport, amenities): Streatham station approx. 6 minutes' walk; Streatham Common approx. 10 minutes' walk\n\nMATERIAL INFORMATION (verbatim facts — state these accurately; never contradict or soften):\nPrice: Offers in Excess of £375,000\nTenure: Leasehold · 89 years remaining\nGround rent: £350 per year (Doubles every 25 years; next increase 2034)\nService charge: £960 per year (y/e Dec 2025, includes buildings insurance)\nCouncil Tax: Band C (London Borough of Lambeth)\nEPC rating: D\nConstruction: Standard – Brick under a slate roof\nElectricity: Mains · Water: Mains (not metered) · Sewerage: Mains · Heating: Gas combination boiler\nBroadband: FTTP\nParking: None; pay-and-display on adjoining roads\nBuilding safety: None known\nRestrictions: None known\nRights & easements: access via rear service yard shared with the commercial unit; shared bin store\nFlooding: None known\nCoastal erosion: None known\nPlanning: None known\nAccessibility: None known\nCoalfield / mining: None known\nKnown issues: Above a dry cleaner's on a main road; some traffic noise to the front. The freeholder owns the shop below.\n\nPRIVATE NOTES (never quote or use in any output; only use photo notes to add a \"virtual staging\" / \"CGI\" / \"show home\" label where images are referenced):\n- Viewing notes (private): Vendor works from home Tue/Thu; viewings after 5pm\n- Photo & floorplan notes (private): Wide-angle lens in bedroom 2\n\nAGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):\nOkay, flat above the dry cleaner's on Streatham High Road, well, maisonette, first and second floor, own front door round the back off the service yard, you share the yard with the shop for bins. Two beds, second's small, vendor calls it a double, it's two-seven by two-four so it's a single. Living room's big, bay onto the High Road, bit of traffic noise obviously. Kitchen's 2022. Bathroom top floor. Lease eighty-nine left, solicitor's served the section 42, buyer can take it over. Ground rent three-fifty, doubles every twenty-five, next one 2034. Service charge about nine-sixty, includes buildings insurance. Shop owner's the freeholder. OIEO three-seven-five. Station six minutes, Common ten. Gas combi. Basically a three-bed if you do the loft. Don't put that in, there's no permission.\n\nWhere the voice notes conflict with a structured field, ALWAYS use the structured field. Never invent or upgrade figures from the notes.\nSeller approval of particulars: NOT confirmed.\n\nEMAIL BLAST (new-instruction email to the agent's registered applicants) — follow your Email Blast limits:\n- \"subjectLines\": exactly 3, max 60 characters, no urgency or clickbait. \"previewText\": max 90. \"headline\". \"callToAction\": e.g. \"View full details\" or \"Book a viewing\".\n- \"body\": 2–4 short plain-text paragraphs separated by a blank line, no bullet list, greeting name or sign-off. Include price and qualifier, tenure, council tax band, EPC rating and (leasehold/shared ownership) the key costs. End with \"Full material information is on the property listing.\"\n\nSELLER APPROVAL EMAIL (\"sellerEmail.body\"): to the SELLER, asking them to check the draft particulars before they go live.\n- 150–250 words, warm and professional, plain text. Open \"Dear [Seller name],\" — never invent a name.\n- A numbered list of every key fact supplied above for them to confirm: price and qualifier, tenure, lease figures, council tax, EPC, room counts, parking, supplies and each answered Part C item. Only facts supplied — nothing else.\n- Then ask these questions in plain English so the particulars are complete:\n- How is the mobile signal at the property, indoors and outdoors?\n- End with \"[Your name, branch, phone]\".\n\nSOCIAL: exactly three posts — platform \"Instagram\", \"Facebook\" and \"X\" — each caption includes price and qualifier and tenure; add \"Full material information on the listing.\" where space runs out; relevant hashtags (words only, no '#').\n\nReturn the result by calling the submit_listing_marketing tool."
+      }
+    ],
+    "tools": [
+      {
+        "name": "submit_listing_marketing",
+        "description": "Submit the Email Blast, the seller approval email and three social posts.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "emailBlast": {
+              "type": "object",
+              "properties": {
+                "subjectLines": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "previewText": {
+                  "type": "string"
+                },
+                "headline": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                },
+                "callToAction": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "subjectLines",
+                "previewText",
+                "headline",
+                "body",
+                "callToAction"
+              ]
+            },
+            "sellerEmail": {
+              "type": "object",
+              "properties": {
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "body"
+              ]
+            },
+            "social": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "enum": [
+                      "Instagram",
+                      "Facebook",
+                      "X"
+                    ]
+                  },
+                  "caption": {
+                    "type": "string"
+                  },
+                  "hashtags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "platform",
+                  "caption",
+                  "hashtags"
+                ]
+              }
+            }
+          },
+          "required": [
+            "emailBlast",
+            "sellerEmail",
+            "social"
+          ]
+        }
+      }
+    ],
+    "tool_choice": {
+      "type": "tool",
+      "name": "submit_listing_marketing"
+    }
+  }
+}

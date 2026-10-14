@@ -1,0 +1,446 @@
+{
+  "extract": {
+    "model": "claude-sonnet-4-5-20250929",
+    "max_tokens": 1500,
+    "temperature": 0,
+    "system": "You extract property facts that a UK estate agent explicitly stated in dictated notes, to pre-fill a listing form.\n\nRULES:\n- Return ONLY values the agent explicitly stated. Never infer, guess or assume. If something isn't said, omit the field entirely.\n- Do not derive one field from another: e.g. never set tenure from the word \"flat\" or \"house\"; never guess council tax band, EPC, lease length, year built or price.\n- Normalise: bedrooms/bathrooms/receptions/lease years as digits (\"four\" → \"4\", \"two and a half\" → \"2.5\"); EPC and council tax as a single capital letter (\"EPC C\" → \"C\", \"band d\" → \"D\"); price as digits with commas, no £ (\"one point four five million\" → \"1,450,000\", \"three fifty\" said as a price → \"350,000\", \"350k\" → \"350,000\"); tenure capitalised (\"Freehold\", \"Leasehold\", \"Share of freehold\").\n- priceQualifier only when a qualifier is said, written in title case, e.g. \"Guide Price\", \"Offers in Excess of\", \"Offers Over\".\n- For descriptive fields (key features, outside space, parking, heating, nearby etc.) keep the agent's own wording, tidied into a short comma-separated phrase. Don't add adjectives.\n- Viewing/access instructions go only in showingNotes; photo/floorplan notes only in mediaNotes.\n- Select fields must use one of the listed options exactly. Part C items (building safety, restrictions, rights & easements, flooding, coastal erosion, planning, accessibility, coalfield/mining) only when the agent addresses them: \"None known\" if they say none/no, otherwise \"Yes – <details>\".\n- Supplies: only what is said (e.g. \"mains drainage\" → sewerage \"Mains\"; don't assume mains for anything else).\n- For every field you return, add an \"evidence\" entry: a short VERBATIM quote (max 80 characters) copied exactly from the notes that states it.\n\nReturn the result by calling the fill_listing_fields tool.",
+    "messages": [
+      {
+        "role": "user",
+        "content": "AGENT VOICE NOTES:\nFour bed semi on Brenzett Close, Chatham, freehold, guide price three fifty, EPC C, council tax band D, two bathrooms, driveway for two cars, south-facing garden"
+      }
+    ],
+    "tools": [
+      {
+        "name": "fill_listing_fields",
+        "description": "Submit only the fields the agent explicitly stated.",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "string",
+              "description": "Address / location"
+            },
+            "propertyType": {
+              "type": "string",
+              "description": "Property type"
+            },
+            "yearBuilt": {
+              "type": "string",
+              "description": "Year built / approx. age"
+            },
+            "keyFeatures": {
+              "type": "string",
+              "description": "Key features"
+            },
+            "targetAudience": {
+              "type": "string",
+              "description": "Likely buyer Comma-separated, only from: First-time buyer, Growing family, Downsizer, Investor, Commuter, Chain-free buyer."
+            },
+            "price": {
+              "type": "string",
+              "description": "Asking price (£)"
+            },
+            "priceQualifier": {
+              "type": "string",
+              "description": "Price qualifier One of: Guide Price | Offers in Excess of | Offers in the Region of | Offers Over | Fixed Price | From | Shared Ownership."
+            },
+            "tenure": {
+              "type": "string",
+              "description": "Tenure One of: Freehold | Leasehold | Share of freehold | Commonhold."
+            },
+            "chainStatus": {
+              "type": "string",
+              "description": "Chain One of: No onward chain | Chain involved | Not known."
+            },
+            "leaseYears": {
+              "type": "string",
+              "description": "Lease remaining (yrs)"
+            },
+            "groundRent": {
+              "type": "string",
+              "description": "Ground rent (£ per year)"
+            },
+            "groundRentReview": {
+              "type": "string",
+              "description": "Ground rent review"
+            },
+            "serviceCharge": {
+              "type": "string",
+              "description": "Service charge (£ per year)"
+            },
+            "serviceChargePeriod": {
+              "type": "string",
+              "description": "Service charge period"
+            },
+            "reserveFund": {
+              "type": "string",
+              "description": "Reserve fund / event fees"
+            },
+            "sharePercent": {
+              "type": "string",
+              "description": "Share offered (%)"
+            },
+            "rent": {
+              "type": "string",
+              "description": "Rent on unsold share (£/month)"
+            },
+            "fullMarketValue": {
+              "type": "string",
+              "description": "Full market value (£)"
+            },
+            "bedrooms": {
+              "type": "string",
+              "description": "Bedrooms"
+            },
+            "bathrooms": {
+              "type": "string",
+              "description": "Bathrooms"
+            },
+            "receptions": {
+              "type": "string",
+              "description": "Receptions"
+            },
+            "dimensions": {
+              "type": "string",
+              "description": "Room dimensions"
+            },
+            "periodFeatures": {
+              "type": "string",
+              "description": "Period / character features"
+            },
+            "outsideSpace": {
+              "type": "string",
+              "description": "Outside space / garden"
+            },
+            "councilTaxBand": {
+              "type": "string",
+              "description": "Council Tax band One of: A | B | C | D | E | F | G | H | I | Exempt | Not yet banded."
+            },
+            "localAuthority": {
+              "type": "string",
+              "description": "Local authority"
+            },
+            "epc": {
+              "type": "string",
+              "description": "EPC rating One of: A | B | C | D | E | F | G | Exempt | Commissioned."
+            },
+            "construction": {
+              "type": "string",
+              "description": "Construction One of: Standard | Non-standard."
+            },
+            "constructionDetails": {
+              "type": "string",
+              "description": "Construction details"
+            },
+            "electricity": {
+              "type": "string",
+              "description": "Electricity"
+            },
+            "water": {
+              "type": "string",
+              "description": "Water"
+            },
+            "waterMetered": {
+              "type": "string",
+              "description": "Water metered? One of: Yes | No."
+            },
+            "sewerage": {
+              "type": "string",
+              "description": "Sewerage One of: Mains | Septic tank | Cesspit | Treatment plant."
+            },
+            "heating": {
+              "type": "string",
+              "description": "Heating"
+            },
+            "broadband": {
+              "type": "string",
+              "description": "Broadband One of: FTTP | FTTC | Cable | ADSL | Other."
+            },
+            "broadbandSpeed": {
+              "type": "string",
+              "description": "Broadband speed (if known)"
+            },
+            "mobileSignal": {
+              "type": "string",
+              "description": "Mobile signal"
+            },
+            "parking": {
+              "type": "string",
+              "description": "Parking"
+            },
+            "buildingSafety": {
+              "type": "string",
+              "description": "Building safety Exactly \"None known\", or \"Yes – <details>\" when the agent describes one."
+            },
+            "restrictions": {
+              "type": "string",
+              "description": "Restrictions Exactly \"None known\", or \"Yes – <details>\" when the agent describes one."
+            },
+            "rightsEasements": {
+              "type": "string",
+              "description": "Rights & easements Exactly \"None known\", or \"Yes – <details>\" when the agent describes one."
+            },
+            "flooding": {
+              "type": "string",
+              "description": "Flooding Exactly \"None known\", or \"Yes – <details>\" when the agent describes one."
+            },
+            "coastalErosion": {
+              "type": "string",
+              "description": "Coastal erosion Exactly \"None known\", or \"Yes – <details>\" when the agent describes one."
+            },
+            "planning": {
+              "type": "string",
+              "description": "Planning Exactly \"None known\", or \"Yes – <details>\" when the agent describes one."
+            },
+            "accessibility": {
+              "type": "string",
+              "description": "Accessibility Exactly \"None known\", or \"Yes – <details>\" when the agent describes one."
+            },
+            "coalfieldMining": {
+              "type": "string",
+              "description": "Coalfield / mining Exactly \"None known\", or \"Yes – <details>\" when the agent describes one."
+            },
+            "disclosures": {
+              "type": "string",
+              "description": "Known issues (always disclosed)"
+            },
+            "nearby": {
+              "type": "string",
+              "description": "Nearby (schools, transport, amenities)"
+            },
+            "areaHighlights": {
+              "type": "string",
+              "description": "Area highlights"
+            },
+            "showingNotes": {
+              "type": "string",
+              "description": "Viewing notes (private)"
+            },
+            "mediaNotes": {
+              "type": "string",
+              "description": "Photo & floorplan notes (private)"
+            },
+            "evidence": {
+              "type": "object",
+              "description": "Verbatim quote from the notes supporting each returned field",
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "propertyType": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "yearBuilt": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "keyFeatures": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "targetAudience": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "price": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "priceQualifier": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "tenure": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "chainStatus": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "leaseYears": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "groundRent": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "groundRentReview": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "serviceCharge": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "serviceChargePeriod": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "reserveFund": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "sharePercent": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "rent": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "fullMarketValue": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "bedrooms": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "bathrooms": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "receptions": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "dimensions": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "periodFeatures": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "outsideSpace": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "councilTaxBand": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "localAuthority": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "epc": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "construction": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "constructionDetails": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "electricity": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "water": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "waterMetered": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "sewerage": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "heating": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "broadband": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "broadbandSpeed": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "mobileSignal": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "parking": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "buildingSafety": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "restrictions": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "rightsEasements": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "flooding": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "coastalErosion": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "planning": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "accessibility": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "coalfieldMining": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "disclosures": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "nearby": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "areaHighlights": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "showingNotes": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "mediaNotes": {
+                  "type": "string",
+                  "maxLength": 80
+                }
+              }
+            }
+          },
+          "required": [
+            "evidence"
+          ]
+        }
+      }
+    ],
+    "tool_choice": {
+      "type": "tool",
+      "name": "fill_listing_fields"
+    }
+  }
+}
