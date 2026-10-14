@@ -334,8 +334,45 @@ function unwrapJson(v: unknown): unknown {
   try {
     return JSON.parse(s);
   } catch {
-    return v;
+    try {
+      return JSON.parse(repairJsonQuotes(s));
+    } catch {
+      return v;
+    }
   }
+}
+
+/**
+ * Escapes stray double quotes inside JSON string values (e.g. reply
+ * "Approved"): a quote only closes a string when the next non-space
+ * character is , } ] or :.
+ */
+export function repairJsonQuotes(s: string): string {
+  let out = "";
+  let inStr = false;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (inStr && ch === "\\") {
+      out += ch + (s[i + 1] ?? "");
+      i++;
+      continue;
+    }
+    if (ch === '"') {
+      if (!inStr) {
+        inStr = true;
+        out += ch;
+        continue;
+      }
+      const rest = s.slice(i + 1).match(/^\s*(.)/);
+      if (!rest || /[,}\]:]/.test(rest[1])) {
+        inStr = false;
+        out += ch;
+      } else out += '\\"';
+      continue;
+    }
+    out += inStr && ch === "\n" ? "\\n" : ch;
+  }
+  return out;
 }
 
 /**

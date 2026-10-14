@@ -6,7 +6,7 @@
 - Cases × runs: 19 × 1
 - LLM grader: on
 - Tokens: 194,496 in / 42,357 out
-- Started: 2026-10-14T14:32:18.789Z
+- Started: 2026-10-14T14:33:03.122Z
 - Result: **7/19 passed**
 
 | Case | Result | Fails | Warns | Core s | Marketing s | Extract s | Retries | LLM |
@@ -15,7 +15,7 @@
 | A2-flat-over-shop-streatham-professional | PASS | 0 | 4 | 10.2 | 21.8 | – | 0 | PASS 4.88 |
 | A3-1930s-semi-sevenoaks-premium | FAIL | 5 | 0 | 15.7 | 21.6 | – | 0 | PASS 5.00 |
 | A4-country-house-frant-luxury | FAIL | 2 | 0 | 11.6 | 61.7 | – | 1 | PASS 4.50 |
-| A5-victorian-cottage-smarden-heritage | FAIL | 12 | 0 | 11.4 | 65.4 | – | 1 | FAIL 3.38 |
+| A5-victorian-cottage-smarden-heritage | FAIL | 5 | 0 | 11.4 | 65.4 | – | 1 | FAIL 3.38 |
 | A6-new-build-kings-hill-professional-legacy | FAIL | 10 | 2 | 12.4 | 25.7 | – | 0 | PASS 5.00 |
 | A6-new-build-kings-hill-professional | FAIL | 10 | 2 | 11.8 | 28.4 | – | 0 | PASS 4.88 |
 | A7-lordswood-planning-conflict | FAIL | 3 | 0 | 11.8 | 46.8 | – | 1 | FAIL 3.88 |
@@ -35,11 +35,11 @@
 
 | # cases | Failure | Cases |
 | ---: | --- | --- |
+| 5 | limits: Seller email N words (need N–N) | A1-ex-la-terrace-medway-plain, A4-country-house-frant-luxury, A5-victorian-cottage-smarden-heritage, A6-new-build-kings-hill-professional-legacy, A7-lordswood-planning-conflict |
 | 5 | raw:limits: Seller email N words (need N–N) | A1-ex-la-terrace-medway-plain, A4-country-house-frant-luxury, A5-victorian-cottage-smarden-heritage, A6-new-build-kings-hill-professional-legacy, A7-lordswood-planning-conflict |
-| 4 | limits: Seller email N words (need N–N) | A1-ex-la-terrace-medway-plain, A4-country-house-frant-luxury, A6-new-build-kings-hill-professional-legacy, A7-lordswood-planning-conflict |
 | 4 | raw:limits: Email body doesn't end with the material-information line | A1-ex-la-terrace-medway-plain, A7-lordswood-planning-conflict, C1-leasehold-missing-ground-rent, C3-flood-history |
-| 3 | v2: emailBlast.body: no "…" sentence | A3-1930s-semi-sevenoaks-premium, A5-victorian-cottage-smarden-heritage, C5-modern-method-of-auction-legacy |
 | 2 | banned: Banned phrase "…" in listing | A3-1930s-semi-sevenoaks-premium, C5-modern-method-of-auction |
+| 2 | v2: emailBlast.body: no "…" sentence | A3-1930s-semi-sevenoaks-premium, C5-modern-method-of-auction-legacy |
 | 2 | raw:banned: Banned phrase "…" in listing | A3-1930s-semi-sevenoaks-premium, C5-modern-method-of-auction |
 | 2 | v2: listing: missing image label "…" | A6-new-build-kings-hill-professional-legacy, A6-new-build-kings-hill-professional |
 | 2 | v2: social.Instagram: missing image label "…" | A6-new-build-kings-hill-professional-legacy, A6-new-build-kings-hill-professional |
@@ -95,14 +95,7 @@
 
 ### A5-victorian-cottage-smarden-heritage — FAIL
 
-- FAIL `limits` Email Blast missing
-- FAIL `limits` Seller email missing
-- FAIL `limits` 0 social posts (need 3)
-- FAIL `materialInfo` emailBlast.body: missing "Guide Price £425,000"
-- FAIL `materialInfo` emailBlast.body: missing tenure "Freehold"
-- FAIL `materialInfo` emailBlast.body: missing council tax band C
-- FAIL `materialInfo` emailBlast.body: missing EPC E
-- FAIL `v2` emailBlast.body: no "Please note:" sentence
+- FAIL `limits` Seller email 303 words (need 150–250)
 - FAIL `raw:limits` Email Blast missing
 - FAIL `raw:limits` Seller email 303 words (need 150–250)
 - FAIL `raw:limits` 0 social posts (need 3)

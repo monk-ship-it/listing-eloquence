@@ -275,6 +275,14 @@ function leakTokens(s: string): string[] {
  * from the private notes that appear in public copy but nowhere in the public
  * inputs. Guidance only.
  */
+/** The exact image labels the prompt may add from the photo notes. */
+export const IMAGE_LABELS = [
+  "Some images have been virtually staged to show how rooms could be furnished.",
+  "Images are computer-generated (CGI) and indicative only.",
+  "Images show the show home; specification may differ.",
+  "Some images have been digitally enhanced.",
+];
+
 export function privateLeakFlags(pack: PackLike, input: object): FactFlag[] {
   const r = input as Record<string, unknown>;
   const priv = PRIVATE_INPUT_KEYS.map((k) => (typeof r[k] === "string" ? (r[k] as string) : ""))
@@ -314,8 +322,10 @@ export function privateLeakFlags(pack: PackLike, input: object): FactFlag[] {
     sections.push(["social", `${p.caption} ${(p.hashtags ?? []).join(" ")}`]);
   const out: FactFlag[] = [];
   const seen = new Set<string>();
-  for (const [section, text] of sections) {
-    if (!text) continue;
+  for (const [section, text0] of sections) {
+    // The permitted image labels are the one sanctioned use of the photo notes.
+    const text = IMAGE_LABELS.reduce((acc, l) => acc.split(l).join(" "), text0 ?? "");
+    if (!text.trim()) continue;
     const hay = ` ${leakTokens(text).join(" ")} `;
     for (const term of terms) {
       if (hay.includes(` ${term} `) && !seen.has(term)) {

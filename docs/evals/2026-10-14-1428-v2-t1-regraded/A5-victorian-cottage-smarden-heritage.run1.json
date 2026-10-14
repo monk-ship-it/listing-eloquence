@@ -55,42 +55,7 @@
     {
       "grader": "limits",
       "severity": "fail",
-      "message": "Email Blast missing"
-    },
-    {
-      "grader": "limits",
-      "severity": "fail",
-      "message": "Seller email missing"
-    },
-    {
-      "grader": "limits",
-      "severity": "fail",
-      "message": "0 social posts (need 3)"
-    },
-    {
-      "grader": "materialInfo",
-      "severity": "fail",
-      "message": "emailBlast.body: missing \"Guide Price £425,000\""
-    },
-    {
-      "grader": "materialInfo",
-      "severity": "fail",
-      "message": "emailBlast.body: missing tenure \"Freehold\""
-    },
-    {
-      "grader": "materialInfo",
-      "severity": "fail",
-      "message": "emailBlast.body: missing council tax band C"
-    },
-    {
-      "grader": "materialInfo",
-      "severity": "fail",
-      "message": "emailBlast.body: missing EPC E"
-    },
-    {
-      "grader": "v2",
-      "severity": "fail",
-      "message": "emailBlast.body: no \"Please note:\" sentence"
+      "message": "Seller email 303 words (need 150–250)"
     },
     {
       "grader": "raw:limits",
