@@ -20,7 +20,7 @@ export type SectionId =
 
 export const SECTIONS: { id: Exclude<SectionId, "voice">; title: string; mobileOpen: boolean }[] = [
   { id: "basics", title: "The basics", mobileOpen: true },
-  { id: "price", title: "Price & tenure", mobileOpen: true },
+  { id: "price", title: "Price, tenure & sale", mobileOpen: true },
   { id: "rooms", title: "Rooms", mobileOpen: false },
   { id: "material", title: "Material information", mobileOpen: false },
   { id: "location", title: "Location & lifestyle", mobileOpen: false },
@@ -78,6 +78,8 @@ export const CONSTRUCTION_OPTIONS = ["Standard", "Non-standard"];
 export const SEWERAGE_OPTIONS = ["Mains", "Septic tank", "Cesspit", "Treatment plant"];
 export const BROADBAND_OPTIONS = ["FTTP", "FTTC", "Cable", "ADSL", "Other"];
 export const YES_NO = ["Yes", "No"];
+export const SALE_METHODS = ["Private treaty", "Traditional auction", "Modern Method of Auction"];
+export const SALE_STATUSES = ["Available", "Under offer – still marketing", "Sold subject to contract"];
 export const LIKELY_BUYERS = [
   "First-time buyer",
   "Growing family",
@@ -89,7 +91,9 @@ export const LIKELY_BUYERS = [
 
 export const isLeasehold = (i: ListingInput) => /leasehold|share of freehold/i.test(i.tenure ?? "");
 export const isSharedOwnership = (i: ListingInput) =>
-  /shared ownership/i.test(i.priceQualifier ?? "");
+  /shared ownership/i.test(i.priceQualifier ?? "") || !!(i.sharePercent ?? "").trim();
+export const isAuction = (i: ListingInput) => /auction/i.test(i.saleMethod ?? "");
+export const isYes = (v: string | undefined) => /^yes$/i.test((v ?? "").trim());
 
 const TRI_HINT = 'Exactly "None known", or "Yes – <details>" when the agent describes one.';
 
@@ -314,6 +318,121 @@ export const FIELD_DEFS: FieldDef[] = [
     extractable: true,
     showIf: isSharedOwnership,
   },
+  // Sale & status
+  {
+    key: "saleMethod",
+    label: "Sale method",
+    placeholder: "Choose…",
+    kind: "select",
+    options: SALE_METHODS,
+    section: "price",
+    dictateMode: "replace",
+    extractable: true,
+    group: "sale",
+    hint: 'Only when stated; "MMoA" / "modern method" → "Modern Method of Auction".',
+  },
+  {
+    key: "saleStatus",
+    label: "Sale status",
+    placeholder: "Choose…",
+    kind: "select",
+    options: SALE_STATUSES,
+    section: "price",
+    dictateMode: "replace",
+    extractable: true,
+    group: "sale",
+  },
+  {
+    key: "auctionTerms",
+    label: "Auction terms",
+    placeholder: "Reservation period, reserve, how the guide relates to the reserve…",
+    kind: "textarea",
+    rows: 2,
+    section: "price",
+    dictateMode: "append-space",
+    extractable: true,
+    showIf: isAuction,
+  },
+  {
+    key: "reservationFee",
+    label: "Reservation fee",
+    placeholder: "4.2% inc. VAT (min £6,000), non-refundable, in addition to the price",
+    kind: "input",
+    section: "price",
+    dictateMode: "replace",
+    extractable: true,
+  },
+  {
+    key: "buyerFees",
+    label: "Buyer's fees",
+    placeholder: "Buyer's premium / admin fee, amount and VAT",
+    kind: "input",
+    section: "price",
+    dictateMode: "replace",
+    extractable: true,
+  },
+  {
+    key: "preMarket",
+    label: "Pre-market / coming soon?",
+    placeholder: "Choose…",
+    kind: "select",
+    options: YES_NO,
+    section: "price",
+    dictateMode: "replace",
+    extractable: true,
+    group: "toggles",
+  },
+  {
+    key: "newBuild",
+    label: "New home?",
+    placeholder: "Choose…",
+    kind: "select",
+    options: YES_NO,
+    section: "price",
+    dictateMode: "replace",
+    extractable: true,
+    group: "toggles",
+    hint: 'Yes only when the agent says it is a new build / new home.',
+  },
+  {
+    key: "incentives",
+    label: "Incentives (with end date)",
+    placeholder: "£5,000 towards flooring for reservations by 30 November 2026",
+    kind: "input",
+    section: "price",
+    dictateMode: "replace",
+    extractable: true,
+  },
+  {
+    key: "estateCharge",
+    label: "Estate / management charge (£ per year)",
+    placeholder: "295",
+    kind: "input",
+    section: "price",
+    dictateMode: "replace",
+    extractable: true,
+    group: "retire",
+  },
+  {
+    key: "ageRestriction",
+    label: "Age / occupancy restriction",
+    placeholder: "Over-60s only",
+    kind: "input",
+    section: "price",
+    dictateMode: "replace",
+    extractable: true,
+    group: "retire",
+  },
+  {
+    key: "eventFees",
+    label: "Event fees (retirement)",
+    placeholder: "1% of sale price on resale, payable to the management company",
+    kind: "input",
+    section: "price",
+    dictateMode: "replace",
+    extractable: true,
+    showIf: (i) => !!(i.ageRestriction ?? "").trim() || !!(i.eventFees ?? "").trim(),
+  },
   // Rooms
   {
     key: "bedrooms",
@@ -406,6 +525,18 @@ export const FIELD_DEFS: FieldDef[] = [
     dictateMode: "replace",
     extractable: true,
     group: "epc",
+  },
+  {
+    key: "epcPredicted",
+    label: "EPC predicted?",
+    placeholder: "Choose…",
+    kind: "select",
+    options: YES_NO,
+    section: "material",
+    dictateMode: "replace",
+    extractable: true,
+    group: "epc",
+    hint: 'Yes only when the agent says the EPC is predicted (SAP / new build).',
   },
   {
     key: "construction",
@@ -630,7 +761,7 @@ const OPTION_SYNONYMS: Record<string, [RegExp, string][]> = {
     [/freehold/i, "Freehold"],
   ],
   chainStatus: [
-    [/\b(no (onward )?chain|chain[- ]free|vacant)\b/i, "No onward chain"],
+    [/\b(no (onward )?chain|chain[- ]free)\b/i, "No onward chain"],
     [/\bnot known|unknown|don'?t know\b/i, "Not known"],
     [/\bchain\b/i, "Chain involved"],
   ],
@@ -650,6 +781,19 @@ const OPTION_SYNONYMS: Record<string, [RegExp, string][]> = {
     [/cable|virgin/i, "Cable"],
     [/adsl|copper/i, "ADSL"],
   ],
+  saleMethod: [
+    [/\b(mmoa|modern method)\b/i, "Modern Method of Auction"],
+    [/\bauction\b/i, "Traditional auction"],
+    [/\bprivate treaty\b/i, "Private treaty"],
+  ],
+  saleStatus: [
+    [/\bunder offer\b/i, "Under offer – still marketing"],
+    [/\b(sold stc|sold subject to contract|stc)\b/i, "Sold subject to contract"],
+    [/\bavailable\b/i, "Available"],
+  ],
+  newBuild: [[/\b(yes|new build|new home)\b/i, "Yes"], [/\bno\b/i, "No"]],
+  epcPredicted: [[/\b(yes|predicted|sap)\b/i, "Yes"], [/\bno\b/i, "No"]],
+  preMarket: [[/\b(yes|pre-?market|coming soon)\b/i, "Yes"], [/\bno\b/i, "No"]],
   waterMetered: [
     [/\b(not metered|unmetered|no)\b/i, "No"],
     [/\b(metered|yes)\b/i, "Yes"],

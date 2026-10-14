@@ -33,6 +33,24 @@ export interface ListingInput {
   sharePercent: string;
   rent: string;
   fullMarketValue: string;
+  /** Private treaty / Traditional auction / Modern Method of Auction. */
+  saleMethod: string;
+  auctionTerms: string;
+  reservationFee: string;
+  buyerFees: string;
+  /** Available / Under offer – still marketing / Sold subject to contract. */
+  saleStatus: string;
+  /** "Yes" when marketed pre-market / coming soon. */
+  preMarket: string;
+  /** "Yes" for a new home ("From" qualifier allowed). */
+  newBuild: string;
+  incentives: string;
+  /** Estate / management charge, £ per year (any tenure). */
+  estateCharge: string;
+  /** "Yes" when the EPC rating is a predicted (SAP) rating. */
+  epcPredicted: string;
+  ageRestriction: string;
+  eventFees: string;
   localAuthority: string;
   chainStatus: string;
   construction: string;
@@ -441,6 +459,18 @@ export const EMPTY_INPUT: ListingInput = {
   sharePercent: "",
   rent: "",
   fullMarketValue: "",
+  saleMethod: "",
+  auctionTerms: "",
+  reservationFee: "",
+  buyerFees: "",
+  saleStatus: "",
+  preMarket: "",
+  newBuild: "",
+  incentives: "",
+  estateCharge: "",
+  epcPredicted: "",
+  ageRestriction: "",
+  eventFees: "",
   localAuthority: "",
   chainStatus: "",
   construction: "",
