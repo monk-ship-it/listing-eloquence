@@ -12,6 +12,13 @@ export interface EvalCase {
   mustInclude?: { text: string; sections: string[] }[];
   /** Must not appear in any public output (word-boundary aware, case-insensitive). */
   mustNotInclude?: string[];
+  /** Regex checks (case-insensitive) on sections, or on every matching key feature. */
+  patterns?: {
+    sections?: string[];
+    match?: string;
+    notMatch?: string;
+    eachKeyFeature?: { if: string; then: string };
+  }[];
   /** Extraction expectations; null = must NOT be returned. */
   expectFields?: Record<string, string | null>;
 }
