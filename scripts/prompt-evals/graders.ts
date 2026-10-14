@@ -394,7 +394,8 @@ export function gradeExtraction(
   }
   const exp = c.expectFields ?? {};
   let correct = 0;
-  const returned = Object.keys(result.fields).length;
+  // Precision is judged only on fields the case has an opinion about.
+  const returned = Object.keys(result.fields).filter((k) => k in exp).length;
   const expectedNonNull = Object.values(exp).filter((v) => v !== null).length;
   for (const [k, v] of Object.entries(result.fields)) {
     if (!(k in exp)) {
