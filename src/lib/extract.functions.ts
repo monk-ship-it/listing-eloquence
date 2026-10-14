@@ -1,73 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { EXTRACTABLE_FIELDS } from "./listing-fields";
-import { filterExtraction, type ExtractResult } from "./extract-filter";
+import type { ExtractResult } from "./extract-filter";
 
 const MAX_NOTES = 8000;
 const DAILY_LIMIT = 40;
-const TOOL = "fill_listing_fields";
-
-const SYSTEM = `You extract property facts that a UK estate agent explicitly stated in dictated notes, to pre-fill a listing form.
-
-RULES:
-- Return ONLY values the agent explicitly stated. Never infer, guess or assume. If something isn't said, omit the field entirely.
-- Do not derive one field from another: e.g. never set tenure from the word "flat" or "house"; never guess council tax band, EPC, lease length, year built or price.
-- Normalise: bedrooms/bathrooms/receptions/lease years as digits ("four" → "4", "two and a half" → "2.5"); EPC and council tax as a single capital letter ("EPC C" → "C", "band d" → "D"); price as digits with commas, no £ ("one point four five million" → "1,450,000", "three fifty" said as a price → "350,000", "350k" → "350,000"); tenure capitalised ("Freehold", "Leasehold", "Share of freehold").
-- priceQualifier only when a qualifier is said, written in title case, e.g. "Guide Price", "Offers in Excess of", "Offers Over".
-- For descriptive fields (key features, outside space, parking, heating, nearby etc.) keep the agent's own wording, tidied into a short comma-separated phrase. Don't add adjectives.
-- Viewing/access instructions go only in showingNotes; photo/floorplan notes only in mediaNotes.
-- Select fields must use one of the listed options exactly. Part C items (building safety, restrictions, rights & easements, flooding, coastal erosion, planning, accessibility, coalfield/mining) only when the agent addresses them: "None known" if they say none/no, otherwise "Yes – <details>".
-- Supplies: only what is said (e.g. "mains drainage" → sewerage "Mains"; don't assume mains for anything else).
-- For every field you return, add an "evidence" entry: a short VERBATIM quote (max 80 characters) copied exactly from the notes that states it.
-
-Return the result by calling the ${TOOL} tool.`;
-
-function buildSchema() {
-  const props: Record<string, unknown> = {};
-  const evidence: Record<string, unknown> = {};
-  for (const d of EXTRACTABLE_FIELDS) {
-    props[d.key] = {
-      type: "string",
-      description: [
-        d.label,
-        d.kind === "select" && d.options ? `One of: ${d.options.join(" | ")}.` : "",
-        d.hint ?? "",
-      ]
-        .filter(Boolean)
-        .join(" "),
-    };
-    evidence[d.key] = { type: "string", maxLength: 80 };
-  }
-  return {
-    type: "object",
-    properties: {
-      ...props,
-      evidence: {
-        type: "object",
-        description: "Verbatim quote from the notes supporting each returned field",
-        properties: evidence,
-      },
-    },
-    required: ["evidence"],
-  };
-}
-
-/** Model call + server-side evidence filter (server only). */
-export async function runExtraction(notes: string): Promise<ExtractResult> {
-  const { callClaudeTool } = await import("./ai-gateway.server");
-  const raw = await callClaudeTool({
-    system: SYSTEM,
-    user: `AGENT VOICE NOTES:\n${notes}`,
-    toolName: TOOL,
-    toolDescription: "Submit only the fields the agent explicitly stated.",
-    inputSchema: buildSchema(),
-    maxTokens: 1500,
-    timeoutMs: 30_000,
-    temperature: 0,
-  });
-  return filterExtraction(raw, notes);
-}
-
 /** "Fill the form from my voice note". Free (no listing credit), 40/day. */
 export const extractListingFields = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -105,6 +41,7 @@ export const extractListingFields = createServerFn({ method: "POST" })
 
     let result: ExtractResult;
     try {
+      const { runExtraction } = await import("./generation.server");
       result = await runExtraction(data.voiceNotes);
     } catch (err) {
       const m = err instanceof Error ? err.message : "";
