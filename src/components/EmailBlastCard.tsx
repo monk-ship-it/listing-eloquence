@@ -10,7 +10,13 @@ import {
   type EmailBlast,
   type ListingOutput,
 } from "@/lib/listing-types";
-import { copyText, formatEmailBodyOnly, formatEmailForPaste } from "@/lib/clipboard";
+import {
+  copyText,
+  formatEmailBodyOnly,
+  formatEmailForPaste,
+  withDraft,
+  wordCount,
+} from "@/lib/clipboard";
 import { generateMarketingForGeneration } from "@/lib/listing.functions";
 
 async function copyWithToast(text: string, label: string) {
@@ -107,6 +113,7 @@ export function EmailBlastCard({
   marketingStatus,
   onGenerated,
   renderText,
+  draft,
 }: {
   emailBlast: EmailBlast | null;
   keyFeatures?: string[];
@@ -114,6 +121,8 @@ export function EmailBlastCard({
   marketingStatus?: "failed";
   onGenerated?: (output: ListingOutput) => void;
   renderText?: (text: string) => ReactNode;
+  /** Seller hasn't approved: every copy is prefixed with the draft label. */
+  draft?: boolean;
 }) {
   const [chosen, setChosen] = useState(0);
 
@@ -151,6 +160,7 @@ export function EmailBlastCard({
           chosen={Math.min(chosen, Math.max(0, emailBlast.subjectLines.length - 1))}
           onChoose={setChosen}
           renderText={renderText}
+          draft={draft}
         />
       )}
     </Card>
@@ -163,13 +173,16 @@ function EmailBlastBody({
   chosen,
   onChoose,
   renderText = (t) => t,
+  draft,
 }: {
   emailBlast: EmailBlast;
   keyFeatures?: string[];
   chosen: number;
   onChoose: (i: number) => void;
   renderText?: (text: string) => ReactNode;
+  draft?: boolean;
 }) {
+  const pmWords = wordCount(emailBlast.personalMessage);
   const subject = emailBlast.subjectLines[chosen] ?? "";
   return (
     <>
@@ -216,7 +229,7 @@ function EmailBlastBody({
                     size="icon"
                     className="h-11 w-11 shrink-0 sm:h-9 sm:w-9"
                     aria-label={`Copy subject line ${i + 1}`}
-                    onClick={() => copyWithToast(s, "Subject line copied.")}
+                    onClick={() => copyWithToast(withDraft(s, draft), "Subject line copied.")}
                   >
                     <Copy className="h-3.5 w-3.5" />
                   </Button>
@@ -295,7 +308,7 @@ function EmailBlastBody({
           className="min-h-11 sm:min-h-10"
           onClick={() =>
             copyWithToast(
-              formatEmailForPaste(emailBlast, { subject, keyFeatures }),
+              withDraft(formatEmailForPaste(emailBlast, { subject, keyFeatures }), draft),
               "Email copied — add your link and sign-off, then paste.",
             )
           }
@@ -306,11 +319,53 @@ function EmailBlastBody({
           type="button"
           variant="outline"
           className="min-h-11 sm:min-h-10"
-          onClick={() => copyWithToast(formatEmailBodyOnly(emailBlast), "Email body copied.")}
+          onClick={() =>
+            copyWithToast(withDraft(formatEmailBodyOnly(emailBlast), draft), "Email body copied.")
+          }
         >
           Copy body only
         </Button>
       </div>
+
+      {emailBlast.personalMessage && (
+        <div className="mt-5 rounded-lg border border-border/70 p-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                CRM property-alert message
+              </p>
+              <span
+                className={`text-xs tabular-nums ${
+                  pmWords < 40 || pmWords > 80 ? "font-semibold text-warning" : "text-muted-foreground"
+                }`}
+              >
+                {pmWords} words (40–80)
+              </span>
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-11 w-11 shrink-0"
+              aria-label="Copy CRM property-alert message"
+              onClick={() =>
+                copyWithToast(
+                  withDraft(emailBlast.personalMessage ?? "", draft),
+                  "Property-alert message copied.",
+                )
+              }
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            For the message box in Alto, Reapit, Street and similar property alerts.
+          </p>
+          <p className="mt-2 break-words text-sm text-muted-foreground">
+            {renderText(emailBlast.personalMessage)}
+          </p>
+        </div>
+      )}
 
       <div className="mt-4 rounded-lg border border-dashed border-border/70 bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground">
         <p className="mb-1.5 font-semibold text-foreground/80">Before you send</p>
