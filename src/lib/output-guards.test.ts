@@ -156,7 +156,7 @@ describe("exact price form", () => {
   });
   it("no qualifier → amount only", () => {
     expect(
-      priceQualifierProblems([["the description", "Priced at £250,000."]], { price: "250000" }),
+      priceQualifierProblems([["the description", "Priced at £250,000."]], { price: "250000", priceQualifier: "" }),
     ).toEqual([]);
   });
 });
