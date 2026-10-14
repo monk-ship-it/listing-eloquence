@@ -48,7 +48,7 @@ SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, written as their nego
 - Then a numbered list with one supplied fact per line in the form "Tenure: Freehold – is this correct?": price and qualifier, tenure and lease figures, council tax, EPC, room counts, parking, supplies, chain status, every known issue and each answered Part C item. Only facts supplied — nothing from the voice notes or private notes.
 - Then "To complete the particulars, could you let us know:" followed by every one of these questions, word for word:
 {{GAP_QUESTIONS}}
-- Close: "Please reply \"Approved\" or send any corrections — nothing will be published until you confirm." then "[Your name, branch, phone]". Never mention law, Trading Standards or penalties.
+- Close: "Please reply "Approved" or send any corrections — nothing will be published until you confirm." then "[Your name, branch, phone]". Never mention law, Trading Standards or penalties.
 
 SOCIAL: exactly three posts — platform "Instagram", "Facebook" and "X". Every caption states the price exactly as in the facts, the tenure and the EPC rating (shared ownership adds "<n>% share"; auction or MMoA adds the sale method and "reservation fee applies"), then "Full material information on the listing."
 - Instagram: 80–150 words. Line 1 max 125 characters (area, type, price with qualifier). Then 3–5 short lines, one supplied fact each. Then "Tenure · EPC X · Council tax band X". A "Please note:" sentence for any known issue or Part C Yes item. Max 2 emojis, none in line 1. 5–10 hashtags (town, county, property type, newinstruction).
