@@ -384,7 +384,11 @@ export function unwrapSellerEmail(v: unknown): unknown {
   if (typeof u !== "string") return u;
   const m = u.match(/^\s*\{\s*"body"\s*:\s*"([\s\S]*)"\s*\}\s*$/);
   if (!m) return u.trim() ? { body: u } : u;
-  const body = m[1].replace(/\\n/g, "\n").replace(/\\t/g, "\t").replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+  const body = m[1]
+    .replace(/\\n/g, "\n")
+    .replace(/\\t/g, "\t")
+    .replace(/\\"/g, '"')
+    .replace(/\\\\/g, "\\");
   return { body };
 }
 

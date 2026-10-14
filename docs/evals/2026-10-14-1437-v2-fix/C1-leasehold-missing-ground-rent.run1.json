@@ -1,0 +1,207 @@
+{
+  "id": "C1-leasehold-missing-ground-rent",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 8419,
+      "stopReason": "tool_use",
+      "inputTokens": 4347,
+      "outputTokens": 456
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 18351,
+      "stopReason": "tool_use",
+      "inputTokens": 5242,
+      "outputTokens": 1280
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "First-floor flat with lift and Juliet balcony, Chatham ME4",
+      "listing": "A first-floor purpose-built flat in Chatham with a lift and an allocated parking space. The property offers open-plan living and a Juliet balcony.\n\nThe open-plan kitchen/living room provides the main living space and features a Juliet balcony. There are two bedrooms and one bathroom. The flat is on the first floor and benefits from lift access.\n\nOutside, there is one allocated parking space.\n\nThe property is in Chatham, close to New Road.\n\nGuide Price £195,000. Leasehold with 99 years remaining and a service charge of £1,450 per year (year ending March 2026). Council Tax Band B (Medway Council). EPC rating C. Mains electricity, mains water (metered), mains sewerage and gas central heating. FTTC broadband available and good outdoor mobile signal coverage on major networks. Building safety, restrictions, rights and easements, flooding, coastal erosion, planning, accessibility and coalfield or mining issues are all none known.",
+      "summary": "First-floor purpose-built flat in Chatham with lift, Juliet balcony and allocated parking. Open-plan kitchen/living room, two bedrooms and one bathroom. Guide Price £195,000. Leasehold.",
+      "keyFeatures": [
+        "First-floor purpose-built flat with lift access",
+        "One allocated parking space",
+        "Open-plan kitchen/living room with Juliet balcony",
+        "Two bedrooms and one bathroom",
+        "Gas central heating",
+        "Leasehold with 99 years remaining, service charge £1,450 per year"
+      ]
+    },
+    "marketing": {
+      "emailBlast": {
+        "subjectLines": [
+          "New instruction: 2-bed flat, Chatham – Guide £195,000",
+          "Just listed: 2-bed flat, Chatham ME4 – Guide £195,000",
+          "Chatham: 2-bed flat with parking – Guide £195,000"
+        ],
+        "previewText": "Leasehold · 99 years · Open-plan kitchen/living room · Juliet balcony · Lift · EPC C",
+        "headline": "First-floor flat with open-plan living and allocated parking",
+        "body": "Guide Price £195,000. Leasehold with 99 years remaining. Service charge £1,450 per year (y/e Mar 2026).\n\nThis first-floor purpose-built flat in Chatham offers open-plan kitchen/living room with Juliet balcony, lift access and one allocated parking space.\n\nCouncil Tax Band B (Medway Council). EPC rating C. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "First-floor purpose-built flat at Albion House, New Road, Chatham ME4. Guide Price £195,000. Two bedrooms, open-plan kitchen/living room with Juliet balcony, lift access and allocated parking. Leasehold with 99 years remaining. Council Tax Band B, EPC C. We'd be pleased to arrange a viewing for you."
+      },
+      "sellerEmail": "{\n  \"body\": \"Dear [Seller name],\\n\\nThank you for instructing us – I've prepared the draft details below for you to check before we go live.\\n\\n1. Price: Guide Price £195,000 – is this correct?\\n2. Property type: First-floor purpose-built flat – is this correct?\\n3. Tenure: Leasehold with 99 years remaining – is this correct?\\n4. Service charge: £1,450 per year (y/e Mar 2026) – is this correct?\\n5. Council Tax: Band B (Medway Council) – is this correct?\\n6. EPC rating: C – is this correct?\\n7. Bedrooms: 2 – is this correct?\\n8. Bathrooms: 1 – is this correct?\\n9. Receptions: 1 – is this correct?\\n10. Parking: One allocated space – is this correct?\\n11. Heating: Gas central heating – is this correct?\\n12. Water: Mains (metered) – is this correct?\\n\\nTo complete the particulars, could you let us know:\\n\\nWhat is the current ground rent, how often is it reviewed and when is the next review?\\n\\nPlease reply \"Approved\" or send any corrections – nothing will be published until you confirm.\\n\\n[Your name, branch, phone]\"\n}",
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "First-floor flat at Albion House, New Road, Chatham ME4 🏢\n\nGuide Price £195,000\nTwo bedrooms, one bathroom\nOpen-plan kitchen/living room with Juliet balcony\nLift access to first floor\nOne allocated parking space\nGas central heating\n\nLeasehold · 99 years remaining · Service charge £1,450 per year · EPC C · Council Tax Band B\n\nFull material information on the listing. Book your viewing today 🔑",
+          "hashtags": [
+            "Chatham",
+            "ChathamProperty",
+            "Medway",
+            "Kent",
+            "NewInstruction",
+            "FlatForSale",
+            "TwoBedFlat",
+            "FirstTimeBuyer",
+            "PropertyForSale",
+            "KentProperty"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "Just listed: first-floor purpose-built flat at Albion House, New Road, Chatham ME4.\n\nGuide Price £195,000. This two-bedroom flat features an open-plan kitchen/living room with Juliet balcony, lift access and one allocated parking space. The property has gas central heating, mains water (metered) and mains electricity. Good outdoor mobile signal coverage on major networks and FTTC broadband available.\n\nLeasehold with 99 years remaining. Service charge £1,450 per year (y/e Mar 2026). Council Tax Band B (Medway Council). EPC rating C.\n\nFull material information on the listing. Call us to arrange a viewing. 🏢\n\n#Chatham #Medway #NewInstruction",
+          "hashtags": [
+            "Chatham",
+            "Medway",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "First-floor flat, Chatham ME4. Guide Price £195,000. Leasehold, 99 years. Open-plan kitchen/living room, Juliet balcony, lift, parking. EPC C. Full material information on listing.",
+          "hashtags": [
+            "Chatham",
+            "Medway"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": false,
+  "findings": [
+    {
+      "grader": "factCheck",
+      "severity": "warn",
+      "message": "\"I've\" (name) in seller email is not in the inputs",
+      "text": "I've"
+    },
+    {
+      "grader": "banned",
+      "severity": "fail",
+      "message": "Banned phrase \"benefits from\" in listing",
+      "text": "…d one bathroom. The flat is on the first floor and benefits from lift access.  Outside, there is one allocated pa…"
+    },
+    {
+      "grader": "banned",
+      "severity": "fail",
+      "message": "Banned phrase \"book your viewing today\" in social.Instagram",
+      "text": "…ax Band B  Full material information on the listing. Book your viewing today 🔑 Chatham ChathamProperty Medway Kent NewInst…"
+    },
+    {
+      "grader": "raw:banned",
+      "severity": "fail",
+      "message": "Banned phrase \"benefits from\" in listing",
+      "text": "…d one bathroom. The flat is on the first floor and benefits from lift access.  Outside, there is one allocated pa…"
+    },
+    {
+      "grader": "raw:banned",
+      "severity": "fail",
+      "message": "Banned phrase \"book your viewing today\" in social.Instagram",
+      "text": "…ax Band B  Full material information on the listing. Book your viewing today 🔑 Chatham ChathamProperty Medway Kent NewInst…"
+    }
+  ],
+  "coreMs": 8419,
+  "marketingMs": 18351,
+  "retries": 0,
+  "output": {
+    "headline": "First-floor flat with lift and Juliet balcony, Chatham ME4",
+    "listing": "A first-floor purpose-built flat in Chatham with a lift and an allocated parking space. The property offers open-plan living and a Juliet balcony.\n\nThe open-plan kitchen/living room provides the main living space and features a Juliet balcony. There are two bedrooms and one bathroom. The flat is on the first floor and benefits from lift access.\n\nOutside, there is one allocated parking space.\n\nThe property is in Chatham, close to New Road.\n\nGuide Price £195,000. Leasehold with 99 years remaining and a service charge of £1,450 per year (year ending March 2026). Council Tax Band B (Medway Council). EPC rating C. Mains electricity, mains water (metered), mains sewerage and gas central heating. FTTC broadband available and good outdoor mobile signal coverage on major networks. Building safety, restrictions, rights and easements, flooding, coastal erosion, planning, accessibility and coalfield or mining issues are all none known.",
+    "summary": "First-floor purpose-built flat in Chatham with lift, Juliet balcony and allocated parking. Open-plan kitchen/living room, two bedrooms and one bathroom. Guide Price £195,000. Leasehold.",
+    "keyFeatures": [
+      "First-floor purpose-built flat with lift access",
+      "One allocated parking space",
+      "Open-plan kitchen/living room with Juliet balcony",
+      "Two bedrooms and one bathroom",
+      "Gas central heating",
+      "Leasehold with 99 years remaining, service charge £1,450 per year"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "New instruction: 2-bed flat, Chatham – Guide £195,000",
+        "Just listed: 2-bed flat, Chatham ME4 – Guide £195,000",
+        "Chatham: 2-bed flat with parking – Guide £195,000"
+      ],
+      "previewText": "Leasehold · 99 years · Open-plan kitchen/living room · Juliet balcony · Lift · EPC C",
+      "headline": "First-floor flat with open-plan living and allocated parking",
+      "body": "Guide Price £195,000. Leasehold with 99 years remaining. Service charge £1,450 per year (y/e Mar 2026).\n\nThis first-floor purpose-built flat in Chatham offers open-plan kitchen/living room with Juliet balcony, lift access and one allocated parking space.\n\nCouncil Tax Band B (Medway Council). EPC rating C.\n\nFull material information is on the property listing.",
+      "callToAction": "Book a viewing",
+      "personalMessage": "First-floor purpose-built flat at Albion House, New Road, Chatham ME4. Guide Price £195,000. Two bedrooms, open-plan kitchen/living room with Juliet balcony, lift access and allocated parking. Leasehold with 99 years remaining. Council Tax Band B, EPC C. We'd be pleased to arrange a viewing for you."
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "First-floor flat at Albion House, New Road, Chatham ME4 🏢\n\nGuide Price £195,000\nTwo bedrooms, one bathroom\nOpen-plan kitchen/living room with Juliet balcony\nLift access to first floor\nOne allocated parking space\nGas central heating\n\nLeasehold · 99 years remaining · Service charge £1,450 per year · EPC C · Council Tax Band B\n\nFull material information on the listing. Book your viewing today 🔑",
+        "hashtags": [
+          "Chatham",
+          "ChathamProperty",
+          "Medway",
+          "Kent",
+          "NewInstruction",
+          "FlatForSale",
+          "TwoBedFlat",
+          "FirstTimeBuyer",
+          "PropertyForSale",
+          "KentProperty"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "Just listed: first-floor purpose-built flat at Albion House, New Road, Chatham ME4.\n\nGuide Price £195,000. This two-bedroom flat features an open-plan kitchen/living room with Juliet balcony, lift access and one allocated parking space. The property has gas central heating, mains water (metered) and mains electricity. Good outdoor mobile signal coverage on major networks and FTTC broadband available.\n\nLeasehold with 99 years remaining. Service charge £1,450 per year (y/e Mar 2026). Council Tax Band B (Medway Council). EPC rating C.\n\nFull material information on the listing. Call us to arrange a viewing. 🏢\n\n#Chatham #Medway #NewInstruction",
+        "hashtags": [
+          "Chatham",
+          "Medway",
+          "NewInstruction"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "First-floor flat, Chatham ME4. Guide Price £195,000. Leasehold, 99 years. Open-plan kitchen/living room, Juliet balcony, lift, parking. EPC C. Full material information on listing.",
+        "hashtags": [
+          "Chatham",
+          "Medway"
+        ]
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – Flat 4, Albion House, New Road, Chatham ME4",
+      "body": "Dear [Seller name],\n\nThank you for instructing us – I've prepared the draft details below for you to check before we go live.\n\n1. Price: Guide Price £195,000 – is this correct?\n2. Property type: First-floor purpose-built flat – is this correct?\n3. Tenure: Leasehold with 99 years remaining – is this correct?\n4. Service charge: £1,450 per year (y/e Mar 2026) – is this correct?\n5. Council Tax: Band B (Medway Council) – is this correct?\n6. EPC rating: C – is this correct?\n7. Bedrooms: 2 – is this correct?\n8. Bathrooms: 1 – is this correct?\n9. Receptions: 1 – is this correct?\n10. Parking: One allocated space – is this correct?\n11. Heating: Gas central heating – is this correct?\n12. Water: Mains (metered) – is this correct?\n\nTo complete the particulars, could you let us know:\n\nWhat is the current ground rent, how often is it reviewed and when is the next review?\n\nPlease reply \"Approved\" or send any corrections – nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 5,
+      "2": 4,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 5,
+      "8": 5
+    },
+    "hardFail": false,
+    "verdict": "PASS",
+    "fixes": [
+      "Portal description: Add ground rent information from voice notes ('Ground rent approximately £300 per year') to the material information paragraph, as this is a leasehold cost that should be disclosed alongside service charge.",
+      "Seller approval email: Add ground rent question explicitly asking for confirmation of the £300 per year figure mentioned in voice notes, not just asking them to provide it from scratch."
+    ],
+    "average": 4.88
+  }
+}

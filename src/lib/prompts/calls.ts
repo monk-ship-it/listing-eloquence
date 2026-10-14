@@ -48,9 +48,9 @@ export const CALL_SETTINGS = {
     maxTokens: 6000,
     retryMaxTokens: 8000,
     timeoutMs: 90_000,
-    temperature: undefined as number | undefined,
+    temperature: 0.7 as number | undefined,
   },
-  marketing: { maxTokens: 3500, timeoutMs: 90_000, temperature: undefined as number | undefined },
+  marketing: { maxTokens: 3500, timeoutMs: 90_000, temperature: 0.7 as number | undefined },
   extract: { maxTokens: 1500, temperature: 0, timeoutMs: 30_000 },
 } as const;
 

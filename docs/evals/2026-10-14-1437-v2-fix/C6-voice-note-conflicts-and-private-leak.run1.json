@@ -1,0 +1,197 @@
+{
+  "id": "C6-voice-note-conflicts-and-private-leak",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 7514,
+      "stopReason": "tool_use",
+      "inputTokens": 4425,
+      "outputTokens": 453
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 18212,
+      "stopReason": "tool_use",
+      "inputTokens": 5313,
+      "outputTokens": 1317
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "Detached house with pool, triple garage and 2.1 acres",
+      "summary": "A four-bedroom detached house built in 1987, set in approximately 2.1 acres within the Kent Downs National Landscape and Metropolitan Green Belt, with indoor swimming pool and triple garage.",
+      "listing": "A four-bedroom detached house built in 1987, set in approximately 2.1 acres within the Kent Downs National Landscape and the Metropolitan Green Belt. The plot is accessed by driveway and includes a triple garage.\n\nThe house provides three reception rooms and benefits from oil-fired central heating. An indoor swimming pool is housed within the property.\n\nThe accommodation comprises four bedrooms and three bathrooms across the floors.\n\nThe grounds extend to approximately 2.1 acres and include the triple garage.\n\nThe property is situated on Pilgrims Way, Wrotham TN15.\n\nGuide Price £1,250,000. Freehold. Council Tax Band G (Tonbridge and Malling Borough Council). EPC rating D. Construction: Standard. Electricity: Mains. Water: Mains (metered). Sewerage: Mains. Heating: Oil-fired central heating. Broadband: FTTC. Mobile signal: Good outdoor coverage on major networks. Parking: Driveway. The property is within the Kent Downs National Landscape and the Metropolitan Green Belt.",
+      "keyFeatures": [
+        "Set in approximately 2.1 acres",
+        "Indoor swimming pool",
+        "Triple garage",
+        "Within the Kent Downs National Landscape and Metropolitan Green Belt",
+        "Four bedrooms and three bathrooms",
+        "Three reception rooms",
+        "Built in 1987",
+        "Oil-fired central heating",
+        "Driveway parking"
+      ]
+    },
+    "marketing": {
+      "emailBlast": {
+        "subjectLines": [
+          "Just listed: 4-bed detached, Wrotham – Guide £1,250,000",
+          "New instruction: Wrotham 4-bed on 2.1 acres – Guide £1.25m",
+          "Indoor pool & 2.1 acres: 4-bed detached, Wrotham – £1.25m"
+        ],
+        "previewText": "Freehold · Indoor swimming pool · Triple garage · EPC D",
+        "headline": "Hollybank, Pilgrims Way, Wrotham TN15",
+        "body": "Guide Price £1,250,000. Freehold.\n\nA detached house built in 1987 set in a 2.1-acre plot with an indoor swimming pool, triple garage and three reception rooms. Oil-fired central heating, mains electricity, water and sewerage, with driveway parking.\n\nCouncil Tax Band G (Tonbridge and Malling Borough Council). EPC rating D. Please note: the property is within the Kent Downs National Landscape and the Metropolitan Green Belt. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "A four-bedroom detached house in Wrotham, Guide Price £1,250,000. The property stands in 2.1 acres with an indoor swimming pool, triple garage and three reception rooms. Built in 1987 with oil-fired central heating and mains services. Within the Kent Downs National Landscape and the Metropolitan Green Belt. I would be pleased to arrange a viewing."
+      },
+      "sellerEmail": "{\n  \"body\": \"Dear [Seller name],\\n\\nThank you for instructing us to market Hollybank; please check the draft details below before anything goes live.\\n\\n1. Asking price: Guide Price £1,250,000 – is this correct?\\n2. Tenure: Freehold – is this correct?\\n3. Property type: Detached house – is this correct?\\n4. Year built: 1987 – is this correct?\\n5. Bedrooms: 4 – is this correct?\\n6. Bathrooms: 3 – is this correct?\\n7. Receptions: 3 – is this correct?\\n8. Council Tax: Band G (Tonbridge and Malling Borough Council) – is this correct?\\n9. EPC rating: D – is this correct?\\n10. Plot size: 2.1 acres – is this correct?\\n11. Indoor swimming pool – is this correct?\\n12. Triple garage – is this correct?\\n13. Parking: Driveway – is this correct?\\n14. Heating: Oil-fired central heating – is this correct?\\n15. Electricity: Mains – is this correct?\\n16. Water: Mains (metered) – is this correct?\\n17. Sewerage: Mains – is this correct?\\n18. Restrictions: within the Kent Downs National Landscape and the Metropolitan Green Belt – is this correct?\\n\\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\\n\\n[Your name, branch, phone]\"\n}",
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "Detached house in Wrotham, Guide Price £1,250,000\n\nSet in a 2.1-acre plot with an indoor swimming pool and triple garage.\n\nBuilt in 1987 with four bedrooms, three bathrooms and three reception rooms.\n\nOil-fired central heating, mains electricity, water and sewerage.\n\nDriveway parking.\n\nFreehold · EPC D · Council Tax Band G\n\nPlease note: the property is within the Kent Downs National Landscape and the Metropolitan Green Belt.\n\nFull material information on the listing. 🏡🏊",
+          "hashtags": [
+            "Wrotham",
+            "Kent",
+            "DetachedHouse",
+            "NewInstruction",
+            "IndoorPool",
+            "KentProperty",
+            "CountryLiving",
+            "TonbridgeAndMalling"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "A detached house in Wrotham, Guide Price £1,250,000. Built in 1987 and set in a 2.1-acre plot, the property has an indoor swimming pool, triple garage and driveway parking. Four bedrooms, three bathrooms and three reception rooms. Oil-fired central heating with mains electricity, water and sewerage. Freehold. EPC rating D. Council Tax Band G (Tonbridge and Malling Borough Council). Please note: the property is within the Kent Downs National Landscape and the Metropolitan Green Belt. Full material information on the listing. 🏡",
+          "hashtags": [
+            "Wrotham",
+            "KentProperty",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "Detached house, Wrotham. Guide Price £1,250,000. Freehold. EPC D. 2.1 acres, indoor pool, triple garage. Within Kent Downs National Landscape & Metropolitan Green Belt. Full material information on listing.",
+          "hashtags": [
+            "Wrotham",
+            "Kent"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": false,
+  "findings": [
+    {
+      "grader": "banned",
+      "severity": "fail",
+      "message": "Banned phrase \"benefits from\" in listing",
+      "text": "…age.  The house provides three reception rooms and benefits from oil-fired central heating. An indoor swimming po…"
+    },
+    {
+      "grader": "raw:banned",
+      "severity": "fail",
+      "message": "Banned phrase \"benefits from\" in listing",
+      "text": "…age.  The house provides three reception rooms and benefits from oil-fired central heating. An indoor swimming po…"
+    }
+  ],
+  "coreMs": 7514,
+  "marketingMs": 18212,
+  "retries": 0,
+  "output": {
+    "headline": "Detached house with pool, triple garage and 2.1 acres",
+    "listing": "A four-bedroom detached house built in 1987, set in approximately 2.1 acres within the Kent Downs National Landscape and the Metropolitan Green Belt. The plot is accessed by driveway and includes a triple garage.\n\nThe house provides three reception rooms and benefits from oil-fired central heating. An indoor swimming pool is housed within the property.\n\nThe accommodation comprises four bedrooms and three bathrooms across the floors.\n\nThe grounds extend to approximately 2.1 acres and include the triple garage.\n\nThe property is situated on Pilgrims Way, Wrotham TN15.\n\nGuide Price £1,250,000. Freehold. Council Tax Band G (Tonbridge and Malling Borough Council). EPC rating D. Construction: Standard. Electricity: Mains. Water: Mains (metered). Sewerage: Mains. Heating: Oil-fired central heating. Broadband: FTTC. Mobile signal: Good outdoor coverage on major networks. Parking: Driveway. The property is within the Kent Downs National Landscape and the Metropolitan Green Belt.",
+    "summary": "A four-bedroom detached house built in 1987, set in approximately 2.1 acres within the Kent Downs National Landscape and Metropolitan Green Belt, with indoor swimming pool and triple garage.",
+    "keyFeatures": [
+      "Set in approximately 2.1 acres",
+      "Indoor swimming pool",
+      "Triple garage",
+      "Within the Kent Downs National Landscape and Metropolitan Green Belt",
+      "Four bedrooms and three bathrooms",
+      "Three reception rooms",
+      "Built in 1987",
+      "Oil-fired central heating",
+      "Driveway parking"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "Just listed: 4-bed detached, Wrotham – Guide £1,250,000",
+        "New instruction: Wrotham 4-bed on 2.1 acres – Guide £1.25m",
+        "Indoor pool & 2.1 acres: 4-bed detached, Wrotham – £1.25m"
+      ],
+      "previewText": "Freehold · Indoor swimming pool · Triple garage · EPC D",
+      "headline": "Hollybank, Pilgrims Way, Wrotham TN15",
+      "body": "Guide Price £1,250,000. Freehold.\n\nA detached house built in 1987 set in a 2.1-acre plot with an indoor swimming pool, triple garage and three reception rooms. Oil-fired central heating, mains electricity, water and sewerage, with driveway parking.\n\nCouncil Tax Band G (Tonbridge and Malling Borough Council). EPC rating D. Please note: the property is within the Kent Downs National Landscape and the Metropolitan Green Belt.\n\nFull material information is on the property listing.",
+      "callToAction": "Book a viewing",
+      "personalMessage": "A four-bedroom detached house in Wrotham, Guide Price £1,250,000. The property stands in 2.1 acres with an indoor swimming pool, triple garage and three reception rooms. Built in 1987 with oil-fired central heating and mains services. Within the Kent Downs National Landscape and the Metropolitan Green Belt. I would be pleased to arrange a viewing."
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "Detached house in Wrotham, Guide Price £1,250,000\n\nSet in a 2.1-acre plot with an indoor swimming pool and triple garage.\n\nBuilt in 1987 with four bedrooms, three bathrooms and three reception rooms.\n\nOil-fired central heating, mains electricity, water and sewerage.\n\nDriveway parking.\n\nFreehold · EPC D · Council Tax Band G\n\nPlease note: the property is within the Kent Downs National Landscape and the Metropolitan Green Belt.\n\nFull material information on the listing. 🏡🏊",
+        "hashtags": [
+          "Wrotham",
+          "Kent",
+          "DetachedHouse",
+          "NewInstruction",
+          "IndoorPool",
+          "KentProperty",
+          "CountryLiving",
+          "TonbridgeAndMalling"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "A detached house in Wrotham, Guide Price £1,250,000. Built in 1987 and set in a 2.1-acre plot, the property has an indoor swimming pool, triple garage and driveway parking. Four bedrooms, three bathrooms and three reception rooms. Oil-fired central heating with mains electricity, water and sewerage. Freehold. EPC rating D. Council Tax Band G (Tonbridge and Malling Borough Council). Please note: the property is within the Kent Downs National Landscape and the Metropolitan Green Belt. Full material information on the listing. 🏡",
+        "hashtags": [
+          "Wrotham",
+          "KentProperty",
+          "NewInstruction"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "Detached house, Wrotham. Guide Price £1,250,000. Freehold. EPC D. 2.1 acres, indoor pool, triple garage. Within Kent Downs National Landscape & Metropolitan Green Belt. Full material information on listing.",
+        "hashtags": [
+          "Wrotham",
+          "Kent"
+        ]
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – Hollybank, Pilgrims Way, Wrotham TN15",
+      "body": "Dear [Seller name],\n\nThank you for instructing us to market Hollybank; please check the draft details below before anything goes live.\n\n1. Asking price: Guide Price £1,250,000 – is this correct?\n2. Tenure: Freehold – is this correct?\n3. Property type: Detached house – is this correct?\n4. Year built: 1987 – is this correct?\n5. Bedrooms: 4 – is this correct?\n6. Bathrooms: 3 – is this correct?\n7. Receptions: 3 – is this correct?\n8. Council Tax: Band G (Tonbridge and Malling Borough Council) – is this correct?\n9. EPC rating: D – is this correct?\n10. Plot size: 2.1 acres – is this correct?\n11. Indoor swimming pool – is this correct?\n12. Triple garage – is this correct?\n13. Parking: Driveway – is this correct?\n14. Heating: Oil-fired central heating – is this correct?\n15. Electricity: Mains – is this correct?\n16. Water: Mains (metered) – is this correct?\n17. Sewerage: Mains – is this correct?\n18. Restrictions: within the Kent Downs National Landscape and the Metropolitan Green Belt – is this correct?\n\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 2,
+      "2": 4,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 4,
+      "7": 4,
+      "8": 2
+    },
+    "hardFail": true,
+    "verdict": "FAIL",
+    "fixes": [
+      "FACTS state 4 bedrooms, voice notes say 'Five-bed' – resolve this critical discrepancy before publication",
+      "FACTS state 2.1-acre plot, voice notes say 'about three acres' – verify actual plot size",
+      "FACTS state asking price £1,250,000, voice notes say 'guide one point three million' – confirm correct guide price",
+      "FACTS state EPC rating D, voice notes say 'EPC C now the windows are done' – verify current EPC rating",
+      "Voice notes mention 'Stunning views to London' which is a key selling feature but omitted from all copy – add if verifiable",
+      "Voice notes mention 'Owners are divorcing and want a quick sale, would take one point one five' – this is sensitive information that must not appear (correctly omitted)",
+      "Seller approval email asks about 4 bedrooms when voice notes say 5 – this inconsistency will undermine seller confidence",
+      "All outputs use 2.1 acres but voice notes say 'about three acres' – material 30% discrepancy needs resolution"
+    ],
+    "average": 3.88
+  }
+}

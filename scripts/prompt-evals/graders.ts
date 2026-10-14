@@ -46,7 +46,12 @@ export function packFromRaw(core: unknown, mkt: unknown): GradePack {
       return v;
     }
   };
-  const m = { ...m0, emailBlast: un(m0.emailBlast), sellerEmail: unwrapSellerEmail(m0.sellerEmail), social: un(m0.social) };
+  const m = {
+    ...m0,
+    emailBlast: un(m0.emailBlast),
+    sellerEmail: unwrapSellerEmail(m0.sellerEmail),
+    social: un(m0.social),
+  };
   const e =
     m.emailBlast && typeof m.emailBlast === "object"
       ? (m.emailBlast as Record<string, unknown>)
@@ -481,15 +486,17 @@ export function gradeV2(pack: GradePack, input: ListingInput): Finding[] {
     for (const [sec, text] of targets)
       if (!/please note:/i.test(text)) f(`${sec}: no "Please note:" sentence`);
   }
+  // The prompt asks for exactly one label: any triggered label satisfies it.
   const media = input.mediaNotes ?? "";
-  for (const [re, label] of IMAGE_LABELS) {
-    if (!re.test(media)) continue;
+  const triggered = IMAGE_LABELS.filter(([re]) => re.test(media)).map(([, l]) => l);
+  if (triggered.length) {
     const blocks: [string, string][] = [
       ["listing", pack.listing],
       ...pack.social.map((p): [string, string] => [`social.${p.platform}`, p.caption]),
     ];
     for (const [sec, text] of blocks)
-      if (!has(text, label)) f(`${sec}: missing image label "${label}"`);
+      if (!triggered.some((l) => has(text, l)))
+        f(`${sec}: missing image label (${triggered.length} triggered)`);
   }
   if (/auction/i.test(input.saleMethod ?? "")) {
     const method = /modern/i.test(input.saleMethod ?? "") ? "Modern Method of Auction" : "auction";

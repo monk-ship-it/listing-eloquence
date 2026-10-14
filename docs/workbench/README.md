@@ -2,7 +2,7 @@
 # Quill prompts in Claude Workbench
 
 Everything in this folder is generated from the code the app runs, so what you
-test here is exactly what Quill sends. Prompt version: `8b2771c0beb2` (also in `VERSION`).
+test here is exactly what Quill sends. Prompt version: `2ca206187d88` (also in `VERSION`).
 
 Quill makes **three** Claude calls. Each one is a separate Workbench prompt:
 

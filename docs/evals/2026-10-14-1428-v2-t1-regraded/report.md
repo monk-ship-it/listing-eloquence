@@ -6,7 +6,7 @@
 - Cases × runs: 19 × 1
 - LLM grader: on
 - Tokens: 194,496 in / 42,357 out
-- Started: 2026-10-14T14:33:03.122Z
+- Started: 2026-10-14T14:34:24.214Z
 - Result: **7/19 passed**
 
 | Case | Result | Fails | Warns | Core s | Marketing s | Extract s | Retries | LLM |
