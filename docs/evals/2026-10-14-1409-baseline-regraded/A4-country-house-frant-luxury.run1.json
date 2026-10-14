@@ -1,0 +1,211 @@
+{
+  "id": "A4-country-house-frant-luxury",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 12933,
+      "stopReason": "tool_use",
+      "inputTokens": 3701,
+      "outputTokens": 813
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 21746,
+      "stopReason": "tool_use",
+      "inputTokens": 4049,
+      "outputTokens": 1529
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "Brook Hall: an Edwardian country house in the High Weald",
+      "summary": "A detached Edwardian country house (1908) with five bedrooms, four receptions and approx. 4.5 acres including a three-acre paddock, heated outdoor pool and new oak-framed triple cart lodge with one-bedroom annexe.",
+      "listing": "Brook Hall stands on a gated plot of approx. 4.5 acres in the High Weald National Landscape, two miles from Frant station and four miles from Royal Tunbridge Wells. Built in 1908, the brick house rises under a clay-tiled roof with tile-hung upper elevations. The accommodation includes four reception rooms, five bedrooms and four bathrooms.\n\nOn the ground floor, the drawing room measures 7.10m x 5.20m and the dining room 5.40m x 4.60m. The kitchen/breakfast room runs to 8.20m x 4.90m. The principal bedroom measures 5.60m x 4.80m.\n\nOutside, gardens and terrace adjoin the house. A heated outdoor pool is served by an air source heat pump. The three-acre paddock extends beyond. An oak-framed triple cart lodge, completed in 2025 under a recently granted planning permission, includes a one-bedroom annexe above. The gated drive provides parking for several cars.\n\nGuide Price £2,100,000. Freehold. Council tax band H (Wealden District Council). EPC rating E. Brick with tile-hung upper elevations under a clay-tiled roof. Mains electricity. Mains water (not metered). Treatment plant. Oil-fired central heating. FTTC broadband. Mobile signal limited indoors; good outdoor coverage. Gated drive with parking for several cars; triple cart lodge. Building safety: none known. Restrictions: within the High Weald National Landscape. Rights and easements: public footpath crosses the southern edge of the paddock. Flooding: none known. Coastal erosion: none known. Planning: permission granted 2025 for the cart lodge with annexe above (built). Accessibility: none known. Coalfield/mining: none known. Known issues: council tax banding of the annexe has not been confirmed. Frant station approx. 2 miles (London Bridge approx. 1 hour); Royal Tunbridge Wells approx. 4 miles.",
+      "keyFeatures": [
+        "Detached Edwardian country house (1908) in the High Weald",
+        "Approx. 4.5 acres including a three-acre paddock",
+        "Heated outdoor pool with air source heat pump",
+        "Oak-framed triple cart lodge (2025) with one-bedroom annexe above",
+        "Four receptions including drawing room (7.10m x 5.20m)",
+        "Kitchen/breakfast room (8.20m x 4.90m)",
+        "Principal bedroom (5.60m x 4.80m)",
+        "Gated drive with parking for several cars",
+        "Frant station approx. 2 miles (London Bridge approx. 1 hour)",
+        "Within the High Weald National Landscape"
+      ]
+    },
+    "marketing": {
+      "emailBlast": {
+        "subjectLines": [
+          "Brook Hall, Frant — Guide Price £2.1m",
+          "Edwardian country house, 4.5 acres",
+          "Five-bed Edwardian home near Frant"
+        ],
+        "previewText": "Gated Edwardian country house with pool, cart lodge, annexe and paddock on 4.5 acres.",
+        "headline": "Brook Hall, Wadhurst Road, near Frant, East Sussex TN3",
+        "body": "A detached Edwardian country house built in 1908, set behind a gated drive on approximately 4.5 acres including a three-acre paddock. Five bedrooms, four bathrooms, four reception rooms.\n\nThe property has a heated outdoor pool (air source heat pump), an oak-framed triple cart lodge built in 2025 with a one-bedroom annexe above, gardens and terrace. Brick with tile-hung upper elevations under a clay-tiled roof. Frant station is approximately 2 miles (London Bridge approximately 1 hour); Royal Tunbridge Wells approximately 4 miles.\n\nGuide Price £2,100,000. Freehold. Council Tax Band H (Wealden District Council). EPC rating E. Within the High Weald National Landscape. A public footpath crosses the southern edge of the paddock. Council tax banding of the annexe has not been confirmed.\n\nFull material information is on the property listing.",
+        "callToAction": "View full details"
+      },
+      "sellerEmail": {
+        "body": "Dear [Seller name],\n\nThank you for instructing us to market Brook Hall. Please check the draft particulars carefully and confirm each detail is correct:\n\n1. Address: Brook Hall, Wadhurst Road, near Frant, East Sussex TN3\n2. Property type: Detached Edwardian country house\n3. Year built: 1908\n4. Price: Guide Price £2,100,000\n5. Tenure: Freehold\n6. Bedrooms: 5 · Bathrooms: 4 · Receptions: 4\n7. Council Tax: Band H (Wealden District Council)\n8. EPC rating: E\n9. Construction: Standard – Brick with tile-hung upper elevations under a clay-tiled roof\n10. Land: Approx. 4.5 acres including a 3-acre paddock\n11. Gated drive; heated outdoor pool (air source heat pump); oak-framed triple cart lodge (2025) with one-bedroom annexe above\n12. Electricity: Mains · Water: Mains (not metered) · Sewerage: Treatment plant · Heating: Oil-fired central heating\n13. Broadband: FTTC · Mobile signal: Limited indoors; good outdoor coverage\n14. Restrictions: within the High Weald National Landscape\n15. Rights & easements: public footpath crosses the southern edge of the paddock\n16. Planning: permission granted 2025 for the cart lodge with annexe above (built)\n17. Known issue: Council tax banding of the annexe has not been confirmed\n18. Frant station approx. 2 miles (London Bridge approx. 1 hour); Royal Tunbridge Wells approx. 4 miles\n\nPlease let us know of any corrections or updates.\n\n[Your name, branch, phone]"
+      },
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "Brook Hall, near Frant — a detached Edwardian country house built in 1908 on approximately 4.5 acres. Gated drive, heated outdoor pool, oak-framed triple cart lodge with one-bedroom annexe, three-acre paddock. Five bedrooms, four bathrooms, four receptions. Frant station approx. 2 miles (London Bridge approx. 1 hour). Guide Price £2,100,000, Freehold. Full material information on the listing. 🏡🌳",
+          "hashtags": [
+            "EastSussex",
+            "Frant",
+            "CountryHouse",
+            "Edwardian",
+            "PropertyForSale",
+            "UKProperty",
+            "CountryLiving",
+            "HighWeald"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "Brook Hall, Wadhurst Road, near Frant, East Sussex TN3\n\nA detached Edwardian country house built in 1908, set behind a gated drive on approximately 4.5 acres including a three-acre paddock. Five bedrooms, four bathrooms, four reception rooms. Heated outdoor pool with air source heat pump. Oak-framed triple cart lodge (2025) with one-bedroom annexe above. Brick with tile-hung upper elevations. Frant station approx. 2 miles (London Bridge approx. 1 hour); Royal Tunbridge Wells approx. 4 miles.\n\nGuide Price £2,100,000. Freehold. Council Tax Band H. EPC rating E. Within the High Weald National Landscape. Public footpath crosses the southern edge of the paddock. Council tax banding of the annexe has not been confirmed.\n\nFull material information on the listing.",
+          "hashtags": [
+            "EastSussex",
+            "Frant",
+            "CountryHouse",
+            "PropertyForSale",
+            "Edwardian",
+            "Equestrian",
+            "CountryProperty",
+            "HighWeald"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "Brook Hall, near Frant — detached Edwardian country house (1908) on approx. 4.5 acres. 5 bed, 4 bath, 4 reception. Gated drive, heated pool, oak cart lodge with annexe, 3-acre paddock. Guide Price £2.1m, Freehold. Full material information on the listing.",
+          "hashtags": [
+            "EastSussex",
+            "Frant",
+            "CountryHouse",
+            "PropertyForSale",
+            "Edwardian"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": false,
+  "findings": [
+    {
+      "grader": "limits",
+      "severity": "fail",
+      "message": "X post 317 > 280 chars incl. hashtags",
+      "text": "Brook Hall, near Frant — detached Edwardian country house (1908) on approx. 4.5 acres. 5 bed, 4 bath, 4 reception. Gated drive, heated pool, oak cart lodge with annexe, 3-acre paddock. Guide Price £2.1m, Freehold. Full material information on the listing."
+    },
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "social.X: no price"
+    },
+    {
+      "grader": "raw:limits",
+      "severity": "fail",
+      "message": "X post 317 > 280 chars incl. hashtags",
+      "text": "Brook Hall, near Frant — detached Edwardian country house (1908) on approx. 4.5 acres. 5 bed, 4 bath, 4 reception. Gated drive, heated pool, oak cart lodge with annexe, 3-acre paddock. Guide Price £2.1m, Freehold. Full material information on the listing."
+    }
+  ],
+  "coreMs": 12933,
+  "marketingMs": 21746,
+  "retries": 0,
+  "output": {
+    "headline": "Brook Hall: an Edwardian country house in the High Weald",
+    "listing": "Brook Hall stands on a gated plot of approx. 4.5 acres in the High Weald National Landscape, two miles from Frant station and four miles from Royal Tunbridge Wells. Built in 1908, the brick house rises under a clay-tiled roof with tile-hung upper elevations. The accommodation includes four reception rooms, five bedrooms and four bathrooms.\n\nOn the ground floor, the drawing room measures 7.10m x 5.20m and the dining room 5.40m x 4.60m. The kitchen/breakfast room runs to 8.20m x 4.90m. The principal bedroom measures 5.60m x 4.80m.\n\nOutside, gardens and terrace adjoin the house. A heated outdoor pool is served by an air source heat pump. The three-acre paddock extends beyond. An oak-framed triple cart lodge, completed in 2025 under a recently granted planning permission, includes a one-bedroom annexe above. The gated drive provides parking for several cars.\n\nGuide Price £2,100,000. Freehold. Council tax band H (Wealden District Council). EPC rating E. Brick with tile-hung upper elevations under a clay-tiled roof. Mains electricity. Mains water (not metered). Treatment plant. Oil-fired central heating. FTTC broadband. Mobile signal limited indoors; good outdoor coverage. Gated drive with parking for several cars; triple cart lodge. Building safety: none known. Restrictions: within the High Weald National Landscape. Rights and easements: public footpath crosses the southern edge of the paddock. Flooding: none known. Coastal erosion: none known. Planning: permission granted 2025 for the cart lodge with annexe above (built). Accessibility: none known. Coalfield/mining: none known. Known issues: council tax banding of the annexe has not been confirmed. Frant station approx. 2 miles (London Bridge approx. 1 hour); Royal Tunbridge Wells approx. 4 miles.",
+    "summary": "A detached Edwardian country house (1908) with five bedrooms, four receptions and approx. 4.5 acres including a three-acre paddock, heated outdoor pool and new oak-framed triple cart lodge with one-bedroom annexe.",
+    "keyFeatures": [
+      "Detached Edwardian country house (1908) in the High Weald",
+      "Approx. 4.5 acres including a three-acre paddock",
+      "Heated outdoor pool with air source heat pump",
+      "Oak-framed triple cart lodge (2025) with one-bedroom annexe above",
+      "Four receptions including drawing room (7.10m x 5.20m)",
+      "Kitchen/breakfast room (8.20m x 4.90m)",
+      "Principal bedroom (5.60m x 4.80m)",
+      "Gated drive with parking for several cars",
+      "Frant station approx. 2 miles (London Bridge approx. 1 hour)",
+      "Within the High Weald National Landscape"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "Brook Hall, Frant — Guide Price £2.1m",
+        "Edwardian country house, 4.5 acres",
+        "Five-bed Edwardian home near Frant"
+      ],
+      "previewText": "Gated Edwardian country house with pool, cart lodge, annexe and paddock on 4.5 acres.",
+      "headline": "Brook Hall, Wadhurst Road, near Frant, East Sussex TN3",
+      "body": "A detached Edwardian country house built in 1908, set behind a gated drive on approximately 4.5 acres including a three-acre paddock. Five bedrooms, four bathrooms, four reception rooms.\n\nThe property has a heated outdoor pool (air source heat pump), an oak-framed triple cart lodge built in 2025 with a one-bedroom annexe above, gardens and terrace. Brick with tile-hung upper elevations under a clay-tiled roof. Frant station is approximately 2 miles (London Bridge approximately 1 hour); Royal Tunbridge Wells approximately 4 miles.\n\nGuide Price £2,100,000. Freehold. Council Tax Band H (Wealden District Council). EPC rating E. Within the High Weald National Landscape. A public footpath crosses the southern edge of the paddock. Council tax banding of the annexe has not been confirmed.\n\nFull material information is on the property listing.",
+      "callToAction": "View full details"
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "Brook Hall, near Frant — a detached Edwardian country house built in 1908 on approximately 4.5 acres. Gated drive, heated outdoor pool, oak-framed triple cart lodge with one-bedroom annexe, three-acre paddock. Five bedrooms, four bathrooms, four receptions. Frant station approx. 2 miles (London Bridge approx. 1 hour). Guide Price £2,100,000, Freehold. Full material information on the listing. 🏡🌳",
+        "hashtags": [
+          "EastSussex",
+          "Frant",
+          "CountryHouse",
+          "Edwardian",
+          "PropertyForSale",
+          "UKProperty",
+          "CountryLiving",
+          "HighWeald"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "Brook Hall, Wadhurst Road, near Frant, East Sussex TN3\n\nA detached Edwardian country house built in 1908, set behind a gated drive on approximately 4.5 acres including a three-acre paddock. Five bedrooms, four bathrooms, four reception rooms. Heated outdoor pool with air source heat pump. Oak-framed triple cart lodge (2025) with one-bedroom annexe above. Brick with tile-hung upper elevations. Frant station approx. 2 miles (London Bridge approx. 1 hour); Royal Tunbridge Wells approx. 4 miles.\n\nGuide Price £2,100,000. Freehold. Council Tax Band H. EPC rating E. Within the High Weald National Landscape. Public footpath crosses the southern edge of the paddock. Council tax banding of the annexe has not been confirmed.\n\nFull material information on the listing.",
+        "hashtags": [
+          "EastSussex",
+          "Frant",
+          "CountryHouse",
+          "PropertyForSale",
+          "Edwardian",
+          "Equestrian",
+          "CountryProperty",
+          "HighWeald"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "Brook Hall, near Frant — detached Edwardian country house (1908) on approx. 4.5 acres. 5 bed, 4 bath, 4 reception. Gated drive, heated pool, oak cart lodge with annexe, 3-acre paddock. Guide Price £2.1m, Freehold. Full material information on the listing.",
+        "hashtags": [
+          "EastSussex",
+          "Frant",
+          "CountryHouse",
+          "PropertyForSale",
+          "Edwardian"
+        ]
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – Brook Hall, Wadhurst Road, near Frant, East Sussex TN3",
+      "body": "Dear [Seller name],\n\nThank you for instructing us to market Brook Hall. Please check the draft particulars carefully and confirm each detail is correct:\n\n1. Address: Brook Hall, Wadhurst Road, near Frant, East Sussex TN3\n2. Property type: Detached Edwardian country house\n3. Year built: 1908\n4. Price: Guide Price £2,100,000\n5. Tenure: Freehold\n6. Bedrooms: 5 · Bathrooms: 4 · Receptions: 4\n7. Council Tax: Band H (Wealden District Council)\n8. EPC rating: E\n9. Construction: Standard – Brick with tile-hung upper elevations under a clay-tiled roof\n10. Land: Approx. 4.5 acres including a 3-acre paddock\n11. Gated drive; heated outdoor pool (air source heat pump); oak-framed triple cart lodge (2025) with one-bedroom annexe above\n12. Electricity: Mains · Water: Mains (not metered) · Sewerage: Treatment plant · Heating: Oil-fired central heating\n13. Broadband: FTTC · Mobile signal: Limited indoors; good outdoor coverage\n14. Restrictions: within the High Weald National Landscape\n15. Rights & easements: public footpath crosses the southern edge of the paddock\n16. Planning: permission granted 2025 for the cart lodge with annexe above (built)\n17. Known issue: Council tax banding of the annexe has not been confirmed\n18. Frant station approx. 2 miles (London Bridge approx. 1 hour); Royal Tunbridge Wells approx. 4 miles\n\nPlease let us know of any corrections or updates.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 5,
+      "2": 5,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 5,
+      "8": 5
+    },
+    "hardFail": false,
+    "verdict": "PASS",
+    "fixes": [],
+    "average": 5
+  }
+}
