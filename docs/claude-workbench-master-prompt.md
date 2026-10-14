@@ -67,3 +67,11 @@ as "• " bullets, `<CTA>: [Add property link]`, then
 
 If the marketing call fails, the listing is still saved and the agent can
 generate the Email Blast free from the generator or Saved listings.
+
+## Seller approval email (marketing call)
+
+The marketing call also returns `sellerEmail.body`: a 150–250 word email to the
+seller with a numbered list of every key fact entered, plain-English questions
+for each unanswered supply or Part C item, and the sign-off placeholder
+`[Your name, branch, phone]`. The subject is set by the app:
+"Your property details for approval – <address>".
