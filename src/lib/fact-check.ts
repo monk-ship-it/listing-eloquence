@@ -5,60 +5,21 @@
  * phrases and contact details in portal copy. Guidance only.
  */
 import { wordsToNumber } from "./dictation-normalise";
+import { BANNED_PHRASES } from "./prompts/banned";
 
-export type FlagKind = "not-in-notes" | "banned" | "contact";
+export type FlagKind = "not-in-notes" | "banned" | "contact" | "private-leak";
+
+/** What triggered a not-in-notes flag (graders treat names as softer). */
+export type FlagRule = "number" | "storey" | "era" | "name";
 
 export interface FactFlag {
   term: string;
   kind: FlagKind;
   section: string;
+  rule?: FlagRule;
 }
 
-export const BANNED_PHRASES = [
-  "the kind of",
-  "nestled",
-  "boasts",
-  "must be viewed",
-  "book your viewing today",
-  "stunning",
-  "charming",
-  "rare opportunity",
-  "dream home",
-  "perfect for",
-  "ideal for",
-  "deceptively spacious",
-  "viewing highly recommended",
-  "early viewing advised",
-  "sought-after",
-  "sought after",
-  "hidden gem",
-  "forever home",
-  "a stone's throw",
-  "close to all amenities",
-  "within easy reach",
-  "benefits from",
-  "wealth of",
-  "abundance of",
-  "bursting with",
-  "immaculate",
-  "superb",
-  "fabulous",
-  "delightful",
-  "exceptional",
-  "unique",
-  "one of a kind",
-  "rarely available",
-  "prestigious",
-  "executive",
-  "luxury",
-  "luxurious",
-  "tlc",
-  "investment opportunity",
-  "won't last",
-  "act fast",
-  "priced to sell",
-  "realistically priced",
-];
+export { BANNED_PHRASES };
 
 const NUMBER_WORDS = [
   "two",
@@ -163,30 +124,30 @@ export function checkText(
   const hay = normaliseText(inputsText);
   const nums = inputNumbers(hay);
   const seen = new Set<string>();
-  const push = (term: string, kind: FlagKind) => {
+  const push = (term: string, kind: FlagKind, rule?: FlagRule) => {
     const k = `${kind}:${term.toLowerCase()}`;
     if (seen.has(k)) return;
     seen.add(k);
-    flags.push({ term, kind, section });
+    flags.push(rule ? { term, kind, section, rule } : { term, kind, section });
   };
 
   // £ amounts and digits
   for (const m of text.matchAll(/£?\d[\d,]*(?:\.\d+)?(?:st|nd|rd|th)?/g)) {
     const term = m[0].replace(/[.,]$/, "");
-    if (!numberKnown(term, nums)) push(term, "not-in-notes");
+    if (!numberKnown(term, nums)) push(term, "not-in-notes", "number");
   }
   // number words (skip "one", too common in prose)
   for (const m of text.matchAll(new RegExp(`\\b(${NUMBER_WORDS.join("|")})\\b`, "gi"))) {
-    if (!numberKnown(m[0].toLowerCase(), nums)) push(m[0], "not-in-notes");
+    if (!numberKnown(m[0].toLowerCase(), nums)) push(m[0], "not-in-notes", "number");
   }
   // storey / floor counts — only allowed when the inputs mention floors or storeys with that number
   for (const m of text.matchAll(STOREY_RE)) {
     const phrase = normaliseText(m[0]);
-    if (!hay.includes(phrase)) push(m[0], "not-in-notes");
+    if (!hay.includes(phrase)) push(m[0], "not-in-notes", "storey");
   }
   // era words
   for (const m of text.matchAll(ERA_RE)) {
-    if (!hay.includes(normaliseText(m[0]))) push(m[0], "not-in-notes");
+    if (!hay.includes(normaliseText(m[0]))) push(m[0], "not-in-notes", "era");
   }
   // capitalised names not at sentence start
   if (opts.checkNames !== false) {
@@ -197,7 +158,7 @@ export function checkText(
       const lower = normaliseText(word).replace(/['’]s$/, "");
       if (sentenceStart) continue;
       if (CAP_STOPWORDS.has(lower) || lower.length < 3) continue;
-      if (!hay.includes(lower)) push(word, "not-in-notes");
+      if (!hay.includes(lower)) push(word, "not-in-notes", "name");
     }
   }
   // banned phrases
@@ -223,7 +184,8 @@ export interface PackLike {
     headline?: string;
     body?: string;
   } | null;
-  social?: { platform: string; caption: string }[];
+  social?: { platform: string; caption: string; hashtags?: string[] }[];
+  sellerEmail?: { body?: string } | null;
 }
 
 /** Flags across the whole pack, keyed by section. */
@@ -247,6 +209,10 @@ export function factCheckPack(pack: PackLike, inputsText: string): FactFlag[] {
     out.push(...checkText(e.body ?? "", "email", inputsText));
   }
   for (const p of pack.social ?? []) out.push(...checkText(p.caption, "social", inputsText));
+  if (pack.sellerEmail?.body) {
+    // Placeholders like [Seller name] are fine; contact details aren't checked here.
+    out.push(...checkText(pack.sellerEmail.body, "seller email", inputsText));
+  }
   return out;
 }
 
@@ -255,4 +221,89 @@ export function inputsToText(input: object): string {
   return Object.values(input)
     .filter((v) => typeof v === "string")
     .join(" \n ");
+}
+
+/** Keys that are private to the agent and must never appear in public copy. */
+export const PRIVATE_INPUT_KEYS = ["showingNotes", "mediaNotes"] as const;
+
+/**
+ * Input text the copy may legitimately draw on — everything except the
+ * private viewing / photo notes, so a private fact in the copy is flagged.
+ */
+export function publicInputsToText(input: object): string {
+  const r = input as Record<string, unknown>;
+  return Object.entries(r)
+    .filter(([k, v]) => typeof v === "string" && !(PRIVATE_INPUT_KEYS as readonly string[]).includes(k))
+    .map(([, v]) => v as string)
+    .join(" \n ");
+}
+
+const LEAK_STOPWORDS = new Set(
+  (
+    "about above after again against all also always and any are around back because been before being below between both but " +
+    "can could did does doing down during each few for from further had has have having her here hers him his how into its just " +
+    "more most must not now off once only other our out over own same she should some such than that the their them then there " +
+    "these they this those through too under until very was were what when where which while who whom why will with would you your " +
+    "please note notes viewing viewings photo photos floorplan agent vendor seller property house home flat room rooms "
+  ).split(" "),
+);
+
+function leakTokens(s: string): string[] {
+  return normaliseText(s)
+    .replace(/[^a-z0-9£' -]+/g, " ")
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
+/**
+ * Distinctive words (≥5 letters, or containing a digit) and 3-word phrases
+ * from the private notes that appear in public copy but nowhere in the public
+ * inputs. Guidance only.
+ */
+export function privateLeakFlags(pack: PackLike, input: object): FactFlag[] {
+  const r = input as Record<string, unknown>;
+  const priv = PRIVATE_INPUT_KEYS.map((k) => (typeof r[k] === "string" ? (r[k] as string) : ""))
+    .join(" \n ")
+    .trim();
+  if (!priv) return [];
+  const publicHay = ` ${leakTokens(publicInputsToText(input)).join(" ")} `;
+  const toks = leakTokens(priv);
+  const terms = new Set<string>();
+  for (const t of toks) {
+    const bare = t.replace(/^['-]+|['-]+$/g, "");
+    if (LEAK_STOPWORDS.has(bare)) continue;
+    if ((bare.length >= 5 || /\d/.test(bare)) && !publicHay.includes(` ${bare} `)) terms.add(bare);
+  }
+  for (let i = 0; i + 2 < toks.length; i++) {
+    const tri = toks.slice(i, i + 3);
+    if (tri.every((w) => LEAK_STOPWORDS.has(w) || w.length < 3)) continue;
+    const phrase = tri.join(" ");
+    if (!publicHay.includes(` ${phrase} `)) terms.add(phrase);
+  }
+  const sections: [string, string][] = [
+    ["headline", pack.headline ?? ""],
+    ["description", pack.listing ?? ""],
+    ["strapline", pack.summary ?? ""],
+    ...(pack.keyFeatures ?? []).map((f): [string, string] => ["keyFeatures", f]),
+  ];
+  const e = pack.emailBlast;
+  if (e) {
+    for (const s of e.subjectLines ?? []) sections.push(["email", s]);
+    sections.push(["email", e.previewText ?? ""], ["email", e.headline ?? ""], ["email", e.body ?? ""]);
+  }
+  for (const p of pack.social ?? [])
+    sections.push(["social", `${p.caption} ${(p.hashtags ?? []).join(" ")}`]);
+  const out: FactFlag[] = [];
+  const seen = new Set<string>();
+  for (const [section, text] of sections) {
+    if (!text) continue;
+    const hay = ` ${leakTokens(text).join(" ")} `;
+    for (const term of terms) {
+      if (hay.includes(` ${term} `) && !seen.has(term)) {
+        seen.add(term);
+        out.push({ term, kind: "private-leak", section });
+      }
+    }
+  }
+  return out;
 }

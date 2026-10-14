@@ -17,7 +17,12 @@ import {
   withMaterialInfo,
 } from "@/lib/clipboard";
 import { buildMaterialInfoBlock, checkMaterialInfo, summariseChecks } from "@/lib/material-info";
-import { factCheckPack, inputsToText, type FactFlag } from "@/lib/fact-check";
+import {
+  factCheckPack,
+  privateLeakFlags,
+  publicInputsToText,
+  type FactFlag,
+} from "@/lib/fact-check";
 import { cn } from "@/lib/utils";
 
 async function copyToast(text: string, label: string) {
@@ -113,7 +118,10 @@ export function ListingPack({
   const [appendMi, setAppendMi] = useState(true);
   const miBlock = useMemo(() => buildMaterialInfoBlock(input), [input]);
   const checks = useMemo(() => summariseChecks(checkMaterialInfo(input)), [input]);
-  const flags = useMemo(() => factCheckPack(output, inputsToText(input)), [output, input]);
+  const flags = useMemo(
+    () => [...factCheckPack(output, publicInputsToText(input)), ...privateLeakFlags(output, input)],
+    [output, input],
+  );
   const hl = useMemo(() => makeHighlighter(flags), [flags]);
   const mi = appendMi ? miBlock : "";
 
