@@ -34,3 +34,14 @@ describe("fact check", () => {
     expect(f.filter((x) => x.kind === "contact").length).toBeGreaterThan(0);
   });
 });
+
+describe("list markers", () => {
+  it("ignores numbered-list markers at the start of a line", () => {
+    const f = checkText("Please check:\n6. Tenure: Freehold\n14) EPC rating\n 7: Parking", "seller email", inputs);
+    expect(f.filter((x) => x.rule === "number")).toEqual([]);
+  });
+  it("still flags invented numbers inside a line", () => {
+    const f = checkText("1. Please reply within 14 days.", "seller email", inputs);
+    expect(f.map((x) => x.term)).toContain("14");
+  });
+});
