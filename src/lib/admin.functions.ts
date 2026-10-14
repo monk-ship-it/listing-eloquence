@@ -82,3 +82,79 @@ export const saveClaudeModelSetting = createServerFn({ method: "POST" })
       updatedAt: saved?.updated_at ?? null,
     };
   });
+
+export interface WorkbenchExport {
+  promptVersion: string;
+  model: string;
+  /** Prompt version stored on the saved listing (null for the current form or older rows). */
+  storedPromptVersion: string | null;
+  variables: Record<string, string>;
+  /** Exact Messages API bodies as JSON strings (what the app would send). */
+  requests: { core: string; marketing: string; extract: string | null };
+}
+
+/**
+ * Admin-only: the exact Claude requests for the current form ({ input }) or
+ * one of the admin's OWN saved listings ({ generationId }) — inputs contain
+ * private viewing notes. No AI call, no credit.
+ */
+export const exportWorkbenchRequest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((raw: { generationId?: string; input?: unknown }) => {
+    if (raw?.generationId !== undefined) {
+      const id = raw.generationId;
+      if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Invalid listing.");
+      return { generationId: id, input: null as unknown };
+    }
+    if (!raw?.input || typeof raw.input !== "object") throw new Error("Nothing to export.");
+    return { generationId: null as string | null, input: raw.input as unknown };
+  })
+  .handler(async ({ data, context }): Promise<WorkbenchExport> => {
+    await assertAdmin(context as unknown as AdminContext);
+    const { coerceLegacyInput } = await import("./listing-types");
+    const { normaliseInput, promptVars } = await import("./prompts/render");
+    const { buildCoreRequest, buildExtractRequest, buildMarketingRequest } = await import(
+      "./prompts/calls"
+    );
+    const { PROMPT_VERSION } = await import("./prompts/version.gen");
+    const { toApiBody, getConfiguredClaudeModel } = await import("./ai-gateway.server");
+
+    let rawInput: unknown = data.input;
+    let storedPromptVersion: string | null = null;
+    if (data.generationId) {
+      const { supabase, userId } = context;
+      const { data: row, error } = await supabase
+        .from("generations")
+        .select("inputs, output, voice")
+        .eq("id", data.generationId)
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (error || !row) throw new Error("That listing couldn't be found.");
+      rawInput = { voice: row.voice, ...((row.inputs ?? {}) as Record<string, unknown>) };
+      const meta = (row.output as { meta?: { promptVersion?: unknown } } | null)?.meta;
+      storedPromptVersion = typeof meta?.promptVersion === "string" ? meta.promptVersion : null;
+    }
+    const coerced = coerceLegacyInput(rawInput);
+    let input;
+    try {
+      input = normaliseInput(coerced);
+    } catch {
+      input = normaliseInput({ ...coerced, voice: "professional" });
+    }
+    const model = await getConfiguredClaudeModel();
+    const notes = input.voiceNotes?.trim() ?? "";
+    return {
+      promptVersion: PROMPT_VERSION,
+      model,
+      storedPromptVersion,
+      variables: promptVars(input),
+      requests: {
+        core: JSON.stringify(toApiBody(buildCoreRequest(input), model), null, 2),
+        marketing: JSON.stringify(toApiBody(buildMarketingRequest(input), model), null, 2),
+        extract:
+          notes.length >= 10
+            ? JSON.stringify(toApiBody(buildExtractRequest(notes), model), null, 2)
+            : null,
+      },
+    };
+  });
