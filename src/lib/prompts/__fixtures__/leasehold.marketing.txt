@@ -1,0 +1,69 @@
+Create the marketing copy (applicant email, seller approval email and social posts) for a new UK sales instruction from the details below.
+
+STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
+- Address / location: Flat 12, Riverside Court, Chatham, Kent ME4
+- Property type: Second-floor apartment
+- Key features: Open-plan kitchen/living room, balcony with river views, lift, allocated parking
+- Likely buyer (emphasis only — never exclude anyone): First-time buyer, Investor
+- Asking price (£): 235,000
+- Price qualifier: Offers in Excess of
+- Tenure: Leasehold
+- Chain: Chain involved
+- Lease remaining (yrs): 112
+- Ground rent (£ per year): 250
+- Ground rent review: reviewed every 25 years
+- Service charge (£ per year): 1,840
+- Service charge period: y/e Mar 2026
+- Bedrooms: 2
+- Bathrooms: 1
+- Receptions: 1
+- Room dimensions: Kitchen/living room 6.10m x 4.20m; Bedroom 1 3.90m x 3.20m
+- Council Tax band: C
+- Local authority: Medway Council
+- EPC rating: C
+- Electricity: Mains
+- Water: Mains
+- Water metered?: Yes
+- Sewerage: Mains
+- Heating: Electric panel heaters
+- Broadband: FTTP
+- Parking: One allocated space
+- Nearby (schools, transport, amenities): Chatham station
+
+MATERIAL INFORMATION (verbatim facts — state these accurately; never contradict or soften):
+Price: Offers in Excess of £235,000
+Tenure: Leasehold · 112 years remaining
+Ground rent: £250 per year (reviewed every 25 years)
+Service charge: £1,840 per year (y/e Mar 2026)
+Council Tax: Band C (Medway Council)
+EPC rating: C
+Electricity: Mains · Water: Mains (metered) · Sewerage: Mains · Heating: Electric panel heaters
+Broadband: FTTP
+Parking: One allocated space
+
+Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never invent or upgrade figures from the notes.
+Seller approval of particulars: NOT confirmed.
+
+EMAIL BLAST (new-instruction email to the agent's registered applicants) — follow your Email Blast limits:
+- "subjectLines": exactly 3, max 60 characters, no urgency or clickbait. "previewText": max 90. "headline". "callToAction": e.g. "View full details" or "Book a viewing".
+- "body": 2–4 short plain-text paragraphs separated by a blank line, no bullet list, greeting name or sign-off. Include price and qualifier, tenure, council tax band, EPC rating and (leasehold/shared ownership) the key costs. End with "Full material information is on the property listing."
+
+SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, asking them to check the draft particulars before they go live.
+- 150–250 words, warm and professional, plain text. Open "Dear [Seller name]," — never invent a name.
+- A numbered list of every key fact supplied above for them to confirm: price and qualifier, tenure, lease figures, council tax, EPC, room counts, parking, supplies and each answered Part C item. Only facts supplied — nothing else.
+- Then ask these questions in plain English so the particulars are complete:
+- Is the property of standard construction (e.g. brick or stone under a tiled or slate roof), or something else such as timber frame?
+- How is the mobile signal at the property, indoors and outdoors?
+- Are you aware of any building safety issues, such as cladding or unsafe materials?
+- Is the property listed or in a conservation area, or subject to tree preservation orders or restrictive covenants?
+- Are there any rights of way, shared accesses or other rights and easements over the property?
+- Has the property ever flooded, or are you aware of any flood risk?
+- Are you aware of any coastal erosion risk?
+- Are there any planning permissions or applications for the property or the immediate area?
+- Does the property have any accessibility features, such as step-free access, a ramp or a lift?
+- Is the property in a coalfield or mining area, as far as you know?
+- End with "[Your name, branch, phone]".
+
+SOCIAL: exactly three posts — platform "Instagram", "Facebook" and "X" — each caption includes price and qualifier and tenure; add "Full material information on the listing." where space runs out; relevant hashtags (words only, no '#').
+
+Return the result by calling the submit_listing_marketing tool.

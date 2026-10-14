@@ -1,0 +1,80 @@
+Create the marketing copy (applicant email, seller approval email and social posts) for a new UK sales instruction from the details below.
+
+STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
+- Address / location: The Old Rectory, Church Lane, Burford, Oxfordshire OX18
+- Property type: Grade II listed detached period rectory
+- Key features: Inglenook fireplace, flagstone floors, exposed beams, bespoke shaker kitchen, cellar, original sash windows
+- Likely buyer (emphasis only — never exclude anyone): Growing family, Downsizer
+- Asking price (£): 1,450,000
+- Price qualifier: Guide Price
+- Tenure: Freehold
+- Chain: No onward chain
+- Bedrooms: 5
+- Bathrooms: 3
+- Receptions: 3
+- Room dimensions: Drawing room 6.8m x 5.1m; Kitchen/breakfast room 7.2m x 4.4m
+- Period / character features: Early 18th-century origins, later Georgian additions, retains much original joinery and fireplaces
+- Outside space / garden: Walled garden of around half an acre, mature herbaceous borders, orchard and a stone terrace
+- Council Tax band: G
+- Local authority: West Oxfordshire District Council
+- EPC rating: E
+- Construction: Standard
+- Construction details: Cotswold stone under a stone slate roof
+- Electricity: Mains
+- Water: Mains
+- Water metered?: Yes
+- Sewerage: Septic tank
+- Heating: Oil-fired central heating
+- Broadband: FTTP
+- Broadband speed (if known): Ultrafast available
+- Mobile signal: Good outdoor coverage on major networks
+- Parking: Gravel driveway and detached double cart shed
+- Building safety: None known
+- Restrictions: Yes – Grade II listed; within the Burford Conservation Area
+- Rights & easements: None known
+- Flooding: None known
+- Coastal erosion: None known
+- Planning: None known
+- Accessibility: None known
+- Coalfield / mining: None known
+- Nearby (schools, transport, amenities): The Burford School, Charlbury station, A40 for Oxford and Cheltenham
+- Area highlights: Cotswold market town, honey-stone high street, independent shops and the River Windrush nearby
+
+MATERIAL INFORMATION (verbatim facts — state these accurately; never contradict or soften):
+Price: Guide Price £1,450,000
+Tenure: Freehold
+Council Tax: Band G (West Oxfordshire District Council)
+EPC rating: E
+Construction: Standard – Cotswold stone under a stone slate roof
+Electricity: Mains · Water: Mains (metered) · Sewerage: Septic tank · Heating: Oil-fired central heating
+Broadband: FTTP, Ultrafast available · Mobile signal: Good outdoor coverage on major networks
+Parking: Gravel driveway and detached double cart shed
+Building safety: None known
+Restrictions: Grade II listed; within the Burford Conservation Area
+Rights & easements: None known
+Flooding: None known
+Coastal erosion: None known
+Planning: None known
+Accessibility: None known
+Coalfield / mining: None known
+
+AGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):
+This is the Old Rectory on Church Lane in Burford. Lovely characterful period rectory, Grade II listed, five bedrooms, three bathrooms, inglenook fireplace and flagstone floors. Walled garden about half an acre with an orchard. Guide price one point four five million, freehold.
+
+Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never invent or upgrade figures from the notes.
+Seller approval of particulars: NOT confirmed.
+
+EMAIL BLAST (new-instruction email to the agent's registered applicants) — follow your Email Blast limits:
+- "subjectLines": exactly 3, max 60 characters, no urgency or clickbait. "previewText": max 90. "headline". "callToAction": e.g. "View full details" or "Book a viewing".
+- "body": 2–4 short plain-text paragraphs separated by a blank line, no bullet list, greeting name or sign-off. Include price and qualifier, tenure, council tax band, EPC rating and (leasehold/shared ownership) the key costs. End with "Full material information is on the property listing."
+
+SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, asking them to check the draft particulars before they go live.
+- 150–250 words, warm and professional, plain text. Open "Dear [Seller name]," — never invent a name.
+- A numbered list of every key fact supplied above for them to confirm: price and qualifier, tenure, lease figures, council tax, EPC, room counts, parking, supplies and each answered Part C item. Only facts supplied — nothing else.
+- Then ask these questions in plain English so the particulars are complete:
+- (none — all supplies and Part C items are answered)
+- End with "[Your name, branch, phone]".
+
+SOCIAL: exactly three posts — platform "Instagram", "Facebook" and "X" — each caption includes price and qualifier and tenure; add "Full material information on the listing." where space runs out; relevant hashtags (words only, no '#').
+
+Return the result by calling the submit_listing_marketing tool.

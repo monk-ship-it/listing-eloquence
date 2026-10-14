@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "properties": {
+    "headline": {
+      "type": "string",
+      "description": "Brochure / email headline, max 70 characters"
+    },
+    "listing": {
+      "type": "string",
+      "description": "Portal description, plain-text paragraphs separated by \\n\\n"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Strapline (portal summary), max 250 characters"
+    },
+    "keyFeatures": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 6,
+      "maxItems": 10,
+      "description": "6–10 bullets, max 80 characters each"
+    }
+  },
+  "required": [
+    "headline",
+    "listing",
+    "summary",
+    "keyFeatures"
+  ]
+}
