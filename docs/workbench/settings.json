@@ -1,0 +1,61 @@
+{
+  "model": "claude-sonnet-4-5-20250929",
+  "modelNote": "Production reads the model id from app_settings.claude_model (Admin page) and falls back to this default. Use the same model as production when comparing.",
+  "anthropicVersion": "2023-06-01",
+  "calls": {
+    "core": {
+      "tool": "submit_listing_core",
+      "tool_choice": {
+        "type": "tool",
+        "name": "submit_listing_core"
+      },
+      "max_tokens": 6000,
+      "retry_max_tokens": 8000,
+      "temperature": "not sent (API default 1.0)",
+      "timeout_ms": 90000,
+      "system": "system.txt",
+      "user": "core.user.txt",
+      "retries": [
+        "On AI_TRUNCATED (stop_reason max_tokens) or MALFORMED_AI_OUTPUT: retry once with max_tokens = retryMaxTokens.",
+        "On AI_TIMEOUT: retry once with the same max_tokens.",
+        "If the first answer has a strapline > 250 chars or a key feature > 80 chars: retry once with {{LIMIT_REMINDER}} filled from core.limit-reminder.txt; if that retry fails, keep the first answer.",
+        "Any other error (e.g. RATE_LIMIT) is not retried."
+      ]
+    },
+    "marketing": {
+      "tool": "submit_listing_marketing",
+      "tool_choice": {
+        "type": "tool",
+        "name": "submit_listing_marketing"
+      },
+      "max_tokens": 3500,
+      "temperature": "not sent (API default 1.0)",
+      "timeout_ms": 90000,
+      "system": "system.txt",
+      "user": "marketing.user.txt",
+      "retries": [
+        "Any failure: retry once. If the retry fails the listing is still saved without the email/social pack."
+      ]
+    },
+    "extract": {
+      "tool": "fill_listing_fields",
+      "tool_choice": {
+        "type": "tool",
+        "name": "fill_listing_fields"
+      },
+      "max_tokens": 1500,
+      "temperature": 0,
+      "timeout_ms": 30000,
+      "system": "extract.system.txt",
+      "user": "extract.user.txt",
+      "retries": [
+        "No retry. Fields whose evidence quote isn't found in the notes are dropped (filterExtraction)."
+      ]
+    }
+  },
+  "postProcessing": {
+    "core": "validateCoreOutput() in src/lib/listing-types.ts",
+    "marketing": "validateMarketingOutput() in src/lib/listing-types.ts; the seller email subject is set by the app",
+    "extract": "filterExtraction() in src/lib/extract-filter.ts (drops fields without a verbatim quote)"
+  }
+}

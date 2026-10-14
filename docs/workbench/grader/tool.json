@@ -1,0 +1,92 @@
+{
+  "name": "submit_grade",
+  "description": "Submit the scores, verdict and fixes.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "scores": {
+        "type": "object",
+        "properties": {
+          "1": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "2": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "3": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "4": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "5": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "6": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "7": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "8": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          }
+        },
+        "required": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ]
+      },
+      "hardFail": {
+        "type": "boolean"
+      },
+      "verdict": {
+        "type": "string",
+        "enum": [
+          "PASS",
+          "FAIL"
+        ]
+      },
+      "fixes": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 8
+      }
+    },
+    "required": [
+      "scores",
+      "hardFail",
+      "verdict",
+      "fixes"
+    ]
+  },
+  "settings": {
+    "maxTokens": 1200,
+    "temperature": 0,
+    "timeoutMs": 90000
+  }
+}

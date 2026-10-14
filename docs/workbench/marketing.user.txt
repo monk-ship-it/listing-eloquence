@@ -1,0 +1,24 @@
+Create the marketing copy (applicant email, seller approval email and social posts) for a new UK sales instruction from the details below.
+
+STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
+{{PROPERTY_DETAILS}}
+MATERIAL INFORMATION (verbatim facts — state these accurately; never contradict or soften):
+{{MATERIAL_INFORMATION}}
+{{PRIVATE_NOTES}}{{VOICE_NOTES}}
+Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never invent or upgrade figures from the notes.
+Seller approval of particulars: {{SELLER_APPROVAL}}.
+
+EMAIL BLAST (new-instruction email to the agent's registered applicants) — follow your Email Blast limits:
+- "subjectLines": exactly 3, max 60 characters, no urgency or clickbait. "previewText": max 90. "headline". "callToAction": e.g. "View full details" or "Book a viewing".
+- "body": 2–4 short plain-text paragraphs separated by a blank line, no bullet list, greeting name or sign-off. Include price and qualifier, tenure, council tax band, EPC rating and (leasehold/shared ownership) the key costs. End with "Full material information is on the property listing."
+
+SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, asking them to check the draft particulars before they go live.
+- 150–250 words, warm and professional, plain text. Open "Dear [Seller name]," — never invent a name.
+- A numbered list of every key fact supplied above for them to confirm: price and qualifier, tenure, lease figures, council tax, EPC, room counts, parking, supplies and each answered Part C item. Only facts supplied — nothing else.
+- Then ask these questions in plain English so the particulars are complete:
+{{GAP_QUESTIONS}}
+- End with "[Your name, branch, phone]".
+
+SOCIAL: exactly three posts — platform "Instagram", "Facebook" and "X" — each caption includes price and qualifier and tenure; add "Full material information on the listing." where space runs out; relevant hashtags (words only, no '#').
+
+Return the result by calling the submit_listing_marketing tool.
