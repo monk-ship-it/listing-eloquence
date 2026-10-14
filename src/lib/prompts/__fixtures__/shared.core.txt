@@ -44,7 +44,7 @@ MATERIAL INFORMATION (verbatim facts — state these accurately; never contradic
 Price: Shared Ownership £130,000
 Shared ownership: 40% share · rent £487 per month on the unsold share · full market value £325,000
 Tenure: Leasehold · 990 years remaining
-Ground rent: Peppercorn per year
+Ground rent: Peppercorn
 Service charge: £312 per year (2026/27 estimate)
 Council Tax: Band C (Dartford Borough Council)
 EPC rating: B
@@ -62,12 +62,12 @@ Accessibility: None known
 Coalfield / mining: None known
 Known issues: Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale
 
-Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never invent or upgrade figures from the notes.
-Seller approval of particulars: confirmed.
+Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never take a material-information figure from the voice notes.
+Seller approval of particulars: confirmed (for the app only — never mention it in the copy).
 
 PRODUCE:
 - "headline": brochure / email headline, max 70 characters.
-- "listing": the portal description — plain-text paragraphs separated by a blank line (opening, accommodation, outside space, location, then the material facts per your rules).
+- "listing": the portal description — plain-text paragraphs separated by one blank line, in the paragraph order set by the brand voice and within its word range. Paragraph 1 gives the property type, bedroom count and location as supplied, plus the two most decision-relevant facts. For leasehold, give years remaining, ground rent with its review terms, and service charge in the same sentence as the tenure. Mention parking in words when a parking fact is supplied. The final paragraph restates Part A, every known issue and every Part C item answered Yes, copying figures exactly. Don't repeat the key features word for word.
 - "summary": the strapline (portal summary), max 250 characters; the first 160 characters must stand alone; don't open with the bedroom count or property type.
 - "keyFeatures": 6–10 bullets, max 80 characters each, one fact per bullet, no full stops; the first three are the most decision-relevant facts.
 

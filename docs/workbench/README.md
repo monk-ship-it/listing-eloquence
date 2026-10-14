@@ -2,7 +2,7 @@
 # Quill prompts in Claude Workbench
 
 Everything in this folder is generated from the code the app runs, so what you
-test here is exactly what Quill sends. Prompt version: `eb82f283dca2` (also in `VERSION`).
+test here is exactly what Quill sends. Prompt version: `8b2771c0beb2` (also in `VERSION`).
 
 Quill makes **three** Claude calls. Each one is a separate Workbench prompt:
 
@@ -20,7 +20,7 @@ Quill makes **three** Claude calls. Each one is a separate Workbench prompt:
 4. **Tool**: click **Add tool** (or "Tools" → "+"), and paste the matching file from `tools/`. It contains the tool name, description and input schema.
 5. **Tool choice**: set it to **Specific tool** and pick the tool you just added (`submit_listing_core`, `submit_listing_marketing` or `fill_listing_fields`).
 6. **Model settings** (the settings icon): set the model, **Temperature** and **Max tokens** from `settings.json` for that call.
-   Core and Marketing don't send a temperature, so leave the Workbench default (1.0). Extract uses 0.
+   Use the temperature shown in `settings.json` for each call ("not sent" means the Workbench default, 1.0). Extract uses 0.
 7. **Variables**: anything in double curly brackets, like `{{BRAND_VOICE}}`, is a variable. Workbench detects them and shows a box for each one.
    Fill them by hand, or go to **Evaluate → Import test cases** and choose `test-cases.csv`. Each row is one test case with every variable already filled in exactly as the app would.
    The CSV has a column for every variable of all three calls; rows for Extract only fill `NOTES`, and rows for Core/Marketing fill the rest.
@@ -46,7 +46,7 @@ The app also retries on certain failures — see `retries` in `settings.json`.
 | `{{PRIVATE_NOTES}}` | renderPrivateNotes(input) — viewing + photo notes with the warning header, or empty |
 | `{{VOICE_NOTES}}` | renderVoiceNotes(input) — dictated notes with their header, or empty |
 | `{{SELLER_APPROVAL}}` | renderSellerApproval(input) — "confirmed" or "NOT confirmed" |
-| `{{GAP_QUESTIONS}}` | renderGapQuestions(input) — unanswered supply / Part C questions (marketing only) |
+| `{{GAP_QUESTIONS}}` | renderGapQuestions(input) — seller questions for every open checklist item except price/approval (marketing only) |
 | `{{LIMIT_REMINDER}}` | empty, or core.limit-reminder.txt on the one retry after a limit breach (core only) |
 | `{{NOTES}}` | the agent's voice notes, trimmed (extraction only) |
 
@@ -54,7 +54,7 @@ The app also retries on certain failures — see `retries` in `settings.json`.
 
 - `system.txt` — master prompt + brand-voice slot (Core and Marketing)
 - `voices/*.txt` — the five brand voices
-- `core.user.txt`, `core.limit-reminder.txt`, `marketing.user.txt` — user templates
+- `core.user.txt`, `core.limit-reminder.txt`, `marketing.user.txt`, `marketing.reminder.txt` — user templates (reminders are only added on a retry)
 - `extract.system.txt`, `extract.user.txt` — "Fill the form" call
 - `tools/*.json` — tool definitions; `settings.json` — model, max tokens, temperature, tool choice, timeouts and retries
 - `test-cases.csv` / `test-cases.json` — every eval case with all variables rendered

@@ -1,5 +1,5 @@
 id,call,tags,BRAND_VOICE,PROPERTY_DETAILS,MATERIAL_INFORMATION,PRIVATE_NOTES,VOICE_NOTES,SELLER_APPROVAL,GAP_QUESTIONS,LIMIT_REMINDER,NOTES
-C1-leasehold-missing-ground-rent,pack,compliance leasehold,"You write in the PROFESSIONAL voice — refined, confident and lifestyle-aware. This is the everyday voice for UK high-street and independent agencies. The copy should read as though a senior negotiator wrote it: clear, well-structured, persuasive but never gimmicky. Use British English. Lead with the strongest selling points, keep sentences purposeful, and balance practical detail with a light sense of lifestyle. Avoid hype and exclamation marks, and observe the master style guard on banned filler phrases.","- Address / location: Flat 4, Albion House, New Road, Chatham ME4
+C1-leasehold-missing-ground-rent,pack,compliance leasehold,"You write in the PROFESSIONAL voice: the everyday copy of a well-run UK high-street agency, as a senior negotiator would write it. British English. Paragraph order: (1) what it is, where, and the two strongest supplied facts; (2) ground floor, then upper floors, in the order the facts list the rooms; (3) garden and parking; (4) location — supplied places and distances only; (5) price, tenure, council tax, EPC and chain. Sentences of 12–20 words. Name things exactly (""utility room"", ""downstairs WC"", ""driveway for two cars""). Lead with the strongest verifiable facts. No stacked adjectives, rhetorical questions or exclamation marks, and address the reader as ""you"" at most once. Target 220–350 words for the description. The master rules override this voice.","- Address / location: Flat 4, Albion House, New Road, Chatham ME4
 - Property type: First-floor purpose-built flat
 - Key features: Open-plan kitchen/living room, Juliet balcony, lift
 - Asking price (£): 195,000
@@ -50,8 +50,8 @@ Accessibility: None known
 Coalfield / mining: None known",,"
 AGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):
 Ground rent's about 300 a year I think, not sure on the review.
-",confirmed,- (none — all supplies and Part C items are answered),,
-C2-shared-ownership,pack,compliance shared-ownership,"You write in the PLAIN & FACTUAL voice — clear, direct and information-first, for investors, flats and quick turnarounds. Use British English. Short declarative sentences, one fact at a time, in a logical order (price and tenure, accommodation, outside space and parking, location, material information). No lifestyle language, no scene-setting, no adjectives that aren't facts. Observe the master style guard on banned filler phrases.","- Address / location: 14 Wren Close, Dartford DA1
+",confirmed,"- What is the current ground rent, how often is it reviewed and when is the next review?",,
+C2-shared-ownership,pack,compliance shared-ownership,"You write in the PLAIN & FACTUAL voice: like a well-kept CRM record turned into prose. British English. Paragraph order: (1) one sentence — type, bedrooms, location, price and qualifier, tenure, chain; (2) accommodation room by room, with dimensions where supplied; (3) outside space and parking; (4) location; (5) material information and known issues, stated neutrally. One fact per sentence, 8–15 words. No non-measurable adjectives, lifestyle language or second person, and no investor claims (rents, yields, returns). Target 150–250 words. The master rules override this voice.","- Address / location: 14 Wren Close, Dartford DA1
 - Property type: Mid-terrace house
 - Key features: Rear garden, two parking spaces
 - Likely buyer (emphasis only — never exclude anyone): First-time buyer
@@ -92,7 +92,7 @@ C2-shared-ownership,pack,compliance shared-ownership,"You write in the PLAIN & F
 ","Price: Shared Ownership £130,000
 Shared ownership: 40% share · rent £487 per month on the unsold share · full market value £325,000
 Tenure: Leasehold · 990 years remaining
-Ground rent: Peppercorn per year
+Ground rent: Peppercorn
 Service charge: £312 per year (2026/27 estimate)
 Council Tax: Band C (Dartford Borough Council)
 EPC rating: B
@@ -109,7 +109,7 @@ Planning: None known
 Accessibility: None known
 Coalfield / mining: None known
 Known issues: Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale",,,confirmed,- (none — all supplies and Part C items are answered),,
-C3-flood-history,pack,compliance known-issue,"You write in the HERITAGE voice — a guided walk-through with atmosphere, detail and local charm, for homes with character, history, mature gardens or village settings. Premium but never overblown. Use British English. Take the reader through the property as if walking them around it, drawing out craftsmanship, the garden and the setting, with a warm sense of place and local context. Only describe period features, a listed status or a specific era where the facts explicitly support it; never add generic ""period"" wording. Evocative but grounded and accurate, observing the master style guard on banned filler phrases.","- Address / location: Mill Cottage, Riverside Lane, Yalding ME18
+C3-flood-history,pack,compliance known-issue,"You write in the HERITAGE voice: a measured walk-through that draws out supplied character, craftsmanship, gardens and setting. British English, warm but grounded. Paragraph order: (1) the building — era and construction exactly as supplied; (2) the rooms in the order the facts list them, naming each supplied feature in the room where it is; (3) bedrooms; (4) garden; (5) village and surroundings from supplied places only; (6) material facts — listing, conservation area, private drainage, flood risk — stated plainly. Never state how rooms connect, which way they face, what they look onto or how they feel unless supplied. Name an era, listed status or period feature only where a supplied fact states it, and apply it only to that item; never call anything ""original"", ""period"" or ""historic"" unless supplied. No invented history, anecdotes or sensory detail. Target 300–500 words. The master rules override this voice.","- Address / location: Mill Cottage, Riverside Lane, Yalding ME18
 - Property type: Detached cottage
 - Year built / approx. age: c.1850
 - Key features: Wood-burning stove, exposed beams, garden to the riverbank
@@ -156,7 +156,7 @@ Coastal erosion: None known
 Planning: None known
 Accessibility: None known
 Coalfield / mining: None known",,,confirmed,- (none — all supplies and Part C items are answered),,
-C4-knotweed,pack,compliance known-issue,"You write in the PREMIUM voice — restrained, understated and considered, for agencies selling at the upper end of the market. The writing is slightly more lifestyle-led, with real care taken over rhythm and phrasing. Use British English. Favour elegant, measured sentences; let quality speak for itself rather than overselling. Subtle, tasteful, never flashy. No exclamation marks, and observe the master style guard on banned filler phrases.","- Address / location: 27 Beech Avenue, Sevenoaks TN13
+C4-knotweed,pack,compliance known-issue,"You write in the PREMIUM voice: measured and assured, in the register of a strong regional independent. British English. Show quality through specifics — materials, layout, fittings — never through adjectives. Describe how supplied spaces connect or can be used only where the facts say so; never assert who the home suits or how life there feels. Paragraph order: (1) a two-sentence opening naming the defining feature and the street or town; (2) principal living space and kitchen, then the rest of the ground floor; (3) bedrooms and bathrooms, principal first; (4) garden, parking, outbuildings; (5) location; (6) material facts. Sentences of 15–25 words, no more than one adjective per noun, no second person, never ""luxury"". Target 300–450 words. The master rules override this voice.","- Address / location: 27 Beech Avenue, Sevenoaks TN13
 - Property type: Detached house
 - Year built / approx. age: 1968
 - Key features: Extended kitchen/family room, double garage, 0.3-acre plot
@@ -204,7 +204,7 @@ Planning: None known
 Accessibility: None known
 Coalfield / mining: None known
 Known issues: Japanese knotweed found in the rear garden near the boundary in 2025; herbicide treatment plan by a PCA-registered contractor in progress, with a 10-year insurance-backed guarantee",,,confirmed,- (none — all supplies and Part C items are answered),,
-C5-modern-method-of-auction,pack,compliance auction,"You write in the PROFESSIONAL voice — refined, confident and lifestyle-aware. This is the everyday voice for UK high-street and independent agencies. The copy should read as though a senior negotiator wrote it: clear, well-structured, persuasive but never gimmicky. Use British English. Lead with the strongest selling points, keep sentences purposeful, and balance practical detail with a light sense of lifestyle. Avoid hype and exclamation marks, and observe the master style guard on banned filler phrases.","- Address / location: 3 Station Terrace, Sheerness ME12
+C5-modern-method-of-auction,pack,compliance auction,"You write in the PROFESSIONAL voice: the everyday copy of a well-run UK high-street agency, as a senior negotiator would write it. British English. Paragraph order: (1) what it is, where, and the two strongest supplied facts; (2) ground floor, then upper floors, in the order the facts list the rooms; (3) garden and parking; (4) location — supplied places and distances only; (5) price, tenure, council tax, EPC and chain. Sentences of 12–20 words. Name things exactly (""utility room"", ""downstairs WC"", ""driveway for two cars""). Lead with the strongest verifiable facts. No stacked adjectives, rhetorical questions or exclamation marks, and address the reader as ""you"" at most once. Target 220–350 words for the description. The master rules override this voice.","- Address / location: 3 Station Terrace, Sheerness ME12
 - Property type: Mid-terrace house
 - Key features: For sale by Modern Method of Auction, rear yard, requires modernisation
 - Asking price (£): 150,000
@@ -252,7 +252,7 @@ Planning: None known
 Accessibility: None known
 Coalfield / mining: None known
 Known issues: Modern Method of Auction: the buyer pays a non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT, in addition to the purchase price; 56-day reservation period. The guide price indicates the seller's minimum expectation; the reserve will be within 10% of the guide.",,,confirmed,- (none — all supplies and Part C items are answered),,
-C6-voice-note-conflicts-and-private-leak,pack,compliance conflict privacy,"You write in the LUXURY voice — warm, cinematic and story-led, for prime and country homes where less is more. Convey quiet authority with considered language and absolutely no overblown adjectives. Use British English. Set a scene, evoke atmosphere and a way of life, but stay disciplined and sparing. Short, confident paragraphs. Understatement carries the tone. ""Luxury"" is the name of this voice, not a word to use: never write ""luxury"" or ""luxurious"" in the copy unless it is part of a supplied specification. The master style guard on banned filler phrases still applies.","- Address / location: Hollybank, Pilgrims Way, Wrotham TN15
+C6-voice-note-conflicts-and-private-leak,pack,compliance conflict privacy,"You write in the LUXURY voice: quiet authority and understatement, for prime and country homes. British English. Short declarative paragraphs where the facts of setting, land, approach and accommodation carry the weight. Paragraph order: (1) setting and land exactly as supplied — position, acreage, approach; (2) the house — era and construction if supplied, principal reception rooms; (3) kitchen and family space; (4) bedrooms, principal suite first; (5) gardens, grounds, outbuildings, annexe, leisure; (6) situation — supplied places and approx. times only; (7) material facts, including drainage, rights of way and designations. Convey quality only through the supplied specification, materials, proportions and setting. Never imagine scenes, moods, light, views, sounds, seasons or ways of life. ""Luxury"" names this voice; never write ""luxury"" or ""luxurious"" unless part of a supplied specification. No ""exclusive"", ""breathtaking"" or ""you"". Target 400–600 words. The master rules override this voice.","- Address / location: Hollybank, Pilgrims Way, Wrotham TN15
 - Property type: Detached house
 - Year built / approx. age: 1987
 - Key features: Indoor swimming pool, triple garage, 2.1-acre plot
@@ -301,7 +301,7 @@ Coalfield / mining: None known",,"
 AGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):
 Five-bed detached on about three acres, guide one point three million, EPC C now the windows are done. Owners are divorcing and want a quick sale, would take one point one five. Stunning views to London. Lockbox 4471, dog in the kitchen.
 ",NOT confirmed,- (none — all supplies and Part C items are answered),,
-A1-ex-la-terrace-medway-plain,pack,agent plain,"You write in the PLAIN & FACTUAL voice — clear, direct and information-first, for investors, flats and quick turnarounds. Use British English. Short declarative sentences, one fact at a time, in a logical order (price and tenure, accommodation, outside space and parking, location, material information). No lifestyle language, no scene-setting, no adjectives that aren't facts. Observe the master style guard on banned filler phrases.","- Address / location: Fernhill Close, Lordswood, Chatham, Kent ME5
+A1-ex-la-terrace-medway-plain,pack,agent plain,"You write in the PLAIN & FACTUAL voice: like a well-kept CRM record turned into prose. British English. Paragraph order: (1) one sentence — type, bedrooms, location, price and qualifier, tenure, chain; (2) accommodation room by room, with dimensions where supplied; (3) outside space and parking; (4) location; (5) material information and known issues, stated neutrally. One fact per sentence, 8–15 words. No non-measurable adjectives, lifestyle language or second person, and no investor claims (rents, yields, returns). Target 150–250 words. The master rules override this voice.","- Address / location: Fernhill Close, Lordswood, Chatham, Kent ME5
 - Property type: Ex-local-authority mid-terrace house
 - Key features: Kitchen/diner; lean-to utility; gas central heating, Worcester boiler 2019; rear garden with gate to rear path
 - Likely buyer (emphasis only — never exclude anyone): First-time buyer, Investor
@@ -312,7 +312,7 @@ A1-ex-la-terrace-medway-plain,pack,agent plain,"You write in the PLAIN & FACTUAL
 - Bedrooms: 3
 - Bathrooms: 1
 - Receptions: 1
-- Room dimensions: Lounge 4.62m x 3.48m; Kitchen/diner 5.45m x 2.90m; Bedroom 1 3.80m x 3.10m; Bedroom 2 3.30m x 2.95m; Bedroom 3 2.40m x 2.05m
+- Room dimensions: Lounge 4.62m x 3.48m (15'2"" x 11'5""); Kitchen/diner 5.45m x 2.90m (17'11"" x 9'6""); Bedroom 1 3.80m x 3.10m (12'6"" x 10'2""); Bedroom 2 3.30m x 2.95m (10'10"" x 9'8""); Bedroom 3 2.40m x 2.05m (7'10"" x 6'9"")
 - Outside space / garden: Rear garden approx. 9m (30ft) with gate to shared rear path
 - Council Tax band: B
 - Local authority: Medway Council
@@ -348,7 +348,7 @@ Restrictions: None known
 Rights & easements: pedestrian right of way along the shared rear path
 Flooding: None known
 Coastal erosion: None known
-Planning: None known
+Planning: See known issues
 Accessibility: None known
 Coalfield / mining: None known
 Known issues: Damp mark on bathroom ceiling from a cracked roof tile, repaired August 2026, not yet redecorated. Seller unaware of planning or building regulations approval for the lean-to utility.","
@@ -359,7 +359,7 @@ PRIVATE NOTES (never quote or use in any output; only use photo notes to add a "
 AGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):
 Right, so this is Fernhill Close up in Lordswood, ex-council, three-bed mid-terrace, standard brick, it's not a Cornish unit or anything. Downstairs lounge at the front, kitchen-diner across the back, er, and a lean-to utility, no planning on that as far as she knows, been there years. Upstairs two doubles and a box room, shower over the bath. Bit of a damp mark on the bathroom ceiling, roofer found a cracked tile, fixed in August, mark's still there. Garden about thirty foot, gate onto the back path. No drive, on-street, no permits. Probate, so no chain. Gas, Worcester boiler 2019. Honestly an investor's dream, would rent for fifteen hundred easy. Guide two-eight-five. Keys in the office, executor's in Leeds.
 ",NOT confirmed,"- How is the mobile signal at the property, indoors and outdoors?",,
-A2-flat-over-shop-streatham-professional,pack,agent professional leasehold,"You write in the PROFESSIONAL voice — refined, confident and lifestyle-aware. This is the everyday voice for UK high-street and independent agencies. The copy should read as though a senior negotiator wrote it: clear, well-structured, persuasive but never gimmicky. Use British English. Lead with the strongest selling points, keep sentences purposeful, and balance practical detail with a light sense of lifestyle. Avoid hype and exclamation marks, and observe the master style guard on banned filler phrases.","- Address / location: Streatham High Road, London SW16
+A2-flat-over-shop-streatham-professional,pack,agent professional leasehold,"You write in the PROFESSIONAL voice: the everyday copy of a well-run UK high-street agency, as a senior negotiator would write it. British English. Paragraph order: (1) what it is, where, and the two strongest supplied facts; (2) ground floor, then upper floors, in the order the facts list the rooms; (3) garden and parking; (4) location — supplied places and distances only; (5) price, tenure, council tax, EPC and chain. Sentences of 12–20 words. Name things exactly (""utility room"", ""downstairs WC"", ""driveway for two cars""). Lead with the strongest verifiable facts. No stacked adjectives, rhetorical questions or exclamation marks, and address the reader as ""you"" at most once. Target 220–350 words for the description. The master rules override this voice.","- Address / location: Streatham High Road, London SW16
 - Property type: Maisonette (first and second floors) above a commercial unit
 - Key features: Own entrance; bay-fronted living room; kitchen fitted 2022; section 42 lease extension notice served, can be assigned to the buyer
 - Likely buyer (emphasis only — never exclude anyone): First-time buyer
@@ -375,7 +375,7 @@ A2-flat-over-shop-streatham-professional,pack,agent professional leasehold,"You 
 - Bedrooms: 2
 - Bathrooms: 1
 - Receptions: 1
-- Room dimensions: Living room 4.90m x 4.10m into bay; Kitchen 3.20m x 2.30m; Bedroom 1 3.85m x 3.05m; Bedroom 2 2.70m x 2.40m
+- Room dimensions: Living room 4.90m x 4.10m into bay (16'1"" x 13'5"" into bay); Kitchen 3.20m x 2.30m (10'6"" x 7'7""); Bedroom 1 3.85m x 3.05m (12'8"" x 10'0""); Bedroom 2 2.70m x 2.40m (8'10"" x 7'10"")
 - Council Tax band: C
 - Local authority: London Borough of Lambeth
 - EPC rating: D
@@ -424,7 +424,7 @@ PRIVATE NOTES (never quote or use in any output; only use photo notes to add a "
 AGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):
 Okay, flat above the dry cleaner's on Streatham High Road, well, maisonette, first and second floor, own front door round the back off the service yard, you share the yard with the shop for bins. Two beds, second's small, vendor calls it a double, it's two-seven by two-four so it's a single. Living room's big, bay onto the High Road, bit of traffic noise obviously. Kitchen's 2022. Bathroom top floor. Lease eighty-nine left, solicitor's served the section 42, buyer can take it over. Ground rent three-fifty, doubles every twenty-five, next one 2034. Service charge about nine-sixty, includes buildings insurance. Shop owner's the freeholder. OIEO three-seven-five. Station six minutes, Common ten. Gas combi. Basically a three-bed if you do the loft. Don't put that in, there's no permission.
 ",NOT confirmed,"- How is the mobile signal at the property, indoors and outdoors?",,
-A3-1930s-semi-sevenoaks-premium,pack,agent premium,"You write in the PREMIUM voice — restrained, understated and considered, for agencies selling at the upper end of the market. The writing is slightly more lifestyle-led, with real care taken over rhythm and phrasing. Use British English. Favour elegant, measured sentences; let quality speak for itself rather than overselling. Subtle, tasteful, never flashy. No exclamation marks, and observe the master style guard on banned filler phrases.","- Address / location: Oak Lane, Sevenoaks, Kent TN13
+A3-1930s-semi-sevenoaks-premium,pack,agent premium,"You write in the PREMIUM voice: measured and assured, in the register of a strong regional independent. British English. Show quality through specifics — materials, layout, fittings — never through adjectives. Describe how supplied spaces connect or can be used only where the facts say so; never assert who the home suits or how life there feels. Paragraph order: (1) a two-sentence opening naming the defining feature and the street or town; (2) principal living space and kitchen, then the rest of the ground floor; (3) bedrooms and bathrooms, principal first; (4) garden, parking, outbuildings; (5) location; (6) material facts. Sentences of 15–25 words, no more than one adjective per noun, no second person, never ""luxury"". Target 300–450 words. The master rules override this voice.","- Address / location: Oak Lane, Sevenoaks, Kent TN13
 - Property type: Semi-detached house
 - Year built / approx. age: 1930s
 - Key features: Kitchen/family room (2021 extension) with island and bi-fold doors; loft conversion (2019) with en-suite, building regulations completion certificate; log burner; garden office with power; ground-floor shower room and utility (former garage)
@@ -436,7 +436,7 @@ A3-1930s-semi-sevenoaks-premium,pack,agent premium,"You write in the PREMIUM voi
 - Bedrooms: 4
 - Bathrooms: 3
 - Receptions: 2
-- Room dimensions: Sitting room 4.55m x 3.70m into bay; Dining room 3.60m x 3.40m; Kitchen/family room 7.80m x 5.10m max; Principal bedroom 4.20m x 3.60m; Bedroom 4 (loft) 5.20m x 3.30m max
+- Room dimensions: Sitting room 4.55m x 3.70m into bay (14'11"" x 12'2"" into bay); Dining room 3.60m x 3.40m (11'10"" x 11'2""); Kitchen/family room 7.80m x 5.10m max (25'7"" x 16'9"" max); Principal bedroom 4.20m x 3.60m (13'9"" x 11'10""); Bedroom 4 (loft) 5.20m x 3.30m max (17'1"" x 10'10"" max)
 - Period / character features: Original stained-glass front door and hall window
 - Outside space / garden: South-west-facing rear garden approx. 30m (100ft) with patio and garden office
 - Council Tax band: F
@@ -485,7 +485,7 @@ PRIVATE NOTES (never quote or use in any output; only use photo notes to add a "
 AGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):
 Right, Oak Lane, Sevenoaks. 1930s semi, big rear extension 2021, kitchen-family room, bifolds, island, Quooker. Loft conversion 2019 with en-suite, building regs signed off, I've seen the completion cert. Four beds, three baths counting the en-suite, family bathroom and the ground-floor shower room. Original stained glass in the front door and hall window. Log burner in the sitting room. Garden south-west, about a hundred foot, garden office at the end with power. Drive for two, garage converted to utility and shower room. Station point eight of a mile, London Bridge about twenty-five. It's in the Sevenoaks School and grammar annexe area, families love it, careful how you word that. Guide nine-seven-five. They've found somewhere so there's a chain.
 ",NOT confirmed,- (none — all supplies and Part C items are answered),,
-A4-country-house-frant-luxury,pack,agent luxury,"You write in the LUXURY voice — warm, cinematic and story-led, for prime and country homes where less is more. Convey quiet authority with considered language and absolutely no overblown adjectives. Use British English. Set a scene, evoke atmosphere and a way of life, but stay disciplined and sparing. Short, confident paragraphs. Understatement carries the tone. ""Luxury"" is the name of this voice, not a word to use: never write ""luxury"" or ""luxurious"" in the copy unless it is part of a supplied specification. The master style guard on banned filler phrases still applies.","- Address / location: Brook Hall, Wadhurst Road, near Frant, East Sussex TN3
+A4-country-house-frant-luxury,pack,agent luxury,"You write in the LUXURY voice: quiet authority and understatement, for prime and country homes. British English. Short declarative paragraphs where the facts of setting, land, approach and accommodation carry the weight. Paragraph order: (1) setting and land exactly as supplied — position, acreage, approach; (2) the house — era and construction if supplied, principal reception rooms; (3) kitchen and family space; (4) bedrooms, principal suite first; (5) gardens, grounds, outbuildings, annexe, leisure; (6) situation — supplied places and approx. times only; (7) material facts, including drainage, rights of way and designations. Convey quality only through the supplied specification, materials, proportions and setting. Never imagine scenes, moods, light, views, sounds, seasons or ways of life. ""Luxury"" names this voice; never write ""luxury"" or ""luxurious"" unless part of a supplied specification. No ""exclusive"", ""breathtaking"" or ""you"". Target 400–600 words. The master rules override this voice.","- Address / location: Brook Hall, Wadhurst Road, near Frant, East Sussex TN3
 - Property type: Detached Edwardian country house
 - Year built / approx. age: 1908
 - Key features: Gated drive; approx. 4.5 acres including a 3-acre paddock; heated outdoor pool (air source heat pump); oak-framed triple cart lodge (2025) with one-bedroom annexe above
@@ -497,7 +497,7 @@ A4-country-house-frant-luxury,pack,agent luxury,"You write in the LUXURY voice �
 - Bedrooms: 5
 - Bathrooms: 4
 - Receptions: 4
-- Room dimensions: Drawing room 7.10m x 5.20m; Dining room 5.40m x 4.60m; Kitchen/breakfast room 8.20m x 4.90m; Principal bedroom 5.60m x 4.80m
+- Room dimensions: Drawing room 7.10m x 5.20m (23'4"" x 17'1""); Dining room 5.40m x 4.60m (17'9"" x 15'1""); Kitchen/breakfast room 8.20m x 4.90m (26'11"" x 16'1""); Principal bedroom 5.60m x 4.80m (18'4"" x 15'9"")
 - Outside space / garden: Gardens, terrace, heated outdoor pool and 3-acre paddock; approx. 4.5 acres in all
 - Council Tax band: H
 - Local authority: Wealden District Council
@@ -546,7 +546,7 @@ PRIVATE NOTES (never quote or use in any output; only use photo notes to add a "
 AGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):
 Right so Brook Hall, outside Frant, about four miles from Tunbridge Wells. Detached Edwardian, 1908 on the datestone, tile-hung, five beds, four baths. Gated drive, about four and a half acres all in including a three-acre paddock. Outdoor pool heated off an air source, and the oak-framed triple cart lodge, permission last year, it's built. Annexe over it, one bed, the mum lived there, not sure if it's separately banded, TBC. Honestly best view in the High Weald, absolutely stunning, write that. Oil in the main house, treatment plant 2022. Public footpath across the bottom of the paddock. High Weald National Landscape. Frant station two miles, London Bridge about an hour. Guide two-point-one. Mobile's patchy indoors.
 ",NOT confirmed,- (none — all supplies and Part C items are answered),,
-A5-victorian-cottage-smarden-heritage,pack,agent heritage,"You write in the HERITAGE voice — a guided walk-through with atmosphere, detail and local charm, for homes with character, history, mature gardens or village settings. Premium but never overblown. Use British English. Take the reader through the property as if walking them around it, drawing out craftsmanship, the garden and the setting, with a warm sense of place and local context. Only describe period features, a listed status or a specific era where the facts explicitly support it; never add generic ""period"" wording. Evocative but grounded and accurate, observing the master style guard on banned filler phrases.","- Address / location: 2 Forge Cottages, The Street, Smarden, Ashford, Kent TN27
+A5-victorian-cottage-smarden-heritage,pack,agent heritage,"You write in the HERITAGE voice: a measured walk-through that draws out supplied character, craftsmanship, gardens and setting. British English, warm but grounded. Paragraph order: (1) the building — era and construction exactly as supplied; (2) the rooms in the order the facts list them, naming each supplied feature in the room where it is; (3) bedrooms; (4) garden; (5) village and surroundings from supplied places only; (6) material facts — listing, conservation area, private drainage, flood risk — stated plainly. Never state how rooms connect, which way they face, what they look onto or how they feel unless supplied. Name an era, listed status or period feature only where a supplied fact states it, and apply it only to that item; never call anything ""original"", ""period"" or ""historic"" unless supplied. No invented history, anecdotes or sensory detail. Target 300–500 words. The master rules override this voice.","- Address / location: 2 Forge Cottages, The Street, Smarden, Ashford, Kent TN27
 - Property type: End-of-terrace Victorian cottage
 - Year built / approx. age: c.1880
 - Key features: Cast-iron fireplace; quarry-tiled kitchen floor; ledged-and-braced doors; cottage garden with brick path and shed
@@ -558,7 +558,7 @@ A5-victorian-cottage-smarden-heritage,pack,agent heritage,"You write in the HERI
 - Bedrooms: 2
 - Bathrooms: 1
 - Receptions: 1
-- Room dimensions: Sitting room 3.90m x 3.60m; Kitchen/dining room 4.30m x 3.20m; Bedroom 1 3.80m x 3.30m; Bedroom 2 2.90m x 2.40m
+- Room dimensions: Sitting room 3.90m x 3.60m (12'10"" x 11'10""); Kitchen/dining room 4.30m x 3.20m (14'1"" x 10'6""); Bedroom 1 3.80m x 3.30m (12'6"" x 10'10""); Bedroom 2 2.90m x 2.40m (9'6"" x 7'10"")
 - Period / character features: Cast-iron fireplace in sitting room; quarry-tiled kitchen floor; ledged-and-braced doors. Kitchen beams are reclaimed (1990s), not original. The kitchen has a range alcove, not an inglenook.
 - Outside space / garden: Rear cottage garden approx. 12m (40ft), brick path, timber shed
 - Council Tax band: C
@@ -604,7 +604,7 @@ Known issues: Seller does not know whether the shared septic tank meets the Envi
 AGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):
 So, Forge Cottages, Smarden, number two, end of terrace, Victorian, about 1880, red brick, clay tiles. Two beds, bathroom upstairs. Cast-iron fireplace in the sitting room, vendor says original, I can't swear to it, so just cast-iron fireplace. Quarry tiles in the kitchen, beams are reclaimed, nineties, not original. Ledged and braced doors throughout. There's a range alcove, it is NOT an inglenook. Low ceiling at the top of the stairs, about six-two, mention it. Cottage garden about forty foot, brick path, shed. Septic tank shared with number one, it's in their garden, emptied yearly, split the cost, vendor doesn't know if it meets the 2020 rules, so say that. Bottom of the garden's flood zone two on the EA map, house never flooded. Conservation area. Oil heating. On-street parking. Guide four-two-five. Lovely chocolate-box village, pub's two minutes.
 ",NOT confirmed,- (none — all supplies and Part C items are answered),,
-A6-new-build-kings-hill-professional,pack,agent new-build,"You write in the PROFESSIONAL voice — refined, confident and lifestyle-aware. This is the everyday voice for UK high-street and independent agencies. The copy should read as though a senior negotiator wrote it: clear, well-structured, persuasive but never gimmicky. Use British English. Lead with the strongest selling points, keep sentences purposeful, and balance practical detail with a light sense of lifestyle. Avoid hype and exclamation marks, and observe the master style guard on banned filler phrases.","- Address / location: Plot 47, Orchard Rise, Kings Hill, West Malling, Kent ME19
+A6-new-build-kings-hill-professional,pack,agent new-build,"You write in the PROFESSIONAL voice: the everyday copy of a well-run UK high-street agency, as a senior negotiator would write it. British English. Paragraph order: (1) what it is, where, and the two strongest supplied facts; (2) ground floor, then upper floors, in the order the facts list the rooms; (3) garden and parking; (4) location — supplied places and distances only; (5) price, tenure, council tax, EPC and chain. Sentences of 12–20 words. Name things exactly (""utility room"", ""downstairs WC"", ""driveway for two cars""). Lead with the strongest verifiable facts. No stacked adjectives, rhetorical questions or exclamation marks, and address the reader as ""you"" at most once. Target 220–350 words for the description. The master rules override this voice.","- Address / location: Plot 47, Orchard Rise, Kings Hill, West Malling, Kent ME19
 - Property type: New-build semi-detached house (The Larch)
 - Year built / approx. age: Completion expected spring 2027
 - Key features: Air source heat pump; underfloor heating to ground floor; EV charging point; two allocated parking spaces; 10-year NHBC warranty; en-suite to principal bedroom
@@ -616,7 +616,7 @@ A6-new-build-kings-hill-professional,pack,agent new-build,"You write in the PROF
 - Bedrooms: 3
 - Bathrooms: 2
 - Receptions: 1
-- Room dimensions: Kitchen/dining room 5.80m x 3.40m; Living room 4.90m x 3.30m; Principal bedroom 4.10m x 3.00m
+- Room dimensions: Kitchen/dining room 5.80m x 3.40m (19'0"" x 11'2""); Living room 4.90m x 3.30m (16'1"" x 10'10""); Principal bedroom 4.10m x 3.00m (13'5"" x 9'10"")
 - Outside space / garden: Turfed rear garden with patio
 - Council Tax band: Not yet banded
 - Local authority: Tonbridge and Malling Borough Council
@@ -642,7 +642,7 @@ A6-new-build-kings-hill-professional,pack,agent new-build,"You write in the PROF
 - Nearby (schools, transport, amenities): West Malling station approx. 2 miles
 ","Price: Fixed Price £410,000
 Tenure: Freehold
-Council Tax: Not yet banded (Tonbridge and Malling Borough Council)
+Council Tax: not yet banded (Tonbridge and Malling Borough Council)
 EPC rating: B
 Construction: Standard – Brick and block under a tiled roof
 Electricity: Mains · Water: Mains (metered) · Sewerage: Mains · Heating: Air source heat pump; underfloor heating downstairs, radiators upstairs

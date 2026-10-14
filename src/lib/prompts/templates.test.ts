@@ -27,7 +27,7 @@ const FX = join(__dirname, "__fixtures__");
 const read = (f: string) => readFileSync(join(FX, f), "utf8");
 const inputs = JSON.parse(read("inputs.json")) as Record<string, ListingInput>;
 
-describe("golden prompts (byte-identical to pre-refactor app)", () => {
+describe("golden prompts (v2 — update only via bun run prompts:golden)", () => {
   for (const [name, input] of Object.entries(inputs)) {
     it(`${name}: system, core, core+reminder, marketing`, () => {
       expect(buildCoreRequest(input).system).toBe(read(`${name}.system.txt`));

@@ -73,6 +73,50 @@
       "type": "string",
       "description": "Full market value (£)"
     },
+    "saleMethod": {
+      "type": "string",
+      "description": "Sale method One of: Private treaty | Traditional auction | Modern Method of Auction. Only when stated; \"MMoA\" / \"modern method\" → \"Modern Method of Auction\"."
+    },
+    "saleStatus": {
+      "type": "string",
+      "description": "Sale status One of: Available | Under offer – still marketing | Sold subject to contract."
+    },
+    "auctionTerms": {
+      "type": "string",
+      "description": "Auction terms"
+    },
+    "reservationFee": {
+      "type": "string",
+      "description": "Reservation fee"
+    },
+    "buyerFees": {
+      "type": "string",
+      "description": "Buyer's fees"
+    },
+    "preMarket": {
+      "type": "string",
+      "description": "Pre-market / coming soon? One of: Yes | No."
+    },
+    "newBuild": {
+      "type": "string",
+      "description": "New home? One of: Yes | No. Yes only when the agent says it is a new build / new home."
+    },
+    "incentives": {
+      "type": "string",
+      "description": "Incentives (with end date)"
+    },
+    "estateCharge": {
+      "type": "string",
+      "description": "Estate / management charge (£ per year)"
+    },
+    "ageRestriction": {
+      "type": "string",
+      "description": "Age / occupancy restriction"
+    },
+    "eventFees": {
+      "type": "string",
+      "description": "Event fees (retirement)"
+    },
     "bedrooms": {
       "type": "string",
       "description": "Bedrooms"
@@ -108,6 +152,10 @@
     "epc": {
       "type": "string",
       "description": "EPC rating One of: A | B | C | D | E | F | G | Exempt | Commissioned."
+    },
+    "epcPredicted": {
+      "type": "string",
+      "description": "EPC predicted? One of: Yes | No. Yes only when the agent says the EPC is predicted (SAP / new build)."
     },
     "construction": {
       "type": "string",
@@ -281,6 +329,50 @@
           "type": "string",
           "maxLength": 80
         },
+        "saleMethod": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "saleStatus": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "auctionTerms": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "reservationFee": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "buyerFees": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "preMarket": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "newBuild": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "incentives": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "estateCharge": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "ageRestriction": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "eventFees": {
+          "type": "string",
+          "maxLength": 80
+        },
         "bedrooms": {
           "type": "string",
           "maxLength": 80
@@ -314,6 +406,10 @@
           "maxLength": 80
         },
         "epc": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "epcPredicted": {
           "type": "string",
           "maxLength": 80
         },

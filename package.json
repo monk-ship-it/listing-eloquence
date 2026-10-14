@@ -13,6 +13,7 @@
     "test": "vitest run",
     "prompts:export": "bun ./scripts/export-workbench.ts",
     "prompts:check": "bun ./scripts/export-workbench.ts --check",
+    "prompts:golden": "bun ./scripts/update-golden.ts",
     "evals": "bun ./scripts/prompt-evals/run.ts"
   },
   "dependencies": {
