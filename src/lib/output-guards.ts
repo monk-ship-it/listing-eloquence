@@ -266,7 +266,26 @@ function canonical(q: string | undefined): string | null {
 
 export interface PriceProblem {
   where: string;
+  /** What was written; empty when the exact form is missing. */
   wrote: string;
+  missing?: boolean;
+}
+
+/** Texts that must contain "<qualifier> <amount>" at least once. */
+export const EXACT_PRICE_REQUIRED = ["the description", "the Email Blast body"];
+
+/** Exact "<qualifier>[:] <amount>" form, case-insensitive, whitespace collapsed. */
+export function hasExactPrice(
+  text: string,
+  input: Pick<ListingInput, "price" | "priceQualifier">,
+): boolean {
+  const digits = (input.price ?? "").replace(/[^\d]/g, "");
+  if (!digits) return true;
+  const amt = `£${Number(digits).toLocaleString("en-GB")}`;
+  const q = (input.priceQualifier ?? "").trim().replace(/\s+/g, " ");
+  const e = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/ /g, "\\s+");
+  const re = new RegExp(`${q ? `${e(q)}\\s*:?\\s*` : ""}${e(amt)}(?!,?\\d)`, "i");
+  return re.test(text.replace(/\s+/g, " "));
 }
 
 /** Places where a different qualifier sits directly before the supplied amount. */
@@ -297,6 +316,9 @@ export function priceQualifierProblems(
         out.push({ where, wrote: `${last[0]} ${m[0]}`.replace(/\s+/g, " ") });
     }
   }
+  for (const [where, text] of texts)
+    if (EXACT_PRICE_REQUIRED.includes(where) && !hasExactPrice(text, input))
+      out.push({ where, wrote: "", missing: true });
   return out;
 }
 
@@ -306,8 +328,18 @@ export function priceReminder(
 ): string {
   const n = Number((input.price ?? "").replace(/[^\d]/g, ""));
   const exact = `${input.priceQualifier?.trim() ? `${input.priceQualifier.trim()} ` : ""}£${n.toLocaleString("en-GB")}`;
-  const list = probs.map((p) => `'${p.wrote}' in ${p.where}`).join(", ");
-  return `\n\nIMPORTANT: The price must read exactly '${exact}' — you wrote ${list}. Never change or swap the qualifier.`;
+  const swapped = probs.filter((p) => !p.missing);
+  const missing = probs.filter((p) => p.missing).map((p) => p.where);
+  const parts: string[] = [];
+  if (swapped.length)
+    parts.push(
+      `you wrote ${swapped.map((p) => `'${p.wrote}' in ${p.where}`).join(", ")}. Never change or swap the qualifier`,
+    );
+  if (missing.length)
+    parts.push(
+      `${missing.join(" and ")} must state it at least once in exactly this form: '${exact}' (in the description's final paragraph and in paragraph 1 of the Email Blast body)`,
+    );
+  return `\n\nIMPORTANT: The price must read exactly '${exact}' — ${parts.join("; ")}.`;
 }
 
 export const coreTextsLabelled = (o: CoreOutput): [string, string][] => [

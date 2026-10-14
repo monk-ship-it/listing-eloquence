@@ -121,3 +121,42 @@ describe("preview + seller email", () => {
     expect(s.proseWords).toBe(4);
   });
 });
+
+describe("exact price form", () => {
+  const g = { price: "195000", priceQualifier: "Guide Price" };
+  const prose = "The flat is offered at a guide price of £195,000.";
+  it("prose only → missing", () => {
+    expect(priceQualifierProblems([["the description", prose]], g)).toEqual([
+      { where: "the description", wrote: "", missing: true },
+    ]);
+  });
+  it("prose plus exact form in final paragraph → OK", () => {
+    expect(
+      priceQualifierProblems(
+        [["the description", `${prose}\n\nGuide Price £195,000. Leasehold.`]],
+        g,
+      ),
+    ).toEqual([]);
+  });
+  it("optional colon, any case", () => {
+    const so = { price: "130,000", priceQualifier: "Shared Ownership" };
+    expect(
+      priceQualifierProblems(
+        [["the Email Blast body", "Shared ownership: £130,000 for a 40% share"]],
+        so,
+      ),
+    ).toEqual([]);
+  });
+  it("swapped qualifier still a problem", () => {
+    const p = priceQualifierProblems(
+      [["the description", "From £410,000. Fixed Price £410,000."]],
+      { price: "410000", priceQualifier: "Fixed Price" },
+    );
+    expect(p).toEqual([{ where: "the description", wrote: "From £410,000" }]);
+  });
+  it("no qualifier → amount only", () => {
+    expect(
+      priceQualifierProblems([["the description", "Priced at £250,000."]], { price: "250000", priceQualifier: "" }),
+    ).toEqual([]);
+  });
+});

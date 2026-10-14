@@ -1,4 +1,8 @@
-import { priceQualifierProblems, sellerEmailShape } from "../../src/lib/output-guards";
+import {
+  hasExactPrice,
+  priceQualifierProblems,
+  sellerEmailShape,
+} from "../../src/lib/output-guards";
 import { unwrapJson } from "../../src/lib/listing-types";
 import { imageLabelsFor } from "../../src/lib/output-guards";
 /** Deterministic graders for eval cases. Each returns Finding[]. */
@@ -302,7 +306,7 @@ export function gradeMaterialInfo(pack: GradePack, input: ListingInput): Finding
   for (const [name, text] of targets) {
     if (input.price) {
       const phrase = `${input.priceQualifier ? `${input.priceQualifier} ` : ""}${fmtMoney(input.price)}`;
-      if (!has(text, phrase)) f("fail", `${name}: missing "${phrase}"`);
+      if (!hasExactPrice(text, input)) f("fail", `${name}: missing "${phrase}"`);
     }
     if (input.tenure && !has(text, input.tenure))
       f("fail", `${name}: missing tenure "${input.tenure}"`);
