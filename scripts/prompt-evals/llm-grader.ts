@@ -29,12 +29,8 @@ function packText(p: GradePack): string {
   ].join("\n\n");
 }
 
-export async function llmGrade(
-  pack: GradePack,
-  input: ListingInput,
-  model: string,
-  onMeta?: (m: CallMeta) => void,
-): Promise<LlmGrade> {
+/** The grader request for one pack (also used to export it for the Console). */
+export function buildGraderRequest(pack: GradePack, input: ListingInput) {
   const v = promptVars(input);
   const voice = VOICES.find((x) => x.id === input.voice);
   const user = fillTemplate(GRADER_USER_TEMPLATE, {
@@ -51,7 +47,7 @@ export async function llmGrade(
     SELLER_APPROVAL: v.SELLER_APPROVAL,
     PACK: packText(pack),
   });
-  const raw = (await callClaudeTool({
+  return {
     system: GRADER_SYSTEM,
     user,
     toolName: GRADER_TOOL,
@@ -60,18 +56,35 @@ export async function llmGrade(
     maxTokens: GRADER_SETTINGS.maxTokens,
     temperature: GRADER_SETTINGS.temperature,
     timeoutMs: GRADER_SETTINGS.timeoutMs,
+  };
+}
+
+export async function llmGrade(
+  pack: GradePack,
+  input: ListingInput,
+  model: string,
+  onMeta?: (m: CallMeta) => void,
+): Promise<LlmGrade> {
+  const raw = (await callClaudeTool({
+    ...buildGraderRequest(pack, input),
     model,
     onMeta,
   })) as Partial<LlmGrade>;
-  const scores = (raw.scores ?? {}) as Record<string, number>;
+  const scores = { ...((raw.scores ?? {}) as Record<string, number>) };
+  const unsupported = Array.isArray(raw.unsupported)
+    ? raw.unsupported.filter((x): x is string => typeof x === "string" && !!x.trim())
+    : [];
+  // Any unsupported claim caps fact fidelity at 2 (a hard fail), whatever the model scored.
+  if (unsupported.length) scores["1"] = Math.min(Number(scores["1"]) || 0, 2);
   const vals = ["1", "2", "3", "4", "5", "6", "7", "8"].map((k) => Number(scores[k]) || 0);
   const average = vals.reduce((a, b) => a + b, 0) / 8;
   // Recompute the verdict from the rubric rather than trusting the model's arithmetic.
-  const hardFail = vals[0] <= 2 || vals[1] <= 2;
+  const hardFail = unsupported.length > 0 || vals[0] <= 2 || vals[1] <= 2;
   return {
     scores,
     hardFail,
     verdict: !hardFail && average >= 4 ? "PASS" : "FAIL",
+    unsupported,
     fixes: Array.isArray(raw.fixes) ? raw.fixes.filter((x) => typeof x === "string") : [],
     average: Math.round(average * 100) / 100,
   };
