@@ -4,7 +4,7 @@
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { renderWorkbenchFiles } from "../src/lib/prompts/workbench-export";
+import { renderWorkbenchFiles, sameGenerated } from "../src/lib/prompts/workbench-export";
 import { loadExportCases } from "./prompt-evals/load-cases";
 
 const ROOT = join(import.meta.dir, "..");
@@ -14,7 +14,7 @@ const stale: string[] = [];
 for (const [rel, content] of Object.entries(files)) {
   const p = join(ROOT, rel);
   const current = existsSync(p) ? readFileSync(p, "utf8") : null;
-  if (current === content) continue;
+  if (sameGenerated(rel, current, content)) continue;
   stale.push(rel);
   if (!check) {
     mkdirSync(dirname(p), { recursive: true });
