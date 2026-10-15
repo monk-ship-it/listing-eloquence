@@ -1,8 +1,4 @@
-import {
-  hasExactPrice,
-  priceQualifierProblems,
-  sellerEmailShape,
-} from "../../src/lib/output-guards";
+import { hasExactPrice, priceQualifierProblems, sellerEmailShape } from "../../src/lib/output-guards";
 import { unwrapJson } from "../../src/lib/listing-types";
 import { imageLabelsFor } from "../../src/lib/output-guards";
 /** Deterministic graders for eval cases. Each returns Finding[]. */
@@ -38,8 +34,7 @@ export interface GradePack {
 }
 
 const str = (v: unknown) => (typeof v === "string" ? v : "");
-const strs = (v: unknown) =>
-  Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
+const strs = (v: unknown) => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : []);
 
 /** Lenient view of raw tool output (before validate* patches it). */
 export function packFromRaw(core: unknown, mkt: unknown): GradePack {
@@ -53,14 +48,8 @@ export function packFromRaw(core: unknown, mkt: unknown): GradePack {
     sellerEmail: unwrapSellerEmail(m0.sellerEmail),
     social: un(m0.social),
   };
-  const e =
-    m.emailBlast && typeof m.emailBlast === "object"
-      ? (m.emailBlast as Record<string, unknown>)
-      : null;
-  const se =
-    m.sellerEmail && typeof m.sellerEmail === "object"
-      ? (m.sellerEmail as Record<string, unknown>)
-      : null;
+  const e = m.emailBlast && typeof m.emailBlast === "object" ? (m.emailBlast as Record<string, unknown>) : null;
+  const se = m.sellerEmail && typeof m.sellerEmail === "object" ? (m.sellerEmail as Record<string, unknown>) : null;
   return {
     headline: str(c.headline),
     listing: str(c.listing),
@@ -164,18 +153,13 @@ const has = (text: string, term: string) => norm(text).includes(norm(term));
 const snippet = (text: string, term: string) => {
   const t = norm(text);
   const i = t.search(termRe(term));
-  return i < 0
-    ? undefined
-    : `…${text.slice(Math.max(0, i - 50), i + term.length + 50).replace(/\n/g, " ")}…`;
+  return i < 0 ? undefined : `…${text.slice(Math.max(0, i - 50), i + term.length + 50).replace(/\n/g, " ")}…`;
 };
 
 // ---------- graders ----------
 
 export function gradeFactCheck(pack: GradePack, input: ListingInput): Finding[] {
-  const flags = factCheckPack(
-    { ...pack, sellerEmail: pack.sellerEmail ?? undefined },
-    publicInputsToText(input),
-  );
+  const flags = factCheckPack({ ...pack, sellerEmail: pack.sellerEmail ?? undefined }, publicInputsToText(input));
   return flags
     .filter((f) => f.kind === "not-in-notes")
     .map((f) => ({
@@ -217,10 +201,7 @@ export function gradeLimits(pack: GradePack, input: ListingInput): Finding[] {
   if (s.length > 250) f(`Strapline ${s.length} > 250 chars`, s);
   const first = s.trim().split(/\s+/)[0] ?? "";
   if (/^\d/.test(s.trim())) f("Strapline opens with a digit", s.slice(0, 60));
-  else if (
-    input.bedrooms &&
-    wordsToNumber(first.toLowerCase().replace(/[^a-z-]/g, "")) === Number(input.bedrooms)
-  )
+  else if (input.bedrooms && wordsToNumber(first.toLowerCase().replace(/[^a-z-]/g, "")) === Number(input.bedrooms))
     f("Strapline opens with the bedroom count", s.slice(0, 60));
   const kf = pack.keyFeatures;
   if (kf.length < 6 || kf.length > 10) f(`${kf.length} key features (need 6–10)`);
@@ -232,10 +213,8 @@ export function gradeLimits(pack: GradePack, input: ListingInput): Finding[] {
   if (!e) f("Email Blast missing");
   else {
     if (e.subjectLines.length !== 3) f(`${e.subjectLines.length} subject lines (need 3)`);
-    for (const sl of e.subjectLines)
-      if (sl.length > 60) f(`Subject line ${sl.length} > 60 chars`, sl);
-    if (e.previewText.length > 90)
-      f(`Preview text ${e.previewText.length} > 90 chars`, e.previewText);
+    for (const sl of e.subjectLines) if (sl.length > 60) f(`Subject line ${sl.length} > 60 chars`, sl);
+    if (e.previewText.length > 90) f(`Preview text ${e.previewText.length} > 90 chars`, e.previewText);
     const paras = e.body
       .split(/\n\s*\n/)
       .map((p) => p.trim())
@@ -250,8 +229,7 @@ export function gradeLimits(pack: GradePack, input: ListingInput): Finding[] {
   else {
     const n = words(se);
     const shape = sellerEmailShape(se);
-    if (shape.proseWords > 120)
-      f(`Seller email prose ${shape.proseWords} words (max 120, list excluded)`);
+    if (shape.proseWords > 120) f(`Seller email prose ${shape.proseWords} words (max 120, list excluded)`);
     for (const l of shape.longLines)
       out.push({
         grader: "limits",
@@ -267,8 +245,7 @@ export function gradeLimits(pack: GradePack, input: ListingInput): Finding[] {
   if (pack.social.length !== 3) f(`${pack.social.length} social posts (need 3)`);
   const x = pack.social.find((p) => p.platform === "X");
   if (x) {
-    const len =
-      `${x.caption}\n\n${x.hashtags.map((h) => `#${h.replace(/^#/, "")}`).join(" ")}`.trim().length;
+    const len = `${x.caption}\n\n${x.hashtags.map((h) => `#${h.replace(/^#/, "")}`).join(" ")}`.trim().length;
     if (len > 280) f(`X post ${len} > 280 chars incl. hashtags`, x.caption);
   }
   return out;
@@ -312,24 +289,15 @@ export function gradeMaterialInfo(pack: GradePack, input: ListingInput): Finding
         else f("warn", `${name}: price stated in prose, not exact form "${phrase}"`);
       }
     }
-    if (input.tenure && !has(text, input.tenure))
-      f("fail", `${name}: missing tenure "${input.tenure}"`);
+    if (input.tenure && !has(text, input.tenure)) f("fail", `${name}: missing tenure "${input.tenure}"`);
     if (input.councilTaxBand && /not yet banded|exempt/i.test(input.councilTaxBand)) {
-      if (
-        !new RegExp(`council tax[^.\\n]{0,20}${esc(input.councilTaxBand.trim())}`, "i").test(text)
-      )
+      if (!new RegExp(`council tax[^.\\n]{0,20}${esc(input.councilTaxBand.trim())}`, "i").test(text))
         f("fail", `${name}: missing "Council Tax: ${input.councilTaxBand}"`);
     } else if (input.councilTaxBand) {
-      const ok =
-        /council tax/i.test(text) &&
-        new RegExp(`\\bband\\s*${esc(input.councilTaxBand)}\\b`, "i").test(text);
+      const ok = /council tax/i.test(text) && new RegExp(`\\bband\\s*${esc(input.councilTaxBand)}\\b`, "i").test(text);
       if (!ok && !has(text, input.councilTaxBand))
         f("fail", `${name}: missing council tax band ${input.councilTaxBand}`);
-      else if (!ok)
-        f(
-          "warn",
-          `${name}: council tax band ${input.councilTaxBand} not stated as "council tax band"`,
-        );
+      else if (!ok) f("warn", `${name}: council tax band ${input.councilTaxBand} not stated as "council tax band"`);
     }
     if (input.epc) {
       const ok = new RegExp(`\\bEPC\\b[^.\\n]{0,30}\\b${esc(input.epc)}\\b`, "i").test(text);
@@ -337,8 +305,7 @@ export function gradeMaterialInfo(pack: GradePack, input: ListingInput): Finding
     }
     if (lease) {
       const items: [string, string][] = [];
-      if (input.leaseYears)
-        items.push(["lease years", `${input.leaseYears.replace(/[^\d]/g, "")} years`]);
+      if (input.leaseYears) items.push(["lease years", `${input.leaseYears.replace(/[^\d]/g, "")} years`]);
       if (input.groundRent) items.push(["ground rent", "ground rent"]);
       if (input.serviceCharge) items.push(["service charge", "service charge"]);
       const paras = text.split(/\n\s*\n/);
@@ -354,8 +321,7 @@ export function gradeMaterialInfo(pack: GradePack, input: ListingInput): Finding
     if (isSharedOwnership(input)) {
       if (input.sharePercent && !has(text, `${input.sharePercent}% share`))
         f("fail", `${name}: missing "${input.sharePercent}% share"`);
-      if (input.rent && !has(text, fmtMoney(input.rent)))
-        f("fail", `${name}: missing rent ${fmtMoney(input.rent)}`);
+      if (input.rent && !has(text, fmtMoney(input.rent))) f("fail", `${name}: missing rent ${fmtMoney(input.rent)}`);
     }
   }
   // Known issues + Part C "Yes" items must be in the description.
@@ -364,8 +330,7 @@ export function gradeMaterialInfo(pack: GradePack, input: ListingInput): Finding
     .map((c) => c.trim())
     .filter((c) => c.length > 3);
   for (const c of clauses)
-    if (!clauseCovered(c, pack.listing))
-      f("fail", `Description doesn't disclose known issue: "${c}"`);
+    if (!clauseCovered(c, pack.listing)) f("fail", `Description doesn't disclose known issue: "${c}"`);
   const partC = [
     "buildingSafety",
     "restrictions",
@@ -380,8 +345,7 @@ export function gradeMaterialInfo(pack: GradePack, input: ListingInput): Finding
     const v = (input[k] ?? "").trim();
     if (!/^yes/i.test(v)) continue;
     const detail = v.replace(/^yes\s*[–—:-]?\s*/i, "");
-    if (detail && !clauseCovered(detail, pack.listing))
-      f("fail", `Description doesn't cover Part C ${k}: "${detail}"`);
+    if (detail && !clauseCovered(detail, pack.listing)) f("fail", `Description doesn't cover Part C ${k}: "${detail}"`);
   }
   for (const p of pack.social) {
     const t = socialText(p);
@@ -483,8 +447,7 @@ export function gradeV2(pack: GradePack, input: ListingInput): Finding[] {
     for (const p of pack.social)
       if (!new RegExp(`\\bEPC\\b[^.\\n]{0,30}\\b${esc(input.epc.trim())}\\b`, "i").test(p.caption))
         f(`social.${p.platform}: no EPC rating ${input.epc}`, p.caption.slice(0, 120));
-  const hasIssues =
-    !!input.disclosures?.trim() || PART_C.some((k) => /^yes/i.test((input[k] ?? "").trim()));
+  const hasIssues = !!input.disclosures?.trim() || PART_C.some((k) => /^yes/i.test((input[k] ?? "").trim()));
   if (hasIssues) {
     const targets: [string, string][] = [
       ["emailBlast.body", pack.emailBlast?.body ?? ""],
@@ -492,8 +455,7 @@ export function gradeV2(pack: GradePack, input: ListingInput): Finding[] {
         .filter((p) => p.platform === "Instagram" || p.platform === "Facebook")
         .map((p): [string, string] => [`social.${p.platform}`, p.caption]),
     ];
-    for (const [sec, text] of targets)
-      if (!/please note:/i.test(text)) f(`${sec}: no "Please note:" sentence`);
+    for (const [sec, text] of targets) if (!/please note:/i.test(text)) f(`${sec}: no "Please note:" sentence`);
   }
   // The app appends one fixed label per trigger: every triggered label must be present.
   const triggered = imageLabelsFor(input.mediaNotes);
@@ -503,8 +465,7 @@ export function gradeV2(pack: GradePack, input: ListingInput): Finding[] {
       ...pack.social.map((p): [string, string] => [`social.${p.platform}`, p.caption]),
     ];
     for (const [sec, text] of blocks)
-      if (!triggered.every((l) => has(text, l)))
-        f(`${sec}: missing image label (${triggered.length} triggered)`);
+      if (!triggered.every((l) => has(text, l))) f(`${sec}: missing image label (${triggered.length} triggered)`);
   }
   if (/auction/i.test(input.saleMethod ?? "")) {
     const method = /modern/i.test(input.saleMethod ?? "") ? "Modern Method of Auction" : "auction";
@@ -515,8 +476,7 @@ export function gradeV2(pack: GradePack, input: ListingInput): Finding[] {
       ["emailBlast.body", (pack.emailBlast?.body ?? "").split(/\n\s*\n/)[0] ?? ""],
       ...pack.social.map((p): [string, string] => [`social.${p.platform}`, p.caption]),
     ];
-    for (const [sec, text] of blocks)
-      if (!re.test(text)) f(`${sec}: no "For sale by ${method}" line`);
+    for (const [sec, text] of blocks) if (!re.test(text)) f(`${sec}: no "For sale by ${method}" line`);
   }
   const priceTexts: [string, string][] = [
     ["headline", pack.headline],
@@ -532,12 +492,9 @@ export function gradeV2(pack: GradePack, input: ListingInput): Finding[] {
     ["sellerEmail.body", pack.sellerEmail?.body ?? ""],
     ...pack.social.map((p): [string, string] => [`social.${p.platform}`, p.caption]),
   ];
-  for (const pr of priceQualifierProblems(priceTexts, input))
-    f(`Price qualifier changed in ${pr.where}`, pr.wrote);
+  for (const pr of priceQualifierProblems(priceTexts, input)) f(`Price qualifier changed in ${pr.where}`, pr.wrote);
   for (const [sec, text] of publicBlocks(pack)) {
-    const m = text.match(
-      /\bdraft\b|subject to (seller )?approval|\bapproval of (the )?particulars\b/i,
-    );
+    const m = text.match(/\bdraft\b|subject to (seller )?approval|\bapproval of (the )?particulars\b/i);
     if (m) f(`Draft/approval wording in ${sec}`, m[0]);
   }
   if (pack.emailBlast) {
@@ -591,13 +548,144 @@ export function gradePatterns(pack: GradePack, c: EvalCase): Finding[] {
   return out;
 }
 
+// ---------------------------------------------------------------------------
+// Room dimensions: every "N.NNm x N.NNm" must belong to the room it was given for
+// ---------------------------------------------------------------------------
+
+const DIM_PAIR_RE = /(\d+(?:\.\d+)?)\s*m\s*[x×]\s*(\d+(?:\.\d+)?)\s*m/gi;
+const NUM_WORDS: Record<string, string> = {
+  one: "1",
+  two: "2",
+  three: "3",
+  four: "4",
+  five: "5",
+  six: "6",
+};
+const roomKey = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\b(one|two|three|four|five|six)\b/g, (w) => NUM_WORDS[w])
+    .trim();
+const pairKey = (a: string, b: string) =>
+  [Number(a), Number(b)]
+    .map((n) => n.toFixed(2))
+    .sort()
+    .join("x");
+
+/** Supplied rooms from the dimensions field: "Lounge 4.62m x 3.48m; Bedroom 1 …". */
+export function suppliedRooms(dimensions: string | undefined): { name: string; key: string }[] {
+  const out: { name: string; key: string }[] = [];
+  for (const seg of (dimensions ?? "").split(/[;\n]/)) {
+    const m = /^\s*(.*?)\s*(\d+(?:\.\d+)?)\s*m\s*[x×]\s*(\d+(?:\.\d+)?)\s*m/i.exec(seg);
+    if (m && m[1].trim()) out.push({ name: roomKey(m[1]), key: pairKey(m[2], m[3]) });
+  }
+  return out;
+}
+
+/**
+ * FAIL when a dimension pair is attached to a different supplied room than the one it
+ * was given for (e.g. the principal bedroom's size written against the living room),
+ * or when a pair appears that isn't in the supplied dimensions at all.
+ * Only judges when the text near the figure names a supplied room — never guesses.
+ */
+export function gradeDimensions(pack: GradePack, input: ListingInput): Finding[] {
+  const rooms = suppliedRooms(input.dimensions);
+  if (!rooms.length) return [];
+  const known = new Set(rooms.map((r) => r.key));
+  const out: Finding[] = [];
+  for (const [where, text] of publicBlocks(pack)) {
+    let prevEnd = 0;
+    for (const m of text.matchAll(DIM_PAIR_RE)) {
+      const at = m.index ?? 0;
+      const key = pairKey(m[1], m[2]);
+      // Window: from the end of the previous figure (or sentence start) to this figure.
+      const before = text.slice(prevEnd, at);
+      const sentenceStart = Math.max(before.lastIndexOf(". "), before.lastIndexOf("\n"));
+      const windowText = ` ${roomKey(before.slice(sentenceStart + 1))} `;
+      prevEnd = at + m[0].length;
+      if (!known.has(key)) {
+        out.push({
+          grader: "dimensions",
+          severity: "fail",
+          message: `${where}: ${m[0]} is not in the supplied room dimensions`,
+          text: m[0],
+        });
+        continue;
+      }
+      const named = rooms.filter((r) => windowText.includes(` ${r.name} `));
+      if (named.length && !named.some((r) => r.key === key)) {
+        const owner = rooms.find((r) => r.key === key)?.name ?? "another room";
+        out.push({
+          grader: "dimensions",
+          severity: "fail",
+          message: `${where}: ${m[0]} is given for "${named[named.length - 1].name}" but was supplied for "${owner}"`,
+          text: m[0],
+        });
+      }
+    }
+  }
+  return out;
+}
+
+/** FAIL when a flat/maisonette's copy names a floor (e.g. "ground floor") the facts never mention. */
+export function gradeFloors(pack: GradePack, input: ListingInput): Finding[] {
+  if (!/\b(flat|maisonette|apartment|penthouse|studio)\b/i.test(input.propertyType ?? "")) return [];
+  const facts = publicInputsToText(input).toLowerCase();
+  // Floors the facts mention, incl. lists like "first and second floors".
+  const F = "lower ground|ground|first|second|third|fourth|top";
+  const supplied = new Set<string>();
+  for (const m of facts.matchAll(new RegExp(`\\b((?:${F})(?:\\s*(?:,|and|&)\\s*(?:${F}))*)[\\s-]+floors?\\b`, "g")))
+    for (const f of m[1].split(/\s*(?:,|and|&)\s*/)) supplied.add(f.trim());
+  const out: Finding[] = [];
+  for (const floor of ["ground", "lower ground", "first", "second", "third", "top"]) {
+    const re = new RegExp(`\\b${floor}[- ]floor\\b`, "i");
+    if (supplied.has(floor)) continue;
+    for (const [where, text] of publicBlocks(pack)) {
+      const m = re.exec(text);
+      if (m) {
+        out.push({
+          grader: "facts",
+          severity: "fail",
+          message: `${where}: "${m[0]}" — the facts never put any part of this ${input.propertyType} on that floor`,
+          text: m[0],
+        });
+        break;
+      }
+    }
+  }
+  return out;
+}
+
+const SUPPLY_LABELS = [
+  "Construction:",
+  "Electricity:",
+  "Water:",
+  "Sewerage:",
+  "Heating:",
+  "Broadband:",
+  "Mobile signal:",
+  "Parking:",
+];
+
+/** WARN when the description's final paragraph reproduces the material-information block. */
+export function gradeBlockDump(pack: GradePack): Finding[] {
+  const paras = pack.listing.split(/\n{2,}/).filter((p) => p.trim());
+  const last = paras[paras.length - 1] ?? "";
+  const n = SUPPLY_LABELS.filter((l) => last.toLowerCase().includes(l.toLowerCase())).length;
+  return n >= 4
+    ? [
+        {
+          grader: "materialInfo",
+          severity: "warn",
+          message: `listing: final paragraph repeats ${n} supply labels — the app adds the Material Information block separately`,
+        },
+      ]
+    : [];
+}
+
 /** Run every pack grader; `prefix` labels raw-output findings. */
-export function gradePack(
-  pack: GradePack,
-  input: ListingInput,
-  c: EvalCase,
-  prefix = "",
-): Finding[] {
+export function gradePack(pack: GradePack, input: ListingInput, c: EvalCase, prefix = ""): Finding[] {
   const all = [
     ...gradeFactCheck(pack, input),
     ...gradeBanned(pack, input),
@@ -609,6 +697,9 @@ export function gradePack(
     ...gradeMustInclude(pack, c),
     ...gradeV2(pack, input),
     ...gradePatterns(pack, c),
+    ...gradeDimensions(pack, input),
+    ...gradeFloors(pack, input),
+    ...gradeBlockDump(pack),
   ];
   return prefix ? all.map((f) => ({ ...f, grader: `${prefix}${f.grader}` })) : all;
 }
@@ -618,10 +709,7 @@ export function gradeRaw(pack: GradePack, input: ListingInput): Finding[] {
   // Pass/fail is decided on the final output only; raw findings are informational.
   return [...gradeLimits(pack, input), ...gradeBanned(pack, input)].map((f) => ({
     ...f,
-    message:
-      f.severity === "fail"
-        ? `${f.message} (fixed by the app before the agent sees it)`
-        : f.message,
+    message: f.severity === "fail" ? `${f.message} (fixed by the app before the agent sees it)` : f.message,
     severity: "warn" as const,
     grader: `raw:${f.grader}`,
   }));
