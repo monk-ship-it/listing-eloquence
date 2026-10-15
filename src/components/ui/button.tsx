@@ -18,8 +18,8 @@ const buttonVariants = cva(
       },
       size: {
         default: "min-h-9 h-auto px-4 py-2",
-        sm: "min-h-8 h-auto rounded-md px-3 py-1.5 text-xs",
-        lg: "min-h-10 h-auto rounded-md px-5 py-2 sm:px-8",
+        sm: "min-h-8 h-auto rounded-md px-3 py-2 text-xs",
+        lg: "min-h-10 h-auto rounded-md px-5 py-2.5 sm:px-8",
         icon: "h-9 w-9",
       },
     },
