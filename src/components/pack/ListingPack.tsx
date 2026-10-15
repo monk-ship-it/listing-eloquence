@@ -78,11 +78,7 @@ function Counter({ n, warn, max }: { n: number; warn?: number; max: number }) {
     <span
       className={cn(
         "text-xs tabular-nums",
-        n > max
-          ? "font-semibold text-destructive"
-          : warn && n > warn
-            ? "text-warning"
-            : "text-muted-foreground",
+        n > max ? "font-semibold text-destructive" : warn && n > warn ? "text-warning" : "text-muted-foreground",
       )}
     >
       {n}/{max}
@@ -198,8 +194,7 @@ export function ListingPack({
               )}
               {flags.some((f) => f.kind === "private-leak") && (
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Includes wording from your private viewing or photo notes — remove it before
-                  publishing.
+                  Includes wording from your private viewing or photo notes — remove it before publishing.
                 </p>
               )}
             </div>
@@ -210,7 +205,7 @@ export function ListingPack({
       <Card className="p-6">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Brochure / email headline
               </p>
@@ -225,15 +220,11 @@ export function ListingPack({
                 </Badge>
               )}
             </div>
-            <h2 className="mt-1 break-words font-display text-xl font-semibold">
-              {hl(output.headline)}
-            </h2>
+            <h2 className="mt-1 break-words font-display text-xl font-semibold">{hl(output.headline)}</h2>
           </div>
           <CopyIcon
             label="Copy full listing pack"
-            onClick={() =>
-              copyToast(buildCopyAllText(output, { materialInfo: mi, draft }), "Full pack copied.")
-            }
+            onClick={() => copyToast(buildCopyAllText(output, { materialInfo: mi, draft }), "Full pack copied.")}
           />
         </div>
       </Card>
@@ -244,9 +235,7 @@ export function ListingPack({
             <h3 className="font-display text-lg font-semibold">Key features</h3>
             <CopyIcon
               label="Copy key features"
-              onClick={() =>
-                copy(formatKeyFeaturesBlock(output.keyFeatures), "Key features copied.")
-              }
+              onClick={() => copy(formatKeyFeaturesBlock(output.keyFeatures), "Key features copied.")}
             />
           </div>
           <ul className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
@@ -256,9 +245,7 @@ export function ListingPack({
                 <span className="min-w-0 break-words">
                   {hl(f)}
                   {f.length > 80 && (
-                    <span className="ml-1.5 text-xs font-semibold text-destructive">
-                      {f.length}/80
-                    </span>
+                    <span className="ml-1.5 text-xs font-semibold text-destructive">{f.length}/80</span>
                   )}
                 </span>
               </li>
@@ -291,20 +278,15 @@ export function ListingPack({
 
       <Card className="p-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-x-2">
             <h3 className="font-display text-lg font-semibold">Strapline (portal summary)</h3>
             <Counter n={strapLen} warn={160} max={250} />
           </div>
-          <CopyIcon
-            label="Copy strapline"
-            onClick={() => copy(output.summary, "Strapline copied.")}
-          />
+          <CopyIcon label="Copy strapline" onClick={() => copy(output.summary, "Strapline copied.")} />
         </div>
         <p className="mt-2 break-words text-sm text-muted-foreground">{hl(output.summary)}</p>
         {strapLen > 160 && strapLen <= 250 && (
-          <p className="mt-1 text-xs text-warning">
-            Over 160 characters — portals may cut it off in search results.
-          </p>
+          <p className="mt-1 text-xs text-warning">Over 160 characters — portals may cut it off in search results.</p>
         )}
       </Card>
 
@@ -315,10 +297,7 @@ export function ListingPack({
             <h3 className="font-display text-lg font-semibold">Material Information</h3>
           </div>
           {miBlock && (
-            <CopyIcon
-              label="Copy Material Information"
-              onClick={() => copy(miBlock, "Material Information copied.")}
-            />
+            <CopyIcon label="Copy Material Information" onClick={() => copy(miBlock, "Material Information copied.")} />
           )}
         </div>
         {miBlock ? (
@@ -329,11 +308,7 @@ export function ListingPack({
           <p className="mt-2 text-sm text-muted-foreground">No material information entered yet.</p>
         )}
         <div className="mt-4 flex items-center gap-3">
-          <Switch
-            id={`mi-append-${generationId ?? "new"}`}
-            checked={appendMi}
-            onCheckedChange={setAppendMi}
-          />
+          <Switch id={`mi-append-${generationId ?? "new"}`} checked={appendMi} onCheckedChange={setAppendMi} />
           <Label htmlFor={`mi-append-${generationId ?? "new"}`} className="text-sm">
             Add to description when copying
           </Label>
@@ -361,9 +336,7 @@ export function ListingPack({
         <h3 className="font-display text-lg font-semibold">Social pack</h3>
         {output.social.length === 0 && (
           <>
-            <p className="mt-2 text-sm text-muted-foreground">
-              The social posts didn't generate this time.
-            </p>
+            <p className="mt-2 text-sm text-muted-foreground">The social posts didn't generate this time.</p>
             <GenerateMarketingButton
               generationId={generationId}
               label="Generate social posts — free, doesn't use a listing"
@@ -455,15 +428,10 @@ function SellerEmailCard({
         </div>
       ) : (
         <>
-          <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Subject
-          </p>
+          <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Subject</p>
           <p className="mt-1 break-words text-sm font-medium">{e.subject}</p>
           <div className="mt-4 max-w-sm space-y-1.5">
-            <Label
-              htmlFor={`seller-name-${generationId ?? "new"}`}
-              className="text-xs text-muted-foreground"
-            >
+            <Label htmlFor={`seller-name-${generationId ?? "new"}`} className="text-xs text-muted-foreground">
               Seller name (replaces [Seller name] when you copy)
             </Label>
             <Input
