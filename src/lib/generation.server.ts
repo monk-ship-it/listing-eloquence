@@ -242,7 +242,7 @@ export async function runExtraction(notes: string, opts: RunOpts = {}): Promise<
   const raw = await callClaudeTool({
     ...buildExtractRequest(notes),
     model: opts.model,
-    onMeta: (m) => opts.onMeta?.({ ...m, call: "extract", attempt: 1 }),
+    onMeta: (m) => opts.onMeta?.({ ...m, call: "extract", attempt: 1, reason: [] }),
   });
   opts.onRaw?.("extract", raw, 1);
   return filterExtraction(raw, notes);
