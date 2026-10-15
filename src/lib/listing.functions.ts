@@ -3,7 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getConfiguredClaudeModel } from "./ai-gateway.server";
 import { runCore, runMarketing } from "./generation.server";
 import type { VoiceId } from "./voices";
-import type { ListingInput, ListingOutput, MarketingOutput } from "./listing-types";
+import type { AttemptMeta, ListingInput, ListingOutput, MarketingOutput } from "./listing-types";
 import { coerceLegacyOutput } from "./listing-types";
 import { isValidVoice, normaliseInput } from "./prompts/render";
 import { PROMPT_VERSION } from "./prompts/version.gen";
@@ -110,9 +110,12 @@ export const generateListing = createServerFn({ method: "POST" })
       const model = await getConfiguredClaudeModel();
       const log = (stage: "core" | "marketing" | "regen", e: unknown) =>
         logGenerationError(userId, stage, e);
+      const attempts: AttemptMeta[] = [];
+      const onMeta = (m: AttemptMeta) =>
+        attempts.push({ call: m.call, attempt: m.attempt, ms: m.ms, reason: m.reason });
       const [coreRes, mktRes] = await Promise.allSettled([
-        runCore(data, { log, model }),
-        runMarketing(data, { log, model }),
+        runCore(data, { log, model, onMeta }),
+        runMarketing(data, { log, model, onMeta }),
       ]);
       if (coreRes.status === "rejected") throw coreRes.reason;
 
@@ -120,7 +123,7 @@ export const generateListing = createServerFn({ method: "POST" })
         mktRes.status === "fulfilled"
           ? { ...coreRes.value, ...mktRes.value }
           : { ...coreRes.value, emailBlast: null, social: [], marketingStatus: "failed" };
-      parsed.meta = { promptVersion: PROMPT_VERSION, model };
+      parsed.meta = { promptVersion: PROMPT_VERSION, model, attempts };
 
       const voice = (data.voice ?? "professional") as VoiceId;
       const { data: savedGen, error: insertError } = await supabase

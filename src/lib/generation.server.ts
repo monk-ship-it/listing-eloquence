@@ -31,6 +31,8 @@ import {
   priceQualifierProblems,
   priceReminder,
   shapeReminder,
+  swapCore,
+  swapMarketing,
   trimPreview,
   xOverBudget,
 } from "./output-guards";
@@ -42,7 +44,14 @@ export interface RunOpts {
   log?: (stage: GenStage, err: unknown) => void | Promise<void>;
   model?: string;
   /** Timing / stop reason / token usage for every attempt. */
-  onMeta?: (m: CallMeta & { call: "core" | "marketing" | "extract"; attempt: number }) => void;
+  onMeta?: (
+    m: CallMeta & {
+      call: "core" | "marketing" | "extract";
+      attempt: number;
+      /** Why this attempt ran (empty for the first attempt). */
+      reason: string[];
+    },
+  ) => void;
   /** Raw tool input of every attempt, before validate* patches it (evals). */
   onRaw?: (call: "core" | "marketing" | "extract", raw: unknown, attempt: number) => void;
 }
@@ -84,15 +93,19 @@ export async function runCore(input: ListingInput, opts: RunOpts = {}): Promise<
     const p = problems(o);
     return (p.limits ? 1 : 0) + p.banned.length + p.price.length;
   };
-  const attempt = async (maxTokens: number, reminder: boolean | string = false) => {
+  const attempt = async (
+    maxTokens: number,
+    reminder: boolean | string = false,
+    reason: string[] = [],
+  ) => {
     const a = ++n;
     const raw = await callClaudeTool({
       ...buildCoreRequest(input, { reminder, maxTokens }),
       model: opts.model,
-      onMeta: (m) => opts.onMeta?.({ ...m, call: "core", attempt: a }),
+      onMeta: (m) => opts.onMeta?.({ ...m, call: "core", attempt: a, reason }),
     });
     opts.onRaw?.("core", raw, a);
-    return labelCore(validateCoreOutput(raw), input);
+    return labelCore(swapCore(validateCoreOutput(raw)), input);
   };
   let out: CoreOutput;
   try {
@@ -102,22 +115,24 @@ export async function runCore(input: ListingInput, opts: RunOpts = {}): Promise<
     const code = errorCode(err);
     retried = true;
     if (code === "AI_TRUNCATED" || code === "MALFORMED_AI_OUTPUT")
-      out = await attempt(S.retryMaxTokens);
-    else if (code === "AI_TIMEOUT") out = await attempt(S.maxTokens);
+      out = await attempt(S.retryMaxTokens, false, [code]);
+    else if (code === "AI_TIMEOUT") out = await attempt(S.maxTokens, false, [code]);
     else throw err;
   }
   const p = problems(out);
   if (!retried && (p.limits || p.banned.length || p.price.length)) {
-    await opts.log?.(
-      "core",
-      new Error(
-        `${p.limits ? "LIMITS_EXCEEDED " : ""}${p.banned.length ? `BANNED: ${p.banned.join(",")}` : ""}`.trim(),
-      ),
-    );
+    const reason = [
+      p.limits ? "LIMITS_EXCEEDED" : "",
+      p.banned.length ? `BANNED: ${p.banned.join(",")}` : "",
+      p.price.length ? `PRICE_QUALIFIER: ${p.price.map((x) => x.wrote).join(",")}` : "",
+    ].filter(Boolean);
+    await opts.log?.("core", new Error(reason.join(" ")));
     const reminder =
-      (p.limits ? LIMIT_REMINDER : "") + (p.banned.length ? bannedReminder(p.banned) : "");
+      (p.limits ? LIMIT_REMINDER : "") +
+      (p.banned.length ? bannedReminder(p.banned) : "") +
+      (p.price.length ? priceReminder(p.price, input) : "");
     try {
-      const second = await attempt(S.maxTokens, reminder);
+      const second = await attempt(S.maxTokens, reminder, reason);
       if (score(second) <= score(out)) out = second;
     } catch (err) {
       await opts.log?.("core", err);
@@ -159,15 +174,15 @@ export async function runMarketing(
       p.social.length + p.banned.length + p.pleaseNote.length + p.price.length + p.shape.length
     );
   };
-  const attempt = async (reminder: boolean | string = false) => {
+  const attempt = async (reminder: boolean | string = false, reason: string[] = []) => {
     const a = ++n;
     const raw = await callClaudeTool({
       ...buildMarketingRequest(input, { reminder }),
       model: opts.model,
-      onMeta: (m) => opts.onMeta?.({ ...m, call: "marketing", attempt: a }),
+      onMeta: (m) => opts.onMeta?.({ ...m, call: "marketing", attempt: a, reason }),
     });
     opts.onRaw?.("marketing", raw, a);
-    const out = validateMarketingOutput(raw);
+    const out = swapMarketing(validateMarketingOutput(raw));
     if (out.sellerEmail) out.sellerEmail = { ...out.sellerEmail, subject };
     const over = xOverBudget(normaliseCaptions(out.social), labels);
     const labelled = labelMarketing(out, input);
@@ -182,7 +197,7 @@ export async function runMarketing(
     await opts.log?.(stage, err);
     retried = true;
     try {
-      out = await attempt();
+      out = await attempt(false, [errorCode(err)]);
     } catch (err2) {
       await opts.log?.(stage, err2);
       throw err2;
@@ -197,7 +212,7 @@ export async function runMarketing(
       p.social.length ? `SOCIAL_RULES: ${p.social.join(",")}` : "",
       p.banned.length ? `BANNED: ${p.banned.join(",")}` : "",
       p.pleaseNote.length ? "PLEASE_NOTE_MISSING" : "",
-      p.price.length ? "PRICE_QUALIFIER" : "",
+      p.price.length ? `PRICE_QUALIFIER: ${p.price.map((x) => x.wrote).join(",")}` : "",
       p.shape.length ? `SHAPE: ${p.shape.join(",")}` : "",
     ].filter(Boolean);
     await opts.log?.(stage, new Error(tags.join(" ")));
@@ -208,7 +223,7 @@ export async function runMarketing(
       (p.price.length ? priceReminder(p.price, input) : "") +
       shapeReminder(p.shape);
     try {
-      const second = await attempt(reminder);
+      const second = await attempt(reminder, tags);
       if (score(second) <= score(out)) out = second;
     } catch (err) {
       await opts.log?.(stage, err);
@@ -227,7 +242,7 @@ export async function runExtraction(notes: string, opts: RunOpts = {}): Promise<
   const raw = await callClaudeTool({
     ...buildExtractRequest(notes),
     model: opts.model,
-    onMeta: (m) => opts.onMeta?.({ ...m, call: "extract", attempt: 1 }),
+    onMeta: (m) => opts.onMeta?.({ ...m, call: "extract", attempt: 1, reason: [] }),
   });
   opts.onRaw?.("extract", raw, 1);
   return filterExtraction(raw, notes);

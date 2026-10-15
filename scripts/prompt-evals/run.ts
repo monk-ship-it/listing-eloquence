@@ -183,6 +183,7 @@ async function runCase(c: EvalCase, run: number): Promise<CaseResult> {
     ms: number;
     stopReason: string | null;
     usage: { input_tokens?: number; output_tokens?: number } | null;
+    reason: string[];
   }) =>
     timings.push({
       call: m.call,
@@ -191,10 +192,14 @@ async function runCase(c: EvalCase, run: number): Promise<CaseResult> {
       stopReason: m.stopReason,
       inputTokens: m.usage?.input_tokens ?? 0,
       outputTokens: m.usage?.output_tokens ?? 0,
+      reason: m.reason,
     });
   const raw: Record<string, unknown> = {};
-  const onRaw = (call: string, r: unknown) => {
+  // raw[call] = the LAST attempt (what the app kept is in `output`);
+  // raw[`${call}.attempt${n}`] keeps every attempt so retries can be audited.
+  const onRaw = (call: string, r: unknown, attempt: number) => {
     raw[call] = r;
+    raw[`${call}.attempt${attempt}`] = r;
   };
   const sum = (call: string) => {
     const t = timings.filter((x) => x.call === call);

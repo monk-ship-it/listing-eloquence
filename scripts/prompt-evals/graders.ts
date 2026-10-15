@@ -306,7 +306,11 @@ export function gradeMaterialInfo(pack: GradePack, input: ListingInput): Finding
   for (const [name, text] of targets) {
     if (input.price) {
       const phrase = `${input.priceQualifier ? `${input.priceQualifier} ` : ""}${fmtMoney(input.price)}`;
-      if (!hasExactPrice(text, input)) f("fail", `${name}: missing "${phrase}"`);
+      if (!hasExactPrice(text, input)) {
+        const amt = fmtMoney(input.price);
+        if (!text.replace(/\s+/g, " ").includes(amt)) f("fail", `${name}: price ${amt} missing`);
+        else f("warn", `${name}: price stated in prose, not exact form "${phrase}"`);
+      }
     }
     if (input.tenure && !has(text, input.tenure))
       f("fail", `${name}: missing tenure "${input.tenure}"`);

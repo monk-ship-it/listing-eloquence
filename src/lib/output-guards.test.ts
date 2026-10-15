@@ -5,8 +5,12 @@ import {
   imageLabelsFor,
   labelSocial,
   missingPleaseNote,
+  hasExactPrice,
+  labelMarketing,
+  swapSoftBanned,
+  withSaleMethodLine,
 } from "./output-guards";
-import type { ListingInput, MarketingOutput } from "./listing-types";
+import type { ListingInput, MarketingOutput, SocialPost } from "./listing-types";
 
 describe("image labels", () => {
   it("one label per trigger, fixed order", () => {
@@ -125,27 +129,16 @@ describe("preview + seller email", () => {
 describe("exact price form", () => {
   const g = { price: "195000", priceQualifier: "Guide Price" };
   const prose = "The flat is offered at a guide price of £195,000.";
-  it("prose only → missing", () => {
-    expect(priceQualifierProblems([["the description", prose]], g)).toEqual([
-      { where: "the description", wrote: "", missing: true },
-    ]);
+  it("prose only → not exact (grader warning), and no retry trigger", () => {
+    expect(hasExactPrice(prose, g)).toBe(false);
+    expect(priceQualifierProblems([["the description", prose]], g)).toEqual([]);
   });
   it("prose plus exact form in final paragraph → OK", () => {
-    expect(
-      priceQualifierProblems(
-        [["the description", `${prose}\n\nGuide Price £195,000. Leasehold.`]],
-        g,
-      ),
-    ).toEqual([]);
+    expect(hasExactPrice(`${prose}\n\nGuide Price £195,000. Leasehold.`, g)).toBe(true);
   });
   it("optional colon, any case", () => {
     const so = { price: "130,000", priceQualifier: "Shared Ownership" };
-    expect(
-      priceQualifierProblems(
-        [["the Email Blast body", "Shared ownership: £130,000 for a 40% share"]],
-        so,
-      ),
-    ).toEqual([]);
+    expect(hasExactPrice("Shared ownership: £130,000 for a 40% share", so)).toBe(true);
   });
   it("swapped qualifier still a problem", () => {
     const p = priceQualifierProblems(
@@ -155,8 +148,41 @@ describe("exact price form", () => {
     expect(p).toEqual([{ where: "the description", wrote: "From £410,000" }]);
   });
   it("no qualifier → amount only", () => {
-    expect(
-      priceQualifierProblems([["the description", "Priced at £250,000."]], { price: "250000", priceQualifier: "" }),
-    ).toEqual([]);
+    expect(hasExactPrice("Priced at £250,000.", { price: "250000", priceQualifier: "" })).toBe(
+      true,
+    );
+  });
+});
+
+describe("soft banned swaps", () => {
+  it("swaps and keeps capitals", () => {
+    expect(swapSoftBanned("The house benefits from a garden. Boasts a view; rooms benefit from light and boast space.")).toBe(
+      "The house has a garden. Has a view; rooms have light and have space.",
+    );
+  });
+});
+
+describe("sale method caption line", () => {
+  const posts = [
+    { platform: "Instagram", caption: "Three bedroom house.", hashtags: [] },
+    { platform: "X", caption: "For sale by Modern Method of Auction. Already there.", hashtags: [] },
+  ] as SocialPost[];
+  it("prepends only where missing", () => {
+    const out = withSaleMethodLine(posts, { saleMethod: "Modern Method of Auction" } as ListingInput);
+    expect(out[0].caption).toBe("For sale by Modern Method of Auction. Three bedroom house.");
+    expect(out[1].caption).toBe(posts[1].caption);
+    const t = withSaleMethodLine(posts, { saleMethod: "Traditional auction" } as ListingInput);
+    expect(t[0].caption.startsWith("For sale by traditional auction. ")).toBe(true);
+    expect(withSaleMethodLine(posts, { saleMethod: "Private treaty" } as ListingInput)).toBe(posts);
+  });
+  it("X stays ≤ 280 after the prepend", () => {
+    const x = { platform: "X", caption: "A".repeat(150) + ". " + "B".repeat(120) + ".", hashtags: ["Kent"] } as SocialPost;
+    const out = labelMarketing(
+      { emailBlast: null, sellerEmail: null, social: [x] } as unknown as MarketingOutput,
+      { saleMethod: "Traditional auction" } as ListingInput,
+    );
+    const c = out.social[0];
+    expect(`${c.caption}${c.hashtags.length ? `\n\n#${c.hashtags.join(" #")}` : ""}`.length).toBeLessThanOrEqual(280);
+    expect(c.caption.startsWith("For sale by traditional auction.")).toBe(true);
   });
 });

@@ -40,6 +40,8 @@ export interface CallTiming {
   stopReason: string | null;
   inputTokens: number;
   outputTokens: number;
+  /** Why this attempt ran (empty for a first attempt). */
+  reason?: string[];
 }
 
 export interface LlmGrade {
