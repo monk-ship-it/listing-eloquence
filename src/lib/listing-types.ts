@@ -130,7 +130,7 @@ export interface ListingOutput {
   /** "failed" when the email/social call failed; can be generated free later. */
   marketingStatus?: "failed";
   /** Prompt version + model that produced this pack (set from Prompt Lab 1 on). */
-  meta?: { promptVersion: string; model: string };
+  meta?: GenerationMeta;
 }
 
 // Sensible per-field length caps for the Email Blast.
@@ -543,12 +543,27 @@ export function coerceLegacyOutput(raw: unknown): ListingOutput {
   };
 }
 
-function coerceMeta(raw: unknown): { promptVersion: string; model: string } | null {
+export interface AttemptMeta {
+  call: "core" | "marketing" | "extract";
+  attempt: number;
+  ms: number;
+  /** Why this attempt ran; empty for a first attempt. */
+  reason: string[];
+}
+export interface GenerationMeta {
+  promptVersion: string;
+  model: string;
+  attempts?: AttemptMeta[];
+}
+
+function coerceMeta(raw: unknown): GenerationMeta | null {
   if (!raw || typeof raw !== "object") return null;
   const m = raw as Record<string, unknown>;
-  return typeof m.promptVersion === "string" && typeof m.model === "string"
-    ? { promptVersion: m.promptVersion, model: m.model }
-    : null;
+  if (typeof m.promptVersion !== "string" || typeof m.model !== "string") return null;
+  const attempts = Array.isArray(m.attempts)
+    ? (m.attempts as AttemptMeta[]).filter((a) => a && typeof a === "object")
+    : undefined;
+  return { promptVersion: m.promptVersion, model: m.model, ...(attempts ? { attempts } : {}) };
 }
 
 export const EMPTY_INPUT: ListingInput = {
