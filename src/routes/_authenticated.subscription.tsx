@@ -27,25 +27,9 @@ import {
   createCheckoutSession,
   type SubscriptionInfo,
 } from "@/lib/subscription.functions";
-import {
-  APP_NAME,
-  PLANS,
-  getPlan,
-  TRIAL_DAYS,
-  CONTACT_EMAIL,
-  planPriceDisplay,
-  type PlanId,
-} from "@/lib/config";
+import { APP_NAME, PLANS, getPlan, TRIAL_DAYS, CONTACT_EMAIL, planPriceDisplay, type PlanId } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
-import {
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
-  Crown,
-  CreditCard,
-  ArrowLeft,
-  Clock,
-} from "lucide-react";
+import { CheckCircle2, XCircle, AlertTriangle, Crown, CreditCard, ArrowLeft, Clock } from "lucide-react";
 
 const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
 
@@ -58,10 +42,7 @@ export const Route = createFileRoute("/_authenticated/subscription")({
     return out;
   },
   head: () => ({
-    meta: [
-      { title: `Subscription — ${APP_NAME}` },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
+    meta: [{ title: `Subscription — ${APP_NAME}` }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: SubscriptionPage,
 });
@@ -229,9 +210,7 @@ function SubscriptionPage() {
       window.history.replaceState(window.history.state, "", "/subscription");
       window.location.href = url;
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Could not start checkout. Please try again.",
-      );
+      toast.error(err instanceof Error ? err.message : "Could not start checkout. Please try again.");
       setCheckoutBusy(null);
     }
   }
@@ -319,10 +298,7 @@ function SubscriptionPage() {
                 />
               )}
               {!sub?.isComped && (
-                <Row
-                  label="Plan"
-                  value={`${currentPlan.name} — ${planPriceDisplay(currentPlan.id)} / month`}
-                />
+                <Row label="Plan" value={`${currentPlan.name} — ${planPriceDisplay(currentPlan.id)} / month`} />
               )}
               {!sub?.isComped && usage && (
                 <Row
@@ -330,9 +306,7 @@ function SubscriptionPage() {
                   value={
                     <span className="text-sm">
                       {usage.used} of {usage.limit} used
-                      <span className="ml-2 text-xs text-muted-foreground">
-                        (renews {fmtDate(usage.resetsOn)})
-                      </span>
+                      <span className="ml-2 text-xs text-muted-foreground">(renews {fmtDate(usage.resetsOn)})</span>
                     </span>
                   }
                 />
@@ -344,9 +318,7 @@ function SubscriptionPage() {
                     <span className="text-sm">
                       {fmtDate(sub?.trialEnd ?? null)}
                       {remaining !== null && (
-                        <span className="ml-2 text-xs text-muted-foreground">
-                          ({remaining} days left)
-                        </span>
+                        <span className="ml-2 text-xs text-muted-foreground">({remaining} days left)</span>
                       )}
                     </span>
                   }
@@ -359,9 +331,7 @@ function SubscriptionPage() {
                     <span className="text-sm">
                       {fmtDate(sub?.currentPeriodEnd ?? null)}
                       {remaining !== null && status !== "none" && (
-                        <span className="ml-2 text-xs text-muted-foreground">
-                          ({remaining} days left)
-                        </span>
+                        <span className="ml-2 text-xs text-muted-foreground">({remaining} days left)</span>
                       )}
                     </span>
                   }
@@ -394,13 +364,10 @@ function SubscriptionPage() {
           {/* Plans */}
           {!sub?.isComped && (
             <Card className="p-6">
-              <h2 className="font-display text-lg font-semibold">
-                {hasAccess ? "Your plan" : "Choose a plan"}
-              </h2>
+              <h2 className="font-display text-lg font-semibold">{hasAccess ? "Your plan" : "Choose a plan"}</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Listings renew at the start of each month. The {TRIAL_DAYS}-day free trial on the
-                Starter plan begins at secure checkout — card required, cancel anytime before
-                renewal.
+                Listings renew at the start of each month. The {TRIAL_DAYS}-day free trial on the Starter plan begins at
+                secure checkout — card required, cancel anytime before renewal.
               </p>
               {hasAccess && (
                 <p className="mt-2 text-sm text-muted-foreground">
@@ -433,9 +400,7 @@ function SubscriptionPage() {
 
                         <span className="text-xs font-normal text-muted-foreground">/mo</span>
                       </p>
-                      <p className="mt-1 text-xs text-primary">
-                        {plan.monthlyListings} listings / month
-                      </p>
+                      <p className="mt-1 text-xs text-primary">{plan.monthlyListings} listings / month</p>
                       {hasAccess ? (
                         isCurrent ? (
                           <Button className="mt-4 w-full" size="sm" variant="outline" disabled>
@@ -444,9 +409,7 @@ function SubscriptionPage() {
                           </Button>
                         ) : (
                           <Button className="mt-4 w-full" size="sm" variant="outline" asChild>
-                            <a
-                              href={`mailto:${CONTACT_EMAIL}?subject=Change%20to%20${plan.name}%20plan`}
-                            >
+                            <a href={`mailto:${CONTACT_EMAIL}?subject=Change%20to%20${plan.name}%20plan`}>
                               Contact support
                             </a>
                           </Button>
@@ -460,11 +423,7 @@ function SubscriptionPage() {
                           onClick={() => startCheckout(plan.id)}
                         >
                           <CreditCard className="mr-2 h-4 w-4" />
-                          {checkoutBusy === plan.id
-                            ? "Starting…"
-                            : plan.id === "starter"
-                              ? "Start trial"
-                              : "Subscribe"}
+                          {checkoutBusy === plan.id ? "Starting…" : plan.id === "starter" ? "Start trial" : "Subscribe"}
                         </Button>
                       )}
                     </div>
@@ -501,16 +460,13 @@ function SubscriptionPage() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Cancel your subscription?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          You'll keep full access until {fmtDate(sub?.currentPeriodEnd ?? null)}.
-                          After that your subscription won't renew. You can resume any time before
-                          then.
+                          You'll keep full access until {fmtDate(sub?.currentPeriodEnd ?? null)}. After that your
+                          subscription won't renew. You can resume any time before then.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Keep subscription</AlertDialogCancel>
-                        <AlertDialogAction onClick={cancelSubscription}>
-                          Cancel subscription
-                        </AlertDialogAction>
+                        <AlertDialogAction onClick={cancelSubscription}>Cancel subscription</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
@@ -531,9 +487,9 @@ function SubscriptionPage() {
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
       <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="text-sm font-medium">{value}</span>
+      <span className="text-right text-sm font-medium">{value}</span>
     </div>
   );
 }
