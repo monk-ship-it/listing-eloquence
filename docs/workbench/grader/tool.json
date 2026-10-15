@@ -4,6 +4,14 @@
   "input_schema": {
     "type": "object",
     "properties": {
+      "unsupported": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 12,
+        "description": "Exact quotes of claims not supported by the facts; empty if none."
+      },
       "scores": {
         "type": "object",
         "properties": {
@@ -48,26 +56,14 @@
             "maximum": 5
           }
         },
-        "required": [
-          "1",
-          "2",
-          "3",
-          "4",
-          "5",
-          "6",
-          "7",
-          "8"
-        ]
+        "required": ["1", "2", "3", "4", "5", "6", "7", "8"]
       },
       "hardFail": {
         "type": "boolean"
       },
       "verdict": {
         "type": "string",
-        "enum": [
-          "PASS",
-          "FAIL"
-        ]
+        "enum": ["PASS", "FAIL"]
       },
       "fixes": {
         "type": "array",
@@ -77,15 +73,10 @@
         "maxItems": 8
       }
     },
-    "required": [
-      "scores",
-      "hardFail",
-      "verdict",
-      "fixes"
-    ]
+    "required": ["unsupported", "scores", "hardFail", "verdict", "fixes"]
   },
   "settings": {
-    "maxTokens": 1200,
+    "maxTokens": 1800,
     "temperature": 0,
     "timeoutMs": 90000
   }
