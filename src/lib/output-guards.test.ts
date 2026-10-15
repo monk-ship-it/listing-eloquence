@@ -5,8 +5,12 @@ import {
   imageLabelsFor,
   labelSocial,
   missingPleaseNote,
+  hasExactPrice,
+  labelMarketing,
+  swapSoftBanned,
+  withSaleMethodLine,
 } from "./output-guards";
-import type { ListingInput, MarketingOutput } from "./listing-types";
+import type { ListingInput, MarketingOutput, SocialPost } from "./listing-types";
 
 describe("image labels", () => {
   it("one label per trigger, fixed order", () => {
