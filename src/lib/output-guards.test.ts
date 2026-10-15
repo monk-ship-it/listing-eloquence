@@ -11,15 +11,18 @@ import {
   withSaleMethodLine,
 } from "./output-guards";
 import type { ListingInput, MarketingOutput, SocialPost } from "./listing-types";
+import {
+  gradeBlockDump,
+  gradeDimensions,
+  gradeFloors,
+  suppliedRooms,
+  type GradePack,
+} from "../../scripts/prompt-evals/graders";
 
 describe("image labels", () => {
   it("one label per trigger, fixed order", () => {
-    expect(
-      imageLabelsFor("Lounge virtually staged; exterior is CGI; show home photos"),
-    ).toHaveLength(3);
-    expect(imageLabelsFor("Digitally altered sky")).toEqual([
-      "Some images have been digitally enhanced.",
-    ]);
+    expect(imageLabelsFor("Lounge virtually staged; exterior is CGI; show home photos")).toHaveLength(3);
+    expect(imageLabelsFor("Digitally altered sky")).toEqual(["Some images have been digitally enhanced."]);
     expect(imageLabelsFor("Photos taken in May")).toEqual([]);
     expect(imageLabelsFor("computer-generated garden")).toHaveLength(1);
   });
@@ -50,9 +53,7 @@ describe("retry triggers", () => {
       emailBlast: { subjectLines: [], previewText: "", headline: "", body: "No note." },
       social: [{ platform: "Instagram", caption: "Please note: knotweed.", hashtags: [] }],
     } as unknown as MarketingOutput;
-    expect(missingPleaseNote(out, { disclosures: "Knotweed" } as ListingInput)).toEqual([
-      "the Email Blast body",
-    ]);
+    expect(missingPleaseNote(out, { disclosures: "Knotweed" } as ListingInput)).toEqual(["the Email Blast body"]);
     expect(missingPleaseNote(out, {} as ListingInput)).toEqual([]);
   });
 });
@@ -77,9 +78,7 @@ describe("price qualifier", () => {
   const oieo = { price: "375000", priceQualifier: "Offers in Excess of" };
   it("accepts lowercase and subject-line abbreviations", () => {
     expect(priceQualifierProblems([["x", "offers in excess of £375,000"]], oieo)).toEqual([]);
-    expect(priceQualifierProblems([["s", "Just listed: 2-bed flat – OIEO £375k"]], oieo)).toEqual(
-      [],
-    );
+    expect(priceQualifierProblems([["s", "Just listed: 2-bed flat – OIEO £375k"]], oieo)).toEqual([]);
     expect(priceQualifierProblems([["s", "Guide £375,000"]], oieo)).toHaveLength(1);
   });
 });
@@ -89,9 +88,7 @@ describe("X with show home + CGI labels", () => {
   const input = { price: "410,000", tenure: "Freehold", epc: "B" } as ListingInput;
   it("budget line", () => {
     expect(labels).toHaveLength(2);
-    expect(renderImageLabelsLine("CGI exterior; show home")).toContain(
-      `at most ${xBudget(labels)} characters`,
-    );
+    expect(renderImageLabelsLine("CGI exterior; show home")).toContain(`at most ${xBudget(labels)} characters`);
   });
   it("moves inline hashtags, then fits 280 without cutting protected sentences", () => {
     const caption =
@@ -100,9 +97,7 @@ describe("X with show home + CGI labels", () => {
     expect(p.caption.endsWith("listing.")).toBe(true);
     expect(p.hashtags).toEqual(["kingshill", "NewHome"]);
     const [x] = labelSocialFor([p], labels, input);
-    const len =
-      `${x.caption}${x.hashtags.length ? `\n\n${x.hashtags.map((h) => `#${h}`).join(" ")}` : ""}`
-        .length;
+    const len = `${x.caption}${x.hashtags.length ? `\n\n${x.hashtags.map((h) => `#${h}`).join(" ")}` : ""}`.length;
     expect(len).toBeLessThanOrEqual(280);
     expect(x.caption).toContain("Fixed Price £410,000");
     expect(x.caption).toContain("Full material information on the listing.");
@@ -141,24 +136,22 @@ describe("exact price form", () => {
     expect(hasExactPrice("Shared ownership: £130,000 for a 40% share", so)).toBe(true);
   });
   it("swapped qualifier still a problem", () => {
-    const p = priceQualifierProblems(
-      [["the description", "From £410,000. Fixed Price £410,000."]],
-      { price: "410000", priceQualifier: "Fixed Price" },
-    );
+    const p = priceQualifierProblems([["the description", "From £410,000. Fixed Price £410,000."]], {
+      price: "410000",
+      priceQualifier: "Fixed Price",
+    });
     expect(p).toEqual([{ where: "the description", wrote: "From £410,000" }]);
   });
   it("no qualifier → amount only", () => {
-    expect(hasExactPrice("Priced at £250,000.", { price: "250000", priceQualifier: "" })).toBe(
-      true,
-    );
+    expect(hasExactPrice("Priced at £250,000.", { price: "250000", priceQualifier: "" })).toBe(true);
   });
 });
 
 describe("soft banned swaps", () => {
   it("swaps and keeps capitals", () => {
-    expect(swapSoftBanned("The house benefits from a garden. Boasts a view; rooms benefit from light and boast space.")).toBe(
-      "The house has a garden. Has a view; rooms have light and have space.",
-    );
+    expect(
+      swapSoftBanned("The house benefits from a garden. Boasts a view; rooms benefit from light and boast space."),
+    ).toBe("The house has a garden. Has a view; rooms have light and have space.");
   });
 });
 
@@ -176,7 +169,11 @@ describe("sale method caption line", () => {
     expect(withSaleMethodLine(posts, { saleMethod: "Private treaty" } as ListingInput)).toBe(posts);
   });
   it("X stays ≤ 280 after the prepend", () => {
-    const x = { platform: "X", caption: "A".repeat(150) + ". " + "B".repeat(120) + ".", hashtags: ["Kent"] } as SocialPost;
+    const x = {
+      platform: "X",
+      caption: "A".repeat(150) + ". " + "B".repeat(120) + ".",
+      hashtags: ["Kent"],
+    } as SocialPost;
     const out = labelMarketing(
       { emailBlast: null, sellerEmail: null, social: [x] } as unknown as MarketingOutput,
       { saleMethod: "Traditional auction" } as ListingInput,
@@ -184,5 +181,75 @@ describe("sale method caption line", () => {
     const c = out.social[0];
     expect(`${c.caption}${c.hashtags.length ? `\n\n#${c.hashtags.join(" #")}` : ""}`.length).toBeLessThanOrEqual(280);
     expect(c.caption.startsWith("For sale by traditional auction.")).toBe(true);
+  });
+});
+
+describe("eval graders (room dimensions, floors, block dump)", () => {
+  const pack = (over: Partial<GradePack>): GradePack => ({
+    headline: "",
+    listing: "",
+    summary: "",
+    keyFeatures: [],
+    emailBlast: null,
+    sellerEmail: null,
+    social: [],
+    ...over,
+  });
+
+  const dims = "Kitchen/dining room 5.80m x 3.40m; Living room 4.90m x 3.30m; Principal bedroom 4.10m x 3.00m";
+  const input = { dimensions: dims, propertyType: "Semi-detached house" } as ListingInput;
+
+  describe("room dimensions grader", () => {
+    it("parses supplied rooms", () => {
+      expect(suppliedRooms(dims).map((r) => r.name)).toEqual([
+        "kitchen dining room",
+        "living room",
+        "principal bedroom",
+      ]);
+    });
+    it("fails a dimension written against the wrong room (A6-legacy)", () => {
+      const f = gradeDimensions(pack({ listing: "The living room measures 4.10m x 3.00m (13'5\" x 9'10\")." }), input);
+      expect(f).toHaveLength(1);
+      expect(f[0].message).toContain('"living room"');
+    });
+    it("passes the right room, number words and lists of rooms", () => {
+      const text =
+        "The kitchen/dining room measures 5.80m x 3.40m (19'0\" x 11'2\"), and the living room is 4.90m x 3.30m. Bedroom one is 3.85m x 3.05m.";
+      const f = gradeDimensions(pack({ listing: text }), {
+        ...input,
+        dimensions: `${dims}; Bedroom 1 3.85m x 3.05m`,
+      } as ListingInput);
+      expect(f).toEqual([]);
+    });
+    it("fails a dimension that was never supplied", () => {
+      expect(gradeDimensions(pack({ listing: "A room of 9.99m x 9.99m." }), input)).toHaveLength(1);
+    });
+  });
+
+  describe("floor names for flats", () => {
+    const flat = {
+      propertyType: "Maisonette (first and second floors) above a commercial unit",
+    } as ListingInput;
+    it("fails a floor the facts never name", () => {
+      const f = gradeFloors(pack({ listing: "The ground floor comprises a living room." }), flat);
+      expect(f.map((x) => x.text)).toEqual(["ground floor"]);
+    });
+    it("allows floors listed in the property type", () => {
+      expect(
+        gradeFloors(pack({ listing: "The first floor has the living room; the second floor two bedrooms." }), flat),
+      ).toEqual([]);
+    });
+    it("ignores houses", () => {
+      expect(gradeFloors(pack({ listing: "The ground floor has a kitchen." }), input)).toEqual([]);
+    });
+  });
+
+  describe("material-information block dump", () => {
+    it("warns when the final paragraph repeats 4+ supply labels", () => {
+      const listing =
+        "Intro.\n\nGuide Price £1. Construction: Standard. Electricity: Mains. Water: Mains. Sewerage: Mains.";
+      expect(gradeBlockDump(pack({ listing }))).toHaveLength(1);
+      expect(gradeBlockDump(pack({ listing: "Intro.\n\nGuide Price £1. Freehold." }))).toEqual([]);
+    });
   });
 });
