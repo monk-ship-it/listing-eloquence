@@ -3,7 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getConfiguredClaudeModel } from "./ai-gateway.server";
 import { runCore, runMarketing } from "./generation.server";
 import type { VoiceId } from "./voices";
-import type { ListingInput, ListingOutput, MarketingOutput } from "./listing-types";
+import type { AttemptMeta, ListingInput, ListingOutput, MarketingOutput } from "./listing-types";
 import { coerceLegacyOutput } from "./listing-types";
 import { isValidVoice, normaliseInput } from "./prompts/render";
 import { PROMPT_VERSION } from "./prompts/version.gen";
