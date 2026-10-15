@@ -59,7 +59,8 @@ const CAP_STOPWORDS = new Set(
     "ground rent service charge mains electricity water sewerage heating broadband mobile signal parking construction " +
     "flooding planning accessibility none known yes no restrictions rights easements building safety coastal erosion coalfield mining " +
     "kitchen living room bedroom bedrooms bathroom bathrooms reception receptions garden view book arrange viewing " +
-    "your name branch phone add link dear hello hi thanks thank kind regards approval please here there we you our"
+    "your name branch phone add link dear hello hi thanks thank kind regards approval please here there we you our " +
+    "what how when which who oieo oiro oie"
   ).split(" "),
 );
 
