@@ -25,8 +25,7 @@ export function reportDir(root: string, h: ReportHeader): string {
 
 export function writeReport(dir: string, h: ReportHeader, results: CaseResult[]): string {
   mkdirSync(dir, { recursive: true });
-  for (const r of results)
-    writeFileSync(join(dir, `${r.id}.run${r.run}.json`), JSON.stringify(r, null, 2) + "\n");
+  for (const r of results) writeFileSync(join(dir, `${r.id}.run${r.run}.json`), JSON.stringify(r, null, 2) + "\n");
 
   let inTok = 0;
   let outTok = 0;
@@ -43,25 +42,17 @@ export function writeReport(dir: string, h: ReportHeader, results: CaseResult[])
   lines.push(`- Git sha: \`${h.gitSha}\``);
   lines.push(`- Cases × runs: ${h.cases} × ${h.runs}`);
   lines.push(`- LLM grader: ${h.llmGrade ? "on" : "off"}`);
-  lines.push(
-    `- Tokens: ${inTok.toLocaleString("en-GB")} in / ${outTok.toLocaleString("en-GB")} out`,
-  );
+  lines.push(`- Tokens: ${inTok.toLocaleString("en-GB")} in / ${outTok.toLocaleString("en-GB")} out`);
   lines.push(`- Started: ${h.startedAt.toISOString()}`);
   const passed = results.filter((r) => r.pass).length;
   lines.push(`- Result: **${passed}/${results.length} passed**`, "");
 
-  lines.push(
-    "| Case | Result | Fails | Warns | Core s | Marketing s | Extract s | Retries | LLM |",
-  );
+  lines.push("| Case | Result | Fails | Warns | Core s | Marketing s | Extract s | Retries | LLM |");
   lines.push("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |");
   for (const r of results) {
     const fails = r.findings.filter((f) => f.severity === "fail").length;
     const warns = r.findings.filter((f) => f.severity === "warn").length;
-    const llm = !r.llm
-      ? "–"
-      : "error" in r.llm
-        ? "error"
-        : `${r.llm.verdict} ${r.llm.average.toFixed(2)}`;
+    const llm = !r.llm ? "–" : "error" in r.llm ? "error" : `${r.llm.verdict} ${r.llm.average.toFixed(2)}`;
     const id = h.runs > 1 ? `${r.id} #${r.run}` : r.id;
     lines.push(
       `| ${id} | ${r.pass ? "PASS" : "FAIL"} | ${fails} | ${warns} | ${s(r.coreMs)} | ${s(r.marketingMs)} | ${s(r.extractMs)} | ${r.retries} | ${llm} |`,
@@ -79,12 +70,7 @@ export function writeReport(dir: string, h: ReportHeader, results: CaseResult[])
     }
   const top = [...counts.entries()].sort((a, b) => b[1].size - a[1].size).slice(0, 10);
   if (top.length) {
-    lines.push(
-      "## Most common failures",
-      "",
-      "| # cases | Failure | Cases |",
-      "| ---: | --- | --- |",
-    );
+    lines.push("## Most common failures", "", "| # cases | Failure | Cases |", "| ---: | --- | --- |");
     for (const [k, ids] of top) lines.push(`| ${ids.size} | ${md(k)} | ${[...ids].join(", ")} |`);
     lines.push("");
   }
@@ -93,29 +79,21 @@ export function writeReport(dir: string, h: ReportHeader, results: CaseResult[])
   for (const r of results) {
     const fails = r.findings.filter((f) => f.severity === "fail");
     const warns = r.findings.filter((f) => f.severity === "warn");
-    lines.push(
-      `### ${r.id}${h.runs > 1 ? ` (run ${r.run})` : ""} — ${r.pass ? "PASS" : "FAIL"}`,
-      "",
-    );
+    lines.push(`### ${r.id}${h.runs > 1 ? ` (run ${r.run})` : ""} — ${r.pass ? "PASS" : "FAIL"}`, "");
     if (r.error) lines.push(`- **Error:** ${r.error}`);
     if (r.extraction)
-      lines.push(
-        `- Precision ${r.extraction.precision.toFixed(2)}, recall ${r.extraction.recall.toFixed(2)}`,
-      );
+      lines.push(`- Precision ${r.extraction.precision.toFixed(2)}, recall ${r.extraction.recall.toFixed(2)}`);
     for (const f of fails)
-      lines.push(
-        `- FAIL \`${f.grader}\` ${md(f.message)}${f.text ? ` — \`${md(f.text).slice(0, 220)}\`` : ""}`,
-      );
+      lines.push(`- FAIL \`${f.grader}\` ${md(f.message)}${f.text ? ` — \`${md(f.text).slice(0, 220)}\`` : ""}`);
     if (warns.length)
-      lines.push(
-        `- ${warns.length} warning(s): ${warns.map((w) => `\`${w.grader}\` ${md(w.message)}`).join("; ")}`,
-      );
+      lines.push(`- ${warns.length} warning(s): ${warns.map((w) => `\`${w.grader}\` ${md(w.message)}`).join("; ")}`);
     if (r.llm && !("error" in r.llm)) {
       lines.push(
         `- LLM: ${r.llm.verdict} (avg ${r.llm.average.toFixed(2)}; ${Object.entries(r.llm.scores)
           .map(([k, v]) => `${k}:${v}`)
           .join(" ")})`,
       );
+      for (const u of r.llm.unsupported ?? []) lines.push(`  - UNSUPPORTED: ${md(u)}`);
       for (const fx of r.llm.fixes) lines.push(`  - ${md(fx)}`);
     } else if (r.llm) lines.push(`- LLM grader error: ${r.llm.error}`);
     lines.push("");
