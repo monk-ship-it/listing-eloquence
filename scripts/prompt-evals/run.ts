@@ -4,6 +4,9 @@
  *
  *   bun run evals -- [--label x] [--cases pack|extract|all] [--only id,id] [--runs 1]
  *                    [--model id] [--concurrency 2] [--llm-grade] [--out dir] [--dry]
+ *   bun run evals -- --regrade docs/evals/<run> [--only id,id] [--llm-grade] [--revalidate]
+ *     Re-grades saved outputs. With --llm-grade it also re-runs the LLM grader on them
+ *     (needs ANTHROPIC_API_KEY; no new listings are generated).
  */
 import { execSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -48,18 +51,11 @@ const doLlm = flag("llm-grade");
 const dry = flag("dry");
 
 const all = loadCases(ROOT);
-let cases: EvalCase[] = [
-  ...(which === "extract" ? [] : all.pack),
-  ...(which === "pack" ? [] : all.extract),
-];
+let cases: EvalCase[] = [...(which === "extract" ? [] : all.pack), ...(which === "pack" ? [] : all.extract)];
 if (only) cases = cases.filter((c) => only.includes(c.id));
 
 // Validate every input key against FIELD_DEFS.
-const known = new Set<string>([
-  ...FIELD_DEFS.map((d) => d.key as string),
-  "voice",
-  "sellerApproved",
-]);
+const known = new Set<string>([...FIELD_DEFS.map((d) => d.key as string), "voice", "sellerApproved"]);
 for (const c of cases)
   for (const k of Object.keys(c.input ?? {}))
     if (!known.has(k)) throw new Error(`Case ${c.id}: unknown input key "${k}"`);
@@ -100,15 +96,14 @@ if (dry) {
 }
 
 // --regrade <dir>: re-run today's deterministic graders over a saved run's
-// outputs (no API calls; LLM grades and timings are kept as saved).
+// outputs. Timings are kept as saved; LLM grades are kept unless --llm-grade
+// is passed, which re-runs only the grader (no new listings are generated).
 const regradeDir = opt("regrade");
 if (regradeDir) {
   const src = join(ROOT, regradeDir);
   const files = readdirSync(src).filter((f) => /\.run\d+\.json$/.test(f));
   const byId = new Map([...all.pack, ...all.extract].map((c) => [c.id, c]));
-  const oldReport = existsSync(join(src, "report.md"))
-    ? readFileSync(join(src, "report.md"), "utf8")
-    : "";
+  const oldReport = existsSync(join(src, "report.md")) ? readFileSync(join(src, "report.md"), "utf8") : "";
   const results: CaseResult[] = [];
   for (const f of files.sort()) {
     const saved = JSON.parse(readFileSync(join(src, f), "utf8")) as CaseResult;
@@ -117,6 +112,7 @@ if (regradeDir) {
     const raw = saved.raw ?? {};
     let findings: CaseResult["findings"] = [];
     let extraction: CaseResult["extraction"];
+    let llm = saved.llm;
     if (saved.error) findings = [];
     else if (c.call === "extract") {
       const g = gradeExtraction(c, raw.extract, saved.output as ExtractResult);
@@ -130,8 +126,7 @@ if (regradeDir) {
         try {
           const core = validateCoreOutput(raw.core);
           const mkt = raw.marketing ? validateMarketingOutput(raw.marketing) : null;
-          if (mkt?.sellerEmail)
-            mkt.sellerEmail = { ...mkt.sellerEmail, subject: final.sellerEmail?.subject ?? "" };
+          if (mkt?.sellerEmail) mkt.sellerEmail = { ...mkt.sellerEmail, subject: final.sellerEmail?.subject ?? "" };
           final = mkt
             ? { ...final, ...core, ...mkt }
             : { ...final, ...core, emailBlast: null, social: [], marketingStatus: "failed" };
@@ -145,9 +140,21 @@ if (regradeDir) {
       ];
       if (final.marketingStatus === "failed")
         findings.push({ grader: "marketing", severity: "fail", message: "marketing call failed" });
+      if (flag("llm-grade")) {
+        if (!process.env.ANTHROPIC_API_KEY) {
+          console.error("--llm-grade needs ANTHROPIC_API_KEY.");
+          process.exit(2);
+        }
+        try {
+          llm = await llmGrade(packFromFinal(final), input, model);
+        } catch (err) {
+          llm = { error: err instanceof Error ? err.message : String(err) };
+        }
+      }
     }
     results.push({
       ...saved,
+      ...(llm ? { llm } : {}),
       findings,
       ...(extraction ? { extraction } : {}),
       pass: !saved.error && !findings.some((x) => x.severity === "fail"),
@@ -259,10 +266,7 @@ async function runCase(c: EvalCase, run: number): Promise<CaseResult> {
       ? { ...coreRes.value, ...mktRes.value }
       : { ...coreRes.value, emailBlast: null, social: [], marketingStatus: "failed" };
   const finalPack = packFromFinal(final);
-  const findings = [
-    ...gradePack(finalPack, input, c),
-    ...gradeRaw(packFromRaw(raw.core, raw.marketing), input),
-  ];
+  const findings = [...gradePack(finalPack, input, c), ...gradeRaw(packFromRaw(raw.core, raw.marketing), input)];
   if (mktRes.status === "rejected")
     findings.push({
       grader: "marketing",
@@ -300,9 +304,7 @@ await Promise.all(
       const [c, r] = jobs[i];
       const t0 = Date.now();
       results[i] = await runCase(c, r);
-      console.log(
-        `${results[i].pass ? "PASS" : "FAIL"} ${c.id}#${r} (${((Date.now() - t0) / 1000).toFixed(1)}s)`,
-      );
+      console.log(`${results[i].pass ? "PASS" : "FAIL"} ${c.id}#${r} (${((Date.now() - t0) / 1000).toFixed(1)}s)`);
     }
   }),
 );
