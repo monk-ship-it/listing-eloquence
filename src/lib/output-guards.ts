@@ -58,8 +58,79 @@ export function labelCore(out: CoreOutput, input: ListingInput): CoreOutput {
 
 export function labelMarketing(out: MarketingOutput, input: ListingInput): MarketingOutput {
   const labels = imageLabelsFor(input.mediaNotes);
-  const social = normaliseCaptions(out.social);
-  return { ...out, social: labels.length ? labelSocialFor(social, labels, input) : social };
+  const social = withSaleMethodLine(normaliseCaptions(out.social), input);
+  // Always run labelSocialFor: it also applies the X ≤ 280 fallback.
+  return { ...out, social: labelSocialFor(social, labels, input) };
+}
+
+/** "For sale by …. " opener for auction / MMoA sales; null for private treaty. */
+export function saleMethodLine(input: Pick<ListingInput, "saleMethod">): string | null {
+  const m = (input as { saleMethod?: string }).saleMethod ?? "";
+  if (!/auction/i.test(m)) return null;
+  return /modern/i.test(m)
+    ? "For sale by Modern Method of Auction. "
+    : "For sale by traditional auction. ";
+}
+
+/** Prepend the sale-method line to captions that lack "For sale by …". */
+export function withSaleMethodLine(posts: SocialPost[], input: ListingInput): SocialPost[] {
+  const line = saleMethodLine(input);
+  if (!line) return posts;
+  return posts.map((p) =>
+    /for sale by/i.test(p.caption) ? p : { ...p, caption: `${line}${p.caption.trimStart()}` },
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Deterministic banned-phrase swaps (no retry needed for these)
+// ---------------------------------------------------------------------------
+
+const SWAPS: [RegExp, string][] = [
+  [/\bbenefits from\b/gi, "has"],
+  [/\bbenefit from\b/gi, "have"],
+  [/\bboasts\b/gi, "has"],
+  [/\bboast\b/gi, "have"],
+];
+
+/** Swap the four verb-only banned phrases, keeping a capital at sentence start. */
+export function swapSoftBanned(text: string): string {
+  let t = text;
+  for (const [re, rep] of SWAPS)
+    t = t.replace(re, (m) => (/^[A-Z]/.test(m) ? rep[0].toUpperCase() + rep.slice(1) : rep));
+  return t;
+}
+
+export function swapCore(o: CoreOutput): CoreOutput {
+  return {
+    ...o,
+    headline: swapSoftBanned(o.headline),
+    listing: swapSoftBanned(o.listing),
+    summary: swapSoftBanned(o.summary),
+    keyFeatures: o.keyFeatures.map(swapSoftBanned),
+  };
+}
+
+export function swapMarketing(o: MarketingOutput): MarketingOutput {
+  const e = o.emailBlast;
+  return {
+    ...o,
+    emailBlast: e
+      ? {
+          ...e,
+          subjectLines: e.subjectLines.map(swapSoftBanned),
+          previewText: swapSoftBanned(e.previewText),
+          headline: swapSoftBanned(e.headline),
+          body: swapSoftBanned(e.body),
+          ...(e.personalMessage !== undefined
+            ? { personalMessage: swapSoftBanned(e.personalMessage) }
+            : {}),
+        }
+      : e,
+    sellerEmail: o.sellerEmail
+      ? { ...o.sellerEmail, body: swapSoftBanned(o.sellerEmail.body) }
+      : o.sellerEmail,
+    social: o.social.map((p) => ({ ...p, caption: swapSoftBanned(p.caption) })),
+  };
 }
 
 const norm = (s: string) =>
@@ -316,9 +387,8 @@ export function priceQualifierProblems(
         out.push({ where, wrote: `${last[0]} ${m[0]}`.replace(/\s+/g, " ") });
     }
   }
-  for (const [where, text] of texts)
-    if (EXACT_PRICE_REQUIRED.includes(where) && !hasExactPrice(text, input))
-      out.push({ where, wrote: "", missing: true });
+  // A missing exact "<qualifier> <amount>" form is NOT a retry trigger (it fixed
+  // nothing and doubled latency); the eval grader reports it as a warning.
   return out;
 }
 
