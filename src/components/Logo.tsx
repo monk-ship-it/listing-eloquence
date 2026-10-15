@@ -24,11 +24,9 @@ export function Logo({
 
       {showText && (
         <span className="flex min-w-0 flex-col leading-none">
-          <span className="font-display text-lg font-semibold tracking-tight sm:text-xl">
-            {APP_NAME}
-          </span>
+          <span className="font-display text-lg font-semibold tracking-tight sm:text-xl">{APP_NAME}</span>
           {withByline && (
-            <span className="text-[11px] font-medium tracking-wide text-muted-foreground">
+            <span className="whitespace-nowrap text-[11px] font-medium tracking-wide text-muted-foreground max-[359px]:hidden">
               by CopyByMonk
             </span>
           )}
