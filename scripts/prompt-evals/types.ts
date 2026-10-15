@@ -48,6 +48,8 @@ export interface LlmGrade {
   scores: Record<string, number>;
   hardFail: boolean;
   verdict: "PASS" | "FAIL";
+  /** Claims the grader found unsupported by the facts (any → hard fail). */
+  unsupported?: string[];
   fixes: string[];
   average: number;
 }
