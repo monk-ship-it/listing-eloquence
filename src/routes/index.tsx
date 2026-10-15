@@ -3,14 +3,7 @@ import { Logo } from "@/components/Logo";
 import { Reveal } from "@/components/Reveal";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  APP_NAME,
-  PLANS,
-  TRIAL_DAYS,
-  CONTACT_EMAIL,
-  planPriceDisplay,
-  type PlanId,
-} from "@/lib/config";
+import { APP_NAME, PLANS, TRIAL_DAYS, CONTACT_EMAIL, planPriceDisplay, type PlanId } from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
 import {
   Check,
@@ -36,14 +29,7 @@ import {
 import { EMAIL_BLAST_PLACEHOLDERS } from "@/lib/listing-types";
 import { PropertyWalkthrough } from "@/components/home/PropertyWalkthrough";
 import { IMG } from "@/lib/images";
-import {
-  SITE,
-  socialMeta,
-  jsonLd,
-  ORGANIZATION_NODE,
-  WEBSITE_NODE,
-  softwareAppNode,
-} from "@/lib/seo";
+import { SITE, socialMeta, jsonLd, ORGANIZATION_NODE, WEBSITE_NODE, softwareAppNode } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -155,7 +141,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 function Header({ user }: { user: boolean }) {
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-3 sm:gap-3 sm:px-5">
         <Logo withByline />
         <nav className="flex items-center gap-1.5 sm:gap-2" aria-label="Primary">
           <Link
@@ -237,14 +223,13 @@ function Hero({ authed }: { authed: boolean }) {
           </span>
 
           <h1 className="mt-5 text-balance font-display text-[clamp(2rem,8vw,2.6rem)] font-semibold leading-[1.12] sm:mt-6 sm:text-5xl lg:text-[3.6rem]">
-            Turn one set of notes into a{" "}
-            <span className="text-gradient">complete listing pack.</span>
+            Turn one set of notes into a <span className="text-gradient">complete listing pack.</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {APP_NAME} helps UK estate agents get new instructions live faster. Speak, type or paste
-            the facts once, choose your brand voice, and get the portal description, key features,
-            strapline, applicant email and social posts from the same source of truth.
+            {APP_NAME} helps UK estate agents get new instructions live faster. Speak, type or paste the facts once,
+            choose your brand voice, and get the portal description, key features, strapline, applicant email and social
+            posts from the same source of truth.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
@@ -306,9 +291,7 @@ function HeroMockup() {
       <div className="rounded-[1.35rem] border border-border/70 bg-background/60 p-3.5 sm:p-4">
         {/* Input method switcher */}
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Capture details
-          </span>
+          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Capture details</span>
           <span className="rounded-full border border-border bg-card/60 px-2 py-0.5 text-[0.65rem] font-medium text-muted-foreground">
             Speak · type · paste
           </span>
@@ -349,12 +332,10 @@ function HeroMockup() {
 
         {/* Transcript */}
         <div className="mt-2.5 rounded-xl border border-border/70 bg-card/50 p-3">
-          <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
-            Transcript
-          </p>
+          <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Transcript</p>
           <p className="mt-1 text-xs leading-relaxed text-foreground/85">
-            “Five bed detached, gravel drive, walled garden, three receptions, arranged for family
-            life and entertaining…”
+            “Five bed detached, gravel drive, walled garden, three receptions, arranged for family life and
+            entertaining…”
           </p>
         </div>
       </div>
@@ -387,8 +368,8 @@ function HeroMockup() {
           </span>
         </div>
         <p className="text-xs leading-relaxed text-foreground/80">
-          A five-bedroom detached home approached by a gravel driveway, with generous reception
-          space, a private walled garden and a layout arranged for family life and entertaining.
+          A five-bedroom detached home approached by a gravel driveway, with generous reception space, a private walled
+          garden and a layout arranged for family life and entertaining.
         </p>
       </div>
     </div>
@@ -437,8 +418,8 @@ function EditorialBand() {
               The detail that sells the room, in every asset.
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-foreground/85 sm:text-base">
-              Describe the space once. Quill keeps the same facts across the portal description, the
-              teaser, the Email Blast copy and every caption — so nothing drifts between channels.
+              Describe the space once. Quill keeps the same facts across the portal description, the teaser, the Email
+              Blast copy and every caption — so nothing drifts between channels.
             </p>
           </div>
         </div>
@@ -488,12 +469,10 @@ function ListingDetail() {
       <div className="mx-auto max-w-6xl px-5">
         <Reveal className="mx-auto max-w-2xl text-center">
           <Eyebrow>WHAT QUILL TAKES OFF THE ADMIN DESK</Eyebrow>
-          <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            Less listing admin. More time back.
-          </h2>
+          <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">Less listing admin. More time back.</h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Quill generates the listing pack from one set of notes, so your team spends less time
-            retyping, rewriting and formatting property copy.
+            Quill generates the listing pack from one set of notes, so your team spends less time retyping, rewriting
+            and formatting property copy.
           </p>
         </Reveal>
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -521,8 +500,7 @@ const VOICE_CARDS = [
     name: "Professional",
     tagline: "Clear. Polished. Direct.",
     body: "Confident everyday listing copy for high-street and independent agencies.",
-    sample:
-      "A well-presented family home with practical living space and a strong village setting.",
+    sample: "A well-presented family home with practical living space and a strong village setting.",
   },
   {
     name: "Premium",
@@ -540,8 +518,7 @@ const VOICE_CARDS = [
     name: "Heritage",
     tagline: "Atmosphere. History. Local charm.",
     body: "For listed homes, architecturally interesting houses, village settings and characterful properties that benefit from a guided description.",
-    sample:
-      "Beyond the old stone threshold, the house opens with warmth, texture and a clear sense of place.",
+    sample: "Beyond the old stone threshold, the house opens with warmth, texture and a clear sense of place.",
   },
 ];
 
@@ -554,8 +531,8 @@ function Voices() {
           Four brand voices for a consistent agency tone.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
-          Pick the voice that fits the property and the agency — every asset in the pack is drafted
-          in the same tone, so brand consistency doesn't rely on the person on the keyboard.
+          Pick the voice that fits the property and the agency — every asset in the pack is drafted in the same tone, so
+          brand consistency doesn't rely on the person on the keyboard.
         </p>
       </Reveal>
       <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -565,13 +542,9 @@ function Voices() {
               <span className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-gold/60" />
               <div className="flex items-center justify-between">
                 <h3 className="font-display text-xl font-semibold">{v.name}</h3>
-                <span className="text-xs font-semibold tabular-nums text-foreground/30">
-                  0{i + 1}
-                </span>
+                <span className="text-xs font-semibold tabular-nums text-foreground/30">0{i + 1}</span>
               </div>
-              <p className="mt-1.5 text-[0.7rem] font-semibold uppercase tracking-wider text-primary">
-                {v.tagline}
-              </p>
+              <p className="mt-1.5 text-[0.7rem] font-semibold uppercase tracking-wider text-primary">{v.tagline}</p>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{v.body}</p>
               <p className="mt-auto border-t border-border/70 pt-4 font-display text-sm italic leading-relaxed text-foreground/85">
                 “{v.sample}”
@@ -616,9 +589,8 @@ function LiveExample() {
             One set of notes. A complete listing pack.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Same source of truth, every asset. See how a handful of property facts becomes the
-            listing description, Key Features, short teaser, Email Blast copy and social captions —
-            brand-consistent and ready to review.
+            Same source of truth, every asset. See how a handful of property facts becomes the listing description, Key
+            Features, short teaser, Email Blast copy and social captions — brand-consistent and ready to review.
           </p>
         </Reveal>
 
@@ -639,9 +611,7 @@ function LiveExample() {
                 <div className="flex items-center gap-1.5 text-xs font-medium text-primary">
                   <Mic className="h-3.5 w-3.5" /> Spoken, typed or pasted
                 </div>
-                <p className="mt-1.5 text-sm italic leading-relaxed text-foreground/90">
-                  {spokenNote}
-                </p>
+                <p className="mt-1.5 text-sm italic leading-relaxed text-foreground/90">{spokenNote}</p>
               </div>
 
               <dl className="mt-4 divide-y divide-border text-sm">
@@ -671,9 +641,9 @@ function LiveExample() {
                 {/* Right-edge fade hints that more tabs scroll into view on mobile. */}
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute right-0 top-0 z-10 h-[3.25rem] w-8 rounded-r-md bg-gradient-to-l from-secondary to-transparent sm:hidden"
+                  className="pointer-events-none absolute right-0 top-0 z-10 h-[3.25rem] w-8 rounded-r-md bg-gradient-to-l from-secondary to-transparent hidden"
                 />
-                <TabsList className="-mx-1 flex h-auto w-[calc(100%+0.5rem)] max-w-[calc(100%+0.5rem)] flex-nowrap items-center justify-start gap-1 overflow-x-auto bg-secondary p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:w-full sm:max-w-full">
+                <TabsList className="flex h-auto w-full flex-wrap items-center justify-start gap-1 bg-secondary p-1 sm:flex-nowrap sm:overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   <TabsTrigger
                     value="listing"
                     className="shrink-0 px-2 py-1 text-xs min-h-11 sm:min-h-0 sm:px-2.5 sm:text-sm"
@@ -719,9 +689,7 @@ function LiveExample() {
                 </TabsList>
 
                 <TabsContent value="listing" className="mt-4">
-                  <h3 className="font-display text-lg font-semibold leading-snug">
-                    {demo.headline}
-                  </h3>
+                  <h3 className="font-display text-lg font-semibold leading-snug">{demo.headline}</h3>
                   <div className="mt-3 space-y-3 text-sm leading-relaxed text-foreground/90">
                     {demo.listing.map((p, i) => (
                       <p key={i}>{p}</p>
@@ -778,27 +746,19 @@ function LiveExample() {
                   </div>
 
                   <div className="mt-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Preview text
-                    </p>
-                    <p className="mt-1 break-words text-sm text-foreground/90">
-                      {demo.emailBlast.previewText}
-                    </p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Preview text</p>
+                    <p className="mt-1 break-words text-sm text-foreground/90">{demo.emailBlast.previewText}</p>
                   </div>
 
                   <div className="mt-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Headline
-                    </p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Headline</p>
                     <p className="mt-1 break-words font-display text-base font-semibold leading-snug">
                       {demo.emailBlast.headline}
                     </p>
                   </div>
 
                   <div className="mt-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Body
-                    </p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Body</p>
                     <div className="mt-1 space-y-3 text-sm leading-relaxed text-foreground/90">
                       {demo.emailBlast.body.map((p, i) => (
                         <p key={i} className="break-words">
@@ -826,15 +786,11 @@ function LiveExample() {
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                       Call to action
                     </p>
-                    <p className="mt-1 break-words text-sm font-medium text-primary">
-                      {demo.emailBlast.callToAction}
-                    </p>
+                    <p className="mt-1 break-words text-sm font-medium text-primary">{demo.emailBlast.callToAction}</p>
                   </div>
 
                   <div className="mt-5 rounded-lg border border-dashed border-border/70 bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground">
-                    <p className="mb-1.5 font-semibold text-foreground/80">
-                      Fill in before sending
-                    </p>
+                    <p className="mb-1.5 font-semibold text-foreground/80">Fill in before sending</p>
                     <ul className="space-y-1">
                       {EMAIL_BLAST_PLACEHOLDERS.map((p) => (
                         <li key={p} className="break-words">
@@ -864,12 +820,7 @@ function LiveExample() {
                 </TabsContent>
 
                 <TabsContent value="x" className="mt-4">
-                  <SocialBlock
-                    icon={XIcon}
-                    label="X"
-                    caption={demo.x.caption}
-                    hashtags={demo.x.hashtags}
-                  />
+                  <SocialBlock icon={XIcon} label="X" caption={demo.x.caption} hashtags={demo.x.hashtags} />
                 </TabsContent>
               </Tabs>
             </div>
@@ -882,13 +833,7 @@ function LiveExample() {
 
 function XIcon({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      focusable="false"
-      className={className}
-      fill="currentColor"
-    >
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" className={className} fill="currentColor">
       <path d="M18.244 2.25h3.308l-7.227 8.26 8.5 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
     </svg>
   );
@@ -961,8 +906,7 @@ const DEMO_UK: DemoPack = {
       "A five-bedroom listed home in the heart of a market town",
       "Cotswold rectory with walled garden — new to market",
     ],
-    previewText:
-      "Five bedrooms, three receptions and a private walled garden. Freehold, guide £1,450,000.",
+    previewText: "Five bedrooms, three receptions and a private walled garden. Freehold, guide £1,450,000.",
     headline: "A distinguished Grade II listed rectory, new to market",
     body: [
       "We are pleased to bring to market a Grade II listed detached rectory in the heart of a Cotswold market town. Set back behind a gravel driveway and a low honey-stone wall, the house has a quiet confidence and a clear sense of proportion throughout.",
@@ -1027,8 +971,8 @@ function VoiceDictation({ authed }: { authed: boolean }) {
             Capture the property in the car, not at the desk.
           </h2>
           <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted-foreground">
-            Rough voice notes become structured, editable listing detail. Quill keeps the facts,
-            drops the filler and returns clean copy your team can review before anything goes live.
+            Rough voice notes become structured, editable listing detail. Quill keeps the facts, drops the filler and
+            returns clean copy your team can review before anything goes live.
           </p>
           <ul className="mt-7 space-y-3">
             {bullets.map((b) => (
@@ -1069,10 +1013,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
 
             <div className="mt-4 space-y-3">
               {examples.map((ex) => (
-                <div
-                  key={ex.label}
-                  className="overflow-hidden rounded-2xl border border-border/70 bg-background/40"
-                >
+                <div key={ex.label} className="overflow-hidden rounded-2xl border border-border/70 bg-background/40">
                   <div className="flex items-center justify-between border-b border-border/60 px-3.5 py-2">
                     <span className="text-xs font-semibold text-foreground">{ex.label}</span>
                     <span className="flex items-center gap-1.5 text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground">
@@ -1082,9 +1023,7 @@ function VoiceDictation({ authed }: { authed: boolean }) {
                   <div className="space-y-2.5 p-3.5">
                     <div className="flex items-start gap-2">
                       <AudioLines className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                      <p className="text-xs italic leading-relaxed text-muted-foreground">
-                        “{ex.raw}”
-                      </p>
+                      <p className="text-xs italic leading-relaxed text-muted-foreground">“{ex.raw}”</p>
                     </div>
                     <div className="rounded-xl border border-primary/25 bg-primary/[0.06] p-3">
                       <div className="mb-1 flex items-center justify-between">
@@ -1118,9 +1057,8 @@ function Pricing({ authed }: { authed: boolean }) {
             Plans that scale with your instructions.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Every plan includes all four brand voices, voice dictation and the full listing pack —
-            Headline, Key Features, description, teaser, Email Blast copy and Instagram, Facebook
-            and X captions.
+            Every plan includes all four brand voices, voice dictation and the full listing pack — Headline, Key
+            Features, description, teaser, Email Blast copy and Instagram, Facebook and X captions.
           </p>
         </Reveal>
 
@@ -1159,14 +1097,8 @@ function Pricing({ authed }: { authed: boolean }) {
                 <ul className="flex-1 space-y-3 text-sm">
                   {orderedFeatures(plan.features).map((f, idx) => (
                     <li key={f} className="flex items-start gap-2.5">
-                      <Check
-                        className={`mt-0.5 h-4 w-4 shrink-0 ${idx === 0 ? "text-primary" : "text-primary/70"}`}
-                      />
-                      <span
-                        className={idx === 0 ? "font-medium text-foreground" : "text-foreground/90"}
-                      >
-                        {f}
-                      </span>
+                      <Check className={`mt-0.5 h-4 w-4 shrink-0 ${idx === 0 ? "text-primary" : "text-primary/70"}`} />
+                      <span className={idx === 0 ? "font-medium text-foreground" : "text-foreground/90"}>{f}</span>
                     </li>
                   ))}
                 </ul>
@@ -1186,8 +1118,7 @@ function Pricing({ authed }: { authed: boolean }) {
 
         <Reveal className="mt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            {TRIAL_DAYS}-day Starter trial at secure checkout · card required · cancel anytime
-            before renewal.
+            {TRIAL_DAYS}-day Starter trial at secure checkout · card required · cancel anytime before renewal.
           </p>
         </Reveal>
       </div>
@@ -1225,8 +1156,8 @@ function FinalCta({ authed }: { authed: boolean }) {
               Test it on the next listing your team has to launch.
             </h2>
             <p className="mt-5 text-lg text-muted-foreground">
-              Bring a real instruction, capture the property once and let Quill hand you a full,
-              brand-consistent listing pack — ready to review, not rewritten from scratch.
+              Bring a real instruction, capture the property once and let Quill hand you a full, brand-consistent
+              listing pack — ready to review, not rewritten from scratch.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <CtaButton authed={authed} size="lg" className="w-full sm:w-auto">
@@ -1260,10 +1191,7 @@ function Footer() {
       <div className="mx-auto max-w-6xl px-5">
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row sm:gap-4">
           <Logo withByline />
-          <nav
-            aria-label="Guides"
-            className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm"
-          >
+          <nav aria-label="Guides" className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm">
             <Link
               to="/uk-property-listing-generator"
               className="inline-flex items-center text-muted-foreground transition-colors hover:text-foreground min-h-11 sm:min-h-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
