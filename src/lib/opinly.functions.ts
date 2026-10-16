@@ -57,55 +57,5 @@ export const getBlogAuthor = createServerFn({ method: "GET" })
     return fetchAuthor(data.slug);
   });
 
-/**
- * Authoritative, server-side conversion/purchase recording.
- * `anonId` should be forwarded from `window.opinly.anonId` when available so
- * the sale is attributed to the browser visit that earned it.
- */
-export const trackOpinlyPurchase = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) =>
-    z
-      .object({
-        orderId: z.string().min(1).max(251),
-        value: z.number().min(0).max(99999999.99),
-        currency: z.string().length(3).optional(),
-        email: z.string().email().optional(),
-        anonId: z.string().min(1).max(128).optional(),
-      })
-      .parse(input),
-  )
-  .handler(async ({ data }) => {
-    const { recordOpinlyPurchase } = await import("./opinly/api.server");
-    try {
-      await recordOpinlyPurchase(data);
-      return { ok: true as const };
-    } catch (err) {
-      console.error("Opinly purchase event failed", err);
-      return { ok: false as const };
-    }
-  });
-
-export const trackOpinlyEvent = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) =>
-    z
-      .object({
-        event: z.string().min(1).max(64),
-        properties: z
-          .record(z.string(), z.union([z.string(), z.number(), z.boolean(), z.null()]))
-          .optional(),
-        externalEventId: z.string().min(1).max(255).optional(),
-        email: z.string().email().optional(),
-        anonId: z.string().min(1).max(128).optional(),
-      })
-      .parse(input),
-  )
-  .handler(async ({ data }) => {
-    const { recordOpinlyEvent } = await import("./opinly/api.server");
-    try {
-      await recordOpinlyEvent(data);
-      return { ok: true as const };
-    } catch (err) {
-      console.error("Opinly event failed", err);
-      return { ok: false as const };
-    }
-  });
+// Purchase/event tracking endpoints were removed: they were unused and, being
+// unauthenticated, let anyone post fake conversions.
