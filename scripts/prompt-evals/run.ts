@@ -24,7 +24,6 @@ import { PROMPT_VERSION } from "../../src/lib/prompts/version.gen";
 import { caseInput } from "../../src/lib/prompts/workbench-export";
 import { FIELD_DEFS } from "../../src/lib/listing-fields";
 import type { ListingOutput } from "../../src/lib/listing-types";
-import { validateCoreOutput, validateMarketingOutput } from "../../src/lib/listing-types";
 import { gradeExtraction, gradePack, gradeRaw, packFromFinal, packFromRaw } from "./graders";
 import { llmGrade } from "./llm-grader";
 import { loadCases } from "./load-cases";
