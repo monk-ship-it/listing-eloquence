@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -18,22 +19,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { APP_NAME } from "@/lib/config";
-import {
-  listMyGenerations,
-  deleteGeneration,
-  type GenerationRecord,
-} from "@/lib/generations.functions";
+import { listMyGenerations, deleteGeneration, type GenerationRecord } from "@/lib/generations.functions";
 import { ListingPack } from "@/components/pack/ListingPack";
 import { WorkbenchExportMenu } from "@/components/admin/WorkbenchExportMenu";
 import { coerceLegacyInput } from "@/lib/listing-types";
-import { Trash2, FileText, ChevronDown, ChevronUp, Loader2, Plus, RefreshCw } from "lucide-react";
+import { Trash2, FileText, ChevronDown, ChevronUp, Loader2, Plus, RefreshCw, Search, PenLine } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/history")({
   head: () => ({
-    meta: [
-      { title: `Saved listings — ${APP_NAME}` },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
+    meta: [{ title: `Saved listings — ${APP_NAME}` }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: HistoryPage,
 });
@@ -76,9 +70,7 @@ function HistoryPage() {
     try {
       const res = await delFn({ data: { id } });
       // Only remove from cache after the server confirms the delete.
-      qc.setQueryData<GenerationRecord[]>(["generations", limit], (prev) =>
-        (prev ?? []).filter((x) => x.id !== id),
-      );
+      qc.setQueryData<GenerationRecord[]>(["generations", limit], (prev) => (prev ?? []).filter((x) => x.id !== id));
       if (!res.deleted) toast.info("That listing was already removed.");
       else toast.success("Listing deleted.");
       qc.invalidateQueries({ queryKey: ["generations"] });
@@ -93,13 +85,41 @@ function HistoryPage() {
   const allItems = query.data ?? [];
   const hasMore = allItems.length > limit;
   const items = hasMore ? allItems.slice(0, limit) : allItems;
+  const [search, setSearch] = useState("");
+  const shown = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter((g) =>
+      [g.propertyTitle, g.inputs?.address, g.inputs?.propertyType, g.voice]
+        .filter(Boolean)
+        .some((v) => String(v).toLowerCase().includes(q)),
+    );
+  }, [items, search]);
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-8 sm:px-5">
       <h1 className="font-display text-3xl font-semibold">Saved listings</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Every listing you generate is stored here. Expand to view, copy or delete.
+        Every listing you generate is stored here. Expand to view, copy or delete — or open it in the generator to tweak
+        and regenerate.
       </p>
+
+      {items.length > 0 && (
+        <div className="relative mt-5 max-w-md">
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <Input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by address, postcode or property type"
+            aria-label="Search saved listings"
+            className="h-11 pl-9 text-base sm:h-10 sm:text-sm"
+          />
+        </div>
+      )}
 
       {query.isLoading ? (
         <div className="mt-6 space-y-3" aria-busy="true" aria-live="polite">
@@ -119,9 +139,7 @@ function HistoryPage() {
           <FileText className="h-8 w-8 text-primary/60" />
           <div>
             <p className="text-sm text-muted-foreground">No saved listings yet.</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Generated packs appear here automatically.
-            </p>
+            <p className="mt-1 text-xs text-muted-foreground">Generated packs appear here automatically.</p>
           </div>
           <Button asChild size="sm">
             <Link to="/app">
@@ -131,7 +149,12 @@ function HistoryPage() {
         </Card>
       ) : (
         <div className="mt-6 space-y-3">
-          {items.map((item) => (
+          {shown.length === 0 && (
+            <p className="rounded-lg border border-dashed border-border/70 p-6 text-center text-sm text-muted-foreground">
+              No saved listings match “{search.trim()}”.
+            </p>
+          )}
+          {shown.map((item) => (
             <HistoryItem
               key={item.id}
               item={item}
@@ -212,9 +235,7 @@ function HistoryItem({
             {open ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-semibold">
-              {item.propertyTitle ?? "Untitled property"}
-            </span>
+            <span className="block truncate text-sm font-semibold">{item.propertyTitle ?? "Untitled property"}</span>
             <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
               <span>{dateLabel}</span>
               <span aria-hidden="true">·</span>
@@ -225,10 +246,22 @@ function HistoryItem({
           </span>
         </button>
         <div className="flex items-center gap-1">
-          <WorkbenchExportMenu
-            generationId={item.id}
-            storedPromptVersion={item.output.meta?.promptVersion ?? null}
-          />
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="h-11 w-11 shrink-0 text-muted-foreground hover:text-foreground"
+            title="Open in generator"
+          >
+            <Link
+              to="/app"
+              search={{ g: item.id }}
+              aria-label={`Open in generator: ${item.propertyTitle ?? "Untitled property"}`}
+            >
+              <PenLine className="h-4 w-4" />
+            </Link>
+          </Button>
+          <WorkbenchExportMenu generationId={item.id} storedPromptVersion={item.output.meta?.promptVersion ?? null} />
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
@@ -238,19 +271,15 @@ function HistoryItem({
                 aria-label={`Delete listing: ${item.propertyTitle ?? "Untitled property"}`}
                 disabled={deleting}
               >
-                {deleting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Trash2 className="h-4 w-4" />
-                )}
+                {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete this listing?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This permanently removes the saved listing. Your monthly usage stays the same —
-                  deletion doesn't refund a generation. This cannot be undone.
+                  This permanently removes the saved listing. Your monthly usage stays the same — deletion doesn't
+                  refund a generation. This cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -269,12 +298,12 @@ function HistoryItem({
 
       {open && (
         <div id={panelId} className="border-t border-border/60 p-4 sm:p-5">
-          <ListingPack
-            output={item.output}
-            input={inputs}
-            generationId={item.id}
-            onOutputChange={onGenerated}
-          />
+          <Button asChild variant="outline" size="sm" className="mb-4 min-h-11 gap-2 sm:min-h-9">
+            <Link to="/app" search={{ g: item.id }}>
+              <PenLine className="h-4 w-4" /> Open in generator
+            </Link>
+          </Button>
+          <ListingPack output={item.output} input={inputs} generationId={item.id} onOutputChange={onGenerated} />
         </div>
       )}
     </Card>
