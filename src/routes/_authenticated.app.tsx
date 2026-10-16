@@ -11,7 +11,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { VOICES, type VoiceId } from "@/lib/voices";
-import { EMPTY_INPUT, EXAMPLE_INPUT, type ListingInput, type ListingOutput } from "@/lib/listing-types";
+import {
+  coerceLegacyInput,
+  EMPTY_INPUT,
+  EXAMPLE_INPUT,
+  type ListingInput,
+  type ListingOutput,
+} from "@/lib/listing-types";
+import { getGeneration } from "@/lib/generations.functions";
+import { useAuth } from "@/hooks/use-auth";
 import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME } from "@/lib/config";
@@ -54,6 +62,9 @@ import {
 import { Sparkles, RefreshCw, Lock, ChevronDown, ListChecks } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app")({
+  // ?g=<id> opens a saved listing (from Saved listings → "Open in generator").
+  validateSearch: (search: Record<string, unknown>): { g?: string } =>
+    typeof search.g === "string" && /^[0-9a-f-]{36}$/i.test(search.g) ? { g: search.g } : {},
   head: () => ({
     meta: [{ title: `Generator — ${APP_NAME}` }, { name: "robots", content: "noindex, nofollow" }],
   }),
@@ -109,6 +120,83 @@ function GeneratorInner() {
       setOpenSections(new Set(SECTIONS.filter((x) => x.mobileOpen).map((x) => x.id)));
     }
   }, []);
+
+  // ---- Never lose a draft: the form autosaves per user, in this browser only. ----
+  const { user } = useAuth();
+  const { g: openId } = Route.useSearch();
+  const getGenerationFn = useServerFn(getGeneration);
+  const draftKey = user ? `quill:draft:v1:${user.id}` : null;
+  const [draftOffer, setDraftOffer] = useState<SavedDraft | null>(null);
+  const draftChecked = useRef(false);
+
+  useEffect(() => {
+    if (!draftKey || draftChecked.current || openId) return;
+    draftChecked.current = true;
+    const d = readDraft(draftKey);
+    if (d && hasDraftContent(d.input) && !hasDraftContent(inputRef.current)) setDraftOffer(d);
+  }, [draftKey, openId]);
+
+  useEffect(() => {
+    if (!draftKey || draftOffer) return;
+    const t = window.setTimeout(() => {
+      const cur = inputRef.current;
+      const snapshot = JSON.stringify(cur);
+      // Nothing unsaved when the form matches the pack it produced (or the example).
+      if (snapshot === generatedFrom || snapshot === JSON.stringify(EXAMPLE_INPUT)) {
+        if (snapshot === generatedFrom) removeDraft(draftKey);
+        return;
+      }
+      if (hasDraftContent(cur)) writeDraft(draftKey, { savedAt: Date.now(), input: cur });
+    }, 1500);
+    return () => window.clearTimeout(t);
+  }, [input, draftKey, draftOffer, generatedFrom]);
+
+  // Typing something new means the agent has moved on from the old draft.
+  useEffect(() => {
+    if (draftOffer && hasDraftContent(input)) setDraftOffer(null);
+  }, [input, draftOffer]);
+
+  function restoreDraft() {
+    if (!draftOffer) return;
+    const next = { ...EMPTY_INPUT, ...draftOffer.input };
+    inputRef.current = next;
+    setInput(next);
+    setFromNotes({});
+    setConflicts([]);
+    setDraftOffer(null);
+    toast.success("Draft restored.");
+  }
+
+  function discardDraft() {
+    if (draftKey) removeDraft(draftKey);
+    setDraftOffer(null);
+  }
+
+  // ---- "Open in generator" from Saved listings (?g=<id>). ----
+  const openedId = useRef<string | null>(null);
+  useEffect(() => {
+    if (!openId || openedId.current === openId) return;
+    openedId.current = openId;
+    getGenerationFn({ data: { id: openId } })
+      .then((rec) => {
+        if (!rec) {
+          toast.error("That saved listing couldn't be found.");
+          return;
+        }
+        const loaded = coerceLegacyInput(rec.inputs);
+        inputRef.current = loaded;
+        setInput(loaded);
+        setFromNotes({});
+        setConflicts([]);
+        setOutput(rec.output);
+        setGenerationId(rec.id);
+        setGeneratedFrom(JSON.stringify(loaded));
+        setDraftOffer(null);
+        toast.success(`Opened “${rec.propertyTitle ?? "saved listing"}” — edit and regenerate, or copy again.`);
+      })
+      .catch(() => toast.error("Couldn't open that saved listing. Please try again."));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openId]);
 
   function toggleSection(id: SectionId) {
     setOpenSections((prev) => {
@@ -279,6 +367,7 @@ function GeneratorInner() {
       setOutput(result.output);
       setGenerationId(result.generationId);
       setGeneratedFrom(snapshot);
+      if (draftKey) removeDraft(draftKey);
       if (result.output.marketingStatus === "failed") {
         toast.warning("Listing ready. The email & social didn't generate — you can add them free below.");
       }
@@ -366,6 +455,25 @@ function GeneratorInner() {
           </Button>
         </div>
       </div>
+
+      {draftOffer && (
+        <Card className="mt-6 border-primary/40 bg-primary/5 p-4" role="status">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="min-w-0 text-sm">
+              You have an unsaved draft from {formatDraftTime(draftOffer.savedAt)}
+              {draftOffer.input.address ? ` (${draftOffer.input.address})` : ""}. Restore it?
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" size="sm" className="min-h-11 sm:min-h-9" onClick={restoreDraft}>
+                Restore draft
+              </Button>
+              <Button type="button" size="sm" variant="outline" className="min-h-11 sm:min-h-9" onClick={discardDraft}>
+                Discard
+              </Button>
+            </div>
+          </div>
+        </Card>
+      )}
 
       {subQuery.isError && (
         <Card className="mt-6 border-destructive/40 bg-destructive/5 p-5" role="alert">
@@ -918,4 +1026,63 @@ function DetailField({
       )}
     </div>
   );
+}
+
+// ---------------------------------------------------------------------------
+// Draft autosave (localStorage, per user). Storage can be unavailable (private
+// mode, blocked site data) — every access is wrapped and failures are ignored.
+// ---------------------------------------------------------------------------
+
+interface SavedDraft {
+  savedAt: number;
+  input: ListingInput;
+}
+
+const DRAFT_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
+
+/** True when the agent has typed anything worth keeping (voice choice alone isn't). */
+function hasDraftContent(input: ListingInput | null | undefined): boolean {
+  if (!input) return false;
+  return Object.entries(input).some(([k, v]) => k !== "voice" && typeof v === "string" && v.trim().length > 0);
+}
+
+function readDraft(key: string): SavedDraft | null {
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return null;
+    const d = JSON.parse(raw) as Partial<SavedDraft>;
+    if (typeof d?.savedAt !== "number" || !d.input || typeof d.input !== "object") return null;
+    if (Date.now() - d.savedAt > DRAFT_MAX_AGE_MS) {
+      window.localStorage.removeItem(key);
+      return null;
+    }
+    return { savedAt: d.savedAt, input: coerceLegacyInput(d.input) };
+  } catch {
+    return null;
+  }
+}
+
+function writeDraft(key: string, draft: SavedDraft) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(draft));
+  } catch {
+    // storage full or unavailable — drafts are a convenience only
+  }
+}
+
+function removeDraft(key: string) {
+  try {
+    window.localStorage.removeItem(key);
+  } catch {
+    // ignore
+  }
+}
+
+function formatDraftTime(ts: number): string {
+  const d = new Date(ts);
+  const sameDay = d.toDateString() === new Date().toDateString();
+  const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  return sameDay
+    ? `today at ${time}`
+    : `${d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })} at ${time}`;
 }
