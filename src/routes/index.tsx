@@ -334,8 +334,7 @@ function HeroMockup() {
         <div className="mt-2.5 rounded-xl border border-border/70 bg-card/50 p-3">
           <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Transcript</p>
           <p className="mt-1 text-xs leading-relaxed text-foreground/85">
-            “Five bed detached, gravel drive, walled garden, three receptions, arranged for family life and
-            entertaining…”
+            “Five bed detached, gravel drive, walled garden, three receptions, freehold…”
           </p>
         </div>
       </div>
@@ -368,8 +367,8 @@ function HeroMockup() {
           </span>
         </div>
         <p className="text-xs leading-relaxed text-foreground/80">
-          A five-bedroom detached home approached by a gravel driveway, with generous reception space, a private walled
-          garden and a layout arranged for family life and entertaining.
+          Fictional example: a five-bedroom detached home with a gravel driveway, three reception rooms and a walled
+          garden. Freehold.
         </p>
       </div>
     </div>
@@ -459,7 +458,7 @@ const BENEFIT_GROUPS = [
     icon: FileText,
     title: "Reusable outputs",
     items:
-      "One set of notes produces the Headline, Key Features, listing description, short teaser, Email Blast copy and Instagram, Facebook and X captions — each editable, none written from scratch.",
+      "One set of notes produces the Headline, Key Features, listing description, short teaser, Email Blast copy and Instagram, Facebook and X captions — each with a copy button, ready to check, edit in your portal or CRM, and paste.",
   },
 ];
 
@@ -574,10 +573,12 @@ function LiveExample() {
     ],
     ["Outside space", "Walled garden, mature borders, orchard, stone terrace"],
     ["Parking", "Gravel driveway and detached double cart shed"],
+    ["Council Tax", "Band G"],
+    ["EPC", "E"],
     ["Voice", "Heritage"],
   ];
   const spokenNote =
-    "“Five bedrooms, Grade II listed, walled garden, original beams, inglenook fireplace, near the high street…”";
+    "“Five bedrooms, Grade II listed, walled garden, original beams, inglenook fireplace…”";
   const demo = DEMO_UK;
 
   return (
@@ -590,7 +591,7 @@ function LiveExample() {
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Same source of truth, every asset. See how a handful of property facts becomes the listing description, Key
-            Features, short teaser, Email Blast copy and social captions — brand-consistent and ready to review.
+            Features, short teaser, Email Blast copy and social captions — brand-consistent and ready to review. This is a fictional property: every line comes only from the facts shown.
           </p>
         </Reveal>
 
@@ -633,7 +634,7 @@ function LiveExample() {
                   <Sparkles className="h-4 w-4 shrink-0" /> Marketing pack out
                 </div>
                 <span className="self-start rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary sm:self-auto">
-                  Generated in seconds
+                  Fictional example
                 </span>
               </div>
 
@@ -881,54 +882,55 @@ interface DemoPack {
 }
 
 const DEMO_UK: DemoPack = {
-  headline: "A Distinguished Grade II Listed Home in the Heart of a Cotswold Market Town",
+  headline: "Grade II listed five-bedroom detached home in a Cotswold market town",
   keyFeatures: [
-    "Grade II listed detached period rectory",
+    "Grade II listed detached home",
     "Five bedrooms and three bathrooms",
-    "Three reception rooms including a drawing room of 6.8m x 5.1m",
-    "Inglenook fireplace and flagstone floors",
-    "Exposed beams and original sash windows",
-    "Bespoke shaker kitchen with cellar below",
-    "Walled garden of around half an acre with an orchard",
+    "Three reception rooms",
+    "Inglenook fireplace, flagstone floors and exposed beams",
+    "Original sash windows",
+    "Bespoke kitchen and a cellar",
+    "Walled garden with mature borders, an orchard and a stone terrace",
     "Gravel driveway and detached double cart shed",
-    "Freehold, guide price £1,450,000",
+    "Freehold | Council Tax Band G | EPC rating E",
   ],
   listing: [
-    "Set back behind a gravel driveway and a low honey-stone wall, this Grade II listed home carries the quiet confidence of a house that has watched over its market town for generations. The layout unfolds in sequence, with rooms of generous proportion and a clear sense of purpose.",
-    "Inside, flagstone floors lead between reception rooms anchored by an inglenook fireplace. Exposed beams and original sash windows bring warmth and controlled light, while a bespoke kitchen sits at the heart of the home, opening onto the garden.",
-    "Five bedrooms, three bathrooms and three reception rooms are arranged over the principal floors, with a cellar below for useful storage. Beyond, a walled garden with mature borders, an orchard and a stone terrace offers a sheltered setting for outdoor dining and entertaining.",
+    "A Grade II listed detached home in a Cotswold market town, with five bedrooms, three bathrooms and three reception rooms.",
+    "Period features include an inglenook fireplace, flagstone floors, exposed beams and original sash windows. The house also has a bespoke kitchen and a cellar.",
+    "The walled garden has mature borders, an orchard and a stone terrace. A gravel driveway and a detached double cart shed provide parking.",
+    "Guide Price £1,450,000. Freehold. Council Tax Band G. EPC rating E.",
   ],
   summary:
-    "A five-bedroom Grade II listed detached home in the heart of a Cotswold market town, with an inglenook fireplace, flagstone floors and a private walled garden. Guide price £1,450,000, freehold.",
+    "A Grade II listed five-bedroom detached home in a Cotswold market town, with an inglenook fireplace, flagstone floors and a walled garden. Guide Price £1,450,000, freehold. EPC rating E.",
   emailBlast: {
     subjectLines: [
-      "New instruction: Grade II listed rectory in the Cotswolds",
-      "A five-bedroom listed home in the heart of a market town",
-      "Cotswold rectory with walled garden — new to market",
+      "New instruction: Grade II listed home in a Cotswold market town",
+      "Five bedrooms, three receptions and a walled garden",
+      "Guide Price £1,450,000 — Grade II listed, freehold",
     ],
-    previewText: "Five bedrooms, three receptions and a private walled garden. Freehold, guide £1,450,000.",
-    headline: "A distinguished Grade II listed rectory, new to market",
+    previewText: "Five bedrooms, three receptions, walled garden. Guide Price £1,450,000, freehold.",
+    headline: "A Grade II listed detached home, new to market",
     body: [
-      "We are pleased to bring to market a Grade II listed detached rectory in the heart of a Cotswold market town. Set back behind a gravel driveway and a low honey-stone wall, the house has a quiet confidence and a clear sense of proportion throughout.",
-      "The layout offers three reception rooms anchored by an inglenook fireplace, flagstone floors and exposed beams, with a bespoke shaker kitchen at the heart of the home and a useful cellar below. Five bedrooms and three bathrooms are arranged over the principal floors.",
-      "Beyond, a walled garden of around half an acre includes an orchard and a stone terrace, with a gravel driveway and detached double cart shed to the front. Offered freehold at a guide price of £1,450,000.",
+      "We are pleased to offer a Grade II listed detached home in a Cotswold market town, with five bedrooms, three bathrooms and three reception rooms.",
+      "Inside there is an inglenook fireplace, flagstone floors, exposed beams and original sash windows, with a bespoke kitchen and a cellar. Outside, the walled garden has mature borders, an orchard and a stone terrace, and there is a gravel driveway with a detached double cart shed.",
+      "Guide Price £1,450,000. Freehold. Council Tax Band G. EPC rating E.",
     ],
     callToAction: "Arrange a viewing",
   },
   instagram: {
     caption:
-      "A Grade II listed home in the heart of a Cotswold market town — inglenook fireplace, flagstone floors and a private walled garden. Five bedrooms, three receptions. Guide £1,450,000.",
-    hashtags: "#CotswoldHomes #GradeIIListed #CountryLiving #PropertyForSale #CotswoldProperty",
+      "Grade II listed and new to market in a Cotswold market town — five bedrooms, three receptions, an inglenook fireplace and a walled garden with an orchard. Guide Price £1,450,000, freehold. EPC E.",
+    hashtags: "#CotswoldHomes #GradeIIListed #PropertyForSale",
   },
   facebook: {
     caption:
-      "New to market — a five-bedroom Grade II listed home in the heart of a Cotswold market town. Three reception rooms, a bespoke kitchen and a private walled garden. Guide price £1,450,000. Viewings are available by appointment.",
+      "New to market: a five-bedroom Grade II listed detached home in a Cotswold market town, with three reception rooms, a bespoke kitchen and a walled garden. Guide Price £1,450,000, freehold. EPC rating E.",
     hashtags: "#CotswoldsProperty #GradeIIListed #ForSale",
   },
   x: {
     caption:
-      "New to market: a five-bedroom Grade II listed Cotswold home with an inglenook fireplace, flagstone floors and a private walled garden. Guide £1,450,000.",
-    hashtags: "#CotswoldHomes #GradeIIListed #ForSale",
+      "New to market: five-bedroom Grade II listed detached home in a Cotswold market town, with a walled garden. Guide Price £1,450,000, freehold. EPC E.",
+    hashtags: "#CotswoldHomes #ForSale",
   },
 };
 
@@ -1089,7 +1091,7 @@ function Pricing({ authed }: { authed: boolean }) {
                 </p>
                 <p className="mt-2 text-xs text-muted-foreground">
                   {plan.id === "starter"
-                    ? `${TRIAL_DAYS}-day Starter trial at secure checkout · card required · cancel anytime`
+                    ? `${TRIAL_DAYS}-day Starter trial at secure checkout · card required · then £39/month unless cancelled`
                     : "Cancel anytime"}
                 </p>
 
@@ -1118,7 +1120,7 @@ function Pricing({ authed }: { authed: boolean }) {
 
         <Reveal className="mt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            {TRIAL_DAYS}-day Starter trial at secure checkout · card required · cancel anytime before renewal.
+            {TRIAL_DAYS}-day Starter trial at secure checkout · card required · renews at the plan price shown unless cancelled before the trial ends. Every draft needs agent checking and seller approval before use.
           </p>
         </Reveal>
       </div>

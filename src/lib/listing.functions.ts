@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { finalizeOrRelease, releaseSlot, type SlotRpc } from "./quota-slot";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getConfiguredClaudeModel } from "./ai-gateway.server";
 import { runCore, runMarketing } from "./generation.server";
@@ -92,16 +93,15 @@ export const generateListing = createServerFn({ method: "POST" })
       }
     }
 
+    const rpc: SlotRpc = (fn, args) =>
+      supabaseAdmin.rpc(fn as never, args as never) as unknown as Promise<{
+        data: unknown;
+        error: unknown;
+      }>;
     const releaseReservation = async () => {
-      if (!reservationId) return;
-      try {
-        await supabaseAdmin.rpc("release_generation_slot", {
-          _user_id: userId,
-          reservation_id: reservationId,
-        });
-      } catch (err) {
-        console.error("release_generation_slot failed", err);
-      }
+      const id = reservationId;
+      reservationId = null;
+      await releaseSlot(rpc, userId, id);
     };
 
     try {
@@ -143,16 +143,14 @@ export const generateListing = createServerFn({ method: "POST" })
       const savedGenId = savedGen.id as string;
 
       if (reservationId) {
-        const { data: finalizedOk, error: finalizeError } = await supabaseAdmin.rpc(
-          "finalize_generation_slot",
-          { _user_id: userId, reservation_id: reservationId, generation_id: savedGenId },
-        );
-        if (finalizeError || finalizedOk !== true) {
+        const id = reservationId;
+        // finalizeOrRelease releases the slot itself on any failure.
+        reservationId = null;
+        const finalizedOk = await finalizeOrRelease(rpc, userId, id, savedGenId);
+        if (!finalizedOk) {
           await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
-          reservationId = null;
           throw new Error("Couldn't record listing usage. Please try again.");
         }
-        reservationId = null;
       } else if (comped) {
         const { error: usageError } = await supabase.from("generation_usage").insert({
           user_id: userId,

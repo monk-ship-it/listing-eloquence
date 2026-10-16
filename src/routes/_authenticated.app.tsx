@@ -177,10 +177,18 @@ function GeneratorInner() {
   useEffect(() => {
     if (!openId || openedId.current === openId) return;
     openedId.current = openId;
-    getGenerationFn({ data: { id: openId } })
+    const requestedId = openId;
+    // Anything typed after the request started must not be overwritten.
+    const before = JSON.stringify(inputRef.current);
+    getGenerationFn({ data: { id: requestedId } })
       .then((rec) => {
+        if (openedId.current !== requestedId) return; // stale response
         if (!rec) {
           toast.error("That saved listing couldn't be found.");
+          return;
+        }
+        if (inFlight.current || JSON.stringify(inputRef.current) !== before) {
+          toast.info("Saved listing not loaded because you'd already started editing. Reopen it from Saved listings.");
           return;
         }
         const loaded = coerceLegacyInput(rec.inputs);
@@ -357,11 +365,12 @@ function GeneratorInner() {
     inFlight.current = true;
     const myId = ++requestId.current;
     setBusy(true);
-    // Let any in-progress dictation finish and land before sending.
-    await dictation.finishPending();
-    const current = inputRef.current;
-    const snapshot = JSON.stringify(current);
     try {
+      // Let any in-progress dictation finish and land before sending. Inside
+      // try/finally so a failure here can never leave busy/inFlight locked.
+      await dictation.finishPending();
+      const current = inputRef.current;
+      const snapshot = JSON.stringify(current);
       const result = await generate({ data: current });
       if (myId !== requestId.current) return; // stale response — ignore
       setOutput(result.output);

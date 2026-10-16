@@ -38,7 +38,7 @@ const STEPS: Step[] = [
     id: "pack",
     label: "The listing pack appears",
     title: "Produce the full pack",
-    body: "Headline, 6–10 Key Features, the listing description, a short teaser, Email Blast copy and Instagram, Facebook and X captions — drafted together and fully editable before use.",
+    body: "Headline, 6–10 Key Features, the listing description, a short teaser, Email Blast copy and Instagram, Facebook and X captions — drafted together, each with a copy button — check and edit after pasting.",
     image: IMG.walkGarden,
     alt: "Private walled garden on a sunny day with a striped lawn and mature planting behind an elegant home",
     icon: Sparkles,
