@@ -1,3 +1,4 @@
+import { missingCaveats } from "../../src/lib/feature-caveats";
 import { hasExactPrice, priceQualifierProblems, sellerEmailShape } from "../../src/lib/output-guards";
 import { unwrapJson } from "../../src/lib/listing-types";
 import { imageLabelsFor } from "../../src/lib/output-guards";
@@ -700,8 +701,19 @@ export function gradePack(pack: GradePack, input: ListingInput, c: EvalCase, pre
     ...gradeDimensions(pack, input),
     ...gradeFloors(pack, input),
     ...gradeBlockDump(pack),
+    ...gradeFeatureCaveats(pack, input),
   ];
   return prefix ? all.map((f) => ({ ...f, grader: `${prefix}${f.grader}` })) : all;
+}
+
+/** FAIL when a key feature names a structure the facts say lacks approval, without a caveat. */
+export function gradeFeatureCaveats(pack: GradePack, input: ListingInput): Finding[] {
+  return missingCaveats(pack.keyFeatures ?? [], input).map((m) => ({
+    grader: "caveats",
+    severity: "fail" as const,
+    message: `keyFeature names the ${m.key} without its supplied planning/building-regs caveat`,
+    evidence: m.feature,
+  }));
 }
 
 /** Raw output: only the checks validate* could hide (limits + banned). */

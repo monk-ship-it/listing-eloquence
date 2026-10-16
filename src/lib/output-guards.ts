@@ -1,3 +1,4 @@
+import { applyFeatureCaveats } from "./feature-caveats";
 /**
  * Deterministic post-processing and retry triggers for generated copy.
  * Pure module (relative imports only) so the app and the eval harness share it.
@@ -53,7 +54,10 @@ export function labelSocial(posts: SocialPost[], labels: string[]): SocialPost[]
 
 export function labelCore(out: CoreOutput, input: ListingInput): CoreOutput {
   const labels = imageLabelsFor(input.mediaNotes);
-  return labels.length ? { ...out, listing: appendLabels(out.listing, labels) } : out;
+  // Supplied "no known approval" caveats are attached deterministically.
+  const keyFeatures = applyFeatureCaveats(out.keyFeatures, input);
+  const withCaveats = { ...out, keyFeatures };
+  return labels.length ? { ...withCaveats, listing: appendLabels(out.listing, labels) } : withCaveats;
 }
 
 export function labelMarketing(out: MarketingOutput, input: ListingInput): MarketingOutput {
