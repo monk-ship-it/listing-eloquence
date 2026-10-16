@@ -39,6 +39,17 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
   - Bullets in the three runs: "Lean-to utility (no known planning or building regulations approval)" twice, and "Lean-to utility (seller unaware of planning or building regulations approval)" once.
 - Final gates: `bunx tsgo --noEmit` clean; `bun run test` **12 files, 123/123 passed**; `bun run prompts:check` up to date (27 files); `bun run build` exit 0.
 
+## Round 4 — feature-caveats correctness fix (independent review)
+- **Bugs fixed in `src/lib/feature-caveats.ts`:**
+  - A negative word anywhere in the sentence triggered a caveat. Now a negative must sit in the same clause as the approval it governs (clauses split on commas, semicolons, "but/however/whereas", and "and" unless it joins planning/building regs). "Extension has planning approval and no known issues" adds nothing.
+  - Generic "no approval" was turned into building regulations. It now stays generic: "no known approval".
+  - Any word like "planning" in a bullet counted as a caveat. Now the bullet must state the same negative substance as the fact. "(planning approved)" or a regs-only caveat where both are required is replaced with the correct one.
+  - A bullet naming two caveated structures counted as caveated after one caveat. Now a bullet is only accepted if it names exactly one structure; compound bullets are split so each structure gets its own correct caveat, or dropped from the bullets when it can't fit.
+  - When the negative can't be tied to one structure (e.g. two structures in the sentence, "approval unknown" naming neither), no legal wording is added: the structure is removed from the bullets and returned by `caveatsForReview()`; the grader FAILs any such bullet. Material Information keeps the verbatim disclosures.
+- Tests: `feature-caveats.test.ts` now 15 cases (added: positive approval + no known issues, generic approval stays generic, planning granted/regs unknown, wrong positive output caveat, regs-only vs both, multiple structures, ambiguous → review).
+- Results: `bun run test` **12 files, 130/130 passed**; `bun run build` exit 0; `bunx tsgo --noEmit` clean; `bun run prompts:check` up to date (27 files). Prompt text unchanged; PROMPT_VERSION `da649db30566` unchanged.
+- Live A7 ×1 (`docs/evals/2026-10-16-1515-a7-caveat-fix`): **PASS**, LLM 5.00, 0 retries, core 10.2s, marketing 23.0s; bullet "Lean-to utility (no known planning or building regulations approval)". Saved as-is A7 failure still FAILs on regrade (grader not weakened).
+
 ## Not tested
 - Opening a saved listing in the browser (the test account has none; generating one would use AI and a credit on an account without access).
 - Stripe checkout, renewal and webhooks live; transactional emails; deletion.
