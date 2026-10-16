@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { finalizeOrRelease, releaseSlot, type SlotRpc } from "./quota-slot";
+import { finalizeOrRelease, releaseSlot, type ReadSlot, type SlotRpc } from "./quota-slot";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getConfiguredClaudeModel } from "./ai-gateway.server";
 import { runCore, runMarketing } from "./generation.server";
