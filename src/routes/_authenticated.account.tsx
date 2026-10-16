@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,7 +27,9 @@ import {
   verifyCheckoutSession,
 } from "@/lib/subscription.functions";
 import { APP_NAME, TRIAL_DAYS, CONTACT_EMAIL, getPlan, planPriceDisplay } from "@/lib/config";
-import { CheckCircle2, CreditCard, Mail, Loader2 } from "lucide-react";
+import { CheckCircle2, CreditCard, Mail, Loader2, Building2 } from "lucide-react";
+import { getMyAgency, saveMyAgency } from "@/lib/generations.functions";
+import { agencySignature, EMPTY_AGENCY, hasAgencyDetails, type AgencyDetails } from "@/lib/clipboard";
 
 export const Route = createFileRoute("/_authenticated/account")({
   head: () => ({
@@ -158,17 +162,14 @@ function AccountPage() {
       )}
       {activation === "pending" && (
         <div className="mt-6 rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 text-sm text-amber-700">
-          Payment received. Your account is still being activated. Please refresh in a moment or
-          contact support.
+          Payment received. Your account is still being activated. Please refresh in a moment or contact support.
         </div>
       )}
 
       <Card className="mt-8 p-7">
         <div className="flex items-center justify-between">
           <h2 className="font-display text-xl font-semibold">Subscription</h2>
-          <Badge variant={hasAccess ? "default" : "secondary"}>
-            {STATUS_LABELS[status] ?? status}
-          </Badge>
+          <Badge variant={hasAccess ? "default" : "secondary"}>{STATUS_LABELS[status] ?? status}</Badge>
         </div>
 
         {isLoading ? (
@@ -204,8 +205,7 @@ function AccountPage() {
             {sub?.cancelAtPeriodEnd ? (
               <div className="rounded-lg border border-border/70 bg-muted/30 p-4">
                 <p className="text-sm text-muted-foreground">
-                  Your subscription is set to cancel. You'll keep access until{" "}
-                  {fmtDate(sub?.currentPeriodEnd ?? null)}.
+                  Your subscription is set to cancel. You'll keep access until {fmtDate(sub?.currentPeriodEnd ?? null)}.
                 </p>
                 <Button className="mt-3" variant="outline" onClick={resume} disabled={busy}>
                   Resume subscription
@@ -229,8 +229,8 @@ function AccountPage() {
                     <AlertDialogTitle>Cancel your subscription?</AlertDialogTitle>
                     <AlertDialogDescription>
                       You'll keep access until the end of your current billing period
-                      {sub?.currentPeriodEnd ? ` (${fmtDate(sub.currentPeriodEnd)})` : ""}. You can
-                      resume anytime before then.
+                      {sub?.currentPeriodEnd ? ` (${fmtDate(sub.currentPeriodEnd)})` : ""}. You can resume anytime
+                      before then.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -243,6 +243,8 @@ function AccountPage() {
           </div>
         )}
       </Card>
+
+      <AgencyDetailsCard />
 
       <Card className="mt-6 p-7">
         <h2 className="font-display text-xl font-semibold">Need help?</h2>
@@ -266,5 +268,119 @@ function Info({ label, value }: { label: string; value: string }) {
       <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
       <p className="mt-1 text-sm font-medium">{value}</p>
     </div>
+  );
+}
+
+const AGENCY_FIELDS: {
+  key: keyof AgencyDetails;
+  label: string;
+  placeholder: string;
+  type?: string;
+}[] = [
+  { key: "negotiatorName", label: "Your name", placeholder: "Sarah Jones" },
+  { key: "agencyName", label: "Agency and branch", placeholder: "Oakwood Estates – Chatham" },
+  { key: "phone", label: "Direct phone", placeholder: "01634 000000", type: "tel" },
+  { key: "email", label: "Email", placeholder: "sarah@oakwoodestates.co.uk", type: "email" },
+  { key: "website", label: "Website", placeholder: "oakwoodestates.co.uk" },
+  { key: "address", label: "Branch address", placeholder: "12 High Street, Chatham ME4 4AA" },
+  { key: "signOff", label: "Sign-off", placeholder: "Kind regards" },
+  {
+    key: "footerLine",
+    label: "Footer line (optional)",
+    placeholder: "Member of Propertymark · The Property Ombudsman",
+  },
+];
+
+/** Agency details saved once and added to the applicant and seller emails at copy time. */
+function AgencyDetailsCard() {
+  const qc = useQueryClient();
+  const getFn = useServerFn(getMyAgency);
+  const saveFn = useServerFn(saveMyAgency);
+  const { data, isLoading, isError } = useQuery({ queryKey: ["agency"], queryFn: () => getFn() });
+  const [form, setForm] = useState<AgencyDetails>(EMPTY_AGENCY);
+  const [saving, setSaving] = useState(false);
+  const loaded = useRef(false);
+
+  useEffect(() => {
+    if (data && !loaded.current) {
+      loaded.current = true;
+      setForm(data);
+    }
+  }, [data]);
+
+  const dirty = !!data && JSON.stringify(form) !== JSON.stringify(data);
+
+  async function save() {
+    setSaving(true);
+    try {
+      const saved = await saveFn({ data: form });
+      qc.setQueryData(["agency"], saved);
+      setForm(saved);
+      toast.success("Agency details saved — Quill adds them to your emails when you copy.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't save your agency details.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Card className="mt-6 p-7">
+      <div className="flex items-center gap-2">
+        <Building2 className="h-5 w-5 text-primary" />
+        <h2 className="font-display text-xl font-semibold">Agency details</h2>
+      </div>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Save these once. Quill adds them as your sign-off when you copy an Email Blast, the full pack or a seller
+        approval email. They never go into portal copy.
+      </p>
+
+      {isLoading ? (
+        <p className="mt-6 text-sm text-muted-foreground">Loading…</p>
+      ) : isError ? (
+        <p className="mt-6 text-sm text-destructive">Couldn't load your agency details.</p>
+      ) : (
+        <form
+          className="mt-5 space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void save();
+          }}
+        >
+          <div className="grid gap-4 sm:grid-cols-2">
+            {AGENCY_FIELDS.map((f) => (
+              <div
+                key={f.key}
+                className={`min-w-0 space-y-1.5 ${f.key === "footerLine" || f.key === "address" ? "sm:col-span-2" : ""}`}
+              >
+                <Label htmlFor={`agency-${f.key}`} className="text-xs text-muted-foreground">
+                  {f.label}
+                </Label>
+                <Input
+                  id={`agency-${f.key}`}
+                  type={f.type ?? "text"}
+                  value={form[f.key]}
+                  maxLength={200}
+                  placeholder={f.placeholder}
+                  autoComplete="off"
+                  onChange={(e) => setForm((prev) => ({ ...prev, [f.key]: e.target.value }))}
+                />
+              </div>
+            ))}
+          </div>
+
+          {hasAgencyDetails(form) && (
+            <div className="rounded-lg border border-dashed border-border/70 bg-muted/30 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Sign-off preview</p>
+              <pre className="mt-1.5 whitespace-pre-wrap break-words font-sans text-sm">{agencySignature(form)}</pre>
+            </div>
+          )}
+
+          <Button type="submit" className="min-h-11 sm:min-h-10" disabled={saving || !dirty}>
+            {saving ? "Saving…" : dirty ? "Save agency details" : "Saved"}
+          </Button>
+        </form>
+      )}
+    </Card>
   );
 }
