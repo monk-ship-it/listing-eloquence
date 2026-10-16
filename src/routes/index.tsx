@@ -87,17 +87,19 @@ function Landing() {
     <>
       <div className="public-daylight min-h-screen overflow-x-clip">
         <Header user={authed} />
-        <Hero authed={authed} />
-        <Workflow />
+        <main>
+          <Hero authed={authed} />
+          <Workflow />
 
-        <ListingDetail />
-        <Voices />
-        <LiveExample />
-        <EditorialBand />
+          <ListingDetail />
+          <Voices />
+          <LiveExample />
+          <EditorialBand />
 
-        <VoiceDictation authed={authed} />
-        <Pricing authed={authed} />
-        <FinalCta authed={authed} />
+          <VoiceDictation authed={authed} />
+          <Pricing authed={authed} />
+          <FinalCta authed={authed} />
+        </main>
         <Footer />
       </div>
     </>
