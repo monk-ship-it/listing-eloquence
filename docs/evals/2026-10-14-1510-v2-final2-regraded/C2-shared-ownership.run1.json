@@ -1,0 +1,188 @@
+{
+  "id": "C2-shared-ownership",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 10125,
+      "stopReason": "tool_use",
+      "inputTokens": 4523,
+      "outputTokens": 576
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 21275,
+      "stopReason": "tool_use",
+      "inputTokens": 5451,
+      "outputTokens": 1569
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "Two-bedroom mid-terrace house, Dartford – Shared Ownership",
+      "summary": "Shared Ownership opportunity in Dartford: 40% share for £130,000, rent £487 per month on the unsold share. Mid-terrace house with rear garden, two parking spaces and gas central heating.",
+      "listing": "A two-bedroom mid-terrace house at 14 Wren Close, Dartford DA1, available for Shared Ownership at £130,000 for a 40% share. Rent on the unsold share is £487 per month. The full market value is £325,000. The tenure is leasehold with 990 years remaining. Ground rent is peppercorn. The service charge is £312 per year (2026/27 estimate).\n\nThe accommodation comprises one reception room and a bathroom. The property has gas central heating. Outside there is a rear garden and driveway parking for two cars.\n\nMains electricity, mains water (metered) and mains sewerage are connected. Broadband is FTTC. Mobile signal provides good outdoor coverage on major networks.\n\nShared Ownership £130,000 for a 40% share. Rent on the unsold share is £487 per month. Full market value £325,000. Leasehold with 990 years remaining. Ground rent is peppercorn. Service charge £312 per year (2026/27 estimate). Council Tax Band C (Dartford Borough Council). EPC rating B. Construction is standard. Shared ownership eligibility criteria apply. The housing association has an 8-week nomination period on resale.",
+      "keyFeatures": [
+        "Shared Ownership: 40% share for £130,000",
+        "Rent £487 per month on the unsold share",
+        "Two bedrooms",
+        "Rear garden",
+        "Driveway parking for two cars",
+        "Gas central heating",
+        "990-year leasehold, peppercorn ground rent",
+        "Service charge £312 per year (2026/27 estimate)",
+        "Council Tax Band C, EPC rating B",
+        "Eligibility criteria apply; 8-week housing association nomination period"
+      ]
+    },
+    "marketing": {
+      "emailBlast": {
+        "subjectLines": [
+          "Just listed: 2-bed mid-terrace, Dartford – SO £130,000",
+          "New instruction: 2-bed house, Dartford DA1 – SO £130,000",
+          "Dartford 2-bed mid-terrace – Shared Ownership £130,000"
+        ],
+        "previewText": "40% share · Leasehold · 990 years · Rear garden · Two parking spaces · EPC B",
+        "headline": "2-bed mid-terrace house, Wren Close, Dartford DA1",
+        "body": "A mid-terrace house in Dartford DA1 is for sale at Shared Ownership £130,000 for a 40% share. Rent on the unsold share is £487 per month. Full market value is £325,000. The tenure is leasehold with 990 years remaining.\n\nThe property has two bedrooms, one bathroom and one reception room. There is a rear garden and two parking spaces on the driveway.\n\nCouncil Tax is band C (Dartford Borough Council). The EPC rating is B. Ground rent is peppercorn. The service charge is £312 per year (2026/27 estimate). Please note: Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "A two-bedroom mid-terrace house at 14 Wren Close, Dartford DA1, is available at Shared Ownership £130,000 for a 40% share. Rent on the unsold share is £487 per month. The property has a rear garden and two parking spaces. The lease has 990 years remaining and the EPC rating is B. I would be pleased to arrange a viewing for you."
+      },
+      "sellerEmail": "{\n  \"body\": \"Dear [Seller name],\\n\\nThank you for instructing us. I have prepared the draft particulars below for your approval. Please check each fact carefully before we publish anything.\\n\\n1. Price: Shared Ownership £130,000 for a 40% share – is this correct?\\n2. Rent on the unsold share: £487 per month – is this correct?\\n3. Full market value: £325,000 – is this correct?\\n4. Tenure: Leasehold with 990 years remaining – is this correct?\\n5. Ground rent: Peppercorn – is this correct?\\n6. Service charge: £312 per year (2026/27 estimate) – is this correct?\\n7. Council Tax: Band C (Dartford Borough Council) – is this correct?\\n8. EPC rating: B – is this correct?\\n9. Bedrooms: 2 – is this correct?\\n10. Bathrooms: 1 – is this correct?\\n11. Reception rooms: 1 – is this correct?\\n12. Parking: Driveway with two parking spaces – is this correct?\\n13. Rear garden – is this correct?\\n14. Electricity: Mains – is this correct?\\n15. Water: Mains (metered) – is this correct?\\n16. Sewerage: Mains – is this correct?\\n17. Heating: Gas central heating – is this correct?\\n18. Broadband: FTTC – is this correct?\\n19. Mobile signal: Good outdoor coverage on major networks – is this correct?\\n20. Construction: Standard – is this correct?\\n21. Known issue: Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale – is this correct?\\n\\nPlease reply \"Approved\" or send any corrections – nothing will be published until you confirm.\\n\\n[Your name, branch, phone]\"\n}",
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "2-bed mid-terrace house, Wren Close, Dartford DA1\n\nShared Ownership £130,000 for a 40% share. Rent on the unsold share is £487 per month. Full market value is £325,000.\n\nTwo bedrooms, one bathroom, one reception room.\n\nRear garden and two parking spaces on the driveway. 🏡\n\nLeasehold · 990 years remaining · Ground rent peppercorn · Service charge £312 per year (2026/27 estimate) · EPC B · Council Tax band C\n\nPlease note: Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale. Full material information on the listing. 🔑",
+          "hashtags": [
+            "Dartford",
+            "DartfordProperty",
+            "Kent",
+            "MidTerrace",
+            "SharedOwnership",
+            "NewInstruction",
+            "ForSale",
+            "TwoBedHouse"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "A two-bedroom mid-terrace house at 14 Wren Close, Dartford DA1, is for sale at Shared Ownership £130,000 for a 40% share. Rent on the unsold share is £487 per month. The full market value is £325,000. The property has two bedrooms, one bathroom and one reception room. There is a rear garden and two parking spaces on the driveway. The tenure is leasehold with 990 years remaining. Ground rent is peppercorn. The service charge is £312 per year (2026/27 estimate). The EPC rating is B. Council Tax is band C (Dartford Borough Council). Please note: Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale. Full material information on the listing. 🏡",
+          "hashtags": [
+            "DartfordProperty",
+            "SharedOwnership",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "2-bed mid-terrace, Dartford DA1. Shared Ownership £130,000 for 40% share. Rent £487/month on unsold share. Rear garden, two parking spaces. Leasehold, 990 yrs. EPC B. Full material information on listing.",
+          "hashtags": [
+            "Dartford",
+            "SharedOwnership"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": true,
+  "findings": [
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "emailBlast.body: ground rent not in the same paragraph as the tenure"
+    },
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "emailBlast.body: service charge not in the same paragraph as the tenure"
+    }
+  ],
+  "coreMs": 10125,
+  "marketingMs": 21275,
+  "retries": 0,
+  "output": {
+    "headline": "Two-bedroom mid-terrace house, Dartford – Shared Ownership",
+    "listing": "A two-bedroom mid-terrace house at 14 Wren Close, Dartford DA1, available for Shared Ownership at £130,000 for a 40% share. Rent on the unsold share is £487 per month. The full market value is £325,000. The tenure is leasehold with 990 years remaining. Ground rent is peppercorn. The service charge is £312 per year (2026/27 estimate).\n\nThe accommodation comprises one reception room and a bathroom. The property has gas central heating. Outside there is a rear garden and driveway parking for two cars.\n\nMains electricity, mains water (metered) and mains sewerage are connected. Broadband is FTTC. Mobile signal provides good outdoor coverage on major networks.\n\nShared Ownership £130,000 for a 40% share. Rent on the unsold share is £487 per month. Full market value £325,000. Leasehold with 990 years remaining. Ground rent is peppercorn. Service charge £312 per year (2026/27 estimate). Council Tax Band C (Dartford Borough Council). EPC rating B. Construction is standard. Shared ownership eligibility criteria apply. The housing association has an 8-week nomination period on resale.",
+    "summary": "Shared Ownership opportunity in Dartford: 40% share for £130,000, rent £487 per month on the unsold share. Mid-terrace house with rear garden, two parking spaces and gas central heating.",
+    "keyFeatures": [
+      "Shared Ownership: 40% share for £130,000",
+      "Rent £487 per month on the unsold share",
+      "Two bedrooms",
+      "Rear garden",
+      "Driveway parking for two cars",
+      "Gas central heating",
+      "990-year leasehold, peppercorn ground rent",
+      "Service charge £312 per year (2026/27 estimate)",
+      "Council Tax Band C, EPC rating B",
+      "Eligibility criteria apply; 8-week housing association nomination period"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "Just listed: 2-bed mid-terrace, Dartford – SO £130,000",
+        "New instruction: 2-bed house, Dartford DA1 – SO £130,000",
+        "Dartford 2-bed mid-terrace – Shared Ownership £130,000"
+      ],
+      "previewText": "40% share · Leasehold · 990 years · Rear garden · Two parking spaces · EPC B",
+      "headline": "2-bed mid-terrace house, Wren Close, Dartford DA1",
+      "body": "A mid-terrace house in Dartford DA1 is for sale at Shared Ownership £130,000 for a 40% share. Rent on the unsold share is £487 per month. Full market value is £325,000. The tenure is leasehold with 990 years remaining.\n\nThe property has two bedrooms, one bathroom and one reception room. There is a rear garden and two parking spaces on the driveway.\n\nCouncil Tax is band C (Dartford Borough Council). The EPC rating is B. Ground rent is peppercorn. The service charge is £312 per year (2026/27 estimate). Please note: Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale.\n\nFull material information is on the property listing.",
+      "callToAction": "Book a viewing",
+      "personalMessage": "A two-bedroom mid-terrace house at 14 Wren Close, Dartford DA1, is available at Shared Ownership £130,000 for a 40% share. Rent on the unsold share is £487 per month. The property has a rear garden and two parking spaces. The lease has 990 years remaining and the EPC rating is B. I would be pleased to arrange a viewing for you."
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "2-bed mid-terrace house, Wren Close, Dartford DA1\n\nShared Ownership £130,000 for a 40% share. Rent on the unsold share is £487 per month. Full market value is £325,000.\n\nTwo bedrooms, one bathroom, one reception room.\n\nRear garden and two parking spaces on the driveway. 🏡\n\nLeasehold · 990 years remaining · Ground rent peppercorn · Service charge £312 per year (2026/27 estimate) · EPC B · Council Tax band C\n\nPlease note: Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale. Full material information on the listing. 🔑",
+        "hashtags": [
+          "Dartford",
+          "DartfordProperty",
+          "Kent",
+          "MidTerrace",
+          "SharedOwnership",
+          "NewInstruction",
+          "ForSale",
+          "TwoBedHouse"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "A two-bedroom mid-terrace house at 14 Wren Close, Dartford DA1, is for sale at Shared Ownership £130,000 for a 40% share. Rent on the unsold share is £487 per month. The full market value is £325,000. The property has two bedrooms, one bathroom and one reception room. There is a rear garden and two parking spaces on the driveway. The tenure is leasehold with 990 years remaining. Ground rent is peppercorn. The service charge is £312 per year (2026/27 estimate). The EPC rating is B. Council Tax is band C (Dartford Borough Council). Please note: Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale. Full material information on the listing. 🏡",
+        "hashtags": [
+          "DartfordProperty",
+          "SharedOwnership",
+          "NewInstruction"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "2-bed mid-terrace, Dartford DA1. Shared Ownership £130,000 for 40% share. Rent £487/month on unsold share. Rear garden, two parking spaces. Leasehold, 990 yrs. EPC B. Full material information on listing.",
+        "hashtags": [
+          "Dartford",
+          "SharedOwnership"
+        ]
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – 14 Wren Close, Dartford DA1",
+      "body": "Dear [Seller name],\n\nThank you for instructing us. I have prepared the draft particulars below for your approval. Please check each fact carefully before we publish anything.\n\n1. Price: Shared Ownership £130,000 for a 40% share – is this correct?\n2. Rent on the unsold share: £487 per month – is this correct?\n3. Full market value: £325,000 – is this correct?\n4. Tenure: Leasehold with 990 years remaining – is this correct?\n5. Ground rent: Peppercorn – is this correct?\n6. Service charge: £312 per year (2026/27 estimate) – is this correct?\n7. Council Tax: Band C (Dartford Borough Council) – is this correct?\n8. EPC rating: B – is this correct?\n9. Bedrooms: 2 – is this correct?\n10. Bathrooms: 1 – is this correct?\n11. Reception rooms: 1 – is this correct?\n12. Parking: Driveway with two parking spaces – is this correct?\n13. Rear garden – is this correct?\n14. Electricity: Mains – is this correct?\n15. Water: Mains (metered) – is this correct?\n16. Sewerage: Mains – is this correct?\n17. Heating: Gas central heating – is this correct?\n18. Broadband: FTTC – is this correct?\n19. Mobile signal: Good outdoor coverage on major networks – is this correct?\n20. Construction: Standard – is this correct?\n21. Known issue: Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale – is this correct?\n\nPlease reply \"Approved\" or send any corrections – nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 5,
+      "2": 5,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 5,
+      "8": 5
+    },
+    "hardFail": false,
+    "verdict": "PASS",
+    "fixes": [],
+    "average": 5
+  }
+}
