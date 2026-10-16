@@ -144,23 +144,39 @@ export const generateListing = createServerFn({ method: "POST" })
 
       if (reservationId) {
         const id = reservationId;
-        // finalizeOrRelease releases the slot itself on any failure.
+        // finalizeOrRelease reconciles and releases the slot itself.
         reservationId = null;
-        const finalizedOk = await finalizeOrRelease(rpc, userId, id, savedGenId);
-        if (!finalizedOk) {
+        const readSlot: ReadSlot = async (rid) => {
+          const { data: row, error } = await supabaseAdmin
+            .from("generation_usage")
+            .select("reservation_status")
+            .eq("id", rid)
+            .eq("user_id", userId)
+            .maybeSingle();
+          if (error) return null;
+          if (!row) return "missing";
+          return row.reservation_status === "completed" ? "completed" : "reserved";
+        };
+        const outcome = await finalizeOrRelease(rpc, readSlot, userId, id, savedGenId);
+        if (outcome === "released") {
+          // Credit confirmed not used, so the listing isn't kept either.
           await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
-          throw new Error("Couldn't record listing usage. Please try again.");
+          throw new Error("Couldn't record listing usage. Please try again — this didn't use a listing.");
+        }
+        if (outcome === "unresolved") {
+          // Unknown whether the credit committed: keep the saved listing. An
+          // unsettled reservation expires on its own and is then not charged.
+          console.error("finalize unresolved; keeping generation", { userId, reservationId: id, savedGenId });
         }
       } else if (comped) {
+        // Comped accounts are unlimited; this row is only an audit trail, so a
+        // failure here must not cost the agent their saved listing.
         const { error: usageError } = await supabase.from("generation_usage").insert({
           user_id: userId,
           generation_id: savedGenId,
           plan: sub?.plan ?? null,
         });
-        if (usageError) {
-          await supabase.from("generations").delete().eq("id", savedGenId).eq("user_id", userId);
-          throw new Error("Couldn't record listing usage. Please try again.");
-        }
+        if (usageError) console.error("comped usage insert failed", usageError);
       }
 
       return { generationId: savedGenId, output: parsed };
