@@ -712,7 +712,7 @@ export function gradeFeatureCaveats(pack: GradePack, input: ListingInput): Findi
     grader: "caveats",
     severity: "fail" as const,
     message: `keyFeature names the ${m.key} without its supplied planning/building-regs caveat`,
-    evidence: m.feature,
+    text: m.feature,
   }));
 }
 
