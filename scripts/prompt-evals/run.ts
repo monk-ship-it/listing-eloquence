@@ -163,7 +163,11 @@ if (regradeDir) {
       ...(llm ? { llm } : {}),
       findings,
       ...(extraction ? { extraction } : {}),
-      pass: !saved.error && !findings.some((x) => x.severity === "fail"),
+      // An LLM-grader FAIL (e.g. an unsupported claim) fails the case too.
+      pass:
+        !saved.error &&
+        !findings.some((x) => x.severity === "fail") &&
+        !(llm && "verdict" in llm && llm.verdict === "FAIL"),
     });
   }
   const h: ReportHeader = {
@@ -289,7 +293,9 @@ async function runCase(c: EvalCase, run: number): Promise<CaseResult> {
   }
   return {
     ...base,
-    pass: !findings.some((f) => f.severity === "fail"),
+    pass:
+      !findings.some((f) => f.severity === "fail") &&
+      !(llm && "verdict" in llm && llm.verdict === "FAIL"),
     findings,
     coreMs: sum("core"),
     marketingMs: sum("marketing"),
