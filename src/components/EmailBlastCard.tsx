@@ -1,5 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,8 +12,25 @@ import {
   type EmailBlast,
   type ListingOutput,
 } from "@/lib/listing-types";
-import { copyText, formatEmailBodyOnly, formatEmailForPaste, withDraft, wordCount } from "@/lib/clipboard";
+import {
+  copyText,
+  formatEmailBodyOnly,
+  formatEmailForPaste,
+  hasAgencyDetails,
+  withAgency,
+  withDraft,
+  wordCount,
+  type AgencyDetails,
+} from "@/lib/clipboard";
 import { generateMarketingForGeneration } from "@/lib/listing.functions";
+import { getMyAgency } from "@/lib/generations.functions";
+
+/** The signed-in agent's saved agency details (Account → Agency details), or null. */
+export function useAgencyDetails(): AgencyDetails | null {
+  const fn = useServerFn(getMyAgency);
+  const q = useQuery({ queryKey: ["agency"], queryFn: () => fn(), staleTime: 5 * 60_000 });
+  return q.data ?? null;
+}
 
 async function copyWithToast(text: string, label: string) {
   const ok = await copyText(text);
@@ -169,6 +188,8 @@ function EmailBlastBody({
   draft?: boolean;
 }) {
   const pmWords = wordCount(emailBlast.personalMessage);
+  const agency = useAgencyDetails();
+  const signed = hasAgencyDetails(agency);
   const subject = emailBlast.subjectLines[chosen] ?? "";
   return (
     <>
@@ -279,8 +300,10 @@ function EmailBlastBody({
           className="min-h-11 sm:min-h-10"
           onClick={() =>
             copyWithToast(
-              withDraft(formatEmailForPaste(emailBlast, { subject, keyFeatures }), draft),
-              "Email copied — add your link and sign-off, then paste.",
+              withDraft(withAgency(formatEmailForPaste(emailBlast, { subject, keyFeatures }), agency), draft),
+              signed
+                ? "Email copied with your sign-off — add the listing link, then paste."
+                : "Email copied — add your link and sign-off, then paste.",
             )
           }
         >
@@ -335,7 +358,23 @@ function EmailBlastBody({
         <p className="mb-1.5 font-semibold text-foreground/80">Before you send</p>
         <ul className="space-y-1">
           <li className="break-words">Replace {EMAIL_LINK_PLACEHOLDER} with the listing URL.</li>
-          <li className="break-words">Replace {EMAIL_SIGNOFF_PLACEHOLDER} with your sign-off.</li>
+          {signed ? (
+            <li className="break-words">
+              Your sign-off is added from{" "}
+              <Link to="/account" className="font-medium text-primary underline-offset-2 hover:underline">
+                Account → Agency details
+              </Link>
+              .
+            </li>
+          ) : (
+            <li className="break-words">
+              Replace {EMAIL_SIGNOFF_PLACEHOLDER} with your sign-off — or save it once in{" "}
+              <Link to="/account" className="font-medium text-primary underline-offset-2 hover:underline">
+                Account → Agency details
+              </Link>{" "}
+              and Quill adds it for you.
+            </li>
+          )}
         </ul>
       </div>
       <p className="mt-2 text-xs text-muted-foreground">

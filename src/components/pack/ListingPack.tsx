@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { EmailBlastCard, GenerateMarketingButton } from "@/components/EmailBlastCard";
+import { EmailBlastCard, GenerateMarketingButton, useAgencyDetails } from "@/components/EmailBlastCard";
 import type { ListingInput, ListingOutput } from "@/lib/listing-types";
 import {
   buildCopyAllText,
@@ -15,6 +15,8 @@ import {
   formatKeyFeaturesBlock,
   formatSellerEmail,
   formatSocialPost,
+  hasAgencyDetails,
+  withAgency,
   withDraft,
   withMaterialInfo,
 } from "@/lib/clipboard";
@@ -133,6 +135,7 @@ export function ListingPack({
   const mi = appendMi ? miBlock : "";
 
   const fixCount = checks.open.length;
+  const agency = useAgencyDetails();
   const draft = input.sellerApproved !== true;
   const copy = (text: string, label: string) => copyToast(withDraft(text, draft), label);
   const strapLen = output.summary?.length ?? 0;
@@ -224,7 +227,9 @@ export function ListingPack({
           </div>
           <CopyIcon
             label="Copy full listing pack"
-            onClick={() => copyToast(buildCopyAllText(output, { materialInfo: mi, draft }), "Full pack copied.")}
+            onClick={() =>
+              copyToast(withAgency(buildCopyAllText(output, { materialInfo: mi, draft }), agency), "Full pack copied.")
+            }
           />
         </div>
       </Card>
@@ -385,6 +390,8 @@ function SellerEmailCard({
 }) {
   const [open, setOpen] = useState(!sellerApproved);
   const [sellerName, setSellerName] = useState("");
+  const agency = useAgencyDetails();
+  const signed = hasAgencyDetails(agency);
   const e = output.sellerEmail;
 
   return (
@@ -450,14 +457,19 @@ function SellerEmailCard({
             className="mt-4 min-h-11 sm:min-h-10"
             onClick={() =>
               copyToast(
-                formatSellerEmail(e, {
-                  sellerName,
-                  listing: output.listing,
-                  keyFeatures: output.keyFeatures,
-                }),
-                sellerName.trim()
-                  ? "Email copied with the draft details — add your sign-off, then send."
-                  : "Email copied — no seller name yet, so replace [Seller name] before sending.",
+                withAgency(
+                  formatSellerEmail(e, {
+                    sellerName,
+                    listing: output.listing,
+                    keyFeatures: output.keyFeatures,
+                  }),
+                  agency,
+                ),
+                !sellerName.trim()
+                  ? "Email copied — no seller name yet, so replace [Seller name] before sending."
+                  : signed
+                    ? "Email copied with the draft details and your sign-off — ready to send."
+                    : "Email copied with the draft details — add your sign-off, then send.",
               )
             }
           >
