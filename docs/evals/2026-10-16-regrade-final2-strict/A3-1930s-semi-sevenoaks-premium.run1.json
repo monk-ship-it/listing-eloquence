@@ -1,0 +1,194 @@
+{
+  "id": "A3-1930s-semi-sevenoaks-premium",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 11502,
+      "stopReason": "tool_use",
+      "inputTokens": 5040,
+      "outputTokens": 785
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 30176,
+      "stopReason": "tool_use",
+      "inputTokens": 5968,
+      "outputTokens": 1665
+    },
+    {
+      "call": "marketing",
+      "attempt": 2,
+      "ms": 22130,
+      "stopReason": "tool_use",
+      "inputTokens": 6083,
+      "outputTokens": 1666
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "Four-bedroom semi-detached house, Sevenoaks",
+      "listing": "A well-proportioned 1930s semi-detached house in Sevenoaks, extended and reconfigured to provide four bedrooms, three bathrooms and adaptable family living space. The property retains its original stained-glass front door and hall window.\n\nThe ground floor comprises a sitting room with log burner, a separate dining room, and a kitchen/family room created by the 2021 extension. The kitchen/family room measures 7.80m x 5.10m max (25'7\" x 16'9\" max) and features an island, bi-fold doors to the garden, and underfloor heating. The former garage has been converted to provide a utility room and ground-floor shower room.\n\nThe first floor offers three bedrooms and a family bathroom. The principal bedroom measures 4.20m x 3.60m (13'9\" x 11'10\"). A loft conversion completed in 2019 with a building regulations completion certificate provides the fourth bedroom, which measures 5.20m x 3.30m max (17'1\" x 10'10\" max), and an en-suite.\n\nThe south-west-facing rear garden extends approximately 30m (100ft) and includes a patio and a garden office with power. A driveway provides parking for two cars.\n\nOak Lane is approximately 0.8 miles from Sevenoaks station, with services to London Bridge taking approximately 25 minutes. Sevenoaks School and Knole Park are nearby.\n\nGuide Price £975,000. Freehold. Council Tax Band F (Sevenoaks District Council). EPC rating D. Construction: Standard – Brick and render under a clay-tiled roof. Electricity: Mains. Water: Mains (metered). Sewerage: Mains. Heating: Gas central heating; underfloor heating in kitchen/family room. Broadband: FTTP, Up to 900Mbps. Mobile signal: Good indoor and outdoor coverage. Parking: Driveway for two cars. The 2021 rear extension was built with planning permission. Building safety, restrictions, rights and easements, flooding, coastal erosion, accessibility and coalfield/mining: None known.",
+      "summary": "A well-proportioned 1930s semi-detached house in Sevenoaks, extended and reconfigured to provide four bedrooms, three bathrooms and adaptable family living space with kitchen/family room, loft conversion and garden office.",
+      "keyFeatures": [
+        "Kitchen/family room (2021 extension) with island and bi-fold doors",
+        "Loft conversion (2019) with en-suite and building regulations certificate",
+        "South-west-facing rear garden approx. 30m with garden office with power",
+        "Original stained-glass front door and hall window",
+        "Ground-floor shower room and utility (former garage)",
+        "Log burner in sitting room",
+        "Sevenoaks station approx. 0.8 miles (London Bridge approx. 25 minutes)",
+        "Driveway parking for two cars"
+      ]
+    },
+    "marketing": {
+      "emailBlast": {
+        "subjectLines": [
+          "New instruction: 4-bed semi, Sevenoaks – Guide £975,000",
+          "Just listed: Oak Lane, Sevenoaks – Guide £975k",
+          "Sevenoaks 4-bed semi with loft conversion – Guide £975k"
+        ],
+        "previewText": "Freehold · 2021 extension · Loft conversion with building regs · Garden office · Station 0.8 miles",
+        "headline": "Four-bedroom semi-detached house, Oak Lane, Sevenoaks",
+        "body": "We are pleased to offer this four-bedroom semi-detached house at Guide Price £975,000. The property is Freehold.\n\nThe 2021 rear extension created a 7.80m kitchen/family room with island and bi-fold doors to the garden. The 2019 loft conversion added a principal bedroom with en-suite and has a building regulations completion certificate. The south-west-facing rear garden extends approx. 30m and includes a garden office with power.\n\nCouncil Tax: Band F (Sevenoaks District Council). EPC rating: D. Sevenoaks station is approx. 0.8 miles (London Bridge approx. 25 minutes by train). Please note: the 2021 rear extension was built with planning permission. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "Four-bedroom 1930s semi-detached house in Oak Lane, Sevenoaks, at a guide price of £975,000. The 2021 kitchen/family room extension with bi-fold doors and the 2019 loft conversion with en-suite and building regulations completion certificate are standout features. South-west-facing garden approx. 30m with garden office. Sevenoaks station approx. 0.8 miles. Please book a viewing."
+      },
+      "sellerEmail": "{\n  \"body\": \"Dear [Seller name],\\n\\nThank you for instructing us to market your property. Before we publish anything, please check the details below and confirm they are accurate.\\n\\n1. Price: Guide Price £975,000 – is this correct?\\n2. Tenure: Freehold – is this correct?\\n3. Council Tax: Band F (Sevenoaks District Council) – is this correct?\\n4. EPC rating: D – is this correct?\\n5. Bedrooms: 4 – is this correct?\\n6. Bathrooms: 3 – is this correct?\\n7. Receptions: 2 – is this correct?\\n8. Parking: Driveway for two cars – is this correct?\\n9. Construction: Standard – Brick and render under a clay-tiled roof – is this correct?\\n10. Electricity: Mains – is this correct?\\n11. Water: Mains (metered) – is this correct?\\n12. Sewerage: Mains – is this correct?\\n13. Heating: Gas central heating; underfloor heating in kitchen/family room – is this correct?\\n14. Broadband: FTTP, Up to 900Mbps – is this correct?\\n15. Mobile signal: Good indoor and outdoor coverage – is this correct?\\n16. Chain status: Chain involved – is this correct?\\n17. Planning: 2021 rear extension built with planning permission – is this correct?\\n18. Building safety: None known – is this correct?\\n19. Restrictions: None known – is this correct?\\n20. Rights & easements: None known – is this correct?\\n21. Flooding: None known – is this correct?\\n22. Coastal erosion: None known – is this correct?\\n23. Accessibility: None known – is this correct?\\n24. Coalfield / mining: None known – is this correct?\\n\\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\\n\\n[Your name, branch, phone]\"\n}",
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "Four-bedroom semi-detached house, Oak Lane, Sevenoaks – Guide Price £975,000 🏡\n\nKitchen/family room extension (2021) with island and bi-fold doors to the garden.\n\nLoft conversion (2019) with en-suite and building regulations completion certificate.\n\nSouth-west-facing rear garden approx. 30m with patio and garden office with power.\n\nOriginal stained-glass front door and hall window.\n\nSevenoaks station approx. 0.8 miles (London Bridge approx. 25 minutes by train).\n\nFreehold · EPC D · Council Tax Band F\n\nPlease note: the 2021 rear extension was built with planning permission.\n\nFull material information on the listing. 🔑",
+          "hashtags": [
+            "Sevenoaks",
+            "Kent",
+            "SemiDetachedHouse",
+            "NewInstruction",
+            "SevenoaksProperty",
+            "KentProperty",
+            "FourBedroom",
+            "KnolePark"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "We are pleased to offer this four-bedroom semi-detached house in Oak Lane, Sevenoaks, at Guide Price £975,000. The property is Freehold. 🏡\n\nThe 2021 rear extension created a 7.80m kitchen/family room with island and bi-fold doors opening to the south-west-facing garden. The 2019 loft conversion added a fourth bedroom with en-suite and has a building regulations completion certificate. The property retains original stained-glass features in the front door and hall window.\n\nThe rear garden extends approx. 30m and includes a garden office with power. Parking is provided on the driveway for two cars. Sevenoaks station is approx. 0.8 miles, with London Bridge approx. 25 minutes by train.\n\nCouncil Tax: Band F. EPC rating: D. Please note: the 2021 rear extension was built with planning permission. Full material information on the listing. 🔑",
+          "hashtags": [
+            "Sevenoaks",
+            "Kent",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "4-bed semi, Oak Lane, Sevenoaks – Guide Price £975,000. Freehold. 2021 kitchen extension with bi-folds, 2019 loft conversion with en-suite, garden office. EPC D. Station 0.8 miles. Full material information on listing.",
+          "hashtags": [
+            "Sevenoaks",
+            "Kent"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": true,
+  "findings": [
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "listing: final paragraph repeats 8 supply labels — the app adds the Material Information block separately"
+    },
+    {
+      "grader": "raw:limits",
+      "severity": "warn",
+      "message": "Preview text 98 > 90 chars (fixed by the app before the agent sees it)",
+      "text": "Freehold · 2021 extension · Loft conversion with building regs · Garden office · Station 0.8 miles"
+    }
+  ],
+  "coreMs": 11502,
+  "marketingMs": 52306,
+  "retries": 1,
+  "output": {
+    "headline": "Four-bedroom semi-detached house, Sevenoaks",
+    "listing": "A well-proportioned 1930s semi-detached house in Sevenoaks, extended and reconfigured to provide four bedrooms, three bathrooms and adaptable family living space. The property retains its original stained-glass front door and hall window.\n\nThe ground floor comprises a sitting room with log burner, a separate dining room, and a kitchen/family room created by the 2021 extension. The kitchen/family room measures 7.80m x 5.10m max (25'7\" x 16'9\" max) and features an island, bi-fold doors to the garden, and underfloor heating. The former garage has been converted to provide a utility room and ground-floor shower room.\n\nThe first floor offers three bedrooms and a family bathroom. The principal bedroom measures 4.20m x 3.60m (13'9\" x 11'10\"). A loft conversion completed in 2019 with a building regulations completion certificate provides the fourth bedroom, which measures 5.20m x 3.30m max (17'1\" x 10'10\" max), and an en-suite.\n\nThe south-west-facing rear garden extends approximately 30m (100ft) and includes a patio and a garden office with power. A driveway provides parking for two cars.\n\nOak Lane is approximately 0.8 miles from Sevenoaks station, with services to London Bridge taking approximately 25 minutes. Sevenoaks School and Knole Park are nearby.\n\nGuide Price £975,000. Freehold. Council Tax Band F (Sevenoaks District Council). EPC rating D. Construction: Standard – Brick and render under a clay-tiled roof. Electricity: Mains. Water: Mains (metered). Sewerage: Mains. Heating: Gas central heating; underfloor heating in kitchen/family room. Broadband: FTTP, Up to 900Mbps. Mobile signal: Good indoor and outdoor coverage. Parking: Driveway for two cars. The 2021 rear extension was built with planning permission. Building safety, restrictions, rights and easements, flooding, coastal erosion, accessibility and coalfield/mining: None known.",
+    "summary": "A well-proportioned 1930s semi-detached house in Sevenoaks, extended and reconfigured to provide four bedrooms, three bathrooms and adaptable family living space with kitchen/family room, loft conversion and garden office.",
+    "keyFeatures": [
+      "Kitchen/family room (2021 extension) with island and bi-fold doors",
+      "Loft conversion (2019) with en-suite and building regulations certificate",
+      "South-west-facing rear garden approx. 30m with garden office with power",
+      "Original stained-glass front door and hall window",
+      "Ground-floor shower room and utility (former garage)",
+      "Log burner in sitting room",
+      "Sevenoaks station approx. 0.8 miles (London Bridge approx. 25 minutes)",
+      "Driveway parking for two cars"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "New instruction: 4-bed semi, Sevenoaks – Guide £975,000",
+        "Just listed: Oak Lane, Sevenoaks – Guide £975k",
+        "Sevenoaks 4-bed semi with loft conversion – Guide £975k"
+      ],
+      "previewText": "Freehold · 2021 extension · Loft conversion with building regs · Garden office",
+      "headline": "Four-bedroom semi-detached house, Oak Lane, Sevenoaks",
+      "body": "We are pleased to offer this four-bedroom semi-detached house at Guide Price £975,000. The property is Freehold.\n\nThe 2021 rear extension created a 7.80m kitchen/family room with island and bi-fold doors to the garden. The 2019 loft conversion added a principal bedroom with en-suite and has a building regulations completion certificate. The south-west-facing rear garden extends approx. 30m and includes a garden office with power.\n\nCouncil Tax: Band F (Sevenoaks District Council). EPC rating: D. Sevenoaks station is approx. 0.8 miles (London Bridge approx. 25 minutes by train). Please note: the 2021 rear extension was built with planning permission.\n\nFull material information is on the property listing.",
+      "callToAction": "Book a viewing",
+      "personalMessage": "Four-bedroom 1930s semi-detached house in Oak Lane, Sevenoaks, at a guide price of £975,000. The 2021 kitchen/family room extension with bi-fold doors and the 2019 loft conversion with en-suite and building regulations completion certificate are standout features. South-west-facing garden approx. 30m with garden office. Sevenoaks station approx. 0.8 miles. Please book a viewing."
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "Four-bedroom semi-detached house, Oak Lane, Sevenoaks – Guide Price £975,000 🏡\n\nKitchen/family room extension (2021) with island and bi-fold doors to the garden.\n\nLoft conversion (2019) with en-suite and building regulations completion certificate.\n\nSouth-west-facing rear garden approx. 30m with patio and garden office with power.\n\nOriginal stained-glass front door and hall window.\n\nSevenoaks station approx. 0.8 miles (London Bridge approx. 25 minutes by train).\n\nFreehold · EPC D · Council Tax Band F\n\nPlease note: the 2021 rear extension was built with planning permission.\n\nFull material information on the listing. 🔑",
+        "hashtags": [
+          "Sevenoaks",
+          "Kent",
+          "SemiDetachedHouse",
+          "NewInstruction",
+          "SevenoaksProperty",
+          "KentProperty",
+          "FourBedroom",
+          "KnolePark"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "We are pleased to offer this four-bedroom semi-detached house in Oak Lane, Sevenoaks, at Guide Price £975,000. The property is Freehold. 🏡\n\nThe 2021 rear extension created a 7.80m kitchen/family room with island and bi-fold doors opening to the south-west-facing garden. The 2019 loft conversion added a fourth bedroom with en-suite and has a building regulations completion certificate. The property retains original stained-glass features in the front door and hall window.\n\nThe rear garden extends approx. 30m and includes a garden office with power. Parking is provided on the driveway for two cars. Sevenoaks station is approx. 0.8 miles, with London Bridge approx. 25 minutes by train.\n\nCouncil Tax: Band F. EPC rating: D. Please note: the 2021 rear extension was built with planning permission. Full material information on the listing. 🔑",
+        "hashtags": [
+          "Sevenoaks",
+          "Kent",
+          "NewInstruction"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "4-bed semi, Oak Lane, Sevenoaks – Guide Price £975,000. Freehold. 2021 kitchen extension with bi-folds, 2019 loft conversion with en-suite, garden office. EPC D. Station 0.8 miles. Full material information on listing.",
+        "hashtags": [
+          "Sevenoaks",
+          "Kent"
+        ]
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – Oak Lane, Sevenoaks, Kent TN13",
+      "body": "Dear [Seller name],\n\nThank you for instructing us to market your property. Before we publish anything, please check the details below and confirm they are accurate.\n\n1. Price: Guide Price £975,000 – is this correct?\n2. Tenure: Freehold – is this correct?\n3. Council Tax: Band F (Sevenoaks District Council) – is this correct?\n4. EPC rating: D – is this correct?\n5. Bedrooms: 4 – is this correct?\n6. Bathrooms: 3 – is this correct?\n7. Receptions: 2 – is this correct?\n8. Parking: Driveway for two cars – is this correct?\n9. Construction: Standard – Brick and render under a clay-tiled roof – is this correct?\n10. Electricity: Mains – is this correct?\n11. Water: Mains (metered) – is this correct?\n12. Sewerage: Mains – is this correct?\n13. Heating: Gas central heating; underfloor heating in kitchen/family room – is this correct?\n14. Broadband: FTTP, Up to 900Mbps – is this correct?\n15. Mobile signal: Good indoor and outdoor coverage – is this correct?\n16. Chain status: Chain involved – is this correct?\n17. Planning: 2021 rear extension built with planning permission – is this correct?\n18. Building safety: None known – is this correct?\n19. Restrictions: None known – is this correct?\n20. Rights & easements: None known – is this correct?\n21. Flooding: None known – is this correct?\n22. Coastal erosion: None known – is this correct?\n23. Accessibility: None known – is this correct?\n24. Coalfield / mining: None known – is this correct?\n\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 5,
+      "2": 5,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 5,
+      "8": 5
+    },
+    "hardFail": false,
+    "verdict": "PASS",
+    "unsupported": [],
+    "fixes": [],
+    "average": 5
+  }
+}
