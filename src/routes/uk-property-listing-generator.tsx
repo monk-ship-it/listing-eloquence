@@ -153,7 +153,7 @@ function UKPage() {
               "Portal-ready Listing Description",
               "Short Teaser summary and Email Blast campaign copy",
               "Instagram, Facebook and X captions",
-              "Four brand voices: Professional, Premium, Luxury, Heritage",
+              "Five brand voices: Professional, Premium, Luxury, Heritage, Plain & factual",
             ].map((item) => (
               <li key={item} className="flex items-start gap-2 text-sm">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
