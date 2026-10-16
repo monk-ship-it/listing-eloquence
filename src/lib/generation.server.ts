@@ -37,6 +37,25 @@ import {
   xOverBudget,
 } from "./output-guards";
 
+/** App post-processing of one core answer (shared with the eval harness). */
+export function finishCore(raw: unknown, input: ListingInput): CoreOutput {
+  return labelCore(swapCore(validateCoreOutput(raw)), input);
+}
+
+/** App post-processing of one marketing answer, without the X-budget probe. */
+export function finishMarketing(raw: unknown, input: ListingInput): MarketingOutput {
+  const subject = `Your property details for approval – ${input.address?.trim() || "your property"}`;
+  const out = swapMarketing(validateMarketingOutput(raw));
+  if (out.sellerEmail) out.sellerEmail = { ...out.sellerEmail, subject };
+  let labelled = labelMarketing(out, input);
+  if (labelled.emailBlast && labelled.emailBlast.previewText.length > 90)
+    labelled = {
+      ...labelled,
+      emailBlast: { ...labelled.emailBlast, previewText: trimPreview(labelled.emailBlast.previewText) },
+    };
+  return labelled;
+}
+
 export type GenStage = "core" | "marketing" | "regen";
 
 export interface RunOpts {
@@ -105,7 +124,7 @@ export async function runCore(input: ListingInput, opts: RunOpts = {}): Promise<
       onMeta: (m) => opts.onMeta?.({ ...m, call: "core", attempt: a, reason }),
     });
     opts.onRaw?.("core", raw, a);
-    return labelCore(swapCore(validateCoreOutput(raw)), input);
+    return finishCore(raw, input);
   };
   let out: CoreOutput;
   try {

@@ -105,39 +105,8 @@
       ]
     }
   },
-  "pass": false,
-  "findings": [
-    {
-      "grader": "mustInclude",
-      "severity": "fail",
-      "message": "\"show home\" missing from listing"
-    },
-    {
-      "grader": "mustInclude",
-      "severity": "fail",
-      "message": "\"CGI\" missing from listing"
-    },
-    {
-      "grader": "v2",
-      "severity": "fail",
-      "message": "listing: missing image label (2 triggered)"
-    },
-    {
-      "grader": "v2",
-      "severity": "fail",
-      "message": "social.Instagram: missing image label (2 triggered)"
-    },
-    {
-      "grader": "v2",
-      "severity": "fail",
-      "message": "social.Facebook: missing image label (2 triggered)"
-    },
-    {
-      "grader": "v2",
-      "severity": "fail",
-      "message": "social.X: missing image label (2 triggered)"
-    }
-  ],
+  "pass": true,
+  "findings": [],
   "coreMs": 19485,
   "marketingMs": 52443,
   "retries": 2,

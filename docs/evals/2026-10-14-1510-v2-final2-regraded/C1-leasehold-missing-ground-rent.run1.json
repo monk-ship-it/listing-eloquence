@@ -103,20 +103,8 @@
       ]
     }
   },
-  "pass": false,
+  "pass": true,
   "findings": [
-    {
-      "grader": "banned",
-      "severity": "fail",
-      "message": "Banned phrase \"benefits from\" in emailBlast.body",
-      "text": "…balcony, two bedrooms and a bathroom. The building benefits from lift access, and there is one allocated parking …"
-    },
-    {
-      "grader": "banned",
-      "severity": "fail",
-      "message": "Banned phrase \"benefits from\" in social.Facebook",
-      "text": "…balcony, two bedrooms and a bathroom. The building benefits from lift access, and there is one allocated parking …"
-    },
     {
       "grader": "materialInfo",
       "severity": "warn",

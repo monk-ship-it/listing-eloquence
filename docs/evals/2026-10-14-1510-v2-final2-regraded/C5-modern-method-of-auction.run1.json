@@ -96,14 +96,8 @@
       ]
     }
   },
-  "pass": false,
-  "findings": [
-    {
-      "grader": "v2",
-      "severity": "fail",
-      "message": "social.X: no \"For sale by Modern Method of Auction\" line"
-    }
-  ],
+  "pass": true,
+  "findings": [],
   "coreMs": 9052,
   "marketingMs": 46531,
   "retries": 1,

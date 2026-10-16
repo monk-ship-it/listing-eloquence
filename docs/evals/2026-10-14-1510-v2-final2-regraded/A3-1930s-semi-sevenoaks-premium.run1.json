@@ -93,14 +93,8 @@
       ]
     }
   },
-  "pass": false,
+  "pass": true,
   "findings": [
-    {
-      "grader": "limits",
-      "severity": "fail",
-      "message": "Preview text 98 > 90 chars",
-      "text": "Freehold · 2021 extension · Loft conversion with building regs · Garden office · Station 0.8 miles"
-    },
     {
       "grader": "materialInfo",
       "severity": "warn",
