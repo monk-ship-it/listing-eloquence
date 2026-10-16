@@ -7,7 +7,7 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 - **Credit reconciliation (src/lib/quota-slot.ts, listing.functions.ts):** after any finalize failure, the row is re-read before deciding.
   - `completed`: the commit happened but the response was lost. The listing is kept and the credit counts.
   - `missing`: released. The listing row is removed and the agent is told it didn't use a listing.
-  - Read or release fails: `unresolved`. The saved listing is **kept**, and the reservation expires on its own (reserve deletes expired `reserved` rows), so it is never charged.
+  - Read or release fails: `unresolved`. The credit state is **unknown**: finalize may have committed. The saved listing is **kept**. If the row is still `reserved`, it expires and is cleared by the next reservation. If it was in fact `completed`, that usage stays counted. Quill does not claim either way.
   - Comped accounts no longer lose a saved listing if the audit-row insert fails.
 - **Stale saved-listing loads (_authenticated.app.tsx):** the effect cleanup cancels the request when you leave the page or open another listing (and allows a fresh load of the same id later). Late responses never overwrite edits or a generation in progress.
 - **Security:** removed two unused, unauthenticated Opinly endpoints (`trackOpinlyPurchase`, `trackOpinlyEvent`) that let anyone post fake conversions. The admin check now calls `has_role` as the caller, not with the service role. All other server functions use `requireSupabaseAuth`. Generation, marketing, extraction and transcription all check subscription status on the server, and every query on saved listings is limited to the signed-in owner's own rows.
@@ -24,6 +24,21 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
   - Current failure, A7: key feature "Kitchen/diner 5.45m x 2.90m (17'11" x 9'6") and lean-to utility" lacks the planning/building-regs caveat.
 - **Browser QA, signed in as the non-admin test account** at 390px and 1280px, on /, /auth, /app, /history, /account, /subscription and /uk-property-listing-generator: no sideways scrolling, no page or console errors, no unlabelled controls, one `<main>` and one `<h1>` per page. The saved-listings empty state renders. Signed-in /auth redirects to checkout because this account has no subscription.
 
+## Round 3 — A7 lean-to caveat (fixed)
+- New deterministic step `src/lib/feature-caveats.ts`, run in `labelCore` (app and eval revalidation).
+  - **What triggers it:** a planning or disclosures sentence that says a structure (lean-to/lean to/leanto, conservatory/orangery/sunroom, extension, loft or garage conversion, outbuilding/annexe/garden room, porch, dormer) has no known or unknown approval.
+  - **What it does:** every key feature naming that structure gets a caveat worded from that sentence only: "no known planning approval", "no known building regulations approval", or "no known planning or building regulations approval".
+  - **Compound bullets** over 80 characters are split so the structure gets its own caveated bullet. When there are already 10 bullets, the structure is dropped from the bullet instead. The description and Material Information still disclose it.
+  - **Prompt text is unchanged**, so there was no golden refresh and PROMPT_VERSION is unchanged.
+- New grader `caveats` in `scripts/prompt-evals/graders.ts` FAILs any uncaveated bullet, including synonyms. The existing case pattern was kept, so no grader was weakened.
+- Tests: `src/lib/feature-caveats.test.ts`, 8 cases (A7 compound bullet, short bullet, spelling variants, already caveated, planning-only wording, positive approval adds nothing, full list of 10).
+- **Saved A7 output from the focused run, regraded:**
+  - as saved: FAIL on both `patterns` and the new `caveats` (`docs/evals/2026-10-16-a7-regrade-asis`);
+  - with today's post-processing: PASS (`docs/evals/2026-10-16-a7-regrade`).
+- **Live A7 ×3** (`docs/evals/2026-10-16-1512-a7-caveat-live`): **3/3 PASS**, LLM 5.00 each, 0 retries. Core ≈10s, marketing ≈24–25s.
+  - Bullets in the three runs: "Lean-to utility (no known planning or building regulations approval)" twice, and "Lean-to utility (seller unaware of planning or building regulations approval)" once.
+- Final gates: `bunx tsgo --noEmit` clean; `bun run test` **12 files, 123/123 passed**; `bun run prompts:check` up to date (27 files); `bun run build` exit 0.
+
 ## Not tested
 - Opening a saved listing in the browser (the test account has none; generating one would use AI and a credit on an account without access).
 - Stripe checkout, renewal and webhooks live; transactional emails; deletion.
@@ -39,7 +54,6 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
    - lawful basis, cookie/analytics consent position, governing law, liability and refund terms.
 
    None of this was written or invented.
-2. **A7 prompt failure:** lean-to key features without the planning caveat. A prompt fix needs `prompts:golden` plus an eval run, so it was left for an explicit prompt round.
-3. Footer and checkout legal identity must match item 1.
+2. Footer and checkout legal identity must match item 1.
 
 Not blockers: in-app editing (promises corrected); the pre-existing ESLint formatting debt.

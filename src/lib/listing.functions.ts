@@ -164,8 +164,8 @@ export const generateListing = createServerFn({ method: "POST" })
           throw new Error("Couldn't record listing usage. Please try again — this didn't use a listing.");
         }
         if (outcome === "unresolved") {
-          // Unknown whether the credit committed: keep the saved listing. An
-          // unsettled reservation expires on its own and is then not charged.
+          // Unknown whether the credit committed: keep the saved listing. A row
+          // still 'reserved' expires; if it actually completed, usage stays counted.
           console.error("finalize unresolved; keeping generation", { userId, reservationId: id, savedGenId });
         }
       } else if (comped) {

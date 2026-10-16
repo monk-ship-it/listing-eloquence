@@ -6,7 +6,8 @@
  * - finalize flips a 'reserved' row to 'completed'; release deletes only
  *   'reserved' rows, so releasing after a commit is a no-op (no double refund).
  * - reserve deletes 'reserved' rows whose reserved_until has passed, so a
- *   reservation we can't settle expires on its own and is never charged.
+ *   still-'reserved' row we can't settle expires on its own (a row that did
+ *   commit stays 'completed' and counted — that state is then unknown to us).
  *
  * A finalize error does NOT prove nothing committed (the response can be lost
  * after the UPDATE). We therefore re-read the row before deciding.
@@ -20,7 +21,7 @@ export type SlotRpc = (
 export type SlotStatus = "completed" | "reserved" | "missing" | null;
 export type ReadSlot = (reservationId: string) => Promise<SlotStatus>;
 
-/** finalized = credit used; released = no credit used; unresolved = unknown, row left to expire. */
+/** finalized = credit used; released = no credit used; unresolved = unknown (may have committed). */
 export type SlotOutcome = "finalized" | "released" | "unresolved";
 
 export async function releaseSlot(rpc: SlotRpc, userId: string, reservationId: string | null) {
