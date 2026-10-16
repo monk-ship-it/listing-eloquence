@@ -1,27 +1,45 @@
-# Release readiness — 16 Oct 2026
+# Release readiness — 16 Oct 2026 (round 2)
 
-Status: **not published**. Brand, pricing, Stripe price ids, users and data unchanged.
+Status: **not published**. Brand, prices, Stripe price ids, accounts and data unchanged. No live charges, emails or deletions of existing data.
 
-## Changes
-1. **Public example (index.tsx)** — LiveExample facts gain Council Tax Band G and EPC E; the "near the high street" note is gone. DEMO_UK is rewritten so it uses only the displayed facts (no rectory, drawing-room size, shaker kitchen, half-acre, "private", "generous" or layout claims). It is labelled "Fictional example" and stays within the generator limits (headline ≤70, teaser ≤250, bullets ≤80, X ≤280 incl. hashtags). The hero preview and transcript no longer invent "private/generous/family life".
-2. **Edit promise** — Quill has no in-app editing, so the "each editable" / "fully editable" claims are removed. The copy now says each output has a copy button and agents check and edit after pasting. In-app edit/save is **not** built (deferred).
-3. **Credit slot leak** — new `src/lib/quota-slot.ts` (`finalizeOrRelease`, `releaseSlot`). If finalize errors, returns false or throws, the slot is released before the saved row is removed. Release only deletes `reserved` rows, so a completed credit is never released twice or charged twice. RPC `{error}` results are checked, not only thrown errors. Tests: `src/lib/quota-slot.test.ts` (7 cases, including a partial error where data is true but an error is also returned).
-4. **Generator lock** — `run()` now awaits `dictation.finishPending()` inside the try/finally. Opening a saved listing ignores stale responses and won't overwrite fields edited while it loads, or a generation already running.
-5. **Claims** — "Priority generation" removed from Pro and Growth (it was never built). "All four brand voices" changed to "five", which is how many exist. Pricing notes state card required and renewal at the plan price unless cancelled, and that drafts need agent checking and seller approval. No accuracy guarantees, compliance certification or portal-integration claims were found.
+## Changes this round
+- **Homepage example (index.tsx):** removed "New instruction" / "new to market" everywhere in DEMO_UK. The spoken note now says "exposed beams", matching the facts. The voices section shows all five voices (Plain & factual added), and each sample is labelled "Illustrative tone only". "Four voices" changed to five here and on /uk-property-listing-generator. "So nothing drifts between channels" replaced with "every channel starts from the same facts. Check each one before it goes live." The homepage now has a `<main>` landmark.
+- **Credit reconciliation (src/lib/quota-slot.ts, listing.functions.ts):** after any finalize failure, the row is re-read before deciding.
+  - `completed`: the commit happened but the response was lost. The listing is kept and the credit counts.
+  - `missing`: released. The listing row is removed and the agent is told it didn't use a listing.
+  - Read or release fails: `unresolved`. The saved listing is **kept**, and the reservation expires on its own (reserve deletes expired `reserved` rows), so it is never charged.
+  - Comped accounts no longer lose a saved listing if the audit-row insert fails.
+- **Stale saved-listing loads (_authenticated.app.tsx):** the effect cleanup cancels the request when you leave the page or open another listing (and allows a fresh load of the same id later). Late responses never overwrite edits or a generation in progress.
+- **Security:** removed two unused, unauthenticated Opinly endpoints (`trackOpinlyPurchase`, `trackOpinlyEvent`) that let anyone post fake conversions. The admin check now calls `has_role` as the caller, not with the service role. All other server functions use `requireSupabaseAuth`. Generation, marketing, extraction and transcription all check subscription status on the server, and every query on saved listings is limited to the signed-in owner's own rows.
+- **Eval harness:** `--revalidate` now runs the app's own post-processing (`finishCore` / `finishMarketing`, shared with generation.server.ts). An LLM-grader FAIL now fails the case. Grader rules were not loosened.
 
-## Test results
-- `bun run test`: 11 files, **110/110 passed**.
-- `bunx tsgo --noEmit`: no errors.
-- `bun run prompts:check`: "Workbench files up to date (27 files)". No prompt files changed, so PROMPT_VERSION is unchanged.
-- Playwright on `/` at 390px and 1280px: no sideways scrolling, no page errors, "Fictional example" present, "rectory" absent.
+## Exact checks and results
+- `bun run build` (production): exit 0.
+- `bun run test`: 11 files, **115/115 passed**. This includes 12 credit tests: committed-but-response-lost, error/false/throw/partial without a commit, release fails, release throws, status read fails, and the confirming read fails.
+- `bunx tsgo --noEmit`: clean. `bun run prompts:check`: up to date (27 files). No prompt text changed; PROMPT_VERSION is unchanged.
+- ESLint: 117 errors, all already present before this round (formatting, `any` in the generated email registry, the intentional control-character regex). None were introduced here.
+- **Regrade of v2-final2 with today's code** (`docs/evals/2026-10-14-1510-v2-final2-regraded`): **19/19**. The earlier 5 failures were all stale: the app now trims the preview and adds image labels and the sale-method line, and the A3, A6 ×2, C1 and C5 failures came from these steps.
+- **Strict LLM regrade** (unsupported-claims grader): C4 (final2) FAIL 4.50. A2 (final) FAIL: "ground floor" invented for a first/second-floor maisonette. A6-legacy (final) FAIL: banned phrase in the personal message. All three known-bad packs are now caught.
+- **Live focused run** `docs/evals/2026-10-16-1504-v2-final3-focused` (8 synthetic cases, LLM-graded): **7/8**. Retries 3/8. Core median ≈10.1s, max 12.2s. Marketing median ≈24.4s, max 63.3s (the slow ones are the retried runs).
+  - Current failure, A7: key feature "Kitchen/diner 5.45m x 2.90m (17'11" x 9'6") and lean-to utility" lacks the planning/building-regs caveat.
+- **Browser QA, signed in as the non-admin test account** at 390px and 1280px, on /, /auth, /app, /history, /account, /subscription and /uk-property-listing-generator: no sideways scrolling, no page or console errors, no unlabelled controls, one `<main>` and one `<h1>` per page. The saved-listings empty state renders. Signed-in /auth redirects to checkout because this account has no subscription.
 
 ## Not tested
-- Signed-in generation end to end (avoids live AI spend and credit use). Finalize-failure behaviour is covered by unit tests only.
-- Stripe checkout and renewal (no live charges), emails, and deleting data.
-- Full keyboard and screen-reader audit of every signed-in page. Spot review only.
+- Opening a saved listing in the browser (the test account has none; generating one would use AI and a credit on an account without access).
+- Stripe checkout, renewal and webhooks live; transactional emails; deletion.
+- A real finalize network failure against the database (covered by the in-memory model tests only).
+- Screen-reader pass (automated label and landmark checks only).
 
-## Launch blockers (owner decisions)
-- **No Privacy Policy or Terms pages exist.** These need the trading entity name, address, ICO registration, data processors (AI provider, hosting, payments), retention and a lawful basis. None were invented.
-- Confirm the legal entity and contact details for the footer and checkout.
-- Decide whether to build in-app editing of generated copy (removed from claims for now).
-- Open items from Prompt Lab: the source-of-truth floor/position rule, the stricter grader, and the v2-final3 eval run.
+## Remaining launch blockers
+1. **Privacy Policy and Terms pages do not exist.** The owner must supply, verified:
+   - legal entity name, company number and registered address;
+   - a contact for data requests, and ICO registration number/fee status;
+   - processors and where data is held: the AI writer (Anthropic), speech-to-text provider, hosting/database, Stripe, email sender, Opinly analytics;
+   - retention periods for listings, voice transcripts (audio isn't stored), usage logs and account deletion;
+   - lawful basis, cookie/analytics consent position, governing law, liability and refund terms.
+
+   None of this was written or invented.
+2. **A7 prompt failure:** lean-to key features without the planning caveat. A prompt fix needs `prompts:golden` plus an eval run, so it was left for an explicit prompt round.
+3. Footer and checkout legal identity must match item 1.
+
+Not blockers: in-app editing (promises corrected); the pre-existing ESLint formatting debt.
