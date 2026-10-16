@@ -12,7 +12,7 @@ import { execSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
 import type { ExtractResult } from "../../src/lib/extract-filter";
-import { runCore, runExtraction, runMarketing } from "../../src/lib/generation.server";
+import { finishCore, finishMarketing, runCore, runExtraction, runMarketing } from "../../src/lib/generation.server";
 import { toApiBody } from "../../src/lib/ai-gateway.server";
 import {
   buildCoreRequest,
@@ -24,7 +24,6 @@ import { PROMPT_VERSION } from "../../src/lib/prompts/version.gen";
 import { caseInput } from "../../src/lib/prompts/workbench-export";
 import { FIELD_DEFS } from "../../src/lib/listing-fields";
 import type { ListingOutput } from "../../src/lib/listing-types";
-import { validateCoreOutput, validateMarketingOutput } from "../../src/lib/listing-types";
 import { gradeExtraction, gradePack, gradeRaw, packFromFinal, packFromRaw } from "./graders";
 import { llmGrade } from "./llm-grader";
 import { loadCases } from "./load-cases";
@@ -124,9 +123,16 @@ if (regradeDir) {
       let final = saved.output as ListingOutput;
       if (flag("revalidate") && raw.core) {
         try {
-          const core = validateCoreOutput(raw.core);
-          const mkt = raw.marketing ? validateMarketingOutput(raw.marketing) : null;
-          if (mkt?.sellerEmail) mkt.sellerEmail = { ...mkt.sellerEmail, subject: final.sellerEmail?.subject ?? "" };
+          // Same post-processing the app applies (swaps, image labels, sale-method
+          // line, preview trim) to the answer the app would have kept.
+          const pick = (r: unknown) => {
+            const o = r as Record<string, unknown> | undefined;
+            if (!o) return o;
+            const keys = Object.keys(o).filter((k) => /^attempt\d+$/.test(k));
+            return keys.length ? o[keys.sort().at(-1)!] : o;
+          };
+          const core = finishCore(pick(raw.core), input);
+          const mkt = raw.marketing ? finishMarketing(pick(raw.marketing), input) : null;
           final = mkt
             ? { ...final, ...core, ...mkt }
             : { ...final, ...core, emailBlast: null, social: [], marketingStatus: "failed" };
@@ -157,7 +163,11 @@ if (regradeDir) {
       ...(llm ? { llm } : {}),
       findings,
       ...(extraction ? { extraction } : {}),
-      pass: !saved.error && !findings.some((x) => x.severity === "fail"),
+      // An LLM-grader FAIL (e.g. an unsupported claim) fails the case too.
+      pass:
+        !saved.error &&
+        !findings.some((x) => x.severity === "fail") &&
+        !(llm && "verdict" in llm && llm.verdict === "FAIL"),
     });
   }
   const h: ReportHeader = {
@@ -283,7 +293,9 @@ async function runCase(c: EvalCase, run: number): Promise<CaseResult> {
   }
   return {
     ...base,
-    pass: !findings.some((f) => f.severity === "fail"),
+    pass:
+      !findings.some((f) => f.severity === "fail") &&
+      !(llm && "verdict" in llm && llm.verdict === "FAIL"),
     findings,
     coreMs: sum("core"),
     marketingMs: sum("marketing"),

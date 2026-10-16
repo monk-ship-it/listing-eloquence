@@ -1,0 +1,262 @@
+{
+  "id": "C1-leasehold-missing-ground-rent",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 6928,
+      "stopReason": "tool_use",
+      "inputTokens": 4553,
+      "outputTokens": 352,
+      "reason": []
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 23821,
+      "stopReason": "tool_use",
+      "inputTokens": 5488,
+      "outputTokens": 1480,
+      "reason": []
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "First-floor two-bedroom flat with lift and allocated parking",
+      "listing": "A first-floor purpose-built flat in Chatham with two bedrooms, a lift and one allocated parking space.\n\nThe accommodation comprises an open-plan kitchen and living room with a Juliet balcony, two bedrooms and a bathroom. Gas central heating is installed throughout.\n\nOutside, there is one allocated parking space.\n\nThe property is offered at a guide price of £195,000. The tenure is leasehold with 99 years remaining and a service charge of £1,450 per year (year ending March 2026). Council Tax Band B. EPC rating C.",
+      "summary": "First-floor purpose-built flat in Chatham with open-plan kitchen/living room, Juliet balcony, lift and allocated parking. Guide Price £195,000. Leasehold, 99 years remaining, service charge £1,450 p.a. EPC C.",
+      "keyFeatures": [
+        "First-floor purpose-built flat with lift access",
+        "One allocated parking space",
+        "Open-plan kitchen and living room with Juliet balcony",
+        "Two bedrooms",
+        "Gas central heating",
+        "99 years remaining on the lease"
+      ]
+    },
+    "core.attempt1": {
+      "headline": "First-floor two-bedroom flat with lift and allocated parking",
+      "listing": "A first-floor purpose-built flat in Chatham with two bedrooms, a lift and one allocated parking space.\n\nThe accommodation comprises an open-plan kitchen and living room with a Juliet balcony, two bedrooms and a bathroom. Gas central heating is installed throughout.\n\nOutside, there is one allocated parking space.\n\nThe property is offered at a guide price of £195,000. The tenure is leasehold with 99 years remaining and a service charge of £1,450 per year (year ending March 2026). Council Tax Band B. EPC rating C.",
+      "summary": "First-floor purpose-built flat in Chatham with open-plan kitchen/living room, Juliet balcony, lift and allocated parking. Guide Price £195,000. Leasehold, 99 years remaining, service charge £1,450 p.a. EPC C.",
+      "keyFeatures": [
+        "First-floor purpose-built flat with lift access",
+        "One allocated parking space",
+        "Open-plan kitchen and living room with Juliet balcony",
+        "Two bedrooms",
+        "Gas central heating",
+        "99 years remaining on the lease"
+      ]
+    },
+    "marketing": {
+      "emailBlast": {
+        "subjectLines": [
+          "Just listed: 2-bed flat, Chatham – Guide Price £195,000",
+          "New instruction: 2-bed first-floor flat, Chatham – £195k",
+          "Chatham ME4: 2-bed purpose-built flat – Guide £195,000"
+        ],
+        "previewText": "Leasehold · 99 years · Allocated parking · Lift · Juliet balcony · EPC C",
+        "headline": "First-floor flat with balcony and lift, Chatham ME4",
+        "body": "We are pleased to offer this two-bedroom first-floor flat at a guide price of £195,000. The property is leasehold with 99 years remaining and a service charge of £1,450 per year (year ending March 2026).\n\nThe accommodation comprises an open-plan kitchen/living room with Juliet balcony, two bedrooms and a bathroom. The building benefits from lift access, and there is one allocated parking space.\n\nCouncil tax band B (Medway Council). EPC rating C. The property is connected to mains electricity, mains water (metered), mains sewerage and has gas central heating. Broadband: FTTC. Mobile signal: good outdoor coverage on major networks. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "A two-bedroom first-floor purpose-built flat in Chatham ME4 at a guide price of £195,000. The property offers an open-plan kitchen/living room with Juliet balcony, lift access to the first floor, and one allocated parking space. Leasehold with 99 years remaining. Council tax band B, EPC C. Please get in touch to arrange a viewing."
+      },
+      "sellerEmail": "{\n  \"body\": \"Dear [Seller name],\\n\\nThank you for instructing us to market your property. Before we publish anything, please can you check the draft details below and confirm they are accurate?\\n\\n1. Price: Guide Price £195,000 – is this correct?\\n2. Property type: First-floor purpose-built flat – is this correct?\\n3. Tenure: Leasehold with 99 years remaining – is this correct?\\n4. Service charge: £1,450 per year (year ending March 2026) – is this correct?\\n5. Council tax: Band B (Medway Council) – is this correct?\\n6. EPC rating: C – is this correct?\\n7. Bedrooms: 2 – is this correct?\\n8. Bathrooms: 1 – is this correct?\\n9. Receptions: 1 – is this correct?\\n10. Parking: One allocated space – is this correct?\\n11. Open-plan kitchen/living room with Juliet balcony – is this correct?\\n12. Lift access – is this correct?\\n13. Construction: Standard – is this correct?\\n14. Electricity: Mains – is this correct?\\n15. Water: Mains (metered) – is this correct?\\n16. Sewerage: Mains – is this correct?\\n17. Heating: Gas central heating – is this correct?\\n18. Broadband: FTTC – is this correct?\\n19. Mobile signal: Good outdoor coverage on major networks – is this correct?\\n\\nTo complete the particulars, could you let us know:\\n\\n• What is the current ground rent, how often is it reviewed and when is the next review?\\n\\nPlease reply \"Approved\" or send any corrections – nothing will be published until you confirm.\\n\\n[Your name, branch, phone]\"\n}",
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "First-floor flat with balcony and lift, Chatham ME4 – Guide Price £195,000\n\nTwo-bedroom purpose-built flat on the first floor.\nOpen-plan kitchen/living room with Juliet balcony.\nLift access to all floors.\nOne allocated parking space.\nGas central heating and mains water (metered).\n\nLeasehold · 99 years remaining · Service charge £1,450 per year · EPC C · Council tax band B\n\nFull material information on the listing. 🏠🔑",
+          "hashtags": [
+            "Chatham",
+            "ChathamProperty",
+            "Kent",
+            "Medway",
+            "Flat",
+            "Apartment",
+            "TwoBedFlat",
+            "NewInstruction",
+            "ForSale",
+            "PropertyForSale"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "A two-bedroom first-floor purpose-built flat in Chatham ME4, offered at a guide price of £195,000. The property is leasehold with 99 years remaining and a service charge of £1,450 per year (year ending March 2026).\n\nThe accommodation comprises an open-plan kitchen/living room with Juliet balcony, two bedrooms and a bathroom. The building benefits from lift access, and there is one allocated parking space. The property has gas central heating and is connected to mains electricity, mains water (metered) and mains sewerage.\n\nCouncil tax band B (Medway Council). EPC rating C. Broadband: FTTC. Mobile signal: good outdoor coverage on major networks.\n\nFull material information on the listing. 🏠",
+          "hashtags": [
+            "ChathamProperty",
+            "KentHomes",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "2-bed first-floor flat, Chatham ME4 – Guide Price £195,000. Leasehold, 99 yrs. Open-plan kitchen/living room, Juliet balcony, lift, allocated parking. EPC C, council tax band B. Full material information on listing.",
+          "hashtags": [
+            "Chatham",
+            "KentProperty"
+          ]
+        }
+      ]
+    },
+    "marketing.attempt1": {
+      "emailBlast": {
+        "subjectLines": [
+          "Just listed: 2-bed flat, Chatham – Guide Price £195,000",
+          "New instruction: 2-bed first-floor flat, Chatham – £195k",
+          "Chatham ME4: 2-bed purpose-built flat – Guide £195,000"
+        ],
+        "previewText": "Leasehold · 99 years · Allocated parking · Lift · Juliet balcony · EPC C",
+        "headline": "First-floor flat with balcony and lift, Chatham ME4",
+        "body": "We are pleased to offer this two-bedroom first-floor flat at a guide price of £195,000. The property is leasehold with 99 years remaining and a service charge of £1,450 per year (year ending March 2026).\n\nThe accommodation comprises an open-plan kitchen/living room with Juliet balcony, two bedrooms and a bathroom. The building benefits from lift access, and there is one allocated parking space.\n\nCouncil tax band B (Medway Council). EPC rating C. The property is connected to mains electricity, mains water (metered), mains sewerage and has gas central heating. Broadband: FTTC. Mobile signal: good outdoor coverage on major networks. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "A two-bedroom first-floor purpose-built flat in Chatham ME4 at a guide price of £195,000. The property offers an open-plan kitchen/living room with Juliet balcony, lift access to the first floor, and one allocated parking space. Leasehold with 99 years remaining. Council tax band B, EPC C. Please get in touch to arrange a viewing."
+      },
+      "sellerEmail": "{\n  \"body\": \"Dear [Seller name],\\n\\nThank you for instructing us to market your property. Before we publish anything, please can you check the draft details below and confirm they are accurate?\\n\\n1. Price: Guide Price £195,000 – is this correct?\\n2. Property type: First-floor purpose-built flat – is this correct?\\n3. Tenure: Leasehold with 99 years remaining – is this correct?\\n4. Service charge: £1,450 per year (year ending March 2026) – is this correct?\\n5. Council tax: Band B (Medway Council) – is this correct?\\n6. EPC rating: C – is this correct?\\n7. Bedrooms: 2 – is this correct?\\n8. Bathrooms: 1 – is this correct?\\n9. Receptions: 1 – is this correct?\\n10. Parking: One allocated space – is this correct?\\n11. Open-plan kitchen/living room with Juliet balcony – is this correct?\\n12. Lift access – is this correct?\\n13. Construction: Standard – is this correct?\\n14. Electricity: Mains – is this correct?\\n15. Water: Mains (metered) – is this correct?\\n16. Sewerage: Mains – is this correct?\\n17. Heating: Gas central heating – is this correct?\\n18. Broadband: FTTC – is this correct?\\n19. Mobile signal: Good outdoor coverage on major networks – is this correct?\\n\\nTo complete the particulars, could you let us know:\\n\\n• What is the current ground rent, how often is it reviewed and when is the next review?\\n\\nPlease reply \"Approved\" or send any corrections – nothing will be published until you confirm.\\n\\n[Your name, branch, phone]\"\n}",
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "First-floor flat with balcony and lift, Chatham ME4 – Guide Price £195,000\n\nTwo-bedroom purpose-built flat on the first floor.\nOpen-plan kitchen/living room with Juliet balcony.\nLift access to all floors.\nOne allocated parking space.\nGas central heating and mains water (metered).\n\nLeasehold · 99 years remaining · Service charge £1,450 per year · EPC C · Council tax band B\n\nFull material information on the listing. 🏠🔑",
+          "hashtags": [
+            "Chatham",
+            "ChathamProperty",
+            "Kent",
+            "Medway",
+            "Flat",
+            "Apartment",
+            "TwoBedFlat",
+            "NewInstruction",
+            "ForSale",
+            "PropertyForSale"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "A two-bedroom first-floor purpose-built flat in Chatham ME4, offered at a guide price of £195,000. The property is leasehold with 99 years remaining and a service charge of £1,450 per year (year ending March 2026).\n\nThe accommodation comprises an open-plan kitchen/living room with Juliet balcony, two bedrooms and a bathroom. The building benefits from lift access, and there is one allocated parking space. The property has gas central heating and is connected to mains electricity, mains water (metered) and mains sewerage.\n\nCouncil tax band B (Medway Council). EPC rating C. Broadband: FTTC. Mobile signal: good outdoor coverage on major networks.\n\nFull material information on the listing. 🏠",
+          "hashtags": [
+            "ChathamProperty",
+            "KentHomes",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "2-bed first-floor flat, Chatham ME4 – Guide Price £195,000. Leasehold, 99 yrs. Open-plan kitchen/living room, Juliet balcony, lift, allocated parking. EPC C, council tax band B. Full material information on listing.",
+          "hashtags": [
+            "Chatham",
+            "KentProperty"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": true,
+  "findings": [
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "listing: price stated in prose, not exact form \"Guide Price £195,000\""
+    },
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "emailBlast.body: price stated in prose, not exact form \"Guide Price £195,000\""
+    },
+    {
+      "grader": "raw:banned",
+      "severity": "warn",
+      "message": "Banned phrase \"benefits from\" in emailBlast.body (fixed by the app before the agent sees it)",
+      "text": "…balcony, two bedrooms and a bathroom. The building benefits from lift access, and there is one allocated parking …"
+    },
+    {
+      "grader": "raw:banned",
+      "severity": "warn",
+      "message": "Banned phrase \"benefits from\" in social.Facebook (fixed by the app before the agent sees it)",
+      "text": "…balcony, two bedrooms and a bathroom. The building benefits from lift access, and there is one allocated parking …"
+    }
+  ],
+  "coreMs": 6928,
+  "marketingMs": 23821,
+  "retries": 0,
+  "output": {
+    "headline": "First-floor two-bedroom flat with lift and allocated parking",
+    "listing": "A first-floor purpose-built flat in Chatham with two bedrooms, a lift and one allocated parking space.\n\nThe accommodation comprises an open-plan kitchen and living room with a Juliet balcony, two bedrooms and a bathroom. Gas central heating is installed throughout.\n\nOutside, there is one allocated parking space.\n\nThe property is offered at a guide price of £195,000. The tenure is leasehold with 99 years remaining and a service charge of £1,450 per year (year ending March 2026). Council Tax Band B. EPC rating C.",
+    "summary": "First-floor purpose-built flat in Chatham with open-plan kitchen/living room, Juliet balcony, lift and allocated parking. Guide Price £195,000. Leasehold, 99 years remaining, service charge £1,450 p.a. EPC C.",
+    "keyFeatures": [
+      "First-floor purpose-built flat with lift access",
+      "One allocated parking space",
+      "Open-plan kitchen and living room with Juliet balcony",
+      "Two bedrooms",
+      "Gas central heating",
+      "99 years remaining on the lease"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "Just listed: 2-bed flat, Chatham – Guide Price £195,000",
+        "New instruction: 2-bed first-floor flat, Chatham – £195k",
+        "Chatham ME4: 2-bed purpose-built flat – Guide £195,000"
+      ],
+      "previewText": "Leasehold · 99 years · Allocated parking · Lift · Juliet balcony · EPC C",
+      "headline": "First-floor flat with balcony and lift, Chatham ME4",
+      "body": "We are pleased to offer this two-bedroom first-floor flat at a guide price of £195,000. The property is leasehold with 99 years remaining and a service charge of £1,450 per year (year ending March 2026).\n\nThe accommodation comprises an open-plan kitchen/living room with Juliet balcony, two bedrooms and a bathroom. The building has lift access, and there is one allocated parking space.\n\nCouncil tax band B (Medway Council). EPC rating C. The property is connected to mains electricity, mains water (metered), mains sewerage and has gas central heating. Broadband: FTTC. Mobile signal: good outdoor coverage on major networks.\n\nFull material information is on the property listing.",
+      "callToAction": "Book a viewing",
+      "personalMessage": "A two-bedroom first-floor purpose-built flat in Chatham ME4 at a guide price of £195,000. The property offers an open-plan kitchen/living room with Juliet balcony, lift access to the first floor, and one allocated parking space. Leasehold with 99 years remaining. Council tax band B, EPC C. Please get in touch to arrange a viewing."
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "First-floor flat with balcony and lift, Chatham ME4 – Guide Price £195,000\n\nTwo-bedroom purpose-built flat on the first floor.\nOpen-plan kitchen/living room with Juliet balcony.\nLift access to all floors.\nOne allocated parking space.\nGas central heating and mains water (metered).\n\nLeasehold · 99 years remaining · Service charge £1,450 per year · EPC C · Council tax band B\n\nFull material information on the listing. 🏠🔑",
+        "hashtags": [
+          "Chatham",
+          "ChathamProperty",
+          "Kent",
+          "Medway",
+          "Flat",
+          "Apartment",
+          "TwoBedFlat",
+          "NewInstruction",
+          "ForSale",
+          "PropertyForSale"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "A two-bedroom first-floor purpose-built flat in Chatham ME4, offered at a guide price of £195,000. The property is leasehold with 99 years remaining and a service charge of £1,450 per year (year ending March 2026).\n\nThe accommodation comprises an open-plan kitchen/living room with Juliet balcony, two bedrooms and a bathroom. The building has lift access, and there is one allocated parking space. The property has gas central heating and is connected to mains electricity, mains water (metered) and mains sewerage.\n\nCouncil tax band B (Medway Council). EPC rating C. Broadband: FTTC. Mobile signal: good outdoor coverage on major networks.\n\nFull material information on the listing. 🏠",
+        "hashtags": [
+          "ChathamProperty",
+          "KentHomes",
+          "NewInstruction"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "2-bed first-floor flat, Chatham ME4 – Guide Price £195,000. Leasehold, 99 yrs. Open-plan kitchen/living room, Juliet balcony, lift, allocated parking. EPC C, council tax band B. Full material information on listing.",
+        "hashtags": [
+          "Chatham",
+          "KentProperty"
+        ]
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – Flat 4, Albion House, New Road, Chatham ME4",
+      "body": "Dear [Seller name],\n\nThank you for instructing us to market your property. Before we publish anything, please can you check the draft details below and confirm they are accurate?\n\n1. Price: Guide Price £195,000 – is this correct?\n2. Property type: First-floor purpose-built flat – is this correct?\n3. Tenure: Leasehold with 99 years remaining – is this correct?\n4. Service charge: £1,450 per year (year ending March 2026) – is this correct?\n5. Council tax: Band B (Medway Council) – is this correct?\n6. EPC rating: C – is this correct?\n7. Bedrooms: 2 – is this correct?\n8. Bathrooms: 1 – is this correct?\n9. Receptions: 1 – is this correct?\n10. Parking: One allocated space – is this correct?\n11. Open-plan kitchen/living room with Juliet balcony – is this correct?\n12. Lift access – is this correct?\n13. Construction: Standard – is this correct?\n14. Electricity: Mains – is this correct?\n15. Water: Mains (metered) – is this correct?\n16. Sewerage: Mains – is this correct?\n17. Heating: Gas central heating – is this correct?\n18. Broadband: FTTC – is this correct?\n19. Mobile signal: Good outdoor coverage on major networks – is this correct?\n\nTo complete the particulars, could you let us know:\n\n• What is the current ground rent, how often is it reviewed and when is the next review?\n\nPlease reply \"Approved\" or send any corrections – nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 5,
+      "2": 5,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 5,
+      "8": 5
+    },
+    "hardFail": false,
+    "verdict": "PASS",
+    "unsupported": [],
+    "fixes": [],
+    "average": 5
+  }
+}

@@ -3,6 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 interface AdminContext {
   userId: string;
+  supabase: { rpc: (fn: "has_role", args: { _user_id: string; _role: string }) => PromiseLike<{ data: unknown; error: unknown }> };
 }
 
 /**
@@ -10,8 +11,8 @@ interface AdminContext {
  * user-editable profile data or email claims.
  */
 async function assertAdmin(context: AdminContext): Promise<void> {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data, error } = await supabaseAdmin.rpc("has_role", {
+  // Checked as the caller (has_role is security definer, callable by authenticated).
+  const { data, error } = await context.supabase.rpc("has_role", {
     _user_id: context.userId,
     _role: "admin",
   });

@@ -180,9 +180,10 @@ function GeneratorInner() {
     const requestedId = openId;
     // Anything typed after the request started must not be overwritten.
     const before = JSON.stringify(inputRef.current);
+    let cancelled = false;
     getGenerationFn({ data: { id: requestedId } })
       .then((rec) => {
-        if (openedId.current !== requestedId) return; // stale response
+        if (cancelled || openedId.current !== requestedId) return; // stale or unmounted
         if (!rec) {
           toast.error("That saved listing couldn't be found.");
           return;
@@ -202,7 +203,15 @@ function GeneratorInner() {
         setDraftOffer(null);
         toast.success(`Opened “${rec.propertyTitle ?? "saved listing"}” — edit and regenerate, or copy again.`);
       })
-      .catch(() => toast.error("Couldn't open that saved listing. Please try again."));
+      .catch(() => {
+        if (!cancelled) toast.error("Couldn't open that saved listing. Please try again.");
+      });
+    return () => {
+      // Navigated away or a different listing was requested: drop this
+      // response, and allow a fresh load if the same id is opened again.
+      cancelled = true;
+      if (openedId.current === requestedId) openedId.current = null;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openId]);
 

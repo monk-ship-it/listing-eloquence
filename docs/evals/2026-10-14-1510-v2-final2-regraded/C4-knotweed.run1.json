@@ -1,0 +1,207 @@
+{
+  "id": "C4-knotweed",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 9445,
+      "stopReason": "tool_use",
+      "inputTokens": 4465,
+      "outputTokens": 556
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 19031,
+      "stopReason": "tool_use",
+      "inputTokens": 5393,
+      "outputTokens": 1503
+    },
+    {
+      "call": "core",
+      "attempt": 2,
+      "ms": 11182,
+      "stopReason": "tool_use",
+      "inputTokens": 4465,
+      "outputTokens": 622
+    },
+    {
+      "call": "marketing",
+      "attempt": 2,
+      "ms": 21035,
+      "stopReason": "tool_use",
+      "inputTokens": 5457,
+      "outputTokens": 1657
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "Extended four-bedroom detached house in Sevenoaks",
+      "listing": "This four-bedroom detached house stands on a 0.3-acre plot on Beech Avenue in Sevenoaks. Built in 1968, the property has been extended to create a spacious kitchen and family room.\n\nThe ground floor comprises two reception rooms and an extended kitchen and family room. The kitchen opens into the family area, providing flexible living space. Gas central heating serves the property, with mains electricity, water and sewerage connected.\n\nFour bedrooms are arranged on the first floor, served by two bathrooms. The principal bedroom occupies the front of the house.\n\nThe rear garden extends to approximately 0.3 acres and is accessed from the kitchen and family room. A driveway provides off-street parking and leads to a double garage.\n\nSevenoaks town centre lies within reach, with shops, restaurants and the railway station offering services to London. The property is situated in a residential area with good outdoor mobile signal coverage on major networks. FTTC broadband is available.\n\nGuide Price £850,000. Freehold. Council Tax Band G (Sevenoaks District Council). EPC rating D. Construction: Standard. Electricity: Mains. Water: Mains (metered). Sewerage: Mains. Heating: Gas central heating. Broadband: FTTC. Mobile signal: Good outdoor coverage on major networks. Parking: Driveway. Building safety, restrictions, rights and easements, flooding, coastal erosion, planning, accessibility and coalfield/mining: None known. Japanese knotweed found in the rear garden near the boundary in 2025; herbicide treatment plan by a PCA-registered contractor in progress, with a 10-year insurance-backed guarantee.",
+      "summary": "Extended four-bedroom detached house on a 0.3-acre plot with double garage and driveway parking. Built in 1968, the property features an extended kitchen and family room, two receptions, and a substantial rear garden.",
+      "keyFeatures": [
+        "Extended kitchen and family room",
+        "0.3-acre plot with substantial rear garden",
+        "Double garage and driveway parking",
+        "Four bedrooms and two bathrooms",
+        "Two reception rooms",
+        "Detached house built in 1968",
+        "Freehold tenure",
+        "Gas central heating with mains services",
+        "Japanese knotweed treatment plan in progress with 10-year guarantee"
+      ]
+    },
+    "marketing": {
+      "emailBlast": {
+        "subjectLines": [
+          "New instruction: 4-bed detached, Sevenoaks – Guide £850k",
+          "Just listed: Sevenoaks 4-bed on 0.3 acres – Guide £850k",
+          "4-bed detached, Beech Avenue, Sevenoaks – Guide £850k"
+        ],
+        "previewText": "Freehold · Extended kitchen/family room · Double garage · 0.3-acre plot · EPC D",
+        "headline": "Four-bedroom detached house, Beech Avenue, Sevenoaks",
+        "body": "A four-bedroom detached house on a 0.3-acre plot in Sevenoaks, offered at a Guide Price £850,000, freehold.\n\nBuilt in 1968, the house has been extended to create a kitchen/family room, and includes two reception rooms, two bathrooms and a double garage. The property stands on a driveway within grounds of approximately 0.3 acres.\n\nCouncil Tax Band G (Sevenoaks District Council), EPC rating D. Please note: Japanese knotweed found in the rear garden near the boundary in 2025; herbicide treatment plan by a PCA-registered contractor in progress, with a 10-year insurance-backed guarantee. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "A four-bedroom detached house on Beech Avenue in Sevenoaks, at a guide price of £850,000. Built in 1968 and extended to create a kitchen/family room, the property stands on a 0.3-acre plot with a double garage. The freehold home offers two reception rooms, two bathrooms and driveway parking. If you would like to arrange a viewing, please let us know."
+      },
+      "sellerEmail": "{\n  \"body\": \"Dear [Seller name],\\n\\nThank you for instructing us to market 27 Beech Avenue. Before we publish anything, please check the details below and confirm they are accurate.\\n\\n1. Address: 27 Beech Avenue, Sevenoaks TN13 – is this correct?\\n2. Property type: Detached house – is this correct?\\n3. Year built: 1968 – is this correct?\\n4. Price: Guide Price £850,000 – is this correct?\\n5. Tenure: Freehold – is this correct?\\n6. Bedrooms: 4 – is this correct?\\n7. Bathrooms: 2 – is this correct?\\n8. Reception rooms: 2 – is this correct?\\n9. Council Tax: Band G (Sevenoaks District Council) – is this correct?\\n10. EPC rating: D – is this correct?\\n11. Construction: Standard – is this correct?\\n12. Electricity: Mains – is this correct?\\n13. Water: Mains (metered) – is this correct?\\n14. Sewerage: Mains – is this correct?\\n15. Heating: Gas central heating – is this correct?\\n16. Broadband: FTTC – is this correct?\\n17. Mobile signal: Good outdoor coverage on major networks – is this correct?\\n18. Parking: Driveway – is this correct?\\n19. Key features: Extended kitchen/family room, double garage, 0.3-acre plot – is this correct?\\n20. Known issue: Japanese knotweed found in the rear garden near the boundary in 2025; herbicide treatment plan by a PCA-registered contractor in progress, with a 10-year insurance-backed guarantee – is this correct?\\n21. Building safety: None known – is this correct?\\n22. Restrictions: None known – is this correct?\\n23. Rights & easements: None known – is this correct?\\n24. Flooding: None known – is this correct?\\n25. Coastal erosion: None known – is this correct?\\n26. Planning: None known – is this correct?\\n27. Accessibility: None known – is this correct?\\n28. Coalfield / mining: None known – is this correct?\\n\\nPlease reply \"Approved\" or send any corrections – nothing will be published until you confirm.\\n\\n[Your name, branch, phone]\"\n}",
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "Four-bedroom detached house on a 0.3-acre plot, Beech Avenue, Sevenoaks. Guide Price £850,000.\n\nBuilt in 1968 and extended to create a kitchen/family room.\nTwo reception rooms and two bathrooms.\nDouble garage and driveway parking.\n0.3-acre plot in Sevenoaks.\n\nFreehold · EPC D · Council Tax Band G\n\nPlease note: Japanese knotweed found in the rear garden near the boundary in 2025; herbicide treatment plan by a PCA-registered contractor in progress, with a 10-year insurance-backed guarantee.\n\nFull material information on the listing. 🏡🌳",
+          "hashtags": [
+            "Sevenoaks",
+            "Kent",
+            "DetachedHouse",
+            "NewInstruction",
+            "FourBedroom",
+            "BeechAvenue",
+            "ForSale",
+            "PropertyForSale",
+            "KentProperty",
+            "SevenoaksProperty"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "A four-bedroom detached house on a 0.3-acre plot has come to the market on Beech Avenue in Sevenoaks. Guide Price £850,000.\n\nBuilt in 1968, the house has been extended to create a kitchen/family room. It offers two reception rooms, two bathrooms, a double garage and driveway parking. The property stands within grounds of approximately 0.3 acres.\n\nFreehold. EPC rating D. Council Tax Band G (Sevenoaks District Council).\n\nPlease note: Japanese knotweed found in the rear garden near the boundary in 2025; herbicide treatment plan by a PCA-registered contractor in progress, with a 10-year insurance-backed guarantee.\n\nFull material information on the listing. 🏡",
+          "hashtags": [
+            "Sevenoaks",
+            "KentProperty",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "4-bed detached house, Beech Avenue, Sevenoaks. Guide Price £850,000. Freehold, EPC D. Extended kitchen/family room, double garage, 0.3-acre plot. Full material information on the listing.",
+          "hashtags": [
+            "Sevenoaks",
+            "NewInstruction"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": true,
+  "findings": [
+    {
+      "grader": "factCheck",
+      "severity": "warn",
+      "message": "\"London\" (name) in description is not in the inputs",
+      "text": "London"
+    },
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "listing: final paragraph repeats 8 supply labels — the app adds the Material Information block separately"
+    }
+  ],
+  "coreMs": 20627,
+  "marketingMs": 40066,
+  "retries": 2,
+  "output": {
+    "headline": "Extended four-bedroom detached house in Sevenoaks",
+    "listing": "This four-bedroom detached house stands on a 0.3-acre plot on Beech Avenue in Sevenoaks. Built in 1968, the property has been extended to create a spacious kitchen and family room.\n\nThe ground floor comprises two reception rooms and an extended kitchen and family room. The kitchen opens into the family area, providing flexible living space. Gas central heating serves the property, with mains electricity, water and sewerage connected.\n\nFour bedrooms are arranged on the first floor, served by two bathrooms. The principal bedroom occupies the front of the house.\n\nThe rear garden extends to approximately 0.3 acres and is accessed from the kitchen and family room. A driveway provides off-street parking and leads to a double garage.\n\nSevenoaks town centre lies within reach, with shops, restaurants and the railway station offering services to London. The property is situated in a residential area with good outdoor mobile signal coverage on major networks. FTTC broadband is available.\n\nGuide Price £850,000. Freehold. Council Tax Band G (Sevenoaks District Council). EPC rating D. Construction: Standard. Electricity: Mains. Water: Mains (metered). Sewerage: Mains. Heating: Gas central heating. Broadband: FTTC. Mobile signal: Good outdoor coverage on major networks. Parking: Driveway. Building safety, restrictions, rights and easements, flooding, coastal erosion, planning, accessibility and coalfield/mining: None known. Japanese knotweed found in the rear garden near the boundary in 2025; herbicide treatment plan by a PCA-registered contractor in progress, with a 10-year insurance-backed guarantee.",
+    "summary": "Extended four-bedroom detached house on a 0.3-acre plot with double garage and driveway parking. Built in 1968, the property features an extended kitchen and family room, two receptions, and a substantial rear garden.",
+    "keyFeatures": [
+      "Extended kitchen and family room",
+      "0.3-acre plot with substantial rear garden",
+      "Double garage and driveway parking",
+      "Four bedrooms and two bathrooms",
+      "Two reception rooms",
+      "Detached house built in 1968",
+      "Freehold tenure",
+      "Gas central heating with mains services",
+      "Japanese knotweed treatment plan in progress with 10-year guarantee"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "New instruction: 4-bed detached, Sevenoaks – Guide £850k",
+        "Just listed: Sevenoaks 4-bed on 0.3 acres – Guide £850k",
+        "4-bed detached, Beech Avenue, Sevenoaks – Guide £850k"
+      ],
+      "previewText": "Freehold · Extended kitchen/family room · Double garage · 0.3-acre plot · EPC D",
+      "headline": "Four-bedroom detached house, Beech Avenue, Sevenoaks",
+      "body": "A four-bedroom detached house on a 0.3-acre plot in Sevenoaks, offered at a Guide Price £850,000, freehold.\n\nBuilt in 1968, the house has been extended to create a kitchen/family room, and includes two reception rooms, two bathrooms and a double garage. The property stands on a driveway within grounds of approximately 0.3 acres.\n\nCouncil Tax Band G (Sevenoaks District Council), EPC rating D. Please note: Japanese knotweed found in the rear garden near the boundary in 2025; herbicide treatment plan by a PCA-registered contractor in progress, with a 10-year insurance-backed guarantee.\n\nFull material information is on the property listing.",
+      "callToAction": "Book a viewing",
+      "personalMessage": "A four-bedroom detached house on Beech Avenue in Sevenoaks, at a guide price of £850,000. Built in 1968 and extended to create a kitchen/family room, the property stands on a 0.3-acre plot with a double garage. The freehold home offers two reception rooms, two bathrooms and driveway parking. If you would like to arrange a viewing, please let us know."
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "Four-bedroom detached house on a 0.3-acre plot, Beech Avenue, Sevenoaks. Guide Price £850,000.\n\nBuilt in 1968 and extended to create a kitchen/family room.\nTwo reception rooms and two bathrooms.\nDouble garage and driveway parking.\n0.3-acre plot in Sevenoaks.\n\nFreehold · EPC D · Council Tax Band G\n\nPlease note: Japanese knotweed found in the rear garden near the boundary in 2025; herbicide treatment plan by a PCA-registered contractor in progress, with a 10-year insurance-backed guarantee.\n\nFull material information on the listing. 🏡🌳",
+        "hashtags": [
+          "Sevenoaks",
+          "Kent",
+          "DetachedHouse",
+          "NewInstruction",
+          "FourBedroom",
+          "BeechAvenue",
+          "ForSale",
+          "PropertyForSale",
+          "KentProperty",
+          "SevenoaksProperty"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "A four-bedroom detached house on a 0.3-acre plot has come to the market on Beech Avenue in Sevenoaks. Guide Price £850,000.\n\nBuilt in 1968, the house has been extended to create a kitchen/family room. It offers two reception rooms, two bathrooms, a double garage and driveway parking. The property stands within grounds of approximately 0.3 acres.\n\nFreehold. EPC rating D. Council Tax Band G (Sevenoaks District Council).\n\nPlease note: Japanese knotweed found in the rear garden near the boundary in 2025; herbicide treatment plan by a PCA-registered contractor in progress, with a 10-year insurance-backed guarantee.\n\nFull material information on the listing. 🏡",
+        "hashtags": [
+          "Sevenoaks",
+          "KentProperty",
+          "NewInstruction"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "4-bed detached house, Beech Avenue, Sevenoaks. Guide Price £850,000. Freehold, EPC D. Extended kitchen/family room, double garage, 0.3-acre plot. Full material information on the listing.",
+        "hashtags": [
+          "Sevenoaks",
+          "NewInstruction"
+        ]
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – 27 Beech Avenue, Sevenoaks TN13",
+      "body": "Dear [Seller name],\n\nThank you for instructing us to market 27 Beech Avenue. Before we publish anything, please check the details below and confirm they are accurate.\n\n1. Address: 27 Beech Avenue, Sevenoaks TN13 – is this correct?\n2. Property type: Detached house – is this correct?\n3. Year built: 1968 – is this correct?\n4. Price: Guide Price £850,000 – is this correct?\n5. Tenure: Freehold – is this correct?\n6. Bedrooms: 4 – is this correct?\n7. Bathrooms: 2 – is this correct?\n8. Reception rooms: 2 – is this correct?\n9. Council Tax: Band G (Sevenoaks District Council) – is this correct?\n10. EPC rating: D – is this correct?\n11. Construction: Standard – is this correct?\n12. Electricity: Mains – is this correct?\n13. Water: Mains (metered) – is this correct?\n14. Sewerage: Mains – is this correct?\n15. Heating: Gas central heating – is this correct?\n16. Broadband: FTTC – is this correct?\n17. Mobile signal: Good outdoor coverage on major networks – is this correct?\n18. Parking: Driveway – is this correct?\n19. Key features: Extended kitchen/family room, double garage, 0.3-acre plot – is this correct?\n20. Known issue: Japanese knotweed found in the rear garden near the boundary in 2025; herbicide treatment plan by a PCA-registered contractor in progress, with a 10-year insurance-backed guarantee – is this correct?\n21. Building safety: None known – is this correct?\n22. Restrictions: None known – is this correct?\n23. Rights & easements: None known – is this correct?\n24. Flooding: None known – is this correct?\n25. Coastal erosion: None known – is this correct?\n26. Planning: None known – is this correct?\n27. Accessibility: None known – is this correct?\n28. Coalfield / mining: None known – is this correct?\n\nPlease reply \"Approved\" or send any corrections – nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 5,
+      "2": 5,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 5,
+      "8": 5
+    },
+    "hardFail": false,
+    "verdict": "PASS",
+    "fixes": [],
+    "average": 5
+  }
+}

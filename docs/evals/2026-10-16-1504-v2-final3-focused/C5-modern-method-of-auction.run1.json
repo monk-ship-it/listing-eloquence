@@ -1,0 +1,266 @@
+{
+  "id": "C5-modern-method-of-auction",
+  "run": 1,
+  "call": "pack",
+  "timings": [
+    {
+      "call": "core",
+      "attempt": 1,
+      "ms": 10104,
+      "stopReason": "tool_use",
+      "inputTokens": 4630,
+      "outputTokens": 539,
+      "reason": []
+    },
+    {
+      "call": "marketing",
+      "attempt": 1,
+      "ms": 24206,
+      "stopReason": "tool_use",
+      "inputTokens": 5558,
+      "outputTokens": 1462,
+      "reason": []
+    }
+  ],
+  "raw": {
+    "core": {
+      "headline": "Two-bedroom mid-terrace house, Sheerness",
+      "listing": "A two-bedroom mid-terrace house in Sheerness offered with no onward chain. For sale by Modern Method of Auction with a 56-day reservation period. The property requires modernisation throughout and benefits from gas central heating and a rear yard.\n\nThe accommodation comprises an entrance hall, a reception room and a kitchen on the ground floor. On the first floor there are two bedrooms and a bathroom.\n\nOutside, there is a rear yard. On-street parking is available and no permit is required.\n\nStation Terrace is located in Sheerness.\n\nFor sale by Modern Method of Auction at a guide price of £150,000. A non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT is payable by the buyer in addition to the purchase price. The 56-day reservation period applies. The guide price indicates the seller's minimum expectation; the reserve will be within 10% of the guide. Freehold. Council Tax Band A (Swale Borough Council). EPC rating E. Standard construction. Mains electricity, mains water (metered), mains sewerage and gas central heating. FTTC broadband available. Good outdoor mobile signal coverage on major networks. On-street parking, no permit required. No onward chain. Building safety, restrictions, rights and easements, flooding, coastal erosion, planning, accessibility and coalfield/mining: none known.",
+      "summary": "For sale by Modern Method of Auction. Mid-terrace house requiring modernisation, offered with no onward chain. Gas central heating and a rear yard. Guide Price £150,000 – reservation fee applies.",
+      "keyFeatures": [
+        "For sale by Modern Method of Auction with a 56-day reservation period",
+        "No onward chain",
+        "Requires modernisation throughout",
+        "Two bedrooms",
+        "Gas central heating",
+        "Rear yard",
+        "On-street parking, no permit required",
+        "Council Tax Band A",
+        "Freehold",
+        "EPC rating E"
+      ]
+    },
+    "core.attempt1": {
+      "headline": "Two-bedroom mid-terrace house, Sheerness",
+      "listing": "A two-bedroom mid-terrace house in Sheerness offered with no onward chain. For sale by Modern Method of Auction with a 56-day reservation period. The property requires modernisation throughout and benefits from gas central heating and a rear yard.\n\nThe accommodation comprises an entrance hall, a reception room and a kitchen on the ground floor. On the first floor there are two bedrooms and a bathroom.\n\nOutside, there is a rear yard. On-street parking is available and no permit is required.\n\nStation Terrace is located in Sheerness.\n\nFor sale by Modern Method of Auction at a guide price of £150,000. A non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT is payable by the buyer in addition to the purchase price. The 56-day reservation period applies. The guide price indicates the seller's minimum expectation; the reserve will be within 10% of the guide. Freehold. Council Tax Band A (Swale Borough Council). EPC rating E. Standard construction. Mains electricity, mains water (metered), mains sewerage and gas central heating. FTTC broadband available. Good outdoor mobile signal coverage on major networks. On-street parking, no permit required. No onward chain. Building safety, restrictions, rights and easements, flooding, coastal erosion, planning, accessibility and coalfield/mining: none known.",
+      "summary": "For sale by Modern Method of Auction. Mid-terrace house requiring modernisation, offered with no onward chain. Gas central heating and a rear yard. Guide Price £150,000 – reservation fee applies.",
+      "keyFeatures": [
+        "For sale by Modern Method of Auction with a 56-day reservation period",
+        "No onward chain",
+        "Requires modernisation throughout",
+        "Two bedrooms",
+        "Gas central heating",
+        "Rear yard",
+        "On-street parking, no permit required",
+        "Council Tax Band A",
+        "Freehold",
+        "EPC rating E"
+      ]
+    },
+    "marketing": {
+      "emailBlast": {
+        "subjectLines": [
+          "Just listed: 2-bed terrace, Sheerness – Guide £150,000",
+          "New instruction: 2-bed house, Sheerness ME12 – Guide £150k",
+          "Modern Method of Auction: 2-bed terrace, Sheerness £150k"
+        ],
+        "previewText": "Freehold · No onward chain · EPC E · Rear yard · Requires modernisation",
+        "headline": "Mid-terrace house, Sheerness ME12",
+        "body": "For sale by Modern Method of Auction at a guide price of £150,000 (freehold). A non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT is payable by the buyer in addition to the purchase price. The 56-day reservation period applies, and the reserve will be within 10% of the guide.\n\nThis mid-terrace house offers two bedrooms, one reception room and one bathroom. The property has a rear yard and requires modernisation throughout. There is no onward chain.\n\nCouncil Tax band A (Swale Borough Council). EPC rating E. On-street parking is available with no permit required. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "A two-bedroom mid-terrace house at 3 Station Terrace, Sheerness ME12, for sale by Modern Method of Auction at a guide price of £150,000 (freehold). The property has a rear yard and requires modernisation. No onward chain. A non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT applies. Book a viewing to see the potential."
+      },
+      "sellerEmail": {
+        "body": "Dear [Seller name],\n\nThank you for instructing us. Below are the draft details for 3 Station Terrace. Please check everything carefully before we publish — nothing will go live until you confirm.\n\n1. Address: 3 Station Terrace, Sheerness ME12 – is this correct?\n2. Property type: Mid-terrace house – is this correct?\n3. Bedrooms: 2 – is this correct?\n4. Bathrooms: 1 – is this correct?\n5. Reception rooms: 1 – is this correct?\n6. Price: Guide Price £150,000 – is this correct?\n7. Sale method: Modern Method of Auction – is this correct?\n8. Auction terms: 56-day reservation period; reserve within 10% of the guide – is this correct?\n9. Reservation fee: Non-refundable 4.2% of purchase price (minimum £6,000) including VAT, payable by buyer – is this correct?\n10. Tenure: Freehold – is this correct?\n11. Council Tax: Band A (Swale Borough Council) – is this correct?\n12. EPC rating: E – is this correct?\n13. Chain status: No onward chain – is this correct?\n14. Parking: On-street, no permit required – is this correct?\n15. Heating: Gas central heating – is this correct?\n16. Water: Mains (metered) – is this correct?\n17. Key features: Rear yard, requires modernisation – is this correct?\n\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+      },
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "Mid-terrace house, 3 Station Terrace, Sheerness ME12 – Guide Price £150,000\n\nFor sale by Modern Method of Auction 🏠\nTwo bedrooms, one reception room, one bathroom\nRear yard\nRequires modernisation\nNo onward chain\n\nFreehold · EPC E · Council Tax band A\n\nNon-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT, payable by the buyer in addition to the purchase price. 56-day reservation period applies.\n\nFull material information on the listing.",
+          "hashtags": [
+            "Sheerness",
+            "Kent",
+            "MidTerrace",
+            "TwoBedroomHouse",
+            "NewInstruction",
+            "ModernMethodOfAuction",
+            "Freehold",
+            "NoOnwardChain"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "Mid-terrace house, 3 Station Terrace, Sheerness ME12 – Guide Price £150,000\n\nFor sale by Modern Method of Auction. This two-bedroom mid-terrace house offers one reception room, one bathroom and a rear yard. The property requires modernisation throughout. Gas central heating and mains water (metered) are connected. On-street parking is available with no permit required. There is no onward chain.\n\nFreehold. EPC rating E. Council Tax band A (Swale Borough Council).\n\nA non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT is payable by the buyer in addition to the purchase price. The 56-day reservation period applies, and the reserve will be within 10% of the guide price.\n\nFull material information on the listing.",
+          "hashtags": [
+            "Sheerness",
+            "Kent",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "Mid-terrace house, Sheerness ME12 – Guide Price £150,000 (freehold). Modern Method of Auction. 2 beds, rear yard, requires modernisation. No chain. EPC E. Reservation fee applies.",
+          "hashtags": [
+            "Sheerness",
+            "Kent"
+          ]
+        }
+      ]
+    },
+    "marketing.attempt1": {
+      "emailBlast": {
+        "subjectLines": [
+          "Just listed: 2-bed terrace, Sheerness – Guide £150,000",
+          "New instruction: 2-bed house, Sheerness ME12 – Guide £150k",
+          "Modern Method of Auction: 2-bed terrace, Sheerness £150k"
+        ],
+        "previewText": "Freehold · No onward chain · EPC E · Rear yard · Requires modernisation",
+        "headline": "Mid-terrace house, Sheerness ME12",
+        "body": "For sale by Modern Method of Auction at a guide price of £150,000 (freehold). A non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT is payable by the buyer in addition to the purchase price. The 56-day reservation period applies, and the reserve will be within 10% of the guide.\n\nThis mid-terrace house offers two bedrooms, one reception room and one bathroom. The property has a rear yard and requires modernisation throughout. There is no onward chain.\n\nCouncil Tax band A (Swale Borough Council). EPC rating E. On-street parking is available with no permit required. Full material information is on the property listing.",
+        "callToAction": "Book a viewing",
+        "personalMessage": "A two-bedroom mid-terrace house at 3 Station Terrace, Sheerness ME12, for sale by Modern Method of Auction at a guide price of £150,000 (freehold). The property has a rear yard and requires modernisation. No onward chain. A non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT applies. Book a viewing to see the potential."
+      },
+      "sellerEmail": {
+        "body": "Dear [Seller name],\n\nThank you for instructing us. Below are the draft details for 3 Station Terrace. Please check everything carefully before we publish — nothing will go live until you confirm.\n\n1. Address: 3 Station Terrace, Sheerness ME12 – is this correct?\n2. Property type: Mid-terrace house – is this correct?\n3. Bedrooms: 2 – is this correct?\n4. Bathrooms: 1 – is this correct?\n5. Reception rooms: 1 – is this correct?\n6. Price: Guide Price £150,000 – is this correct?\n7. Sale method: Modern Method of Auction – is this correct?\n8. Auction terms: 56-day reservation period; reserve within 10% of the guide – is this correct?\n9. Reservation fee: Non-refundable 4.2% of purchase price (minimum £6,000) including VAT, payable by buyer – is this correct?\n10. Tenure: Freehold – is this correct?\n11. Council Tax: Band A (Swale Borough Council) – is this correct?\n12. EPC rating: E – is this correct?\n13. Chain status: No onward chain – is this correct?\n14. Parking: On-street, no permit required – is this correct?\n15. Heating: Gas central heating – is this correct?\n16. Water: Mains (metered) – is this correct?\n17. Key features: Rear yard, requires modernisation – is this correct?\n\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+      },
+      "social": [
+        {
+          "platform": "Instagram",
+          "caption": "Mid-terrace house, 3 Station Terrace, Sheerness ME12 – Guide Price £150,000\n\nFor sale by Modern Method of Auction 🏠\nTwo bedrooms, one reception room, one bathroom\nRear yard\nRequires modernisation\nNo onward chain\n\nFreehold · EPC E · Council Tax band A\n\nNon-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT, payable by the buyer in addition to the purchase price. 56-day reservation period applies.\n\nFull material information on the listing.",
+          "hashtags": [
+            "Sheerness",
+            "Kent",
+            "MidTerrace",
+            "TwoBedroomHouse",
+            "NewInstruction",
+            "ModernMethodOfAuction",
+            "Freehold",
+            "NoOnwardChain"
+          ]
+        },
+        {
+          "platform": "Facebook",
+          "caption": "Mid-terrace house, 3 Station Terrace, Sheerness ME12 – Guide Price £150,000\n\nFor sale by Modern Method of Auction. This two-bedroom mid-terrace house offers one reception room, one bathroom and a rear yard. The property requires modernisation throughout. Gas central heating and mains water (metered) are connected. On-street parking is available with no permit required. There is no onward chain.\n\nFreehold. EPC rating E. Council Tax band A (Swale Borough Council).\n\nA non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT is payable by the buyer in addition to the purchase price. The 56-day reservation period applies, and the reserve will be within 10% of the guide price.\n\nFull material information on the listing.",
+          "hashtags": [
+            "Sheerness",
+            "Kent",
+            "NewInstruction"
+          ]
+        },
+        {
+          "platform": "X",
+          "caption": "Mid-terrace house, Sheerness ME12 – Guide Price £150,000 (freehold). Modern Method of Auction. 2 beds, rear yard, requires modernisation. No chain. EPC E. Reservation fee applies.",
+          "hashtags": [
+            "Sheerness",
+            "Kent"
+          ]
+        }
+      ]
+    }
+  },
+  "pass": true,
+  "findings": [
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "listing: price stated in prose, not exact form \"Guide Price £150,000\""
+    },
+    {
+      "grader": "materialInfo",
+      "severity": "warn",
+      "message": "emailBlast.body: price stated in prose, not exact form \"Guide Price £150,000\""
+    },
+    {
+      "grader": "raw:banned",
+      "severity": "warn",
+      "message": "Banned phrase \"benefits from\" in listing (fixed by the app before the agent sees it)",
+      "text": "…he property requires modernisation throughout and benefits from gas central heating and a rear yard.  The accommo…"
+    }
+  ],
+  "coreMs": 10104,
+  "marketingMs": 24206,
+  "retries": 0,
+  "output": {
+    "headline": "Two-bedroom mid-terrace house, Sheerness",
+    "listing": "A two-bedroom mid-terrace house in Sheerness offered with no onward chain. For sale by Modern Method of Auction with a 56-day reservation period. The property requires modernisation throughout and has gas central heating and a rear yard.\n\nThe accommodation comprises an entrance hall, a reception room and a kitchen on the ground floor. On the first floor there are two bedrooms and a bathroom.\n\nOutside, there is a rear yard. On-street parking is available and no permit is required.\n\nStation Terrace is located in Sheerness.\n\nFor sale by Modern Method of Auction at a guide price of £150,000. A non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT is payable by the buyer in addition to the purchase price. The 56-day reservation period applies. The guide price indicates the seller's minimum expectation; the reserve will be within 10% of the guide. Freehold. Council Tax Band A (Swale Borough Council). EPC rating E. Standard construction. Mains electricity, mains water (metered), mains sewerage and gas central heating. FTTC broadband available. Good outdoor mobile signal coverage on major networks. On-street parking, no permit required. No onward chain. Building safety, restrictions, rights and easements, flooding, coastal erosion, planning, accessibility and coalfield/mining: none known.",
+    "summary": "For sale by Modern Method of Auction. Mid-terrace house requiring modernisation, offered with no onward chain. Gas central heating and a rear yard. Guide Price £150,000 – reservation fee applies.",
+    "keyFeatures": [
+      "For sale by Modern Method of Auction with a 56-day reservation period",
+      "No onward chain",
+      "Requires modernisation throughout",
+      "Two bedrooms",
+      "Gas central heating",
+      "Rear yard",
+      "On-street parking, no permit required",
+      "Council Tax Band A",
+      "Freehold",
+      "EPC rating E"
+    ],
+    "emailBlast": {
+      "subjectLines": [
+        "Just listed: 2-bed terrace, Sheerness – Guide £150,000",
+        "New instruction: 2-bed house, Sheerness ME12 – Guide £150k",
+        "Modern Method of Auction: 2-bed terrace, Sheerness £150k"
+      ],
+      "previewText": "Freehold · No onward chain · EPC E · Rear yard · Requires modernisation",
+      "headline": "Mid-terrace house, Sheerness ME12",
+      "body": "For sale by Modern Method of Auction at a guide price of £150,000 (freehold). A non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT is payable by the buyer in addition to the purchase price. The 56-day reservation period applies, and the reserve will be within 10% of the guide.\n\nThis mid-terrace house offers two bedrooms, one reception room and one bathroom. The property has a rear yard and requires modernisation throughout. There is no onward chain.\n\nCouncil Tax band A (Swale Borough Council). EPC rating E. On-street parking is available with no permit required.\n\nFull material information is on the property listing.",
+      "callToAction": "Book a viewing",
+      "personalMessage": "A two-bedroom mid-terrace house at 3 Station Terrace, Sheerness ME12, for sale by Modern Method of Auction at a guide price of £150,000 (freehold). The property has a rear yard and requires modernisation. No onward chain. A non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT applies. Book a viewing to see the potential."
+    },
+    "social": [
+      {
+        "platform": "Instagram",
+        "caption": "Mid-terrace house, 3 Station Terrace, Sheerness ME12 – Guide Price £150,000\n\nFor sale by Modern Method of Auction 🏠\nTwo bedrooms, one reception room, one bathroom\nRear yard\nRequires modernisation\nNo onward chain\n\nFreehold · EPC E · Council Tax band A\n\nNon-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT, payable by the buyer in addition to the purchase price. 56-day reservation period applies.\n\nFull material information on the listing.",
+        "hashtags": [
+          "Sheerness",
+          "Kent",
+          "MidTerrace",
+          "TwoBedroomHouse",
+          "NewInstruction",
+          "ModernMethodOfAuction",
+          "Freehold",
+          "NoOnwardChain"
+        ]
+      },
+      {
+        "platform": "Facebook",
+        "caption": "Mid-terrace house, 3 Station Terrace, Sheerness ME12 – Guide Price £150,000\n\nFor sale by Modern Method of Auction. This two-bedroom mid-terrace house offers one reception room, one bathroom and a rear yard. The property requires modernisation throughout. Gas central heating and mains water (metered) are connected. On-street parking is available with no permit required. There is no onward chain.\n\nFreehold. EPC rating E. Council Tax band A (Swale Borough Council).\n\nA non-refundable reservation fee of 4.2% of the purchase price (minimum £6,000) including VAT is payable by the buyer in addition to the purchase price. The 56-day reservation period applies, and the reserve will be within 10% of the guide price.\n\nFull material information on the listing.",
+        "hashtags": [
+          "Sheerness",
+          "Kent",
+          "NewInstruction"
+        ]
+      },
+      {
+        "platform": "X",
+        "caption": "For sale by Modern Method of Auction. Mid-terrace house, Sheerness ME12 – Guide Price £150,000 (freehold). Modern Method of Auction. 2 beds, rear yard, requires modernisation. No chain. EPC E. Reservation fee applies.",
+        "hashtags": [
+          "Sheerness",
+          "Kent"
+        ]
+      }
+    ],
+    "sellerEmail": {
+      "subject": "Your property details for approval – 3 Station Terrace, Sheerness ME12",
+      "body": "Dear [Seller name],\n\nThank you for instructing us. Below are the draft details for 3 Station Terrace. Please check everything carefully before we publish — nothing will go live until you confirm.\n\n1. Address: 3 Station Terrace, Sheerness ME12 – is this correct?\n2. Property type: Mid-terrace house – is this correct?\n3. Bedrooms: 2 – is this correct?\n4. Bathrooms: 1 – is this correct?\n5. Reception rooms: 1 – is this correct?\n6. Price: Guide Price £150,000 – is this correct?\n7. Sale method: Modern Method of Auction – is this correct?\n8. Auction terms: 56-day reservation period; reserve within 10% of the guide – is this correct?\n9. Reservation fee: Non-refundable 4.2% of purchase price (minimum £6,000) including VAT, payable by buyer – is this correct?\n10. Tenure: Freehold – is this correct?\n11. Council Tax: Band A (Swale Borough Council) – is this correct?\n12. EPC rating: E – is this correct?\n13. Chain status: No onward chain – is this correct?\n14. Parking: On-street, no permit required – is this correct?\n15. Heating: Gas central heating – is this correct?\n16. Water: Mains (metered) – is this correct?\n17. Key features: Rear yard, requires modernisation – is this correct?\n\nPlease reply \"Approved\" or send any corrections — nothing will be published until you confirm.\n\n[Your name, branch, phone]"
+    }
+  },
+  "llm": {
+    "scores": {
+      "1": 5,
+      "2": 5,
+      "3": 5,
+      "4": 5,
+      "5": 5,
+      "6": 5,
+      "7": 5,
+      "8": 5
+    },
+    "hardFail": false,
+    "verdict": "PASS",
+    "unsupported": [],
+    "fixes": [],
+    "average": 5
+  }
+}

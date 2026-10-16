@@ -87,17 +87,19 @@ function Landing() {
     <>
       <div className="public-daylight min-h-screen overflow-x-clip">
         <Header user={authed} />
-        <Hero authed={authed} />
-        <Workflow />
+        <main>
+          <Hero authed={authed} />
+          <Workflow />
 
-        <ListingDetail />
-        <Voices />
-        <LiveExample />
-        <EditorialBand />
+          <ListingDetail />
+          <Voices />
+          <LiveExample />
+          <EditorialBand />
 
-        <VoiceDictation authed={authed} />
-        <Pricing authed={authed} />
-        <FinalCta authed={authed} />
+          <VoiceDictation authed={authed} />
+          <Pricing authed={authed} />
+          <FinalCta authed={authed} />
+        </main>
         <Footer />
       </div>
     </>
@@ -418,7 +420,7 @@ function EditorialBand() {
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-foreground/85 sm:text-base">
               Describe the space once. Quill keeps the same facts across the portal description, the teaser, the Email
-              Blast copy and every caption — so nothing drifts between channels.
+              Blast copy and every caption — so every channel starts from the same facts. Check each one before it goes live.
             </p>
           </div>
         </div>
@@ -446,7 +448,7 @@ const BENEFIT_GROUPS = [
     icon: Building2,
     title: "Brand voice packs",
     items:
-      "Professional, Premium, Luxury and Heritage voices keep every listing on-brand without rewriting from scratch.",
+      "Professional, Premium, Luxury, Heritage and Plain & factual voices keep every listing on-brand without rewriting from scratch.",
   },
   {
     icon: FileCheck2,
@@ -519,6 +521,12 @@ const VOICE_CARDS = [
     body: "For listed homes, architecturally interesting houses, village settings and characterful properties that benefit from a guided description.",
     sample: "Beyond the old stone threshold, the house opens with warmth, texture and a clear sense of place.",
   },
+  {
+    name: "Plain & factual",
+    tagline: "Clear. Factual. Quick.",
+    body: "For ex-local-authority homes, flats, investor and probate stock. Straight facts in short sentences.",
+    sample: "A two-bedroom first-floor flat with a separate kitchen and allocated parking.",
+  },
 ];
 
 function Voices() {
@@ -527,14 +535,14 @@ function Voices() {
       <Reveal className="mx-auto max-w-2xl text-center">
         <Eyebrow>Brand voices</Eyebrow>
         <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-          Four brand voices for a consistent agency tone.
+          Five brand voices for a consistent agency tone.
         </h2>
         <p className="mt-4 text-lg text-muted-foreground">
           Pick the voice that fits the property and the agency — every asset in the pack is drafted in the same tone, so
           brand consistency doesn't rely on the person on the keyboard.
         </p>
       </Reveal>
-      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {VOICE_CARDS.map((v, i) => (
           <Reveal key={v.name} delay={i * 80} className="h-full">
             <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/60 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card">
@@ -546,6 +554,9 @@ function Voices() {
               <p className="mt-1.5 text-[0.7rem] font-semibold uppercase tracking-wider text-primary">{v.tagline}</p>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{v.body}</p>
               <p className="mt-auto border-t border-border/70 pt-4 font-display text-sm italic leading-relaxed text-foreground/85">
+                <span className="mb-1 block font-sans text-[0.65rem] font-semibold not-italic uppercase tracking-wider text-muted-foreground">
+                  Illustrative tone only
+                </span>
                 “{v.sample}”
               </p>
             </div>
@@ -578,7 +589,7 @@ function LiveExample() {
     ["Voice", "Heritage"],
   ];
   const spokenNote =
-    "“Five bedrooms, Grade II listed, walled garden, original beams, inglenook fireplace…”";
+    "“Five bedrooms, Grade II listed, walled garden, exposed beams, inglenook fireplace…”";
   const demo = DEMO_UK;
 
   return (
@@ -904,12 +915,12 @@ const DEMO_UK: DemoPack = {
     "A Grade II listed five-bedroom detached home in a Cotswold market town, with an inglenook fireplace, flagstone floors and a walled garden. Guide Price £1,450,000, freehold. EPC rating E.",
   emailBlast: {
     subjectLines: [
-      "New instruction: Grade II listed home in a Cotswold market town",
+      "Grade II listed five-bedroom home in a Cotswold market town",
       "Five bedrooms, three receptions and a walled garden",
       "Guide Price £1,450,000 — Grade II listed, freehold",
     ],
     previewText: "Five bedrooms, three receptions, walled garden. Guide Price £1,450,000, freehold.",
-    headline: "A Grade II listed detached home, new to market",
+    headline: "A Grade II listed detached home with a walled garden",
     body: [
       "We are pleased to offer a Grade II listed detached home in a Cotswold market town, with five bedrooms, three bathrooms and three reception rooms.",
       "Inside there is an inglenook fireplace, flagstone floors, exposed beams and original sash windows, with a bespoke kitchen and a cellar. Outside, the walled garden has mature borders, an orchard and a stone terrace, and there is a gravel driveway with a detached double cart shed.",
@@ -919,17 +930,17 @@ const DEMO_UK: DemoPack = {
   },
   instagram: {
     caption:
-      "Grade II listed and new to market in a Cotswold market town — five bedrooms, three receptions, an inglenook fireplace and a walled garden with an orchard. Guide Price £1,450,000, freehold. EPC E.",
+      "A Grade II listed home in a Cotswold market town — five bedrooms, three receptions, an inglenook fireplace and a walled garden with an orchard. Guide Price £1,450,000, freehold. EPC E.",
     hashtags: "#CotswoldHomes #GradeIIListed #PropertyForSale",
   },
   facebook: {
     caption:
-      "New to market: a five-bedroom Grade II listed detached home in a Cotswold market town, with three reception rooms, a bespoke kitchen and a walled garden. Guide Price £1,450,000, freehold. EPC rating E.",
+      "A five-bedroom Grade II listed detached home in a Cotswold market town, with three reception rooms, a bespoke kitchen and a walled garden. Guide Price £1,450,000, freehold. EPC rating E.",
     hashtags: "#CotswoldsProperty #GradeIIListed #ForSale",
   },
   x: {
     caption:
-      "New to market: five-bedroom Grade II listed detached home in a Cotswold market town, with a walled garden. Guide Price £1,450,000, freehold. EPC E.",
+      "Five-bedroom Grade II listed detached home in a Cotswold market town, with a walled garden. Guide Price £1,450,000, freehold. EPC E.",
     hashtags: "#CotswoldHomes #ForSale",
   },
 };
@@ -1059,7 +1070,7 @@ function Pricing({ authed }: { authed: boolean }) {
             Plans that scale with your instructions.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Every plan includes all four brand voices, voice dictation and the full listing pack — Headline, Key
+            Every plan includes all five brand voices, voice dictation and the full listing pack — Headline, Key
             Features, description, teaser, Email Blast copy and Instagram, Facebook and X captions.
           </p>
         </Reveal>
