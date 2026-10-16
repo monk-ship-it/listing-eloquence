@@ -1,7 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Json } from "@/integrations/supabase/types";
 import type { ListingInput, ListingOutput } from "./listing-types";
 import { coerceLegacyOutput } from "./listing-types";
+import { AGENCY_KEYS, EMPTY_AGENCY, type AgencyDetails } from "./clipboard";
 
 export interface GenerationRecord {
   id: string;
@@ -57,4 +59,80 @@ export const deleteGeneration = createServerFn({ method: "POST" })
       .select("id");
     if (error) throw new Error(error.message);
     return { ok: true, deleted: (rows?.length ?? 0) > 0 };
+  });
+
+/** One saved listing (owner only) — used by "Open in generator". */
+export const getGeneration = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { id: string }) => {
+    const id = typeof input?.id === "string" ? input.id.trim() : "";
+    if (!id || !UUID_RE.test(id)) throw new Error("Invalid listing id.");
+    return { id };
+  })
+  .handler(async ({ data, context }): Promise<GenerationRecord | null> => {
+    const { supabase, userId } = context;
+    const { data: row, error } = await supabase
+      .from("generations")
+      .select("id, voice, property_title, created_at, inputs, output")
+      .eq("id", data.id)
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!row) return null;
+    return {
+      id: row.id,
+      voice: row.voice,
+      propertyTitle: row.property_title,
+      createdAt: row.created_at,
+      inputs: row.inputs as unknown as ListingInput,
+      output: coerceLegacyOutput(row.output),
+    };
+  });
+
+// ---------------------------------------------------------------------------
+// Agency details — saved once on the account, added to emails at copy time.
+// Stored in profiles.agency (jsonb); RLS: owner-only read/update.
+// ---------------------------------------------------------------------------
+
+const AGENCY_MAX = 200;
+
+/** Keep only the known fields, as trimmed single-line strings. */
+export function cleanAgencyDetails(raw: unknown): AgencyDetails {
+  const r = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const out = { ...EMPTY_AGENCY };
+  for (const k of AGENCY_KEYS) {
+    const v = r[k];
+    out[k] =
+      typeof v === "string"
+        ? v
+            .replace(/[\u0000-\u001f\u007f]+/g, " ")
+            .trim()
+            .slice(0, AGENCY_MAX)
+        : "";
+  }
+  return out;
+}
+
+export const getMyAgency = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AgencyDetails> => {
+    const { supabase, userId } = context;
+    const { data, error } = await supabase.from("profiles").select("agency").eq("id", userId).maybeSingle();
+    if (error) throw new Error(error.message);
+    return cleanAgencyDetails(data?.agency);
+  });
+
+export const saveMyAgency = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: Partial<AgencyDetails>) => cleanAgencyDetails(input))
+  .handler(async ({ data, context }): Promise<AgencyDetails> => {
+    const { supabase, userId } = context;
+    const agency = data as unknown as Json;
+    const { data: rows, error } = await supabase.from("profiles").update({ agency }).eq("id", userId).select("id");
+    if (error) throw new Error(error.message);
+    if (!rows?.length) {
+      const { error: insErr } = await supabase.from("profiles").insert({ id: userId, agency });
+      if (insErr) throw new Error(insErr.message);
+    }
+    return data;
   });

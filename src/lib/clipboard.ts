@@ -96,9 +96,7 @@ export function formatEmailBodyOnly(emailBlast: EmailBlast | null | undefined): 
 /** Caption plus hashtags, with no trailing blank line when there are none. */
 export function formatSocialPost(p0: { caption: string; hashtags?: string[] }): string {
   // Older saved posts may repeat their hashtags inline at the end of the caption.
-  const [p] = normaliseCaptions([
-    { platform: "", caption: p0.caption, hashtags: p0.hashtags ?? [] },
-  ]);
+  const [p] = normaliseCaptions([{ platform: "", caption: p0.caption, hashtags: p0.hashtags ?? [] }]);
   const tags = (p.hashtags ?? []).map((t) => `#${t.replace(/^#/, "")}`).join(" ");
   return tags ? `${p.caption}\n\n${tags}` : p.caption;
 }
@@ -137,9 +135,7 @@ export function buildCopyAllText(
     email ? `\n--- Email Blast ---\n${email}` : "",
     pm ? `\n--- CRM property-alert message ---\n${pm}` : "",
     social ? `\n--- Social pack ---\n${social}` : "",
-    output.sellerEmail
-      ? `\n--- Seller approval email ---\n${formatSellerEmail(output.sellerEmail)}`
-      : "",
+    output.sellerEmail ? `\n--- Seller approval email ---\n${formatSellerEmail(output.sellerEmail)}` : "",
   ]
     .filter((s) => s !== "")
     .join("\n");
@@ -167,7 +163,77 @@ export function formatSellerEmail(
     opts.listing?.trim() ?? "",
     opts.keyFeatures?.length ? formatKeyFeaturesBlock(opts.keyFeatures) : "",
   ].filter(Boolean);
-  if (draft.length)
-    body = `${body}\n\n---\nDRAFT – SUBJECT TO YOUR APPROVAL\n\n${draft.join("\n\n")}`;
+  if (draft.length) body = `${body}\n\n---\nDRAFT – SUBJECT TO YOUR APPROVAL\n\n${draft.join("\n\n")}`;
   return e.subject ? `Subject: ${e.subject}\n\n${body}` : body;
+}
+
+// ---------------------------------------------------------------------------
+// Agency details: saved once on the account, used to fill the sign-off
+// placeholder at copy time. Portal copy never gets contact details.
+// ---------------------------------------------------------------------------
+
+export interface AgencyDetails {
+  negotiatorName: string;
+  agencyName: string;
+  phone: string;
+  email: string;
+  website: string;
+  address: string;
+  signOff: string;
+  footerLine: string;
+}
+
+export const AGENCY_KEYS = [
+  "negotiatorName",
+  "agencyName",
+  "phone",
+  "email",
+  "website",
+  "address",
+  "signOff",
+  "footerLine",
+] as const satisfies readonly (keyof AgencyDetails)[];
+
+export const EMPTY_AGENCY: AgencyDetails = {
+  negotiatorName: "",
+  agencyName: "",
+  phone: "",
+  email: "",
+  website: "",
+  address: "",
+  signOff: "",
+  footerLine: "",
+};
+
+/** True once there's enough to sign an email with. */
+export function hasAgencyDetails(a: AgencyDetails | null | undefined): boolean {
+  return !!a && [a.negotiatorName, a.agencyName, a.phone, a.email].some((v) => !!v?.trim());
+}
+
+const SIGN_OFF_END =
+  /(kind regards|best regards|warm regards|regards|best wishes|many thanks|thanks|yours sincerely|yours faithfully),?\s*$/i;
+
+/** Sign-off block, e.g. "Kind regards,\nSarah Jones\nOakwood Estates – Chatham\n01634 …". */
+export function agencySignature(a: AgencyDetails, opts: { withSignOff?: boolean } = {}): string {
+  const lines = [a.negotiatorName, a.agencyName, a.phone, a.email, a.website, a.address]
+    .map((s) => s?.trim())
+    .filter(Boolean) as string[];
+  const signOff = opts.withSignOff === false ? "" : `${(a.signOff?.trim() || "Kind regards").replace(/,$/, "")},`;
+  const footer = a.footerLine?.trim();
+  return [signOff, ...lines, footer ? `\n${footer}` : ""].filter(Boolean).join("\n");
+}
+
+/**
+ * Replaces the sign-off placeholder with the saved agency details. Leaves the
+ * text untouched when no details are saved. Skips the "Kind regards," line when
+ * the text already signs off just before the placeholder.
+ */
+export function withAgency(text: string, a: AgencyDetails | null | undefined): string {
+  if (!text || !a || !hasAgencyDetails(a) || !text.includes(EMAIL_SIGNOFF_PLACEHOLDER)) return text;
+  const parts = text.split(EMAIL_SIGNOFF_PLACEHOLDER);
+  return parts.reduce((acc, part, i) => {
+    if (i === 0) return part;
+    const signedOff = SIGN_OFF_END.test(acc);
+    return `${acc}${agencySignature(a, { withSignOff: !signedOff })}${part}`;
+  }, "");
 }
