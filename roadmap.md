@@ -1,8 +1,8 @@
 # Release preparation
 
-- [ ] Urgent review: verified complimentary identity, atomic webhook ordering/error handling, duplicate checkout and durable trial eligibility.
-- [ ] Urgent review: every exported field fact/privacy checks, relational counts/floors, persistent safety draft and material-info completeness.
-- [ ] Run urgent regression/export gates and update release evidence without live billing changes.
+- [x] Urgent review: verified complimentary identity, atomic webhook ordering/error handling, duplicate checkout and durable trial eligibility.
+- [x] Urgent review: every exported field fact/privacy checks, relational counts/floors, persistent safety draft and material-info completeness.
+- [x] Run urgent regression/export gates and update release evidence without live billing changes.
 
 - [x] Audit and correct authentication, password recovery and sign-out.
 - [x] Audit and correct billing cancellation, checkout and error states without live mutations.
