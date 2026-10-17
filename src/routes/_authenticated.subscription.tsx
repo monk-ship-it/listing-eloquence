@@ -190,7 +190,7 @@ function SubscriptionPage() {
       toast.error("Please log in to continue to checkout.");
       return;
     }
-    if (hasAccess || isComped) {
+    if (hasAccess || isComped || sub?.canCancel) {
       toast.info(
         planId === currentPlan.id
           ? "You're already on this plan."
@@ -223,7 +223,7 @@ function SubscriptionPage() {
     if (autoStartedRef.current) return;
     if (isLoading || isError || !sub || !user) return;
     if (!planParam) return;
-    if (hasAccess || isComped) return;
+    if (hasAccess || isComped || sub?.canCancel) return;
     autoStartedRef.current = true;
     startCheckout(planParam);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -398,7 +398,7 @@ function SubscriptionPage() {
                         <span className="text-xs font-normal text-muted-foreground">/mo</span>
                       </p>
                       <p className="mt-1 text-xs text-primary">{plan.monthlyListings} listings / month</p>
-                      {hasAccess ? (
+                      {hasAccess || sub?.canCancel ? (
                         isCurrent ? (
                           <Button className="mt-4 w-full" size="sm" variant="outline" disabled>
                             <CheckCircle2 className="mr-2 h-4 w-4" />

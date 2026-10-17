@@ -324,6 +324,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
 
     if (
       (await comped(email)) ||
+      canCancelSubscription(row?.status ?? "none", row?.stripe_subscription_id) ||
       hasActiveAccess(row?.status ?? "none", row?.current_period_end ?? null)
     ) {
       throw new Error(

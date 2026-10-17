@@ -332,6 +332,7 @@ export function ListingPack({
 
       <SellerEmailCard
         output={output}
+        materialInfo={miBlock}
         sellerApproved={input.sellerApproved === true}
         generationId={generationId}
         onGenerated={onOutputChange}
@@ -379,11 +380,13 @@ export function ListingPack({
 
 function SellerEmailCard({
   output,
+  materialInfo,
   sellerApproved,
   generationId,
   onGenerated,
 }: {
   output: ListingOutput;
+  materialInfo: string;
   sellerApproved: boolean;
   generationId: string | null;
   onGenerated: (o: ListingOutput) => void;
@@ -460,7 +463,7 @@ function SellerEmailCard({
                 withAgency(
                   formatSellerEmail(e, {
                     sellerName,
-                    listing: output.listing,
+                    listing: withMaterialInfo(output.listing, materialInfo),
                     keyFeatures: output.keyFeatures,
                   }),
                   agency,

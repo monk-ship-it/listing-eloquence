@@ -2,6 +2,7 @@ import { describe, expect, it, vi, afterEach } from "vitest";
 import { canCancelSubscription, safeBillingReturnUrl, subscriptionPeriodEnd } from "./billing-state";
 import { sanitizeAuthNext, isRecoveryLink } from "./auth-state";
 import { setSubscriptionCancelAtPeriodEnd } from "./stripe.server";
+import { buildCopyAllText, formatSellerEmail, withMaterialInfo } from "./clipboard";
 
 vi.mock("./config", () => ({ PLAN_PRICING: {} }));
 
@@ -42,5 +43,15 @@ describe("release account safeguards", () => {
     expect(isRecoveryLink("#type=signup&access_token=synthetic")).toBe(false);
     expect(isRecoveryLink("#type=recovery&error=expired")).toBe(false);
     expect(isRecoveryLink("")).toBe(false);
+  });
+  it("includes supplied disclosures in the seller approval particulars and full pack", () => {
+    const listing = "A two-bedroom terrace.";
+    const materialInfo = "Planning: No approval for the porch.";
+    const sellerEmail = { subject: "Please check the particulars", body: "Please review the attached draft." };
+    const approval = formatSellerEmail(sellerEmail, { listing: withMaterialInfo(listing, materialInfo), keyFeatures: ["Two bedrooms"] });
+    const all = buildCopyAllText({ headline: "Two-bedroom terrace", listing, keyFeatures: ["Two bedrooms"], sellerEmail }, { materialInfo, draft: true });
+    expect(approval).toContain(materialInfo);
+    expect(all).toContain(approval);
+    expect(all.startsWith("DRAFT – subject to seller approval")).toBe(true);
   });
 });
