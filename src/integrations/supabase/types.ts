@@ -39,6 +39,7 @@ export type Database = {
           expires_at: string
           origin: string
           plan: string
+          trial_days: number
           trial_used: boolean
           user_id: string
         }
@@ -48,6 +49,7 @@ export type Database = {
           expires_at?: string
           origin: string
           plan: string
+          trial_days?: number
           trial_used?: boolean
           user_id: string
         }
@@ -57,6 +59,7 @@ export type Database = {
           expires_at?: string
           origin?: string
           plan?: string
+          trial_days?: number
           trial_used?: boolean
           user_id?: string
         }

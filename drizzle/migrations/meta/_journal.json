@@ -29,6 +29,13 @@
       "when": 1792238251791,
       "tag": "0003_billing_event_and_checkout_guards",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792238452235,
+      "tag": "0004_checkout_attempt_trial_parameters",
+      "breakpoints": true
     }
   ]
 }
