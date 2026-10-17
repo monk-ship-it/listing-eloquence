@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkText, factCheckPack, keyFeatureCaveatFlags } from "./fact-check";
+import { checkText, factCheckPack, keyFeatureCaveatFlags, privateLeakFlags, publicInputsToText } from "./fact-check";
 
 const inputs =
   "Four bed semi on Brenzett Close, Chatham. Guide price 350,000. Living room 5.20m x 4.10m. Victorian fireplace.";
@@ -81,5 +81,23 @@ describe("price abbreviations", () => {
       [],
     );
     expect(checkText("Guide £360k", "email", inputs).map((x) => x.term)).toContain("£360k");
+  });
+});
+
+describe("exported facts and privacy", () => {
+  it("checks personal messages for private access instructions", () => {
+    expect(privateLeakFlags({ emailBlast: { personalMessage: "The keysafe code is 9876." } }, { showingNotes: "keysafe code 9876", bedrooms: "2" }).some(f => f.kind === "private-leak")).toBe(true);
+  });
+  it("checks personal message, CTA and seller subject for unsupported facts", () => {
+    for (const pack of [{ emailBlast: { personalMessage: "Three bedrooms." } }, { emailBlast: { callToAction: "View three bedrooms" } }, { sellerEmail: { subject: "Three bedrooms" } }]) expect(factCheckPack(pack, "Two bedrooms, three bathrooms").some(f => f.rule === "room-count")).toBe(true);
+  });
+  it("does not pool bedroom and bathroom counts", () => {
+    const facts = publicInputsToText({ bedrooms: "2", bathrooms: "3", price: "325000" });
+    expect(factCheckPack({ listing: "Three bedrooms and two bathrooms." }, facts).filter(f => f.rule === "room-count")).toHaveLength(2);
+    expect(factCheckPack({ listing: "Two bedrooms and three bathrooms." }, facts).filter(f => f.rule === "room-count")).toEqual([]);
+  });
+  it("rejects ground-floor room attribution for a first/second floor maisonette", () => {
+    expect(checkText("The kitchen is on the ground floor.", "description", "Maisonette on first and second floors. Kitchen 3.00m x 2.00m.").some(f => f.rule === "floor-position")).toBe(true);
+    expect(checkText("Ground-floor kitchen.", "description", "Ground-floor kitchen.").filter(f => f.rule === "floor-position")).toEqual([]);
   });
 });

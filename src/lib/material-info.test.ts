@@ -49,14 +49,16 @@ describe("buildMaterialInfoBlock", () => {
     );
     expect(block).toContain("Broadband: FTTP");
   });
-  it("never prints placeholders or 'capped'", () => {
+  it("never prints placeholders and preserves supplied cap wording for verification", () => {
     const block = buildMaterialInfoBlock({
       ...LEASEHOLD_EXAMPLE,
       epc: "TBC",
       mobileSignal: "Ask agent",
       groundRentReview: "capped at £500",
     });
-    expect(block).not.toMatch(/TBC|Ask agent|capped/i);
+    expect(block).not.toMatch(/TBC|Ask agent/i);
+    expect(block).toContain("capped at £500");
+    expect(checkMaterialInfo({ ...LEASEHOLD_EXAMPLE, groundRentReview: "capped at £500" }).some(i => i.field === "groundRentReview" && !i.ok && i.severity === "conflict")).toBe(true);
     expect(block).not.toContain("EPC rating");
   });
   it("prints Part C answers", () => {
@@ -91,6 +93,7 @@ describe("checkMaterialInfo", () => {
     expect(items.filter((i) => !i.ok && i.severity === "block").map((i) => i.field)).toEqual([
       "sharePercent",
       "rent",
+      "fullMarketValue",
     ]);
   });
 });
