@@ -142,3 +142,10 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 3. **External verification before distribution:** confirm hosted auth redirect URLs for both custom domains, confirmation/reset delivery and password rules; safely validate successful checkout/webhook and cancellation in a test environment, then the complete listing/save/history/copy journey with permitted access. Read-only checks above found no current Stripe-price/portal configuration defect.
 
 Not blockers: in-app editing (promises corrected); the pre-existing ESLint formatting debt. Not published.
+
+## Final auth review fixes (17 Oct, 12:07 UTC)
+- Post-sign-in `next` rejects backslashes/control chars/`//` and is re-resolved against window.location.origin before navigation (resolveSameOriginNext); regression tests added.
+- Complimentary access confirmed bound solely to the authorised immutable owner user ID; no email or email-verification state is consulted (test added).
+- Fixed missing auth `mode` on generator-page plan links and reset-password back link.
+- Results: bun run test 164/164, prompts:check green, type check clean. Nothing published.
+- Still unverifiable from repo: hosted email-confirmation setting, auth redirect URLs, email delivery.

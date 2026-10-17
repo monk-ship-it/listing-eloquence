@@ -9,6 +9,18 @@ export function sanitizeAuthNext(value: unknown): string | undefined {
   return value;
 }
 
+/** Resolve a sanitized next path against the current origin; undefined if it would leave it. */
+export function resolveSameOriginNext(value: unknown, origin: string): string | undefined {
+  const path = sanitizeAuthNext(value);
+  if (!path) return undefined;
+  try {
+    const url = new URL(path, origin);
+    return url.origin === new URL(origin).origin ? url.pathname + url.search + url.hash : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /** A normal signed-in session is not a password-recovery session. */
 export function isRecoveryLink(hash: string): boolean {
   const params = new URLSearchParams(hash.replace(/^#/, ""));

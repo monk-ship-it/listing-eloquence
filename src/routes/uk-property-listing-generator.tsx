@@ -107,7 +107,7 @@ function UKPage() {
           </div>
           <nav className="flex shrink-0 items-center gap-2">
             <Button asChild className="min-h-[44px]">
-              <Link to="/auth" search={{ plan: "starter" }}>
+              <Link to="/auth" search={{ plan: "starter", mode: "signup" }}>
                 Get started
               </Link>
             </Button>
@@ -130,7 +130,7 @@ function UKPage() {
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Button asChild size="lg" className="min-h-[44px]">
-            <Link to="/auth" search={{ plan: "starter" }}>
+            <Link to="/auth" search={{ plan: "starter", mode: "signup" }}>
               Create first pack <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
@@ -301,7 +301,7 @@ function UKPage() {
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-3">
             <Button asChild size="lg" className="min-h-[44px]">
-              <Link to="/auth" search={{ plan: "starter" }}>
+              <Link to="/auth" search={{ plan: "starter", mode: "signup" }}>
                 Create first pack
               </Link>
             </Button>
