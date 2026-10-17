@@ -42,10 +42,10 @@ async function assertAccess(
   supabase: Parameters<typeof import("./subscription.functions").readReconciledSubscriber>[0],
   userId: string,
 ) {
-  const { isCompedEmail } = await import("./comped.server");
+  const { isCompedUserId } = await import("./comped.server");
   const { hasActiveAccess, readReconciledSubscriber } = await import("./subscription.functions");
   const sub = await readReconciledSubscriber(supabase, userId);
-  const comped = isCompedEmail(sub?.email);
+  const comped = isCompedUserId(userId);
   const status = sub?.status ?? "none";
   const hasAccess = comped || hasActiveAccess(status, sub?.current_period_end ?? null);
   if (!hasAccess) throw new Error("SUBSCRIPTION_REQUIRED");

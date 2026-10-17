@@ -3,9 +3,9 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getPlan, TRIAL_DAYS, type PlanId } from "./config";
 import { canCancelSubscription, subscriptionPeriodEnd, safeBillingReturnUrl } from "./billing-state";
 
-async function comped(email: string | null | undefined): Promise<boolean> {
-  const { isCompedEmail } = await import("./comped.server");
-  return isCompedEmail(email);
+async function comped(userId: string | null | undefined): Promise<boolean> {
+  const { isCompedUserId } = await import("./comped.server");
+  return isCompedUserId(userId);
 }
 
 export interface SubscriptionInfo {
@@ -34,6 +34,7 @@ export interface UsageInfo {
 
 async function toInfo(
   row: {
+    user_id?: string;
     status: string;
     plan?: string | null;
     cancel_at_period_end: boolean;
@@ -46,7 +47,7 @@ async function toInfo(
   } | null,
 ): Promise<SubscriptionInfo> {
   const rawStatus = row?.status ?? "none";
-  const isComped = await comped(row?.email);
+  const isComped = await comped(row?.user_id);
   return {
     status: isComped ? "active" : rawStatus,
     rawStatus,
@@ -113,7 +114,7 @@ export async function readReconciledSubscriber(
 
   if (error) throw new Error("Could not load your subscription. Please try again.");
 
-  if (await comped(data?.email)) return data ?? null;
+  if (await comped(userId)) return data ?? null;
 
   const { reconcileSubscriberRow } = await import("./billing-sync.server");
   const { row } = await reconcileSubscriberRow(
@@ -127,7 +128,7 @@ export const getMySubscription = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<SubscriptionInfo> => {
     const { supabase, userId } = context;
     const row = await readReconciledSubscriber(supabase, userId);
-    return toInfo(row);
+    return toInfo(row ? { ...row, user_id: userId } : { user_id: userId, status: "none", cancel_at_period_end: false, trial_end: null, current_period_end: null, email: null });
   });
 
 /**
@@ -179,7 +180,7 @@ export const getMyUsage = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<UsageInfo> => {
     const { supabase, userId } = context;
     const data = await readReconciledSubscriber(supabase, userId);
-    const isComped = await comped(data?.email);
+    const isComped = await comped(userId);
     return computeUsage(supabase, userId, getPlan(data?.plan).id, isComped);
   });
 
@@ -300,6 +301,10 @@ export const createBillingPortalUrl = createServerFn({ method: "POST" })
     const { createBillingPortalSession } = await import("./stripe.server");
     const { getAppUrl } = await import("./config.server");
     const session = await createBillingPortalSession(row.stripe_customer_id, safeBillingReturnUrl(data.returnUrl, getAppUrl()));
+    const { error: saveError } = await supabaseAdmin.from("billing_checkout_state").update({
+      checkout_url: session.url, trial_used: reserved.trialDays > 0 || !!row?.stripe_subscription_id || !!row?.trial_end,
+    }).eq("user_id", userId).eq("attempt_id", reserved.attemptId);
+    if (saveError) throw new Error("Checkout was prepared but could not be recorded. Retry the same plan; do not open another checkout.");
     return { url: session.url as string };
   });
 
@@ -323,7 +328,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const email = (claims as { email?: string } | undefined)?.email ?? row?.email ?? "";
 
     if (
-      (await comped(email)) ||
+      (await comped(userId)) ||
       canCancelSubscription(row?.status ?? "none", row?.stripe_subscription_id) ||
       hasActiveAccess(row?.status ?? "none", row?.current_period_end ?? null)
     ) {
@@ -332,7 +337,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       );
     }
 
-    const { resolvePriceId, createSubscriptionCheckoutSession } = await import("./stripe.server");
+    const { resolvePriceId, createSubscriptionCheckoutSession, getCustomerSubscriptions } = await import("./stripe.server");
     const { getAppUrl } = await import("./config.server");
     const priceId = await resolvePriceId(plan);
 
@@ -347,6 +352,20 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     ]);
     const origin = ALLOWED_ORIGINS.has(rawOrigin) ? rawOrigin : getAppUrl();
 
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (row?.stripe_customer_id) {
+      const existing = await getCustomerSubscriptions(row.stripe_customer_id);
+      if (existing.data?.some((s: { status: string }) => canCancelSubscription(s.status, "existing"))) {
+        throw new Error("You already have a subscription. Open Manage billing to update payment details or cancel.");
+      }
+    }
+    const { data: attempt, error: claimError } = await supabaseAdmin.rpc("claim_billing_checkout", {
+      _user_id: userId, _plan: plan, _origin: origin,
+      _prior_trial: !!row?.stripe_subscription_id || !!row?.trial_end,
+    });
+    if (claimError || !attempt) throw new Error("Could not prepare checkout. Retry the same plan or manage billing.");
+    const reserved = attempt as { attemptId: string; trialDays: number; url?: string };
+    if (reserved.url) return { url: reserved.url };
     const session = await createSubscriptionCheckoutSession({
       plan,
       priceId,
@@ -355,10 +374,15 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       customerId: row?.stripe_customer_id ?? null,
       successUrl: `${origin}/account?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancelUrl: `${origin}/subscription?checkout=cancelled`,
-      trialDays: plan === "starter" ? TRIAL_DAYS : 0,
+      trialDays: reserved.trialDays,
+      idempotencyKey: `quill-checkout-${reserved.attemptId}`,
     });
 
     if (!session?.url) throw new Error("Could not start checkout. Please try again.");
+    const { error: saveError } = await supabaseAdmin.from("billing_checkout_state").update({
+      checkout_url: session.url, trial_used: reserved.trialDays > 0 || !!row?.stripe_subscription_id || !!row?.trial_end,
+    }).eq("user_id", userId).eq("attempt_id", reserved.attemptId);
+    if (saveError) throw new Error("Checkout was prepared but could not be recorded. Retry the same plan; do not open another checkout.");
     return { url: session.url as string };
   });
 

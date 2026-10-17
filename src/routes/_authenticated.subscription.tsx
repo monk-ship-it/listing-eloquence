@@ -266,9 +266,7 @@ function SubscriptionPage() {
                 <p className="text-xs text-muted-foreground">
                   {sub?.isComped
                     ? "Complimentary access — no billing"
-                    : hasAccess && (rawStatus === "past_due" || rawStatus === "unpaid")
-                      ? `Grace period active — access continues until ${fmtDate(sub?.currentPeriodEnd ?? null)}`
-                      : hasAccess && status === "trialing"
+                    : hasAccess && status === "trialing"
                         ? `Free trial — ends ${fmtDate(sub?.trialEnd ?? null)}`
                         : hasAccess
                           ? `Full access — ${status === "active" && sub?.cancelAtPeriodEnd ? "cancelling at period end" : "renewing automatically"}`

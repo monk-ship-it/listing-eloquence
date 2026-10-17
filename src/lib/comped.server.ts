@@ -1,9 +1,5 @@
-// Server-only: never import from client-reachable module scope.
-/** Emails granted free, permanent access to the app (case-insensitive). */
-const COMPED_EMAILS = ["domenico@copybymonk.com"];
-
-/** Whether the given email always has full access, bypassing billing. */
-export function isCompedEmail(email: string | null | undefined): boolean {
-  if (!email) return false;
-  return COMPED_EMAILS.includes(email.trim().toLowerCase());
+// Server-only entitlement bound to the verified, existing owner account ID.
+const OWNER_USER_ID = "ac5319e0-b05c-4ec8-99fc-e52559637b5f";
+export function isCompedUserId(userId: string | null | undefined): boolean {
+  return userId === OWNER_USER_ID;
 }
