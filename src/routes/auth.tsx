@@ -16,7 +16,7 @@ const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
 import { sanitizeAuthNext as sanitizeNext, resolveAuthMode } from "@/lib/auth-state";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>): { plan?: PlanId; next?: string; mode: "login" | "signup" } => {
+  validateSearch: (search: Record<string, unknown>): { plan?: PlanId; next?: string; mode?: "login" | "signup" } => {
     const plan = search.plan as string | undefined;
     const out: { plan?: PlanId; next?: string; mode: "login" | "signup" } = { mode: resolveAuthMode(search.mode, search.plan) };
     if (plan && VALID_PLANS.includes(plan as PlanId)) out.plan = plan as PlanId;
@@ -56,7 +56,7 @@ function AuthPage() {
   const { user, loading } = useAuth();
   const { plan: planParam, next, mode: requestedMode } = Route.useSearch();
   const plan: PlanId = planParam ?? "starter";
-  const mode = requestedMode;
+  const mode = resolveAuthMode(requestedMode, planParam);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
