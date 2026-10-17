@@ -91,7 +91,7 @@ function ResetPasswordPage() {
               ? "Choose a new password for your account."
               : "This page needs a valid password reset link from your email. Request a new link if yours has expired."}
           </p>
-          {!ready && <Button asChild variant="link" className="mt-2 px-0"><Link to="/auth">Back to sign in</Link></Button>}
+          {!ready && <Button asChild variant="link" className="mt-2 px-0"><Link to="/auth" search={{ mode: "login" }}>Back to sign in</Link></Button>}
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="new-password">New password</Label>
