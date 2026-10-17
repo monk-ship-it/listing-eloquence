@@ -135,7 +135,7 @@ export function buildCopyAllText(
     email ? `\n--- Email Blast ---\n${email}` : "",
     pm ? `\n--- CRM property-alert message ---\n${pm}` : "",
     social ? `\n--- Social pack ---\n${social}` : "",
-    output.sellerEmail ? `\n--- Seller approval email ---\n${formatSellerEmail(output.sellerEmail)}` : "",
+    output.sellerEmail ? `\n--- Seller approval email ---\n${formatSellerEmail(output.sellerEmail, { listing: withMaterialInfo(output.listing, opts.materialInfo), keyFeatures: output.keyFeatures })}` : "",
   ]
     .filter((s) => s !== "")
     .join("\n");

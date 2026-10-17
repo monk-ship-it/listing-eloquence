@@ -27,7 +27,7 @@ import { Trash2, FileText, ChevronDown, ChevronUp, Loader2, Plus, RefreshCw, Sea
 
 export const Route = createFileRoute("/_authenticated/history")({
   head: () => ({
-    meta: [{ title: `Saved listings — ${APP_NAME}` }, { name: "robots", content: "noindex, nofollow" }],
+    meta: [{ title: `Saved listings — ${APP_NAME}` }, { name: "description", content: "View and copy your saved Quill listing packs." }, { property: "og:title", content: `Saved listings — ${APP_NAME}` }, { property: "og:description", content: "View and copy your saved Quill listing packs." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: HistoryPage,
 });
@@ -83,7 +83,7 @@ function HistoryPage() {
   }
 
   const allItems = query.data ?? [];
-  const hasMore = allItems.length > limit;
+  const hasMore = limit < 2000 && allItems.length > limit;
   const items = hasMore ? allItems.slice(0, limit) : allItems;
   const [search, setSearch] = useState("");
   const shown = useMemo(() => {

@@ -13,7 +13,7 @@ import { ShieldCheck, RefreshCw, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
-    meta: [{ title: `Admin — ${APP_NAME}` }, { name: "robots", content: "noindex, nofollow" }],
+    meta: [{ title: `Admin — ${APP_NAME}` }, { name: "description", content: "Quill operator settings." }, { property: "og:title", content: `Admin — ${APP_NAME}` }, { property: "og:description", content: "Quill operator settings." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: AdminPage,
 });

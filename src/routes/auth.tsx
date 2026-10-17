@@ -13,12 +13,7 @@ import { APP_NAME, TRIAL_DAYS, getPlan, planPriceDisplay, type PlanId } from "@/
 
 const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
 
-// Only allow same-origin, path-only next targets (e.g. /.lovable/oauth/consent?...).
-function sanitizeNext(value: unknown): string | undefined {
-  if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//"))
-    return undefined;
-  return value;
-}
+import { sanitizeAuthNext as sanitizeNext } from "@/lib/auth-state";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>): { plan?: PlanId; next?: string } => {
@@ -41,6 +36,8 @@ export const Route = createFileRoute("/auth")({
         property: "og:description",
         content: `Sign in or create your ${APP_NAME} account to generate AI property listings.`,
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:url", content: "https://copybymonk.com/auth" },
       { name: "twitter:title", content: `Sign in — ${APP_NAME}` },
       {
@@ -89,11 +86,9 @@ function AuthPage() {
     setBusy(true);
     try {
       if (mode === "signup") {
-        const emailRedirectTo = next
-          ? `${window.location.origin}${next}`
-          : `${window.location.origin}/subscription?plan=${plan}`;
+        const emailRedirectTo = `${window.location.origin}/auth?plan=${plan}${next ? `&next=${encodeURIComponent(next)}` : ""}`;
         const { data: signUpData, error } = await supabase.auth.signUp({
-          email,
+          email: email.trim(),
           password,
           options: {
             emailRedirectTo,
@@ -109,7 +104,7 @@ function AuthPage() {
         }
         toast.success("Account created — taking you to the next step.");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error) throw error;
         toast.success("Welcome back.");
       }
@@ -243,14 +238,15 @@ function AuthPage() {
                   {busy ? "Please wait…" : mode === "signup" ? "Create account" : "Log in"}
                 </Button>
                 {mode === "login" && (
-                  <button
+                  <Button
+                    variant="ghost"
                     type="button"
                     onClick={handleForgot}
                     disabled={busy}
                     className="w-full text-center text-sm text-muted-foreground min-h-11 sm:min-h-0 underline-offset-4 hover:text-foreground hover:underline"
                   >
                     Forgot password?
-                  </button>
+                  </Button>
                 )}
               </form>
             )}

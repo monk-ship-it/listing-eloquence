@@ -23,11 +23,11 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "What exactly does one generation produce?",
-    a: "One run returns a Headline, 6–10 Key Features, a portal-ready Listing Description, a Short Teaser, an Email Blast and one caption each for Instagram, Facebook and X. Nothing else is generated.",
+    a: "One run returns a headline, key features, a draft listing description, a short teaser, an Email Blast, a seller approval email and captions for Instagram, Facebook and X. Check every output before pasting it into your chosen channels.",
   },
   {
     q: "Can I control the tone?",
-    a: "Yes. Choose Professional, Premium, Luxury or Heritage. All voices observe the same style guard, avoiding filler like ‘nestled’ or ‘boasts’, and never inventing period claims.",
+    a: "Yes. Choose Professional, Premium, Luxury, Heritage or Plain & factual. Every voice is instructed to use only the facts supplied. Check the draft and obtain seller approval before it goes live.",
   },
   {
     q: "Is there a free trial?",

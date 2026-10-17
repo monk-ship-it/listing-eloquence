@@ -1,7 +1,7 @@
-import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useNavigate, useRouterState, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
@@ -12,6 +12,11 @@ import { toast } from "sonner";
 import { PenLine, History, CreditCard, User, Shield, Menu, LogOut } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
+  ssr: false,
+  beforeLoad: async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) throw redirect({ to: "/auth", replace: true });
+  },
   head: () => ({
     meta: [{ name: "robots", content: "noindex, nofollow" }],
   }),
@@ -36,6 +41,7 @@ const NAV_ITEMS: NavItem[] = [
 function AuthenticatedLayout() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const adminFn = useServerFn(amIAdmin);
   const adminQuery = useQuery({
@@ -45,10 +51,6 @@ function AuthenticatedLayout() {
   });
   const isAdmin = adminQuery.data ?? false;
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    if (!loading && !user) navigate({ to: "/auth" });
-  }, [user, loading, navigate]);
 
   if (loading || !user) {
     return (
@@ -61,9 +63,12 @@ function AuthenticatedLayout() {
   const items = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
 
   async function signOut() {
-    await supabase.auth.signOut();
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    const { error } = await supabase.auth.signOut();
+    if (error) { toast.error("Could not sign out. Please try again."); return; }
     toast.success("Signed out.");
-    navigate({ to: "/" });
+    navigate({ to: "/auth", replace: true });
   }
 
   return (

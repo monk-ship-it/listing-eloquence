@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { APP_NAME } from "@/lib/config";
+import { isRecoveryLink } from "@/lib/auth-state";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({
@@ -40,17 +41,22 @@ function ResetPasswordPage() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    const recoveryLink = isRecoveryLink(window.location.hash);
+    let cancelled = false;
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "PASSWORD_RECOVERY" || session) setReady(true);
+      if (event === "PASSWORD_RECOVERY" && session) setReady(true);
     });
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session || window.location.hash.includes("type=recovery")) setReady(true);
-    });
-    return () => sub.subscription.unsubscribe();
+    if (recoveryLink) {
+      supabase.auth.getUser().then(({ data, error }) => {
+        if (!cancelled && !error && data.user) setReady(true);
+      }).catch(() => { if (!cancelled) setReady(false); });
+    }
+    return () => { cancelled = true; sub.subscription.unsubscribe(); };
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!ready || busy) return;
     if (password !== confirm) {
       toast.error("Passwords don't match.");
       return;
@@ -83,8 +89,9 @@ function ResetPasswordPage() {
           <p className="mt-1 text-sm text-muted-foreground">
             {ready
               ? "Choose a new password for your account."
-              : "Open this page from the reset link in your email."}
+              : "This page needs a valid password reset link from your email. Request a new link if yours has expired."}
           </p>
+          {!ready && <Button asChild variant="link" className="mt-2 px-0"><Link to="/auth">Back to sign in</Link></Button>}
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="new-password">New password</Label>

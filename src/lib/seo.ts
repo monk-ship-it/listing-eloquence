@@ -48,26 +48,18 @@ export function socialMeta(opts: {
   locale?: Locale;
   image?: { url: string; width?: number; height?: number; type?: string; alt?: string };
 }) {
-  const img = opts.image ?? {
-    url: OG_IMAGE,
-    width: 1200,
-    height: 630,
-    type: "image/png",
-    alt: OG_IMAGE_ALT,
-  };
+  const img = opts.image && /^https:\/\//.test(opts.image.url) ? opts.image : undefined;
   return [
     { property: "og:site_name", content: SITE_NAME },
     { property: "og:locale", content: opts.locale ?? "en_GB" },
-    { property: "og:image", content: img.url },
-    ...(img.width ? [{ property: "og:image:width", content: String(img.width) }] : []),
-    ...(img.height ? [{ property: "og:image:height", content: String(img.height) }] : []),
-    ...(img.type ? [{ property: "og:image:type", content: img.type }] : []),
-    { property: "og:image:alt", content: img.alt ?? opts.title },
-    { name: "twitter:card", content: "summary_large_image" },
+    ...(img ? [{ property: "og:image", content: img.url }, { property: "og:image:alt", content: img.alt ?? opts.title }] : []),
+    ...(img?.width ? [{ property: "og:image:width", content: String(img.width) }] : []),
+    ...(img?.height ? [{ property: "og:image:height", content: String(img.height) }] : []),
+    ...(img?.type ? [{ property: "og:image:type", content: img.type }] : []),
+    { name: "twitter:card", content: img ? "summary_large_image" : "summary" },
     { name: "twitter:title", content: opts.title },
     { name: "twitter:description", content: opts.description },
-    { name: "twitter:image", content: img.url },
-    { name: "twitter:image:alt", content: img.alt ?? opts.title },
+    ...(img ? [{ name: "twitter:image", content: img.url }, { name: "twitter:image:alt", content: img.alt ?? opts.title }] : []),
   ];
 }
 
