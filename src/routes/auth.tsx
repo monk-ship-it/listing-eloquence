@@ -13,12 +13,12 @@ import { APP_NAME, TRIAL_DAYS, getPlan, planPriceDisplay, type PlanId } from "@/
 
 const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
 
-import { sanitizeAuthNext as sanitizeNext } from "@/lib/auth-state";
+import { sanitizeAuthNext as sanitizeNext, resolveAuthMode } from "@/lib/auth-state";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>): { plan?: PlanId; next?: string } => {
+  validateSearch: (search: Record<string, unknown>): { plan?: PlanId; next?: string; mode: "login" | "signup" } => {
     const plan = search.plan as string | undefined;
-    const out: { plan?: PlanId; next?: string } = {};
+    const out: { plan?: PlanId; next?: string; mode: "login" | "signup" } = { mode: resolveAuthMode(search.mode, search.plan) };
     if (plan && VALID_PLANS.includes(plan as PlanId)) out.plan = plan as PlanId;
     const next = sanitizeNext(search.next);
     if (next) out.next = next;
@@ -54,9 +54,9 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const { plan: planParam, next } = Route.useSearch();
+  const { plan: planParam, next, mode: requestedMode } = Route.useSearch();
   const plan: PlanId = planParam ?? "starter";
-  const [mode, setMode] = useState<"login" | "signup">("signup");
+  const mode = requestedMode;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -148,7 +148,10 @@ function AuthPage() {
           </Link>
         </div>
         <Card className="border-border/70 bg-card/80 p-7 backdrop-blur">
-          <Tabs value={mode} onValueChange={(v) => setMode(v as "login" | "signup")}>
+          <Tabs value={mode} onValueChange={(v) => {
+            setCheckInbox(false);
+            navigate({ to: "/auth", search: { plan: planParam, next, mode: resolveAuthMode(v, planParam) }, replace: true });
+          }}>
             <TabsList className="grid w-full grid-cols-2 h-auto sm:h-9">
               <TabsTrigger value="signup" className="min-h-11 sm:min-h-0">
                 Start free trial
