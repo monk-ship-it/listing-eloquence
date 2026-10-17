@@ -12,6 +12,7 @@ async function stripeRequest(
   path: string,
   method: "GET" | "POST",
   form?: Record<string, string>,
+  idempotencyKey?: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- untyped Stripe JSON
 ): Promise<any> {
   const res = await fetch(`${STRIPE_API}${path}`, {
@@ -19,6 +20,7 @@ async function stripeRequest(
     headers: {
       Authorization: `Bearer ${getKey()}`,
       "Content-Type": "application/x-www-form-urlencoded",
+      ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
     },
     body: form ? new URLSearchParams(form).toString() : undefined,
   });
@@ -54,6 +56,8 @@ export interface CheckoutParams {
   successUrl: string;
   cancelUrl: string;
   trialDays?: number;
+  idempotencyKey: string;
+  expiresAt?: number;
 }
 
 /** Create a subscription Checkout Session tied to the logged-in app user. */
@@ -74,6 +78,7 @@ export async function createSubscriptionCheckoutSession(params: CheckoutParams) 
     "subscription_data[metadata][currency]": "gbp",
     allow_promotion_codes: "true",
     payment_method_collection: "always",
+    ...(params.expiresAt ? { expires_at: String(params.expiresAt) } : {}),
   };
 
   if (params.customerId) {
@@ -86,7 +91,7 @@ export async function createSubscriptionCheckoutSession(params: CheckoutParams) 
     form["subscription_data[trial_period_days]"] = String(params.trialDays);
   }
 
-  return stripeRequest("/checkout/sessions", "POST", form);
+  return stripeRequest("/checkout/sessions", "POST", form, params.idempotencyKey);
 }
 
 export function setSubscriptionCancelAtPeriodEnd(subscriptionId: string, cancel: boolean) {
@@ -101,4 +106,8 @@ export function createBillingPortalSession(customerId: string, returnUrl: string
     customer: customerId,
     return_url: returnUrl,
   });
+}
+
+export function getCustomerSubscriptions(customerId: string) {
+  return stripeRequest(`/subscriptions?customer=${encodeURIComponent(customerId)}&status=all&limit=100`, "GET");
 }

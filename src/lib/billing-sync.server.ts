@@ -43,7 +43,7 @@ function toIso(seconds: number | null): string | null {
 
 function firstItem(sub: Record<string, unknown>): Record<string, unknown> | null {
   const items = asRecord(sub.items);
-  const data = Array.isArray(items?.data) ? items!.data : [];
+  const data = Array.isArray(items?.data) ? items.data : [];
   return asRecord(data[0]);
 }
 
@@ -120,16 +120,18 @@ export async function reconcileSubscriberRow(row: SubscriberRow | null): Promise
       const { error } = await supabaseAdmin
         .from("subscribers")
         .update({
-          status: authoritative.status!,
-          cancel_at_period_end: authoritative.cancel_at_period_end!,
+          status: authoritative.status ?? "canceled",
+          cancel_at_period_end: authoritative.cancel_at_period_end ?? false,
           trial_end: authoritative.trial_end,
           current_period_end: authoritative.current_period_end,
           stripe_customer_id: authoritative.stripe_customer_id,
           stripe_price_id: authoritative.stripe_price_id,
-          plan: authoritative.plan!,
+          plan: authoritative.plan ?? "starter",
           updated_at: new Date().toISOString(),
+          ...(typeof sub.created === "number" ? { stripe_subscription_created: sub.created } : {}),
         })
-        .eq("user_id", userId);
+        .eq("user_id", userId)
+        .eq("stripe_subscription_id", subscriptionId);
       if (error) {
         logFailure(subscriptionId, new Error(`db update failed: ${error.message}`));
       }

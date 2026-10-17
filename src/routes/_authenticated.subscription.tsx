@@ -266,13 +266,11 @@ function SubscriptionPage() {
                 <p className="text-xs text-muted-foreground">
                   {sub?.isComped
                     ? "Complimentary access — no billing"
-                    : hasAccess && (rawStatus === "past_due" || rawStatus === "unpaid")
-                      ? `Grace period active — access continues until ${fmtDate(sub?.currentPeriodEnd ?? null)}`
-                      : hasAccess && status === "trialing"
+                    : hasAccess && status === "trialing"
                         ? `Free trial — ends ${fmtDate(sub?.trialEnd ?? null)}`
                         : hasAccess
                           ? `Full access — ${status === "active" && sub?.cancelAtPeriodEnd ? "cancelling at period end" : "renewing automatically"}`
-                          : "Subscribe to restore access"}
+                          : sub?.canCancel ? "Manage your existing subscription below" : "Subscribe to restore access"}
                 </p>
               </div>
             </div>
@@ -363,8 +361,8 @@ function SubscriptionPage() {
             <Card className="p-6">
               <h2 className="font-display text-lg font-semibold">{hasAccess ? "Your plan" : "Choose a plan"}</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Listings renew at the start of each month. The {TRIAL_DAYS}-day free trial on the Starter plan begins at
-                secure checkout — card required, cancel anytime before renewal.
+                Listings renew at the start of each month. Eligible first-time customers receive a {TRIAL_DAYS}-day Starter trial.
+                Card required; checkout confirms any trial and renewal price. Cancel anytime before renewal.
               </p>
               {hasAccess && (
                 <p className="mt-2 text-sm text-muted-foreground">
@@ -420,7 +418,7 @@ function SubscriptionPage() {
                           onClick={() => startCheckout(plan.id)}
                         >
                           <CreditCard className="mr-2 h-4 w-4" />
-                          {checkoutBusy === plan.id ? "Starting…" : plan.id === "starter" ? "Start trial" : "Subscribe"}
+                          {checkoutBusy === plan.id ? "Starting…" : "Subscribe"}
                         </Button>
                       )}
                     </div>
@@ -438,7 +436,7 @@ function SubscriptionPage() {
                   ? `Your subscription is set to cancel — access ends ${fmtDate(sub?.currentPeriodEnd ?? null)}. You can resume any time before then.`
                   : hasAccess
                     ? `Cancel any time. Paid access continues until ${fmtDate(sub?.currentPeriodEnd ?? null)}; after that your subscription will not renew.`
-                    : "You can still cancel while generation is paused. Cancellation stops renewal; it does not settle outstanding invoices."}
+                    : sub?.canCancel ? "You can still cancel while generation is paused. Cancellation stops renewal; it does not settle outstanding invoices." : "Your subscription has ended. You can still manage invoices and payment details."}
               </p>
 
               <div className="mt-4 flex flex-wrap gap-3">

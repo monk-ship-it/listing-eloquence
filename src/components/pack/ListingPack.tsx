@@ -29,6 +29,7 @@ import {
   type FactFlag,
 } from "@/lib/fact-check";
 import { cn } from "@/lib/utils";
+import { needsSafetyDraft } from "@/lib/pack-safety";
 
 async function copyToast(text: string, label: string) {
   const ok = await copyText(text);
@@ -136,7 +137,7 @@ export function ListingPack({
 
   const fixCount = checks.open.length;
   const agency = useAgencyDetails();
-  const draft = input.sellerApproved !== true;
+  const draft = needsSafetyDraft(input.sellerApproved, checks.open, flags);
   const copy = (text: string, label: string) => copyToast(withDraft(text, draft), label);
   const strapLen = output.summary?.length ?? 0;
 
@@ -217,7 +218,7 @@ export function ListingPack({
                 <Badge
                   variant="outline"
                   className="border-warning/60 text-[10px] uppercase text-warning"
-                  title="Seller approval not confirmed — copies are labelled draft (TPO Code 7j)"
+                  title="Seller approval or outstanding fact/disclosure checks require review — copies remain draft"
                 >
                   Draft
                 </Badge>
@@ -333,7 +334,7 @@ export function ListingPack({
       <SellerEmailCard
         output={output}
         materialInfo={miBlock}
-        sellerApproved={input.sellerApproved === true}
+        sellerApproved={!draft}
         generationId={generationId}
         onGenerated={onOutputChange}
       />

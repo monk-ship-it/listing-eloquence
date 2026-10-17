@@ -87,6 +87,38 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 - A real finalize network failure against the database (covered by the in-memory model tests only).
 - Screen-reader pass (automated label and landmark checks only).
 
+## Round 6 — urgent independent security/correctness findings (17 Oct)
+
+### Changes
+- Complimentary entitlement now uses the verified existing owner's immutable account ID from authenticated context, never subscriber/billing email. The owner ID was verified against the confirmed identity before changing the rule; checkout billing email cannot grant access or overwrite the identity email.
+- Verified Stripe webhooks delegate to a tested processor. Returned database read/write errors propagate to HTTP 500 for retry. Events read current Stripe subscription state, not stale invoice snapshots. Only checkout can attach a new subscription; subscription/customer/email fallback cannot attach old subscriptions. The atomic PostgreSQL function locks the subscriber, rejects older same-subscription events and rejects superseded subscription identities. Existing records are preserved.
+- Checkout rejects open subscriptions (including past_due/unpaid), checks customer subscription history and fails closed on an incomplete history read. Durable per-user checkout attempts keep an identical idempotency key, trial parameter and explicit expiry across retries. Eligibility is consumed conservatively when an eligible attempt is reserved; a lost response or expired abandoned attempt cannot grant a second trial. Historical subscriptions/trials preclude another trial. Competing plans cannot open concurrent attempts. Failed recording of a prepared session gives a retry-same-plan message, not a claim that nothing happened.
+- Billing management remains independent of generation access. Removed false grace-period text and corrected repeat-trial promises: only eligible first-time customers receive a trial; checkout confirms it. Ended subscribers retain invoice/payment management. Portal return URLs use the existing allowlist. Cancellation/resume returns Stripe's accepted state even if local persistence fails, with writes constrained to the same subscription identity; reconciliation also cannot overwrite a replacement subscription ID.
+- Fact/privacy checks now cover personal message, CTA, seller-email subject and social hashtags as well as the existing outputs. Bedroom/bathroom counts are checked by type, not pooled numbers. Unsupported room-to-floor attribution is flagged. Seller approval cannot remove draft status while fact/privacy flags or must-fix/conflicting Material Information remain unresolved.
+- Supplied "capped at £500" ground-rent wording is retained with a verification conflict flag, not silently deleted. Ground-rent review information and shared-ownership full market value are checked; Part C "Yes" without details is incomplete. Material Information remains visible.
+
+### Exact changed-file inventory
+- Billing/security: `src/lib/comped.server.ts`, `subscription.functions.ts`, `stripe.server.ts`, `billing-sync.server.ts`, new `billing-webhook.server.ts`, `listing.functions.ts`, `extract.functions.ts`, `transcribe.functions.ts`, `src/routes/api/public/stripe-webhook.ts`, `src/routes/_authenticated.subscription.tsx`.
+- Output safeguards: `src/lib/fact-check.ts`, `material-info.ts`, new `pack-safety.ts`, `src/components/pack/ListingPack.tsx`.
+- Regression tests: new `src/lib/billing-security.test.ts`, `billing-database.test.ts`, `pack-safety.test.ts`; updated `fact-check.test.ts`, `material-info.test.ts`.
+- Applied additive migrations: `drizzle/migrations/0003_billing_event_and_checkout_guards.sql`, `0004_checkout_attempt_trial_parameters.sql` and managed migration metadata/generated types. No live subscription mutation was performed.
+- Test-only dependency: `@electric-sql/pglite` in `package.json`/lockfile; actual migration SQL is exercised against an isolated synthetic PostgreSQL database, never production rows.
+- Architecture/evidence: `AGENTS.md`, `roadmap.md`, this document.
+
+### Checks actually executed
+- Final `bun run prompts:export` → **0 files changed, 27 total**; `bun run test` → **16 files, 159/159 PASS** (17 Oct, 12:03 UTC); `bun run prompts:check` → **27 up to date**. No prompt text changed; no golden refresh or prompt-version bump.
+- Billing processor/request regressions: 8 tests, including billing email attack, returned read/write errors, old subscription metadata ignored, current Stripe state, provider failure, idempotency and no repeated trial parameter.
+- Actual migration PostgreSQL regressions: 5 tests, including identical trial reservation after response loss, expired-attempt repeat eligibility, older event rejection, superseded checkout rejection, newer checkout only after ending, and denial of privileged functions to authenticated customers. Synthetic database only.
+- Material Information: 21 tests; fact checking: 16 tests; persistent safety draft: 4 tests. Existing cancellation, URL allowlist, request semantics and quota-reconciliation suites also remain green.
+- Latest automatic preview build observed **build OK, 17 Oct 12:03:06 UTC**. A separate production build/typecheck was **not manually run**, as sandbox instructions prohibit it; earlier production results are historical, not this round's evidence.
+- Real requesting-user session (ended Starter subscription): `/subscription`, `/history`, `/app` loaded at **1280×1800 and 390×844**, one main landmark each, no horizontal overflow or browser page errors. Ended account retains **Manage billing & invoices**. Mobile screenshot inspected. Signed-out subscription redirects to auth. Real synthetic clipboard copy/readback succeeds. No checkout/cancel/resume/portal mutation controls were clicked.
+- Initial browser assertions wrongly assumed this account had no subscription/empty history; inspection established an ended subscription and saved history, and the final script was corrected and passed. No private listing content was logged.
+
+### Verification limits and remaining blockers
+- No actual charge, checkout completion, live cancellation/resumption, webhook mutation, email, new generation, deletion or publish. Payment-problem UI behavior is source/regression verified, not a live past_due customer journey. Cancellation after Stripe-success/local-save-failure is implemented truthfully but not fault-injected in a live account.
+- Current identity has no generation access: new listing → save → history → copy remains unverified end-to-end. Existing history loads; records were not changed.
+- External test-environment billing lifecycle, hosted confirmation/reset delivery/redirect/password settings and verified owner Privacy/Terms/legal identity decisions below remain required. No legal identity/address or guaranteed-compliance claim was invented.
+
 ## Remaining launch blockers
 1. **Privacy Policy and Terms pages do not exist.** The owner must supply, verified:
    - legal entity name, company number and registered address;

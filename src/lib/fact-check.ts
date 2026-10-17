@@ -11,7 +11,7 @@ import { IMAGE_LABELS } from "./output-guards";
 export type FlagKind = "not-in-notes" | "banned" | "contact" | "private-leak" | "missing-caveat";
 
 /** What triggered a not-in-notes flag (graders treat names as softer). */
-export type FlagRule = "number" | "storey" | "era" | "name";
+export type FlagRule = "number" | "storey" | "era" | "name" | "room-count" | "floor-position";
 
 export interface FactFlag {
   term: string;
@@ -161,6 +161,23 @@ export function checkText(
     const phrase = normaliseText(m[0]);
     if (!hay.includes(phrase)) push(m[0], "not-in-notes", "storey");
   }
+  // Counts are relational: a price, dimension or bathroom count never authorises bedrooms.
+  const countPattern = /\b(one|two|three|four|five|six|seven|eight|nine|ten|\d+)[- ]+(bed(?:room)?s?|bath(?:room)?s?)\b/gi;
+  const kind = (s: string) => /^bed/i.test(s) ? "bed" : "bath";
+  const count = (s: string) => wordsToNumber(s.toLowerCase()) ?? Number(s);
+  for (const m of text.matchAll(countPattern)) {
+    const matching = [...inputsText.matchAll(countPattern)].some(i => kind(i[2]) === kind(m[2]) && count(i[1]) === count(m[1]));
+    if (!matching) push(m[0], "not-in-notes", "room-count");
+  }
+  // A floor mention elsewhere does not justify attributing a room to that floor.
+  for (const sentence of text.split(/[.!?\n]+/)) {
+    const floor = sentence.match(/\b(ground|first|second|third|fourth|basement|lower ground|upper ground)[- ]floor\b/i);
+    if (!floor) continue;
+    const rooms = sentence.match(/\b(?:kitchen|bedrooms?|bathrooms?|living room|dining room|reception room|lounge)\b/gi) ?? [];
+    const suppliedClauses = inputsText.split(/[.!?\n]+/);
+    const supported = rooms.length ? rooms.every(room => suppliedClauses.some(clause => normaliseText(clause).includes(normaliseText(floor[0])) && normaliseText(clause).includes(normaliseText(room)))) : normaliseText(inputsText).includes(normaliseText(floor[0]));
+    if (!supported) push(sentence.trim(), "not-in-notes", "floor-position");
+  }
   // era words
   for (const m of text.matchAll(ERA_RE)) {
     if (!hay.includes(normaliseText(m[0]))) push(m[0], "not-in-notes", "era");
@@ -199,9 +216,11 @@ export interface PackLike {
     previewText?: string;
     headline?: string;
     body?: string;
+    personalMessage?: string;
+    callToAction?: string;
   } | null;
   social?: { platform: string; caption: string; hashtags?: string[] }[];
-  sellerEmail?: { body?: string } | null;
+  sellerEmail?: { subject?: string; body?: string } | null;
 }
 
 /** Flags across the whole pack, keyed by section. */
@@ -223,8 +242,11 @@ export function factCheckPack(pack: PackLike, inputsText: string): FactFlag[] {
     out.push(...checkText(e.previewText ?? "", "email", inputsText));
     out.push(...checkText(e.headline ?? "", "email", inputsText, { checkNames: false }));
     out.push(...checkText(e.body ?? "", "email", inputsText));
+    out.push(...checkText(e.personalMessage ?? "", "personal message", inputsText));
+    out.push(...checkText(e.callToAction ?? "", "email CTA", inputsText));
   }
-  for (const p of pack.social ?? []) out.push(...checkText(p.caption, "social", inputsText));
+  for (const p of pack.social ?? []) out.push(...checkText(`${p.caption} ${(p.hashtags ?? []).join(" ")}`, "social", inputsText));
+  if (pack.sellerEmail?.subject) out.push(...checkText(pack.sellerEmail.subject, "seller email subject", inputsText));
   if (pack.sellerEmail?.body) {
     // Placeholders like [Seller name] are fine; contact details aren't checked here.
     out.push(...checkText(pack.sellerEmail.body, "seller email", inputsText));
@@ -252,7 +274,7 @@ export function publicInputsToText(input: object): string {
     .filter(
       ([k, v]) => typeof v === "string" && !(PRIVATE_INPUT_KEYS as readonly string[]).includes(k),
     )
-    .map(([, v]) => v as string)
+    .map(([k, v]) => k === "bedrooms" ? `${v} bedrooms` : k === "bathrooms" ? `${v} bathrooms` : v as string)
     .join(" \n ");
 }
 
@@ -316,8 +338,11 @@ export function privateLeakFlags(pack: PackLike, input: object): FactFlag[] {
       ["email", e.previewText ?? ""],
       ["email", e.headline ?? ""],
       ["email", e.body ?? ""],
+      ["personal message", e.personalMessage ?? ""],
+      ["email CTA", e.callToAction ?? ""],
     );
   }
+  if (pack.sellerEmail) sections.push(["seller email", `${pack.sellerEmail.subject ?? ""} ${pack.sellerEmail.body ?? ""}`]);
   for (const p of pack.social ?? [])
     sections.push(["social", `${p.caption} ${(p.hashtags ?? []).join(" ")}`]);
   const out: FactFlag[] = [];

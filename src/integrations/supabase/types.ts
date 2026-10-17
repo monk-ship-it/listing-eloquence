@@ -32,6 +32,39 @@ export type Database = {
         }
         Relationships: []
       }
+      billing_checkout_state: {
+        Row: {
+          attempt_id: string
+          checkout_url: string | null
+          expires_at: string
+          origin: string
+          plan: string
+          trial_days: number
+          trial_used: boolean
+          user_id: string
+        }
+        Insert: {
+          attempt_id?: string
+          checkout_url?: string | null
+          expires_at?: string
+          origin: string
+          plan: string
+          trial_days?: number
+          trial_used?: boolean
+          user_id: string
+        }
+        Update: {
+          attempt_id?: string
+          checkout_url?: string | null
+          expires_at?: string
+          origin?: string
+          plan?: string
+          trial_days?: number
+          trial_used?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -261,8 +294,10 @@ export type Database = {
           plan: string
           status: string
           stripe_customer_id: string | null
+          stripe_event_created: number
           stripe_payment_link_id: string | null
           stripe_price_id: string | null
+          stripe_subscription_created: number
           stripe_subscription_id: string | null
           trial_end: string | null
           updated_at: string
@@ -277,8 +312,10 @@ export type Database = {
           plan?: string
           status?: string
           stripe_customer_id?: string | null
+          stripe_event_created?: number
           stripe_payment_link_id?: string | null
           stripe_price_id?: string | null
+          stripe_subscription_created?: number
           stripe_subscription_id?: string | null
           trial_end?: string | null
           updated_at?: string
@@ -293,8 +330,10 @@ export type Database = {
           plan?: string
           status?: string
           stripe_customer_id?: string | null
+          stripe_event_created?: number
           stripe_payment_link_id?: string | null
           stripe_price_id?: string | null
+          stripe_subscription_created?: number
           stripe_subscription_id?: string | null
           trial_end?: string | null
           updated_at?: string
@@ -376,6 +415,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_billing_event: {
+        Args: {
+          _checkout: boolean
+          _event_created: number
+          _fields: Json
+          _subscription_created: number
+          _subscription_id: string
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      claim_billing_checkout: {
+        Args: {
+          _origin: string
+          _plan: string
+          _prior_trial: boolean
+          _user_id: string
+        }
+        Returns: Json
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean

@@ -28,10 +28,10 @@ export const transcribeAudio = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
-    const { isCompedEmail } = await import("./comped.server");
+    const { isCompedUserId } = await import("./comped.server");
     const { hasActiveAccess, readReconciledSubscriber } = await import("./subscription.functions");
     const sub = await readReconciledSubscriber(supabase, userId);
-    const comped = isCompedEmail(sub?.email);
+    const comped = isCompedUserId(userId);
     if (!comped && !hasActiveAccess(sub?.status ?? "none", sub?.current_period_end ?? null)) {
       throw new Error("SUBSCRIPTION_REQUIRED");
     }
