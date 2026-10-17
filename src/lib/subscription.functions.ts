@@ -351,15 +351,18 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const origin = ALLOWED_ORIGINS.has(rawOrigin) ? rawOrigin : getAppUrl();
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let priorSubscription = !!row?.stripe_subscription_id || !!row?.trial_end;
     if (row?.stripe_customer_id) {
       const existing = await getCustomerSubscriptions(row.stripe_customer_id);
+      if (!Array.isArray(existing.data) || existing.has_more) throw new Error("Could not confirm billing history. Open Manage billing or contact support before subscribing.");
+      priorSubscription = priorSubscription || existing.data.length > 0;
       if (existing.data?.some((s: { status: string }) => canCancelSubscription(s.status, "existing"))) {
         throw new Error("You already have a subscription. Open Manage billing to update payment details or cancel.");
       }
     }
     const { data: attempt, error: claimError } = await supabaseAdmin.rpc("claim_billing_checkout", {
       _user_id: userId, _plan: plan, _origin: origin,
-      _prior_trial: !!row?.stripe_subscription_id || !!row?.trial_end,
+      _prior_trial: priorSubscription,
     });
     if (claimError || !attempt) throw new Error("Could not prepare checkout. Retry the same plan or manage billing.");
     const reserved = attempt as { attemptId: string; trialDays: number; url?: string; expiresAt: number };

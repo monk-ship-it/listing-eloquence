@@ -88,6 +88,11 @@ describe("exported facts and privacy", () => {
   it("checks personal messages for private access instructions", () => {
     expect(privateLeakFlags({ emailBlast: { personalMessage: "The keysafe code is 9876." } }, { showingNotes: "keysafe code 9876", bedrooms: "2" }).some(f => f.kind === "private-leak")).toBe(true);
   });
+  it("checks every additional exported marketing field for private leaks", () => {
+    for (const pack of [{ emailBlast: { callToAction: "Use keysafe 9876" } }, { sellerEmail: { subject: "Use keysafe 9876" } }, { social: [{ platform: "X", caption: "View today", hashtags: ["keysafe 9876"] }] }]) {
+      expect(privateLeakFlags(pack, { showingNotes: "keysafe code 9876", bedrooms: "2" }).some(f => f.kind === "private-leak")).toBe(true);
+    }
+  });
   it("checks personal message, CTA and seller subject for unsupported facts", () => {
     for (const pack of [{ emailBlast: { personalMessage: "Three bedrooms." } }, { emailBlast: { callToAction: "View three bedrooms" } }, { sellerEmail: { subject: "Three bedrooms" } }]) expect(factCheckPack(pack, "Two bedrooms, three bathrooms").some(f => f.rule === "room-count")).toBe(true);
   });
