@@ -11,3 +11,5 @@
 - Social image metadata is emitted only for an explicitly supplied absolute HTTPS page image, avoiding broken placeholder previews.
 - Complimentary access is bound to an explicitly authorised immutable user ID, never any billing or self-entered email; checkout attempts and webhook identity/order guards are persisted atomically to prevent entitlement escalation and duplicate trials.
 - Pack safety draft status combines seller approval, outstanding material-information checks and fact/privacy flags so approval cannot hide unresolved problems.
+- Auth mode is URL-driven: plain sign-in defaults to login, valid plan links default to signup, and explicit mode overrides the default while preserving the plan and safe next destination.
+- Unapproved legal-page preparation stays in repository documentation, not public routes or placeholder policies, so missing owner decisions cannot be presented as agreed terms.

@@ -1,7 +1,7 @@
 # Release preparation
 
-- [ ] Narrow follow-up: preserve login/signup link intent and verify in browser.
-- [ ] Narrow follow-up: prepare unpublished sole-trader legal structure and inventory missing owner decisions.
+- [x] Narrow follow-up: preserve login/signup link intent and verify in browser.
+- [x] Narrow follow-up: prepare unpublished sole-trader legal structure and inventory missing owner decisions.
 
 - [x] Urgent review: verified complimentary identity, atomic webhook ordering/error handling, duplicate checkout and durable trial eligibility.
 - [x] Urgent review: every exported field fact/privacy checks, relational counts/floors, persistent safety draft and material-info completeness.
