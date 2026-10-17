@@ -302,7 +302,7 @@ export const createBillingPortalUrl = createServerFn({ method: "POST" })
     const { getAppUrl } = await import("./config.server");
     const session = await createBillingPortalSession(row.stripe_customer_id, safeBillingReturnUrl(data.returnUrl, getAppUrl()));
     const { error: saveError } = await supabaseAdmin.from("billing_checkout_state").update({
-      checkout_url: session.url, trial_used: reserved.trialDays > 0 || !!row?.stripe_subscription_id || !!row?.trial_end,
+      checkout_url: session.url, ...(reserved.trialDays > 0 || !!row?.stripe_subscription_id || !!row?.trial_end ? { trial_used: true } : {}),
     }).eq("user_id", userId).eq("attempt_id", reserved.attemptId);
     if (saveError) throw new Error("Checkout was prepared but could not be recorded. Retry the same plan; do not open another checkout.");
     return { url: session.url as string };
@@ -380,7 +380,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
 
     if (!session?.url) throw new Error("Could not start checkout. Please try again.");
     const { error: saveError } = await supabaseAdmin.from("billing_checkout_state").update({
-      checkout_url: session.url, trial_used: reserved.trialDays > 0 || !!row?.stripe_subscription_id || !!row?.trial_end,
+      checkout_url: session.url, ...(reserved.trialDays > 0 || !!row?.stripe_subscription_id || !!row?.trial_end ? { trial_used: true } : {}),
     }).eq("user_id", userId).eq("attempt_id", reserved.attemptId);
     if (saveError) throw new Error("Checkout was prepared but could not be recorded. Retry the same plan; do not open another checkout.");
     return { url: session.url as string };
