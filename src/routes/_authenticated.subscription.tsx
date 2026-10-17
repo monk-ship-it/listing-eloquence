@@ -42,7 +42,7 @@ export const Route = createFileRoute("/_authenticated/subscription")({
     return out;
   },
   head: () => ({
-    meta: [{ title: `Subscription — ${APP_NAME}` }, { name: "robots", content: "noindex, nofollow" }],
+    meta: [{ title: `Subscription — ${APP_NAME}` }, { name: "description", content: "Manage your Quill plan, cancellation and billing." }, { property: "og:title", content: `Subscription — ${APP_NAME}` }, { property: "og:description", content: "Manage your Quill plan, cancellation and billing." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: SubscriptionPage,
 });
@@ -108,7 +108,7 @@ function SubscriptionPage() {
   const checkoutFn = useServerFn(createCheckoutSession);
   const subFn = useServerFn(getMySubscription);
   const usageFn = useServerFn(getMyUsage);
-  const { data: sub, isLoading } = useQuery({
+  const { data: sub, isLoading, isError, refetch } = useQuery({
     queryKey: ["subscription"],
     queryFn: () => subFn(),
   });
@@ -160,7 +160,7 @@ function SubscriptionPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("checkout") === "cancelled") {
-      toast("Checkout cancelled. No payment was taken.");
+      toast("Checkout closed. Check your subscription status before trying again.");
       window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
@@ -221,13 +221,13 @@ function SubscriptionPage() {
   const autoStartedRef = useRef(false);
   useEffect(() => {
     if (autoStartedRef.current) return;
-    if (isLoading || !user) return;
+    if (isLoading || isError || !sub || !user) return;
     if (!planParam) return;
     if (hasAccess || isComped) return;
     autoStartedRef.current = true;
     startCheckout(planParam);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, user, planParam, hasAccess, isComped]);
+  }, [isLoading, isError, sub, user, planParam, hasAccess, isComped]);
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-10">
@@ -242,6 +242,11 @@ function SubscriptionPage() {
 
       {isLoading ? (
         <p className="mt-8 text-sm text-muted-foreground">Loading…</p>
+      ) : isError ? (
+        <div className="mt-8" role="alert">
+          <p className="text-sm text-destructive">Could not load your subscription. Please try again before starting checkout.</p>
+          <Button className="mt-4" variant="outline" onClick={() => refetch()}>Retry</Button>
+        </div>
       ) : (
         <div className="mt-8 space-y-6">
           {/* Access banner */}
@@ -338,15 +343,7 @@ function SubscriptionPage() {
                 />
               )}
               {(rawStatus === "past_due" || rawStatus === "unpaid") && (
-                <Row
-                  label="Grace period"
-                  value={
-                    <span className="text-sm text-amber-600">
-                      <AlertTriangle className="mr-1 inline h-4 w-4" />
-                      Access continues until {fmtDate(sub?.currentPeriodEnd ?? null)}
-                    </span>
-                  }
-                />
+                <Row label="Payment" value="Generation is paused. Update your payment method or cancel below." />
               )}
               {sub?.cancelAtPeriodEnd && status !== "none" && (
                 <Row
@@ -433,17 +430,19 @@ function SubscriptionPage() {
             </Card>
           )}
 
-          {hasAccess && !sub?.isComped && (status === "active" || status === "trialing") && (
+          {!sub?.isComped && (sub?.canCancel || sub?.canManageBilling) && (
             <Card className="p-6">
               <h2 className="font-display text-lg font-semibold">Billing</h2>
               <p className="mt-1 text-sm text-muted-foreground">
                 {sub?.cancelAtPeriodEnd
                   ? `Your subscription is set to cancel — access ends ${fmtDate(sub?.currentPeriodEnd ?? null)}. You can resume any time before then.`
-                  : "Cancel any time. You'll keep access until the end of your current billing period, and changes are reflected here straight away."}
+                  : hasAccess
+                    ? `Cancel any time. Paid access continues until ${fmtDate(sub?.currentPeriodEnd ?? null)}; after that your subscription will not renew.`
+                    : "You can still cancel while generation is paused. Cancellation stops renewal; it does not settle outstanding invoices."}
               </p>
 
               <div className="mt-4 flex flex-wrap gap-3">
-                {sub?.cancelAtPeriodEnd ? (
+                {sub?.canCancel && (sub?.cancelAtPeriodEnd ? (
                   <Button onClick={resumeSubscription} disabled={resumeBusy}>
                     <CheckCircle2 className="mr-2 h-4 w-4" />
                     {resumeBusy ? "Resuming…" : "Resume subscription"}
@@ -460,7 +459,7 @@ function SubscriptionPage() {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Cancel your subscription?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          You'll keep full access until {fmtDate(sub?.currentPeriodEnd ?? null)}. After that your
+                          {hasAccess ? `Paid access continues until ${fmtDate(sub?.currentPeriodEnd ?? null)}. ` : "Generation is already paused. "}After that your
                           subscription won't renew. You can resume any time before then.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
@@ -470,12 +469,12 @@ function SubscriptionPage() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                )}
+                ))}
 
-                <Button variant="outline" disabled={portalLoading} onClick={openBillingPortal}>
+                {sub?.canManageBilling && <Button variant="outline" disabled={portalLoading} onClick={openBillingPortal}>
                   <CreditCard className="mr-2 h-4 w-4" />
                   {portalLoading ? "Opening…" : "Manage billing & invoices"}
-                </Button>
+                </Button>}
               </div>
             </Card>
           )}

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getPlan, TRIAL_DAYS, type PlanId } from "./config";
+import { canCancelSubscription, subscriptionPeriodEnd, safeBillingReturnUrl } from "./billing-state";
 
 async function comped(email: string | null | undefined): Promise<boolean> {
   const { isCompedEmail } = await import("./comped.server");
@@ -12,6 +13,8 @@ export interface SubscriptionInfo {
   rawStatus: string;
   plan: PlanId;
   cancelAtPeriodEnd: boolean;
+  canCancel: boolean;
+  canManageBilling: boolean;
   trialEnd: string | null;
   currentPeriodEnd: string | null;
   hasAccess: boolean;
@@ -38,6 +41,8 @@ async function toInfo(
     current_period_end: string | null;
     email: string | null;
     stripe_price_id?: string | null;
+    stripe_subscription_id?: string | null;
+    stripe_customer_id?: string | null;
   } | null,
 ): Promise<SubscriptionInfo> {
   const rawStatus = row?.status ?? "none";
@@ -47,6 +52,8 @@ async function toInfo(
     rawStatus,
     plan: getPlan(row?.plan).id,
     cancelAtPeriodEnd: row?.cancel_at_period_end ?? false,
+    canCancel: !isComped && canCancelSubscription(rawStatus, row?.stripe_subscription_id),
+    canManageBilling: !isComped && !!row?.stripe_customer_id,
     trialEnd: row?.trial_end ?? null,
     currentPeriodEnd: row?.current_period_end ?? null,
     hasAccess: isComped || hasActiveAccess(rawStatus, row?.current_period_end ?? null),
@@ -98,11 +105,13 @@ export async function readReconciledSubscriber(
   supabase: { from: (t: string) => any },
   userId: string,
 ) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("subscribers")
     .select(SUBSCRIBER_COLUMNS)
     .eq("user_id", userId)
     .maybeSingle();
+
+  if (error) throw new Error("Could not load your subscription. Please try again.");
 
   if (await comped(data?.email)) return data ?? null;
 
@@ -180,7 +189,7 @@ export const cancelMySubscription = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: row } = await supabase
       .from("subscribers")
-      .select("stripe_subscription_id")
+      .select(SUBSCRIBER_COLUMNS)
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -199,19 +208,24 @@ export const cancelMySubscription = createServerFn({ method: "POST" })
     const updated = await setSubscriptionCancelAtPeriodEnd(row.stripe_subscription_id, true);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: saved } = await supabaseAdmin
+    const { data: saved, error: saveError } = await supabaseAdmin
       .from("subscribers")
       .update({
         cancel_at_period_end: true,
         status: updated.status,
+        current_period_end: subscriptionPeriodEnd(updated) ?? row.current_period_end,
       })
       .eq("user_id", userId)
       .select(
-        "status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_price_id",
+        SUBSCRIBER_COLUMNS,
       )
       .maybeSingle();
 
-    return toInfo(saved);
+    if (saveError || !saved) {
+      console.error("Subscription state sync failed after Stripe update", saveError);
+    }
+    // Stripe has already accepted the change: never report it as undone if the local save fails.
+    return toInfo({ ...row, status: updated.status, cancel_at_period_end: updated.cancel_at_period_end === true, current_period_end: subscriptionPeriodEnd(updated) ?? row.current_period_end });
   });
 
 export const resumeMySubscription = createServerFn({ method: "POST" })
@@ -220,7 +234,7 @@ export const resumeMySubscription = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { data: row } = await supabase
       .from("subscribers")
-      .select("stripe_subscription_id")
+      .select(SUBSCRIBER_COLUMNS)
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -243,19 +257,24 @@ export const resumeMySubscription = createServerFn({ method: "POST" })
     const updated = await setSubscriptionCancelAtPeriodEnd(row.stripe_subscription_id, false);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: saved } = await supabaseAdmin
+    const { data: saved, error: saveError } = await supabaseAdmin
       .from("subscribers")
       .update({
         cancel_at_period_end: false,
         status: updated.status,
+        current_period_end: subscriptionPeriodEnd(updated) ?? row.current_period_end,
       })
       .eq("user_id", userId)
       .select(
-        "status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_price_id",
+        SUBSCRIBER_COLUMNS,
       )
       .maybeSingle();
 
-    return toInfo(saved);
+    if (saveError || !saved) {
+      console.error("Subscription state sync failed after Stripe update", saveError);
+    }
+    // Stripe has already accepted the change: never report it as undone if the local save fails.
+    return toInfo({ ...row, status: updated.status, cancel_at_period_end: updated.cancel_at_period_end === true, current_period_end: subscriptionPeriodEnd(updated) ?? row.current_period_end });
   });
 
 /**
@@ -279,7 +298,8 @@ export const createBillingPortalUrl = createServerFn({ method: "POST" })
     }
 
     const { createBillingPortalSession } = await import("./stripe.server");
-    const session = await createBillingPortalSession(row.stripe_customer_id, data.returnUrl);
+    const { getAppUrl } = await import("./config.server");
+    const session = await createBillingPortalSession(row.stripe_customer_id, safeBillingReturnUrl(data.returnUrl, getAppUrl()));
     return { url: session.url as string };
   });
 
@@ -370,12 +390,12 @@ export const verifyCheckoutSession = createServerFn({ method: "POST" })
       const { data: dbRow } = await supabase
         .from("subscribers")
         .select(
-          "status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_price_id",
+          SUBSCRIBER_COLUMNS,
         )
         .eq("user_id", userId)
         .maybeSingle();
 
       const subscription = await toInfo(dbRow);
-      return { ok: belongs, activated: subscription.hasAccess, subscription };
+      return { ok: belongs, activated: belongs && subscription.hasAccess, subscription };
     },
   );

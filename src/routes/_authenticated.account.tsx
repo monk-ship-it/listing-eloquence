@@ -33,7 +33,7 @@ import { agencySignature, EMPTY_AGENCY, hasAgencyDetails, type AgencyDetails } f
 
 export const Route = createFileRoute("/_authenticated/account")({
   head: () => ({
-    meta: [{ title: `Account — ${APP_NAME}` }, { name: "robots", content: "noindex, nofollow" }],
+    meta: [{ title: `Account — ${APP_NAME}` }, { name: "description", content: "Your Quill account, agency details and subscription." }, { property: "og:title", content: `Account — ${APP_NAME}` }, { property: "og:description", content: "Your Quill account, agency details and subscription." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: AccountPage,
 });
@@ -67,7 +67,7 @@ function AccountPage() {
   const [activation, setActivation] = useState<null | "activating" | "active" | "pending">(null);
   const pollStarted = useRef(false);
 
-  const { data: sub, isLoading } = useQuery({ queryKey: ["subscription"], queryFn: () => subFn() });
+  const { data: sub, isLoading, isError, refetch } = useQuery({ queryKey: ["subscription"], queryFn: () => subFn() });
 
   // Post-checkout return: verify the session server-side and poll the DB until
   // the webhook activates the subscription. Access is driven by the DB, never
@@ -89,7 +89,7 @@ function AccountPage() {
           if (sessionId) {
             const res = await verifyFn({ data: { sessionId } });
             await qc.invalidateQueries({ queryKey: ["subscription"] });
-            if (res.activated) {
+            if (res.ok && res.activated) {
               if (!cancelled) setActivation("active");
               toast.success("Subscription activated. Your account is ready.");
               return;
@@ -162,7 +162,7 @@ function AccountPage() {
       )}
       {activation === "pending" && (
         <div className="mt-6 rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 text-sm text-amber-700">
-          Payment received. Your account is still being activated. Please refresh in a moment or contact support.
+          We could not confirm checkout yet. Refresh in a moment or contact support before trying again.
         </div>
       )}
 
@@ -174,6 +174,8 @@ function AccountPage() {
 
         {isLoading ? (
           <p className="mt-6 text-sm text-muted-foreground">Loading…</p>
+        ) : isError ? (
+          <div className="mt-6" role="alert"><p className="text-sm text-destructive">Could not load your subscription.</p><Button className="mt-3" variant="outline" onClick={() => refetch()}>Retry</Button></div>
         ) : inactive ? (
           <div className="mt-6">
             <p className="text-sm text-muted-foreground">
@@ -185,6 +187,7 @@ function AccountPage() {
                 <CreditCard className="mr-2 h-4 w-4" /> Choose a plan & start free trial
               </a>
             </Button>
+            {(sub?.canCancel || sub?.canManageBilling) && <Button asChild variant="outline" className="mt-3"><a href="/subscription">Manage billing or cancel subscription</a></Button>}
           </div>
         ) : (
           <div className="mt-6 space-y-4">
@@ -217,7 +220,7 @@ function AccountPage() {
               </div>
             )}
 
-            {!sub?.cancelAtPeriodEnd && (
+            {sub?.canCancel && !sub?.cancelAtPeriodEnd && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="ghost" className="text-muted-foreground" disabled={busy}>

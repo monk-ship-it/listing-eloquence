@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
@@ -36,6 +36,7 @@ const NAV_ITEMS: NavItem[] = [
 function AuthenticatedLayout() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const adminFn = useServerFn(amIAdmin);
   const adminQuery = useQuery({
@@ -61,9 +62,12 @@ function AuthenticatedLayout() {
   const items = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
 
   async function signOut() {
-    await supabase.auth.signOut();
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    const { error } = await supabase.auth.signOut();
+    if (error) { toast.error("Could not sign out. Please try again."); return; }
     toast.success("Signed out.");
-    navigate({ to: "/" });
+    navigate({ to: "/auth", replace: true });
   }
 
   return (

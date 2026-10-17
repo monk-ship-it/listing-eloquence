@@ -84,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Quill turns one set of property notes into a complete, compliant listing pack for UK estate agents.",
+          "Quill turns one set of property notes into a complete draft listing pack for UK estate agents.",
       },
       { name: "author", content: "CopyByMonk" },
       { name: "theme-color", content: "#f7f3ea" },
@@ -140,6 +140,9 @@ function RootComponent() {
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      if (event === "SIGNED_OUT") {
+        void queryClient.cancelQueries().then(() => queryClient.clear());
+      }
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
