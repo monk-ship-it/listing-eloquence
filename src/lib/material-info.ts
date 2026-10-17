@@ -36,14 +36,6 @@ export function money(v: string): string {
   return t;
 }
 
-function noCapped(s: string): string {
-  return s
-    .replace(/\b(is\s+)?capped\b(\s+at\s+[^,;)]*)?/gi, "")
-    .replace(/\s{2,}/g, " ")
-    .replace(/\(\s*\)/g, "")
-    .trim();
-}
-
 /** Known-issues topics that contradict a Part C "None known" answer. */
 export const PART_C_CONFLICTS: Partial<Record<TextFieldKey, { topic: string; re: RegExp }>> = {
   planning: {
@@ -129,10 +121,10 @@ export function buildMaterialInfoBlock(input: ListingInput): string {
   }
   if (isLeasehold(input)) {
     const gr = val(input, "groundRent");
-    const review = noCapped(val(input, "groundRentReview"));
+    const review = val(input, "groundRentReview");
     if (gr)
       lines.push(
-        `Ground rent: ${noCapped(money(gr))}${/^£?\d[\d,]*(\.\d+)?$/.test(gr) ? " per year" : ""}${review ? ` (${review})` : ""}`,
+        `Ground rent: ${money(gr)}${/^£?\d[\d,]*(\.\d+)?$/.test(gr) ? " per year" : ""}${review ? ` (${review})` : ""}`,
       );
     const sc = val(input, "serviceCharge");
     const period = val(input, "serviceChargePeriod");
@@ -303,6 +295,10 @@ export function checkMaterialInfo(input: ListingInput): CheckItem[] {
   if (isLeasehold(input)) {
     add("leaseYears", "block", !!val(input, "leaseYears"), "Add the years remaining on the lease.");
     add("groundRent", "block", !!val(input, "groundRent"), "Add the ground rent (£ per year).");
+    add("groundRentReview", "block", !!val(input, "groundRentReview"), "Confirm the ground-rent review terms and next review, or explicitly state no review.");
+    for (const field of ["groundRent", "groundRentReview"] as const) {
+      if (/\bcapped\b/i.test(val(input, field))) add(field, "conflict", false, "Supplied cap wording is retained for verification. Check the lease; do not present an unverified ground-rent cap as established fact.");
+    }
     add(
       "serviceCharge",
       "block",
@@ -313,6 +309,7 @@ export function checkMaterialInfo(input: ListingInput): CheckItem[] {
   if (isSharedOwnership(input)) {
     add("sharePercent", "block", !!val(input, "sharePercent"), "Add the share percentage offered.");
     add("rent", "block", !!val(input, "rent"), "Add the rent on the unsold share.");
+    add("fullMarketValue", "block", !!val(input, "fullMarketValue"), "Add the full market value, not just the share price.");
   }
   add(
     "sellerApproved",
@@ -359,6 +356,7 @@ export function checkMaterialInfo(input: ListingInput): CheckItem[] {
 
   for (const k of PART_C_KEYS) {
     add(k, "confirm", !!val(input, k), 'Unanswered — choose "None known" or add details.');
+    if (/^yes\s*[–\-:]?\s*$/i.test(val(input, k))) add(k, "block", false, "Yes is incomplete — add the supplied details before marketing.");
   }
   return items;
 }
