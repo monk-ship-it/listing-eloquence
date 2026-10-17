@@ -128,6 +128,7 @@ export async function reconcileSubscriberRow(row: SubscriberRow | null): Promise
           stripe_price_id: authoritative.stripe_price_id,
           plan: authoritative.plan ?? "starter",
           updated_at: new Date().toISOString(),
+          ...(typeof sub.created === "number" ? { stripe_subscription_created: sub.created } : {}),
         })
         .eq("user_id", userId)
         .eq("stripe_subscription_id", subscriptionId);

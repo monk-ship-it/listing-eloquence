@@ -217,6 +217,7 @@ export const cancelMySubscription = createServerFn({ method: "POST" })
         current_period_end: subscriptionPeriodEnd(updated) ?? row.current_period_end,
       })
       .eq("user_id", userId)
+      .eq("stripe_subscription_id", row.stripe_subscription_id)
       .select(
         SUBSCRIBER_COLUMNS,
       )
@@ -266,6 +267,7 @@ export const resumeMySubscription = createServerFn({ method: "POST" })
         current_period_end: subscriptionPeriodEnd(updated) ?? row.current_period_end,
       })
       .eq("user_id", userId)
+      .eq("stripe_subscription_id", row.stripe_subscription_id)
       .select(
         SUBSCRIBER_COLUMNS,
       )
