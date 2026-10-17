@@ -331,11 +331,11 @@ function SubscriptionPage() {
               )}
               {status !== "trialing" && (
                 <Row
-                  label={sub?.cancelAtPeriodEnd ? "Access until" : "Next billing date"}
+                  label={status === "canceled" ? "Access ended" : status === "none" ? "Billing period" : sub?.cancelAtPeriodEnd ? "Access until" : "Next billing date"}
                   value={
                     <span className="text-sm">
                       {fmtDate(sub?.currentPeriodEnd ?? null)}
-                      {remaining !== null && status !== "none" && (
+                      {remaining !== null && status !== "none" && status !== "canceled" && (
                         <span className="ml-2 text-xs text-muted-foreground">({remaining} days left)</span>
                       )}
                     </span>

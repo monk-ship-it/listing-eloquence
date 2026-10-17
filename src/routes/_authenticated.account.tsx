@@ -179,12 +179,11 @@ function AccountPage() {
         ) : inactive ? (
           <div className="mt-6">
             <p className="text-sm text-muted-foreground">
-              Start your {TRIAL_DAYS}-day free trial to unlock listing generation. Plans from{" "}
-              {planPriceDisplay("starter")}/month — cancel anytime.
+              {sub?.canCancel ? "Generation is paused. Manage your existing subscription to update payment details or cancel; do not start another subscription." : `Start your ${TRIAL_DAYS}-day free trial to unlock listing generation. Card required; ${planPriceDisplay("starter")}/month after the Starter trial — cancel anytime.`}
             </p>
             <Button asChild className="mt-5" size="lg">
               <a href="/subscription">
-                <CreditCard className="mr-2 h-4 w-4" /> Choose a plan & start free trial
+                <CreditCard className="mr-2 h-4 w-4" /> {sub?.canCancel ? "View subscription" : "Choose a plan & start free trial"}
               </a>
             </Button>
             {(sub?.canCancel || sub?.canManageBilling) && <Button asChild variant="outline" className="mt-3"><a href="/subscription">Manage billing or cancel subscription</a></Button>}
