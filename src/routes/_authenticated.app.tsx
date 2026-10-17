@@ -66,7 +66,7 @@ export const Route = createFileRoute("/_authenticated/app")({
   validateSearch: (search: Record<string, unknown>): { g?: string } =>
     typeof search.g === "string" && /^[0-9a-f-]{36}$/i.test(search.g) ? { g: search.g } : {},
   head: () => ({
-    meta: [{ title: `Generator — ${APP_NAME}` }, { name: "robots", content: "noindex, nofollow" }],
+    meta: [{ title: `Generator — ${APP_NAME}` }, { name: "description", content: "Create a draft UK property listing pack from your supplied facts." }, { property: "og:title", content: `Generator — ${APP_NAME}` }, { property: "og:description", content: "Create a draft UK property listing pack from your supplied facts." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: GeneratorPage,
 });

@@ -3,6 +3,8 @@ import { canCancelSubscription, safeBillingReturnUrl, subscriptionPeriodEnd } fr
 import { sanitizeAuthNext, isRecoveryLink } from "./auth-state";
 import { setSubscriptionCancelAtPeriodEnd } from "./stripe.server";
 
+vi.mock("./config", () => ({ PLAN_PRICING: {} }));
+
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 describe("release account safeguards", () => {
   it("allows cancellation even when payment problems block access", () => {
