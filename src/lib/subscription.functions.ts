@@ -98,7 +98,7 @@ const SUBSCRIBER_COLUMNS =
 
 /**
  * Reads the caller's subscriber row and reconciles it against Stripe before
- * any access decision. Comped emails skip Stripe entirely (unlimited access,
+ * any access decision. Authorised complimentary user IDs skip Stripe (unlimited access,
  * no subscription required).
  */
 export async function readReconciledSubscriber(
@@ -360,7 +360,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       _prior_trial: !!row?.stripe_subscription_id || !!row?.trial_end,
     });
     if (claimError || !attempt) throw new Error("Could not prepare checkout. Retry the same plan or manage billing.");
-    const reserved = attempt as { attemptId: string; trialDays: number; url?: string };
+    const reserved = attempt as { attemptId: string; trialDays: number; url?: string; expiresAt: number };
     if (reserved.url) return { url: reserved.url };
     const session = await createSubscriptionCheckoutSession({
       plan,
@@ -372,13 +372,14 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       cancelUrl: `${origin}/subscription?checkout=cancelled`,
       trialDays: reserved.trialDays,
       idempotencyKey: `quill-checkout-${reserved.attemptId}`,
+      expiresAt: reserved.expiresAt,
     });
 
     if (!session?.url) throw new Error("Could not start checkout. Please try again.");
-    const { error: saveError } = await supabaseAdmin.from("billing_checkout_state").update({
+    const { data: savedAttempt, error: saveError } = await supabaseAdmin.from("billing_checkout_state").update({
       checkout_url: session.url, ...(reserved.trialDays > 0 || !!row?.stripe_subscription_id || !!row?.trial_end ? { trial_used: true } : {}),
-    }).eq("user_id", userId).eq("attempt_id", reserved.attemptId);
-    if (saveError) throw new Error("Checkout was prepared but could not be recorded. Retry the same plan; do not open another checkout.");
+    }).eq("user_id", userId).eq("attempt_id", reserved.attemptId).select("attempt_id").maybeSingle();
+    if (saveError || !savedAttempt) throw new Error("Checkout was prepared but could not be recorded. Retry the same plan; do not open another checkout.");
     return { url: session.url as string };
   });
 

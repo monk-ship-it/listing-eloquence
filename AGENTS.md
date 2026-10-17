@@ -9,3 +9,5 @@
 - Authentication is checked before rendering the client-only protected layout; sign-out cancels and clears private queries before clearing the session to prevent cross-account cached data.
 - Billing cancellation availability and authoritative period-date parsing live in billing-state.ts; cancellation must stay available when generation is blocked by a payment problem.
 - Social image metadata is emitted only for an explicitly supplied absolute HTTPS page image, avoiding broken placeholder previews.
+- Complimentary access is bound to an explicitly authorised immutable user ID, never any billing or self-entered email; checkout attempts and webhook identity/order guards are persisted atomically to prevent entitlement escalation and duplicate trials.
+- Pack safety draft status combines seller approval, outstanding material-information checks and fact/privacy flags so approval cannot hide unresolved problems.

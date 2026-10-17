@@ -218,7 +218,7 @@ export function ListingPack({
                 <Badge
                   variant="outline"
                   className="border-warning/60 text-[10px] uppercase text-warning"
-                  title="Seller approval not confirmed — copies are labelled draft (TPO Code 7j)"
+                  title="Seller approval or outstanding fact/disclosure checks require review — copies remain draft"
                 >
                   Draft
                 </Badge>

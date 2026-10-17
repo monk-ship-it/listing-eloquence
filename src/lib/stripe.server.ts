@@ -57,6 +57,7 @@ export interface CheckoutParams {
   cancelUrl: string;
   trialDays?: number;
   idempotencyKey: string;
+  expiresAt?: number;
 }
 
 /** Create a subscription Checkout Session tied to the logged-in app user. */
@@ -77,6 +78,7 @@ export async function createSubscriptionCheckoutSession(params: CheckoutParams) 
     "subscription_data[metadata][currency]": "gbp",
     allow_promotion_codes: "true",
     payment_method_collection: "always",
+    ...(params.expiresAt ? { expires_at: String(params.expiresAt) } : {}),
   };
 
   if (params.customerId) {
