@@ -119,15 +119,24 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 - Current identity has no generation access: new listing → save → history → copy remains unverified end-to-end. Existing history loads; records were not changed.
 - External test-environment billing lifecycle, hosted confirmation/reset delivery/redirect/password settings and verified owner Privacy/Terms/legal identity decisions below remain required. No legal identity/address or guaranteed-compliance claim was invented.
 
+## Narrow follow-up — sole trader and login intent (17 Oct, 12:05 UTC)
+- Confirmed **CopyByMonk is a sole trader, not a limited company**. Support remains domenico@copybymonk.com. Domenico Monk is the known owner name, but legal identity/address for policies remain unverified.
+- Prepared `docs/legal-page-preparation.md`: Privacy/Terms section structure, code-backed processing/storage/AI/speech/billing/analytics facts, and explicit owner/legal decisions. This is internal preparation, not a finished policy. No public placeholder pages or links were added.
+- Fixed homepage desktop/mobile **Log in** links to request login explicitly. Plain `/auth` now selects login; all valid plan links retain signup. URL-driven tab changes preserve plan and safe onward destination and survive reload.
+- Changed files: `src/routes/index.tsx`, `src/routes/auth.tsx`, `src/lib/auth-state.ts`, `src/lib/release-rules.test.ts`, `docs/legal-page-preparation.md`, `AGENTS.md`, `roadmap.md`, this document; sole-trader fact also saved in project memory.
+- Executed `bun run test`: **16 files, 161/161 PASS** at 12:05 UTC; `bun run prompts:check`: **27 up to date**. No prompt-bearing files changed, so no export/golden refresh needed.
+- Automatic preview gate: **build OK at 12:05:04 UTC** after correcting a temporary required-search-parameter type error. No manual production build or typecheck was run; these remain distinct from the preview gate.
+- Browser: homepage Log in → Welcome back → reload, trial → signup, login/signup tab switching, and all three plan defaults passed at **1280×1800 and 390×844**; zero page errors, no horizontal overflow on auth. Mobile screenshots inspected. Initial mobile tab check clicked before hydration; rerun after interactivity passed. No authentication forms, billing changes or emails submitted; nothing published.
+
 ## Remaining launch blockers
 1. **Privacy Policy and Terms pages do not exist.** The owner must supply, verified:
-   - legal entity name, company number and registered address;
+   - verified sole-trader legal identity and service/legal correspondence address (no limited-company number or registered office assumed);
    - whether domenico@copybymonk.com is also the data-request contact, and ICO registration number/fee status;
    - processors and where data is held: the AI writer (Anthropic), speech-to-text provider, hosting/database, Stripe, email sender, Opinly analytics;
    - retention periods for listings, voice transcripts (audio isn't stored), usage logs and account deletion;
    - lawful basis, cookie/analytics consent position, governing law, liability and refund terms.
 
-   Operator **CopyByMonk** and support **domenico@copybymonk.com** are confirmed. They do not establish legal entity details, company number or registered address. None of the missing legal terms was invented.
+   Operator **CopyByMonk**, **sole-trader status**, and support **domenico@copybymonk.com** are confirmed. The known owner name is **Domenico Monk**; legal identity/address for policies still require verification. None of the missing legal terms was invented. Internal structure is prepared in `docs/legal-page-preparation.md`; no placeholder policy is public.
 2. Footer and checkout legal identity must match item 1.
 
 3. **External verification before distribution:** confirm hosted auth redirect URLs for both custom domains, confirmation/reset delivery and password rules; safely validate successful checkout/webhook and cancellation in a test environment, then the complete listing/save/history/copy journey with permitted access. Read-only checks above found no current Stripe-price/portal configuration defect.

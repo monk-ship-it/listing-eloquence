@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { canCancelSubscription, safeBillingReturnUrl, subscriptionPeriodEnd } from "./billing-state";
-import { sanitizeAuthNext, isRecoveryLink } from "./auth-state";
+import { sanitizeAuthNext, isRecoveryLink, resolveAuthMode } from "./auth-state";
 import { setSubscriptionCancelAtPeriodEnd } from "./stripe.server";
 import { buildCopyAllText, formatSellerEmail, withMaterialInfo } from "./clipboard";
 
@@ -8,6 +8,15 @@ vi.mock("./config", () => ({ PLAN_PRICING: {} }));
 
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 describe("release account safeguards", () => {
+  it("defaults plain login links to login and preserves explicit login intent with a plan", () => {
+    expect(resolveAuthMode(undefined, undefined)).toBe("login");
+    expect(resolveAuthMode("login", "starter")).toBe("login");
+    expect(resolveAuthMode("unexpected", "invalid")).toBe("login");
+  });
+  it("retains signup intent on all valid plan links and explicit signup links", () => {
+    for (const plan of ["starter", "pro", "growth"]) expect(resolveAuthMode(undefined, plan)).toBe("signup");
+    expect(resolveAuthMode("signup", undefined)).toBe("signup");
+  });
   it("allows cancellation even when payment problems block access", () => {
     for (const status of ["active", "trialing", "past_due", "unpaid", "incomplete", "paused"]) expect(canCancelSubscription(status, "sub_synthetic")).toBe(true);
     expect(canCancelSubscription("canceled", "sub_synthetic")).toBe(false);

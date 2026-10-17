@@ -1,4 +1,9 @@
 /** Reject paths that browsers could interpret as an external URL. */
+export function resolveAuthMode(mode: unknown, plan: unknown): "login" | "signup" {
+  if (mode === "login" || mode === "signup") return mode;
+  return ["starter", "pro", "growth"].includes(typeof plan === "string" ? plan : "") ? "signup" : "login";
+}
+
 export function sanitizeAuthNext(value: unknown): string | undefined {
   if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//") || /[\\\u0000-\u0020]/.test(value)) return undefined;
   return value;

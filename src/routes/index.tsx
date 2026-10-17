@@ -166,10 +166,10 @@ function Header({ user }: { user: boolean }) {
           ) : (
             <>
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-                <Link to="/auth">Log in</Link>
+                <Link to="/auth" search={{ mode: "login" }}>Log in</Link>
               </Button>
               <Button asChild variant="ghost" size="sm" className="min-h-11 px-3 sm:hidden">
-                <Link to="/auth">Log in</Link>
+                <Link to="/auth" search={{ mode: "login" }}>Log in</Link>
               </Button>
               <Button asChild className="min-h-11 sm:min-h-0">
                 <Link to="/auth" search={{ plan: "starter" }}>
