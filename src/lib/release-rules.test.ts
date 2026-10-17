@@ -64,3 +64,21 @@ describe("release account safeguards", () => {
     expect(all.startsWith("DRAFT – subject to seller approval")).toBe(true);
   });
 });
+import { sanitizeAuthNext as _san, resolveSameOriginNext as _rso } from "./auth-state";
+import { isCompedUserId as _comp } from "./comped.server";
+describe("auth next redirect hardening", () => {
+  it("rejects slash-backslash, backslash and control-character targets", () => {
+    for (const v of ["/\\evil.com", "/\\\\evil.com", "\\\\evil.com", "/\tevil", "/\nevil", "//evil.com"]) {
+      expect(_san(v)).toBeUndefined();
+      expect(_rso(v, "https://copybymonk.com")).toBeUndefined();
+    }
+  });
+  it("keeps same-origin paths", () => {
+    expect(_rso("/.lovable/oauth/consent?x=1", "https://copybymonk.com")).toBe("/.lovable/oauth/consent?x=1");
+  });
+  it("comped access depends only on the authorised immutable user id, not email", () => {
+    expect(_comp("ac5319e0-b05c-4ec8-99fc-e52559637b5f")).toBe(true);
+    expect(_comp("domenico@copybymonk.com")).toBe(false);
+    expect(_comp(undefined)).toBe(false);
+  });
+});

@@ -13,7 +13,7 @@ import { APP_NAME, TRIAL_DAYS, getPlan, planPriceDisplay, type PlanId } from "@/
 
 const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
 
-import { sanitizeAuthNext as sanitizeNext, resolveAuthMode } from "@/lib/auth-state";
+import { sanitizeAuthNext as sanitizeNext, resolveAuthMode, resolveSameOriginNext } from "@/lib/auth-state";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>): { plan?: PlanId; next?: string; mode?: "login" | "signup" } => {
@@ -67,10 +67,10 @@ function AuthPage() {
   function goPostAuth() {
     if (redirectedRef.current) return;
     redirectedRef.current = true;
-    if (next) {
-      // Same-origin relative path (validated above). Use window.location so we
-      // land on non-router routes like /.lovable/oauth/consent cleanly.
-      window.location.href = next;
+    const safeNext = next ? resolveSameOriginNext(next, window.location.origin) : undefined;
+    if (safeNext) {
+      // Re-validated against the resolved origin before a full-page navigation.
+      window.location.href = safeNext;
       return;
     }
     navigate({ to: "/subscription", search: { plan } });
