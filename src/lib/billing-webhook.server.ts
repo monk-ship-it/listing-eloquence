@@ -3,7 +3,7 @@ import { getStripeSubscription } from "./stripe.server";
 import { subscriptionPeriodEnd } from "./billing-state";
 
 type RecordValue = Record<string, any>;
-export async function processBillingEvent(event: { type?: string; created?: number; data?: { object?: RecordValue } }) {
+export async function processBillingEvent(event: { type?: string; created?: number; data?: { object?: RecordValue } }, deps?: { db: any; getSubscription: typeof getStripeSubscription }) {
   const supported = ["checkout.session.completed", "customer.subscription.created", "customer.subscription.updated", "customer.subscription.deleted", "invoice.paid", "invoice.payment_failed"];
   if (!supported.includes(event.type ?? "")) return;
   const object = event.data?.object;
@@ -15,9 +15,9 @@ export async function processBillingEvent(event: { type?: string; created?: numb
   const subscriptionId = typeof id === "string" ? id : id?.id;
   if (!subscriptionId) throw new Error("Missing subscription identity");
   // Event snapshots may be stale, including paid/failed invoices. Always read current Stripe state.
-  const sub = await getStripeSubscription(subscriptionId);
+  const sub = await (deps?.getSubscription ?? getStripeSubscription)(subscriptionId);
   if (sub.id !== subscriptionId) throw new Error("Subscription identity mismatch");
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const supabaseAdmin = deps?.db ?? (await import("@/integrations/supabase/client.server")).supabaseAdmin;
   const { data: row, error } = await supabaseAdmin.from("subscribers").select("user_id").eq("stripe_subscription_id", subscriptionId).maybeSingle();
   if (error) throw error;
   // Only signed checkout metadata may attach a new subscription. Never match by billing email/customer.
