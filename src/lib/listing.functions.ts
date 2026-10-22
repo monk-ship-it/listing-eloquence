@@ -190,7 +190,7 @@ export const generateListing = createServerFn({ method: "POST" })
 /**
  * Fill in the Email Blast (and the social pack, if empty) for an existing
  * saved listing. Free — never reserves a listing slot — but limited to
- * REGEN_DAILY_LIMIT successful runs per user per day.
+ * 30 reserved attempts per user per UTC day (see provider-quota.ts).
  */
 export const generateMarketingForGeneration = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

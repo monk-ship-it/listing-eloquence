@@ -36,26 +36,27 @@ export const transcribeAudio = createServerFn({ method: "POST" })
       throw new Error("SUBSCRIPTION_REQUIRED");
     }
 
-    // Rolling 24h budget: 200 calls and 40 MB of audio. Usage is recorded only
-    // after a successful transcription, so failed attempts never count.
+    // Rolling 24h budget (200 calls, 40 MB, bounded in-flight) reserved atomically
+    // BEFORE the provider call; every attempt counts, so failures can't bypass it.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const { data: usageRows, error: usageError } = await supabaseAdmin
-      .from("transcription_usage")
-      .select("bytes")
-      .eq("user_id", userId)
-      .gte("created_at", since)
-      .limit(DAILY_CALL_LIMIT + 1);
-    if (usageError) {
-      console.error("transcription_usage read failed", usageError);
-      throw new Error("TRANSCRIPTION_FAILED");
+    const { reserveProviderCall, settleProviderCall } = await import("./provider-quota");
+    const reservationId = await reserveProviderCall(supabaseAdmin, userId, "transcribe", data.file.size);
+    try {
+      const text = await callTranscription(data);
+      await settleProviderCall(supabaseAdmin, userId, reservationId, true);
+      return { text };
+    } catch (err) {
+      await settleProviderCall(supabaseAdmin, userId, reservationId, false);
+      throw err;
     }
-    const rows = usageRows ?? [];
-    const usedBytes = rows.reduce((sum, r) => sum + (r.bytes ?? 0), 0);
-    if (rows.length >= DAILY_CALL_LIMIT || usedBytes + data.file.size > DAILY_BYTE_BUDGET) {
-      throw new Error("TRANSCRIPTION_DAILY_LIMIT");
-    }
+  });
 
+/** Deadline for the whole provider call, including the streamed response. */
+export const TRANSCRIPTION_DEADLINE_MS = 90_000;
+/** Maximum decoded SSE text accepted from the provider. */
+export const MAX_TRANSCRIPT_STREAM_CHARS = 512 * 1024;
+
+async function callTranscription(data: { file: File; lang: string; type: string }): Promise<string> {
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
       console.error("Missing LOVABLE_API_KEY");
@@ -86,14 +87,24 @@ export const transcribeAudio = createServerFn({ method: "POST" })
       "Property notes dictated by an estate agent. Return a plain verbatim transcript only.",
     );
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/transcriptions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "X-Lovable-AIG-SDK": "fetch" },
-      body: form,
-    });
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), TRANSCRIPTION_DEADLINE_MS);
+    try {
+    let res: Response;
+    try {
+      res = await fetch("https://ai.gateway.lovable.dev/v1/audio/transcriptions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "X-Lovable-AIG-SDK": "fetch" },
+        body: form,
+        signal: controller.signal,
+      });
+    } catch {
+      console.error("Transcription request failed or timed out");
+      throw new Error("TRANSCRIPTION_FAILED");
+    }
     if (!res.ok || !res.body) {
       const body = await res.text().catch(() => "");
-      console.error("Transcription error", res.status, body);
+      console.error("Transcription error", res.status, body.slice(0, 200));
       if (res.status === 402) throw new Error("TRANSCRIPTION_CREDITS");
       if (res.status === 429) throw new Error("TRANSCRIPTION_RATE_LIMIT");
       throw new Error("TRANSCRIPTION_FAILED");
@@ -124,10 +135,25 @@ export const transcribeAudio = createServerFn({ method: "POST" })
         if (e instanceof Error && e.message === "TRANSCRIPTION_FAILED") throw e;
       }
     };
+    let received = 0;
     for (;;) {
-      const { done, value } = await reader.read();
+      let chunk: ReadableStreamReadResult<Uint8Array>;
+      try {
+        chunk = await reader.read();
+      } catch {
+        throw new Error("TRANSCRIPTION_FAILED"); // deadline abort or network drop
+      }
+      const { done, value } = chunk;
       if (done) break;
-      buffer += decoder.decode(value, { stream: true }).replace(/\r\n/g, "\n");
+      const piece = decoder.decode(value, { stream: true }).replace(/\r\n/g, "\n");
+      received += piece.length;
+      if (received > MAX_TRANSCRIPT_STREAM_CHARS || buffer.length + piece.length > MAX_TRANSCRIPT_STREAM_CHARS) {
+        console.error("Transcription stream exceeded size limit");
+        await reader.cancel().catch(() => {});
+        controller.abort();
+        throw new Error("TRANSCRIPTION_FAILED");
+      }
+      buffer += piece;
       let idx;
       while ((idx = buffer.indexOf("\n\n")) !== -1) {
         handle(buffer.slice(0, idx));
@@ -138,10 +164,8 @@ export const transcribeAudio = createServerFn({ method: "POST" })
 
     const text = ((finalText ?? deltas) as string).trim();
     if (!text) throw new Error("NO_SPEECH");
-
-    const { error: insertError } = await supabaseAdmin
-      .from("transcription_usage")
-      .insert({ user_id: userId, lang: data.lang, bytes: data.file.size });
-    if (insertError) console.error("transcription_usage insert failed", insertError);
-    return { text };
-  });
+    return text;
+    } finally {
+      clearTimeout(timer);
+    }
+}
