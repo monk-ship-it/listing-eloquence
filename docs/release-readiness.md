@@ -149,3 +149,19 @@ Not blockers: in-app editing (promises corrected); the pre-existing ESLint forma
 - Fixed missing auth `mode` on generator-page plan links and reset-password back link.
 - Results: bun run test 164/164, prompts:check green, type check clean. Nothing published.
 - Still unverifiable from repo: hosted email-confirmation setting, auth redirect URLs, email delivery.
+
+## Production hardening pass — billing entitlement and Stripe reliability (22 Oct, 15:30 UTC)
+
+Status: **not production-ready.** Public Privacy/Terms are absent (internal prep stays private pending owner details), and hosted auth/email settings plus a test-mode billing lifecycle remain unverified. Prices unchanged pending owner-supplied final Stripe IDs. Nothing published; no live customer/subscription mutated (one read-only query of subscriber price/status counts: 4 `none` without price, 3 `canceled` on grandfathered `price_1Tj5eD…` → starter, still mapped).
+
+Changes:
+- `src/lib/plan-identity.ts` (new): exact allowlist = current PLAN_PRICING prices + all four grandfathered Quill prices. Unknown prices, unknown payment links, non-GBP currency and amount-only input return no plan. Amount/threshold fallbacks and env price-id trust removed from identification (`config.server.ts` re-exports).
+- `hasActiveAccess` now requires an allowlisted `stripe_price_id`; all callers (subscription info, generation, extraction, transcription, checkout guard) pass it. Unknown prices are stored as-is so the owner can still cancel/manage billing but get no entitlement.
+- Webhook: attaches new subscriptions only from signed checkout metadata **and** a Quill price; adds `checkout.session.async_payment_succeeded`; checkout events without a subscription are ignored. Raw-body signature verification, current-state Stripe reads, DB error → 500 retry and `apply_billing_event` ordering unchanged. No `payment_method_types` allowlist (tested).
+- Usage: `computeUsage` throws on failed/empty count reads instead of reporting unused allowance. Cancel/resume/portal subscriber reads now surface read errors.
+- Stripe client: 15 s timeout per request; one retry for GETs and idempotency-keyed POSTs (same key reused); unkeyed POSTs not retried; timeouts/429/5xx/invalid JSON → friendly retryable message; logs contain no ids, keys or customer data. Cancellation availability and "Stripe accepted, local save failed" reporting unchanged.
+- `vitest.config.ts`: `@` alias so tests can import app modules.
+
+Results: `bun run test` 17 files / 179 tests passed (15 new in `billing-hardening.test.ts`: current + grandfathered mappings, unrelated high-priced GBP, USD, stale env id, amount-only, unknown-price access denial, unrelated checkout not attached, async-payment attach, usage fail-closed, timeout retry, stable idempotency key, no payment_method_types). `bun run prompts:check` up to date (no prompt files touched). Preview build OK (15:30:08 UTC). No manual production build/typecheck (sandbox restriction).
+
+Unresolved external checks: Stripe test-mode lifecycle (checkout, async payment, past_due, cancel, portal) against a test webhook endpoint; confirm the Stripe dashboard sends `checkout.session.async_payment_succeeded` to the endpoint; owner-supplied final price IDs; hosted auth redirect/email delivery; legal identity, address, Privacy/Terms decisions.
