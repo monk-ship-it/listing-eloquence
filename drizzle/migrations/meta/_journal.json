@@ -36,6 +36,13 @@
       "when": 1792238452235,
       "tag": "0004_checkout_attempt_trial_parameters",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792683192189,
+      "tag": "0005_provider_call_reservations",
+      "breakpoints": true
     }
   ]
 }
