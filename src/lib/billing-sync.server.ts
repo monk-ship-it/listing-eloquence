@@ -100,10 +100,10 @@ export async function reconcileSubscriberRow(row: SubscriberRow | null): Promise
       current_period_end: toIso(periodEnd(sub)),
       stripe_customer_id: str(sub.customer) ?? current.stripe_customer_id ?? null,
       stripe_price_id: str(price?.id) ?? current.stripe_price_id ?? null,
-      plan: identifyPlan({
-        priceId: str(price?.id),
-        amount: num(price?.unit_amount),
-      }),
+      // Unknown/non-Quill prices keep plan "starter" but carry their price id,
+      // which hasActiveAccess rejects — no entitlement from unrecognised prices.
+      plan:
+        identifyPlan({ priceId: str(price?.id), currency: str(price?.currency) }) ?? "starter",
     };
 
     const changed =
