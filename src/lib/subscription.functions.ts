@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getPlan, TRIAL_DAYS, type PlanId } from "./config";
+import { planForPriceId } from "./plan-identity";
 import { canCancelSubscription, subscriptionPeriodEnd, safeBillingReturnUrl } from "./billing-state";
 
 async function comped(userId: string | null | undefined): Promise<boolean> {
@@ -57,7 +58,7 @@ async function toInfo(
     canManageBilling: !isComped && !!row?.stripe_customer_id,
     trialEnd: row?.trial_end ?? null,
     currentPeriodEnd: row?.current_period_end ?? null,
-    hasAccess: isComped || hasActiveAccess(rawStatus, row?.current_period_end ?? null),
+    hasAccess: isComped || hasActiveAccess(rawStatus, row?.current_period_end ?? null, row?.stripe_price_id),
     isComped,
     email: row?.email ?? null,
   };
@@ -85,8 +86,10 @@ function startOfNextMonthIso(): string {
  * temporarily unreachable. Access is always driven by the database record,
  * never by the post-checkout redirect URL.
  */
-export function hasActiveAccess(status: string, currentPeriodEnd: string | null): boolean {
+export function hasActiveAccess(status: string, currentPeriodEnd: string | null, priceId: string | null | undefined): boolean {
   if (status !== "active" && status !== "trialing") return false;
+  // Exact Quill price allowlist: unknown/unrelated Stripe prices never grant access.
+  if (!planForPriceId(priceId)) return false;
   if (!currentPeriodEnd) return false;
   const end = Date.parse(currentPeriodEnd);
   if (Number.isNaN(end)) return false;
@@ -328,7 +331,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     if (
       (await comped(userId)) ||
       canCancelSubscription(row?.status ?? "none", row?.stripe_subscription_id) ||
-      hasActiveAccess(row?.status ?? "none", row?.current_period_end ?? null)
+      hasActiveAccess(row?.status ?? "none", row?.current_period_end ?? null, row?.stripe_price_id)
     ) {
       throw new Error(
         "You already have subscription access. Manage billing or contact support to change plan.",

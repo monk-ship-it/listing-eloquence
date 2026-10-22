@@ -20,7 +20,7 @@ export const extractListingFields = createServerFn({ method: "POST" })
     const { hasActiveAccess, readReconciledSubscriber } = await import("./subscription.functions");
     const sub = await readReconciledSubscriber(supabase, userId);
     const comped = isCompedUserId(userId);
-    if (!comped && !hasActiveAccess(sub?.status ?? "none", sub?.current_period_end ?? null)) {
+    if (!comped && !hasActiveAccess(sub?.status ?? "none", sub?.current_period_end ?? null, sub?.stripe_price_id)) {
       throw new Error("SUBSCRIPTION_REQUIRED");
     }
 
