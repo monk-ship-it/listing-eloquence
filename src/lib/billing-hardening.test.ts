@@ -1,4 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+vi.mock("@/assets/quill-logo-72.webp", () => ({ default: "logo72" }));
+vi.mock("@/assets/quill-logo-144.webp", () => ({ default: "logo144" }));
+vi.mock("@/integrations/supabase/auth-middleware", () => ({ requireSupabaseAuth: {} }));
 import { identifyPlan, planForPriceId, LEGACY_PRICE_PLAN } from "./plan-identity";
 import { PLAN_PRICING } from "./config";
 import { processBillingEvent } from "./billing-webhook.server";
