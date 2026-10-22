@@ -3,7 +3,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { ExtractResult } from "./extract-filter";
 
 const MAX_NOTES = 8000;
-const DAILY_LIMIT = 40;
 /** "Fill the form from my voice note". Free (no listing credit), 40/day. */
 export const extractListingFields = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -25,25 +24,17 @@ export const extractListingFields = createServerFn({ method: "POST" })
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const since = new Date();
-    since.setUTCHours(0, 0, 0, 0);
-    const { count, error: countError } = await supabaseAdmin
-      .from("regen_usage")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .eq("kind", "extract")
-      .gte("created_at", since.toISOString());
-    if (countError) {
-      console.error("regen_usage count failed", countError);
-      throw new Error("AI_UNAVAILABLE");
-    }
-    if ((count ?? 0) >= DAILY_LIMIT) throw new Error("EXTRACT_LIMIT_REACHED");
+    // Atomic pre-call reservation (40/day, bounded in-flight); every attempt counts.
+    const { reserveProviderCall, settleProviderCall } = await import("./provider-quota");
+    const reservationId = await reserveProviderCall(supabaseAdmin, userId, "extract");
 
     let result: ExtractResult;
     try {
       const { runExtraction } = await import("./generation.server");
       result = await runExtraction(data.voiceNotes);
+      await settleProviderCall(supabaseAdmin, userId, reservationId, true);
     } catch (err) {
+      await settleProviderCall(supabaseAdmin, userId, reservationId, false);
       const m = err instanceof Error ? err.message : "";
       console.warn("extract failed", m);
       try {
@@ -60,9 +51,5 @@ export const extractListingFields = createServerFn({ method: "POST" })
       );
     }
 
-    const { error: usageErr } = await supabaseAdmin
-      .from("regen_usage")
-      .insert({ user_id: userId, kind: "extract" });
-    if (usageErr) console.error("regen_usage insert failed", usageErr);
     return result;
   });

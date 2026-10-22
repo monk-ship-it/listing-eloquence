@@ -186,12 +186,11 @@ export const generateListing = createServerFn({ method: "POST" })
     }
   });
 
-const REGEN_DAILY_LIMIT = 30;
 
 /**
  * Fill in the Email Blast (and the social pack, if empty) for an existing
  * saved listing. Free — never reserves a listing slot — but limited to
- * REGEN_DAILY_LIMIT successful runs per user per day.
+ * 30 reserved attempts per user per UTC day (see provider-quota.ts).
  */
 export const generateMarketingForGeneration = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -205,19 +204,6 @@ export const generateMarketingForGeneration = createServerFn({ method: "POST" })
     await assertAccess(supabase, userId);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const since = new Date();
-    since.setUTCHours(0, 0, 0, 0);
-    const { count, error: countError } = await supabaseAdmin
-      .from("regen_usage")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .eq("kind", "marketing")
-      .gte("created_at", since.toISOString());
-    if (countError) {
-      console.error("regen_usage count failed", countError);
-      throw new Error("AI_UNAVAILABLE");
-    }
-    if ((count ?? 0) >= REGEN_DAILY_LIMIT) throw new Error("REGEN_LIMIT_REACHED");
 
     const { data: row, error } = await supabase
       .from("generations")
@@ -242,13 +228,18 @@ export const generateMarketingForGeneration = createServerFn({ method: "POST" })
       safeInput = { ...input, voice: "professional" };
     }
 
+    // Atomic pre-call reservation (30/day, bounded in-flight); every attempt counts.
+    const { reserveProviderCall, settleProviderCall } = await import("./provider-quota");
+    const reservationId = await reserveProviderCall(supabaseAdmin, userId, "marketing");
     let mkt: MarketingOutput;
     try {
       mkt = await runMarketing(safeInput, {
         stage: "regen",
         log: (stage, e) => logGenerationError(userId, stage, e),
       });
+      await settleProviderCall(supabaseAdmin, userId, reservationId, true);
     } catch (err) {
+      await settleProviderCall(supabaseAdmin, userId, reservationId, false);
       const code = errorCode(err);
       throw new Error(code === "UNKNOWN" ? "AI_UNAVAILABLE" : code);
     }
@@ -269,11 +260,6 @@ export const generateMarketingForGeneration = createServerFn({ method: "POST" })
       console.error("generation update failed", updateError);
       throw new Error("Couldn't save the email. Please try again.");
     }
-
-    const { error: usageErr } = await supabaseAdmin
-      .from("regen_usage")
-      .insert({ user_id: userId, kind: "marketing" });
-    if (usageErr) console.error("regen_usage insert failed", usageErr);
 
     return coerceLegacyOutput(rawOut);
   });

@@ -263,6 +263,39 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_call_reservations: {
+        Row: {
+          bytes: number
+          created_at: string
+          id: string
+          kind: string
+          reserved_until: string
+          settled_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          bytes?: number
+          created_at?: string
+          id?: string
+          kind: string
+          reserved_until?: string
+          settled_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          bytes?: number
+          created_at?: string
+          id?: string
+          kind?: string
+          reserved_until?: string
+          settled_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       regen_usage: {
         Row: {
           created_at: string
@@ -475,6 +508,14 @@ export type Database = {
         Returns: boolean
       }
       reserve_generation_slot: { Args: { _user_id: string }; Returns: string }
+      reserve_provider_call: {
+        Args: { _bytes: number; _kind: string; _user_id: string }
+        Returns: string
+      }
+      settle_provider_call: {
+        Args: { _reservation_id: string; _succeeded: boolean; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
