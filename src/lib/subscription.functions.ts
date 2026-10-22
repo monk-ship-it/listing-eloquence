@@ -149,7 +149,7 @@ export async function computeUsage(
   const nowIso = new Date().toISOString();
   // Count durable (completed) usage plus any unexpired reservations so
   // in-flight generations are reflected until they finalize or expire.
-  const [{ count: completedCount }, { count: reservedCount }] = await Promise.all([
+  const [completed, reserved] = await Promise.all([
     supabase
       .from("generation_usage")
       .select("id", { count: "exact", head: true })
@@ -165,7 +165,11 @@ export async function computeUsage(
       .gte("reserved_until", nowIso),
   ]);
 
-  const used = (completedCount ?? 0) + (reservedCount ?? 0);
+  // Fail closed: a failed or empty count read must never report unused allowance.
+  if (completed.error || reserved.error || typeof completed.count !== "number" || typeof reserved.count !== "number") {
+    throw new Error("Could not load your listing usage. Please try again.");
+  }
+  const used = completed.count + reserved.count;
   const limit = planMeta.monthlyListings;
   return {
     plan: planMeta.id,
@@ -191,11 +195,12 @@ export const cancelMySubscription = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<SubscriptionInfo> => {
     const { supabase, userId } = context;
-    const { data: row } = await supabase
+    const { data: row, error: readError } = await supabase
       .from("subscribers")
       .select(SUBSCRIBER_COLUMNS)
       .eq("user_id", userId)
       .maybeSingle();
+    if (readError) throw new Error("Could not load your subscription. Please try again.");
 
     if (!row?.stripe_subscription_id) {
       throw new Error("No active subscription found to cancel.");
@@ -237,11 +242,12 @@ export const resumeMySubscription = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<SubscriptionInfo> => {
     const { supabase, userId } = context;
-    const { data: row } = await supabase
+    const { data: row, error: readError } = await supabase
       .from("subscribers")
       .select(SUBSCRIBER_COLUMNS)
       .eq("user_id", userId)
       .maybeSingle();
+    if (readError) throw new Error("Could not load your subscription. Please try again.");
 
     if (!row?.stripe_subscription_id) {
       throw new Error("No subscription found.");
@@ -293,11 +299,12 @@ export const createBillingPortalUrl = createServerFn({ method: "POST" })
   .inputValidator((data: { returnUrl: string }) => data)
   .handler(async ({ context, data }): Promise<{ url: string }> => {
     const { supabase, userId } = context;
-    const { data: row } = await supabase
+    const { data: row, error: readError } = await supabase
       .from("subscribers")
       .select("stripe_customer_id")
       .eq("user_id", userId)
       .maybeSingle();
+    if (readError) throw new Error("Could not load your billing account. Please try again.");
 
     if (!row?.stripe_customer_id) {
       throw new Error("No billing account found. Subscribe first to manage billing.");
