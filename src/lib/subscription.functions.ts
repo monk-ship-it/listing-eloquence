@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getPlan, TRIAL_DAYS, type PlanId } from "./config";
+import { planForPriceId } from "./plan-identity";
 import { canCancelSubscription, subscriptionPeriodEnd, safeBillingReturnUrl } from "./billing-state";
 
 async function comped(userId: string | null | undefined): Promise<boolean> {
@@ -57,7 +58,7 @@ async function toInfo(
     canManageBilling: !isComped && !!row?.stripe_customer_id,
     trialEnd: row?.trial_end ?? null,
     currentPeriodEnd: row?.current_period_end ?? null,
-    hasAccess: isComped || hasActiveAccess(rawStatus, row?.current_period_end ?? null),
+    hasAccess: isComped || hasActiveAccess(rawStatus, row?.current_period_end ?? null, row?.stripe_price_id),
     isComped,
     email: row?.email ?? null,
   };
@@ -85,8 +86,10 @@ function startOfNextMonthIso(): string {
  * temporarily unreachable. Access is always driven by the database record,
  * never by the post-checkout redirect URL.
  */
-export function hasActiveAccess(status: string, currentPeriodEnd: string | null): boolean {
+export function hasActiveAccess(status: string, currentPeriodEnd: string | null, priceId: string | null | undefined): boolean {
   if (status !== "active" && status !== "trialing") return false;
+  // Exact Quill price allowlist: unknown/unrelated Stripe prices never grant access.
+  if (!planForPriceId(priceId)) return false;
   if (!currentPeriodEnd) return false;
   const end = Date.parse(currentPeriodEnd);
   if (Number.isNaN(end)) return false;
@@ -146,7 +149,7 @@ export async function computeUsage(
   const nowIso = new Date().toISOString();
   // Count durable (completed) usage plus any unexpired reservations so
   // in-flight generations are reflected until they finalize or expire.
-  const [{ count: completedCount }, { count: reservedCount }] = await Promise.all([
+  const [completed, reserved] = await Promise.all([
     supabase
       .from("generation_usage")
       .select("id", { count: "exact", head: true })
@@ -162,7 +165,11 @@ export async function computeUsage(
       .gte("reserved_until", nowIso),
   ]);
 
-  const used = (completedCount ?? 0) + (reservedCount ?? 0);
+  // Fail closed: a failed or empty count read must never report unused allowance.
+  if (completed.error || reserved.error || typeof completed.count !== "number" || typeof reserved.count !== "number") {
+    throw new Error("Could not load your listing usage. Please try again.");
+  }
+  const used = completed.count + reserved.count;
   const limit = planMeta.monthlyListings;
   return {
     plan: planMeta.id,
@@ -188,11 +195,12 @@ export const cancelMySubscription = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<SubscriptionInfo> => {
     const { supabase, userId } = context;
-    const { data: row } = await supabase
+    const { data: row, error: readError } = await supabase
       .from("subscribers")
       .select(SUBSCRIBER_COLUMNS)
       .eq("user_id", userId)
       .maybeSingle();
+    if (readError) throw new Error("Could not load your subscription. Please try again.");
 
     if (!row?.stripe_subscription_id) {
       throw new Error("No active subscription found to cancel.");
@@ -234,11 +242,12 @@ export const resumeMySubscription = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<SubscriptionInfo> => {
     const { supabase, userId } = context;
-    const { data: row } = await supabase
+    const { data: row, error: readError } = await supabase
       .from("subscribers")
       .select(SUBSCRIBER_COLUMNS)
       .eq("user_id", userId)
       .maybeSingle();
+    if (readError) throw new Error("Could not load your subscription. Please try again.");
 
     if (!row?.stripe_subscription_id) {
       throw new Error("No subscription found.");
@@ -290,11 +299,12 @@ export const createBillingPortalUrl = createServerFn({ method: "POST" })
   .inputValidator((data: { returnUrl: string }) => data)
   .handler(async ({ context, data }): Promise<{ url: string }> => {
     const { supabase, userId } = context;
-    const { data: row } = await supabase
+    const { data: row, error: readError } = await supabase
       .from("subscribers")
       .select("stripe_customer_id")
       .eq("user_id", userId)
       .maybeSingle();
+    if (readError) throw new Error("Could not load your billing account. Please try again.");
 
     if (!row?.stripe_customer_id) {
       throw new Error("No billing account found. Subscribe first to manage billing.");
@@ -328,7 +338,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     if (
       (await comped(userId)) ||
       canCancelSubscription(row?.status ?? "none", row?.stripe_subscription_id) ||
-      hasActiveAccess(row?.status ?? "none", row?.current_period_end ?? null)
+      hasActiveAccess(row?.status ?? "none", row?.current_period_end ?? null, row?.stripe_price_id)
     ) {
       throw new Error(
         "You already have subscription access. Manage billing or contact support to change plan.",

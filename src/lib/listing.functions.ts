@@ -47,7 +47,7 @@ async function assertAccess(
   const sub = await readReconciledSubscriber(supabase, userId);
   const comped = isCompedUserId(userId);
   const status = sub?.status ?? "none";
-  const hasAccess = comped || hasActiveAccess(status, sub?.current_period_end ?? null);
+  const hasAccess = comped || hasActiveAccess(status, sub?.current_period_end ?? null, sub?.stripe_price_id);
   if (!hasAccess) throw new Error("SUBSCRIPTION_REQUIRED");
   return { sub, comped };
 }

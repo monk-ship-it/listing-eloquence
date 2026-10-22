@@ -8,6 +8,18 @@ function getKey(): string {
   return key;
 }
 
+export const STRIPE_TIMEOUT_MS = 15_000;
+export const STRIPE_RETRYABLE_MESSAGE =
+  "Billing is temporarily unavailable. Nothing was changed on your side — please try again in a minute.";
+
+/** Network, timeout, rate-limit or 5xx failure: safe to retry, shown with a friendly message. */
+export class StripeRetryableError extends Error {
+  constructor() {
+    super(STRIPE_RETRYABLE_MESSAGE);
+    this.name = "StripeRetryableError";
+  }
+}
+
 async function stripeRequest(
   path: string,
   method: "GET" | "POST",
@@ -15,20 +27,43 @@ async function stripeRequest(
   idempotencyKey?: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- untyped Stripe JSON
 ): Promise<any> {
-  const res = await fetch(`${STRIPE_API}${path}`, {
-    method,
-    headers: {
-      Authorization: `Bearer ${getKey()}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-      ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
-    },
-    body: form ? new URLSearchParams(form).toString() : undefined,
-  });
-  const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data?.error?.message || `Stripe error ${res.status}`);
+  // GETs and keyed POSTs are safe to repeat once; unkeyed POSTs are never retried.
+  const attempts = method === "GET" || idempotencyKey ? 2 : 1;
+  for (let attempt = 1; ; attempt++) {
+    let res: Response;
+    try {
+      res = await fetch(`${STRIPE_API}${path}`, {
+        method,
+        headers: {
+          Authorization: `Bearer ${getKey()}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+          // The same key is reused on retry so Stripe never creates a duplicate.
+          ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
+        },
+        body: form ? new URLSearchParams(form).toString() : undefined,
+        signal: AbortSignal.timeout(STRIPE_TIMEOUT_MS),
+      });
+    } catch {
+      console.error(`[stripe] ${method} ${path.split("?")[0].split("/").slice(0, 2).join("/")} network/timeout failure`);
+      if (attempt < attempts) continue;
+      throw new StripeRetryableError();
+    }
+    if (res.status === 429 || res.status >= 500) {
+      console.error(`[stripe] ${method} request returned ${res.status}`);
+      if (attempt < attempts) continue;
+      throw new StripeRetryableError();
+    }
+    let data: { error?: { message?: string } } | null = null;
+    try {
+      data = await res.json();
+    } catch {
+      throw new StripeRetryableError();
+    }
+    if (!res.ok) {
+      throw new Error(data?.error?.message || `Stripe error ${res.status}`);
+    }
+    return data;
   }
-  return data;
 }
 
 export function getStripeSubscription(subscriptionId: string) {
