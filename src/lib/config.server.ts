@@ -78,56 +78,7 @@ export function getStripePlanConfig(): Record<
   };
 }
 
-/**
- * Retired Stripe price ids that may still appear on old subscriber rows.
- * Kept so historical records always map to a plan.
- */
-const LEGACY_PRICE_PLAN: Record<string, PlanKey> = {
-  price_1Tst7KAAj6LfwOUap6nwwkT1: "starter",
-  price_1Tst7TAAj6LfwOUaTOG299iy: "pro",
-  price_1Tst7dAAj6LfwOUaD8AqhUVE: "growth",
-  price_1Tj5eDAAj6LfwOUapbQ7yPiy: "starter",
-};
-
-/**
- * Identifies the plan key from a Stripe checkout/subscription using, in
- * priority order: Payment Link ID, Price ID, then the recurring amount.
- * Matches both the new live ids/amounts and (via exact amount) the legacy
- * amounts so existing subscriptions still map to the right plan.
- */
-export function identifyPlan(opts: {
-  paymentLinkId?: string | null;
-  priceId?: string | null;
-  amount?: number | null;
-}): PlanKey {
-  const cfg = getStripePlanConfig();
-  const keys: PlanKey[] = ["starter", "pro", "growth"];
-
-  if (opts.paymentLinkId) {
-    for (const k of keys) {
-      if (cfg[k].paymentLinkId && cfg[k].paymentLinkId === opts.paymentLinkId) return k;
-    }
-  }
-  if (opts.priceId) {
-    for (const k of keys) {
-      if (cfg[k].priceId && cfg[k].priceId === opts.priceId) return k;
-    }
-    const legacy = LEGACY_PRICE_PLAN[opts.priceId];
-    if (legacy) return legacy;
-  }
-  if (opts.amount != null) {
-    for (const k of keys) {
-      if (opts.amount === PLAN_PRICING[k].amount) return k;
-    }
-
-    // Legacy amounts (£24.99 / £29.99 / £49.99) for grandfathered subs.
-    if (opts.amount === 4999) return "growth";
-    if (opts.amount === 2999) return "pro";
-    if (opts.amount === 2499) return "starter";
-    // Threshold fallback for anything else.
-    if (opts.amount >= 14900) return "growth";
-    if (opts.amount >= 7900) return "pro";
-    return "starter";
-  }
-  return "starter";
-}
+// Plan identification uses exact Quill price allowlists only (see plan-identity.ts).
+// Env price ids are deliberately NOT trusted for entitlement: a stale or
+// unrelated id must never grant Quill access.
+export { identifyPlan, planForPriceId, LEGACY_PRICE_PLAN } from "./plan-identity";
