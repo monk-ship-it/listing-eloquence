@@ -18,7 +18,9 @@ import { sanitizeAuthNext as sanitizeNext, resolveAuthMode, resolveSameOriginNex
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>): { plan?: PlanId; next?: string; mode?: "login" | "signup" } => {
     const plan = search.plan as string | undefined;
-    const out: { plan?: PlanId; next?: string; mode: "login" | "signup" } = { mode: resolveAuthMode(search.mode, search.plan) };
+    const out: { plan?: PlanId; next?: string; mode: "login" | "signup" } = {
+      mode: resolveAuthMode(search.mode, search.plan),
+    };
     if (plan && VALID_PLANS.includes(plan as PlanId)) out.plan = plan as PlanId;
     const next = sanitizeNext(search.next);
     if (next) out.next = next;
@@ -136,6 +138,7 @@ function AuthPage() {
   }
 
   const selectedPlan = planParam ? getPlan(planParam) : null;
+  const isStarterPlan = plan === "starter";
 
   return (
     <div className="relative flex min-h-dvh items-center justify-center px-5 py-12">
@@ -148,13 +151,20 @@ function AuthPage() {
           </Link>
         </div>
         <Card className="border-border/70 bg-card/80 p-7 backdrop-blur">
-          <Tabs value={mode} onValueChange={(v) => {
-            setCheckInbox(false);
-            navigate({ to: "/auth", search: { plan: planParam, next, mode: resolveAuthMode(v, planParam) }, replace: true });
-          }}>
+          <Tabs
+            value={mode}
+            onValueChange={(v) => {
+              setCheckInbox(false);
+              navigate({
+                to: "/auth",
+                search: { plan: planParam, next, mode: resolveAuthMode(v, planParam) },
+                replace: true,
+              });
+            }}
+          >
             <TabsList className="grid w-full grid-cols-2 h-auto sm:h-9">
               <TabsTrigger value="signup" className="min-h-11 sm:min-h-0">
-                Start free trial
+                {isStarterPlan ? "Start free trial" : "Create account"}
               </TabsTrigger>
               <TabsTrigger value="login" className="min-h-11 sm:min-h-0">
                 Log in
@@ -162,24 +172,29 @@ function AuthPage() {
             </TabsList>
 
             <TabsContent value="signup" className="mt-6">
-              {mode === "signup" && (
-                <h1 className="font-display text-2xl font-semibold">Create your account</h1>
-              )}
+              {mode === "signup" && <h1 className="font-display text-2xl font-semibold">Create your account</h1>}
               <p className="mt-1 text-sm text-muted-foreground">
-                The {TRIAL_DAYS}-day Starter trial begins at secure checkout — card required. Cancel
-                anytime before renewal from your account.
+                {isStarterPlan ? (
+                  <>
+                    Eligible first-time subscribers can start a {TRIAL_DAYS}-day Starter trial at secure checkout — card
+                    required. Cancel before it ends to avoid the first charge.
+                  </>
+                ) : (
+                  <>
+                    Create your account, then continue to secure checkout for {getPlan(plan).name}. Payment is due at
+                    checkout and renews monthly. Cancel anytime from your account.
+                  </>
+                )}
               </p>
               {selectedPlan && (
                 <p className="mt-2 text-sm font-medium text-foreground">
                   {selectedPlan.name} · {planPriceDisplay(selectedPlan.id)}/month
-                  {selectedPlan.id === "starter" ? ` after your ${TRIAL_DAYS}-day trial` : ""}
+                  {isStarterPlan ? ` after an eligible ${TRIAL_DAYS}-day trial` : " · paid at checkout"}
                 </p>
               )}
             </TabsContent>
             <TabsContent value="login" className="mt-6">
-              {mode === "login" && (
-                <h1 className="font-display text-2xl font-semibold">Welcome back</h1>
-              )}
+              {mode === "login" && <h1 className="font-display text-2xl font-semibold">Welcome back</h1>}
               <p className="mt-1 text-sm text-muted-foreground">Log in to keep writing.</p>
             </TabsContent>
 
@@ -232,12 +247,7 @@ function AuthPage() {
                     placeholder="At least 6 characters"
                   />
                 </div>
-                <Button
-                  type="submit"
-                  className="w-full min-h-11 sm:min-h-0"
-                  size="lg"
-                  disabled={busy}
-                >
+                <Button type="submit" className="w-full min-h-11 sm:min-h-0" size="lg" disabled={busy}>
                   {busy ? "Please wait…" : mode === "signup" ? "Create account" : "Log in"}
                 </Button>
                 {mode === "login" && (
@@ -256,8 +266,19 @@ function AuthPage() {
           </Tabs>
         </Card>
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          The {TRIAL_DAYS}-day Starter trial starts at secure checkout — card required. Cancel
-          anytime before renewal; access continues until your period ends.
+          {mode === "login" ? (
+            <>Access your saved listings and manage your subscription from your account.</>
+          ) : isStarterPlan ? (
+            <>
+              The {TRIAL_DAYS}-day Starter trial is for eligible first-time subscribers and requires a card. Cancel
+              anytime before renewal; access continues until your period ends.
+            </>
+          ) : (
+            <>
+              {getPlan(plan).name} costs {planPriceDisplay(plan)}/month, paid at checkout. Cancel anytime before
+              renewal; access continues until your period ends.
+            </>
+          )}
         </p>
       </div>
     </div>
