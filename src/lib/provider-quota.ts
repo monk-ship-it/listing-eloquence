@@ -11,7 +11,10 @@ type RpcResult = { data: unknown; error: { message?: string } | null };
 // Exact RPC overloads remain compatible with Supabase's generated function
 // names and argument types; accepting an arbitrary string is too broad.
 type Rpc = {
-  rpc(fn: "reserve_provider_call", args: { _user_id: string; _kind: string; _bytes: number }): PromiseLike<RpcResult>;
+  rpc(
+    fn: "reserve_provider_call",
+    args: { _user_id: string; _kind: string; _bytes: number },
+  ): PromiseLike<RpcResult>;
   rpc(
     fn: "settle_provider_call",
     args: { _user_id: string; _reservation_id: string; _succeeded: boolean },
@@ -44,8 +47,7 @@ export async function reserveProviderCall(db: Rpc, userId: string, kind: Provide
     throw new Error(UNAVAILABLE_CODE[kind]);
   }
   const msg = String(result.error?.message ?? "");
-  if (msg.includes("PROVIDER_LIMIT_REACHED") || msg.includes("PROVIDER_BYTES_EXCEEDED"))
-    throw new Error(LIMIT_CODE[kind]);
+  if (msg.includes("PROVIDER_LIMIT_REACHED") || msg.includes("PROVIDER_BYTES_EXCEEDED")) throw new Error(LIMIT_CODE[kind]);
   if (msg.includes("PROVIDER_IN_FLIGHT")) throw new Error(BUSY_CODE[kind]);
   if (result.error || typeof result.data !== "string" || !result.data) {
     console.error("provider reservation failed", { kind });
@@ -55,18 +57,9 @@ export async function reserveProviderCall(db: Rpc, userId: string, kind: Provide
 }
 
 /** Best-effort settle. An unsettled row stays counted and expires from in-flight. */
-export async function settleProviderCall(
-  db: Rpc,
-  userId: string,
-  reservationId: string,
-  succeeded: boolean,
-): Promise<void> {
+export async function settleProviderCall(db: Rpc, userId: string, reservationId: string, succeeded: boolean): Promise<void> {
   try {
-    const { error } = await db.rpc("settle_provider_call", {
-      _user_id: userId,
-      _reservation_id: reservationId,
-      _succeeded: succeeded,
-    });
+    const { error } = await db.rpc("settle_provider_call", { _user_id: userId, _reservation_id: reservationId, _succeeded: succeeded });
     if (error) console.error("provider settle failed (attempt remains counted)");
   } catch {
     console.error("provider settle failed (attempt remains counted)");

@@ -7,7 +7,7 @@ STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 - Likely buyer (emphasis only — never exclude anyone): Growing family, Downsizer
 - Asking price (£): 1,450,000
 - Price qualifier: Guide Price
-- Tenure: Freehold
+- Tenure / ownership: Freehold
 - Chain: No onward chain
 - Bedrooms: 5
 - Bathrooms: 3
@@ -17,7 +17,7 @@ STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 - Outside space / garden: Walled garden of around half an acre, mature herbaceous borders, orchard and a stone terrace
 - Council Tax band: G
 - Local authority: West Oxfordshire District Council
-- EPC rating: E
+- EPC rating or status: E
 - Construction: Standard
 - Construction details: Cotswold stone under a stone slate roof
 - Electricity: Mains
@@ -58,11 +58,14 @@ Planning: None known
 Accessibility: None known
 Coalfield / mining: None known
 
-AGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):
-This is the Old Rectory on Church Lane in Burford. Lovely characterful period rectory, Grade II listed, five bedrooms, three bathrooms, inglenook fireplace and flagstone floors. Walled garden about half an acre with an orchard. Guide price one point four five million, freehold.
+AGENT VOICE NOTES (access instructions removed — supplementary context only):
+This is the Old Rectory on Church Lane in Burford.
+Lovely characterful period rectory, Grade II listed, five bedrooms, three bathrooms, inglenook fireplace and flagstone floors.
+Walled garden about half an acre with an orchard.
+Guide price one point four five million, freehold.
 
 Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never take a material-information figure from the voice notes.
-Seller approval of particulars: NOT confirmed (for the app only — never mention it in the copy).
+Seller approval of particulars: NOT confirmed — approval must be recorded against the generated wording (for the app only — never mention it in the copy).
 
 PRODUCE:
 - "headline": brochure / email headline, max 70 characters.

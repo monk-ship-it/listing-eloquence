@@ -9,6 +9,7 @@ import { EMPTY_INPUT, LEASEHOLD_EXAMPLE, type ListingInput } from "./listing-typ
 
 const freehold: ListingInput = {
   ...EMPTY_INPUT,
+  propertyNation: "England",
   price: "425,000",
   priceQualifier: "Guide Price",
   tenure: "Freehold",
@@ -58,7 +59,11 @@ describe("buildMaterialInfoBlock", () => {
     });
     expect(block).not.toMatch(/TBC|Ask agent/i);
     expect(block).toContain("capped at £500");
-    expect(checkMaterialInfo({ ...LEASEHOLD_EXAMPLE, groundRentReview: "capped at £500" }).some(i => i.field === "groundRentReview" && !i.ok && i.severity === "conflict")).toBe(true);
+    expect(
+      checkMaterialInfo({ ...LEASEHOLD_EXAMPLE, groundRentReview: "capped at £500" }).some(
+        (i) => i.field === "groundRentReview" && !i.ok && i.severity === "conflict",
+      ),
+    ).toBe(true);
     expect(block).not.toContain("EPC rating");
   });
   it("prints Part C answers", () => {
@@ -81,11 +86,11 @@ describe("checkMaterialInfo", () => {
     expect(s.mustFix).toBe(0);
     expect(s.open).toHaveLength(0);
   });
-  it("requires seller approval and treats unanswered Part C as confirm", () => {
+  it("treats unanswered Part C as confirm; approval belongs to generated output", () => {
     const s = summariseChecks(
       checkMaterialInfo({ ...freehold, sellerApproved: false, flooding: "" }),
     );
-    expect(s.mustFix).toBe(1);
+    expect(s.mustFix).toBe(0);
     expect(s.open.find((i) => i.field === "flooding")?.severity).toBe("confirm");
   });
   it("flags missing shared ownership details", () => {
@@ -95,6 +100,86 @@ describe("checkMaterialInfo", () => {
       "rent",
       "fullMarketValue",
     ]);
+  });
+});
+
+describe("nation and certificate review", () => {
+  it("does not silently infer a nation for legacy properties", () => {
+    expect(
+      checkMaterialInfo({ ...freehold, propertyNation: "" }).some(
+        (i) => i.field === "propertyNation" && !i.ok,
+      ),
+    ).toBe(true);
+  });
+  it("accepts Band I only in Wales", () => {
+    for (const propertyNation of ["England", "Scotland"])
+      expect(
+        checkMaterialInfo({ ...freehold, propertyNation, councilTaxBand: "I" }).find(
+          (i) => i.field === "councilTaxBand",
+        )?.ok,
+      ).toBe(false);
+    expect(
+      checkMaterialInfo({ ...freehold, propertyNation: "Wales", councilTaxBand: "I" }).find(
+        (i) => i.field === "councilTaxBand",
+      )?.ok,
+    ).toBe(true);
+  });
+  it("uses Northern Ireland domestic rates, not Council Tax", () => {
+    const ni = {
+      ...freehold,
+      propertyNation: "Northern Ireland",
+      councilTaxBand: "",
+      domesticRates: "1240",
+      domesticRatesYear: "2026/27",
+    };
+    const block = buildMaterialInfoBlock(ni);
+    expect(block).toContain("Domestic rates: £1,240 per year (2026/27)");
+    expect(block).not.toContain("Council Tax");
+    expect(checkMaterialInfo(ni).filter((i) => !i.ok)).toEqual([]);
+    expect(
+      checkMaterialInfo({ ...ni, domesticRatesYear: "2026/29" }).find(
+        (i) => i.field === "domesticRatesYear",
+      )?.ok,
+    ).toBe(false);
+  });
+  it("requires supplied Scottish Home Report or checked exemption information", () => {
+    const scot = { ...freehold, propertyNation: "Scotland", homeReportStatus: "Awaiting" };
+    expect(checkMaterialInfo(scot).some((i) => i.field === "homeReportStatus" && !i.ok)).toBe(true);
+    expect(
+      checkMaterialInfo({
+        ...scot,
+        homeReportStatus: "Exemption claimed",
+        homeReportDetails: "New build",
+      }).some((i) => i.field === "homeReportStatus" && !i.ok),
+    ).toBe(true);
+    const ready = {
+      ...scot,
+      homeReportStatus: "Available",
+      homeReportDetails: "Dated 12 October 2026, reference HR123",
+    };
+    expect(checkMaterialInfo(ready).filter((i) => !i.ok)).toEqual([]);
+    expect(buildMaterialInfoBlock(ready)).toContain(
+      "Home Report: Available – Dated 12 October 2026, reference HR123",
+    );
+  });
+  it("renders commissioning as a pending status, never an EPC letter rating", () => {
+    const pending = { ...freehold, epc: "Commissioned" };
+    expect(buildMaterialInfoBlock(pending)).toContain("EPC status: Commissioned — rating awaited");
+    expect(buildMaterialInfoBlock(pending)).not.toContain("EPC rating: Commissioned");
+    expect(checkMaterialInfo(pending).some((i) => i.field === "epc" && !i.ok)).toBe(true);
+    expect(
+      checkMaterialInfo({ ...freehold, epc: "Exempt" }).some(
+        (i) => i.field === "epcExemptionReason" && !i.ok,
+      ),
+    ).toBe(true);
+  });
+  it("preserves supplied service-charge periods without adding a contradictory year", () => {
+    expect(
+      buildMaterialInfoBlock({ ...LEASEHOLD_EXAMPLE, serviceCharge: "£180 per month" }),
+    ).toContain("Service charge: £180 per month (");
+    expect(
+      buildMaterialInfoBlock({ ...LEASEHOLD_EXAMPLE, serviceCharge: "£180 per month" }),
+    ).not.toContain("per month per year");
   });
 });
 

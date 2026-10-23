@@ -1,18 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-/**
- * Disabled: Quill does not send transactional email from user requests.
- * The previous handler let any signed-in user queue branded mail to any
- * address with arbitrary template data. Kept as a closed route so the path
- * cannot be reused accidentally.
- */
-const disabled = () => Response.json({ error: "Not available" }, { status: 404 });
-
+// This unused browser-callable sender accepted arbitrary recipients and links.
+// Keep the route closed without reading credentials, the request body or any
+// database tables. Auth email delivery and the trusted queue worker are separate.
 export const Route = createFileRoute("/lovable/email/transactional/send")({
   server: {
     handlers: {
-      GET: disabled,
-      POST: disabled,
+      ANY: () => Response.json(
+        { error: "Transactional email sending is unavailable." },
+        { status: 410, headers: { "Cache-Control": "no-store" } },
+      ),
     },
   },
 });

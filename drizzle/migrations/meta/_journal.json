@@ -43,6 +43,20 @@
       "when": 1792683192189,
       "tag": "0005_provider_call_reservations",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792779922091,
+      "tag": "0006_provider_call_limits_hardening",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792779938418,
+      "tag": "0007_billing_snapshot_compare_and_swap",
+      "breakpoints": true
     }
   ]
 }

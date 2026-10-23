@@ -7,7 +7,7 @@ STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 - Likely buyer (emphasis only — never exclude anyone): First-time buyer
 - Asking price (£): 130,000
 - Price qualifier: Shared Ownership
-- Tenure: Leasehold
+- Tenure / ownership: Leasehold
 - Lease remaining (yrs): 990
 - Ground rent (£ per year): Peppercorn
 - Service charge (£ per year): 312
@@ -20,7 +20,7 @@ STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 - Receptions: 1
 - Council Tax band: C
 - Local authority: Dartford Borough Council
-- EPC rating: B
+- EPC rating or status: B
 - Construction: Standard
 - Electricity: Mains
 - Water: Mains
@@ -63,7 +63,7 @@ Coalfield / mining: None known
 Known issues: Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale
 
 Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never take a material-information figure from the voice notes.
-Seller approval of particulars: confirmed (for the app only — never mention it in the copy).
+Seller approval of particulars: NOT confirmed — approval must be recorded against the generated wording (for the app only — never mention it in the copy).
 
 PRODUCE:
 - "headline": brochure / email headline, max 70 characters.

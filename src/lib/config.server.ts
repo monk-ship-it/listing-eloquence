@@ -30,49 +30,19 @@ export function getAppUrl(): string {
   return (process.env.APP_URL || "https://copybymonk.com").replace(/\/+$/, "");
 }
 
-/**
- * Returns an env value only when it is present AND matches the expected id
- * prefix. This guards against the historically swapped
- * STRIPE_*_PRICE_ID / STRIPE_*_PAYMENT_LINK_ID secrets, where a price-id slot
- * actually held a `plink_` value (and vice-versa). A mismatched value is
- * treated as missing so the hardcoded public constants are used instead.
- */
-function envWithPrefix(name: string, prefix: "price_" | "plink_"): string | null {
-  const v = process.env[name];
-  if (!v) return null;
-  const trimmed = v.trim();
-  return trimmed.startsWith(prefix) ? trimmed : null;
-}
-
-/**
- * Reads the Stripe Payment Link ID and Price ID for each plan. Env secrets are
- * used only when they carry the correct prefix; otherwise the authoritative
- * public constants in PLAN_PRICING (config.ts) are used. Amounts are the
- * current live pence amounts.
- */
-export function getStripePlanConfig(): Record<
-  PlanKey,
-  { paymentLinkId: string | null; priceId: string | null; amount: number }
-> {
+/** Reviewed current catalogue; stale environment prices/payment links are ignored. */
+export function getStripePlanConfig(): Record<PlanKey, { priceId: string; amount: number }> {
   return {
     starter: {
-      paymentLinkId:
-        envWithPrefix("STRIPE_STARTER_PAYMENT_LINK_ID", "plink_") ??
-        PLAN_PRICING.starter.paymentLinkId,
-      priceId: envWithPrefix("STRIPE_STARTER_PRICE_ID", "price_") ?? PLAN_PRICING.starter.priceId,
+      priceId: PLAN_PRICING.starter.priceId,
       amount: PLAN_PRICING.starter.amount,
     },
     pro: {
-      paymentLinkId:
-        envWithPrefix("STRIPE_PRO_PAYMENT_LINK_ID", "plink_") ?? PLAN_PRICING.pro.paymentLinkId,
-      priceId: envWithPrefix("STRIPE_PRO_PRICE_ID", "price_") ?? PLAN_PRICING.pro.priceId,
+      priceId: PLAN_PRICING.pro.priceId,
       amount: PLAN_PRICING.pro.amount,
     },
     growth: {
-      paymentLinkId:
-        envWithPrefix("STRIPE_GROWTH_PAYMENT_LINK_ID", "plink_") ??
-        PLAN_PRICING.growth.paymentLinkId,
-      priceId: envWithPrefix("STRIPE_GROWTH_PRICE_ID", "price_") ?? PLAN_PRICING.growth.priceId,
+      priceId: PLAN_PRICING.growth.priceId,
       amount: PLAN_PRICING.growth.amount,
     },
   };

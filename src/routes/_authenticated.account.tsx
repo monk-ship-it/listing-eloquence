@@ -29,11 +29,27 @@ import {
 import { APP_NAME, TRIAL_DAYS, CONTACT_EMAIL, getPlan, planPriceDisplay } from "@/lib/config";
 import { CheckCircle2, CreditCard, Mail, Loader2, Building2 } from "lucide-react";
 import { getMyAgency, saveMyAgency } from "@/lib/generations.functions";
-import { agencySignature, EMPTY_AGENCY, hasAgencyDetails, type AgencyDetails } from "@/lib/clipboard";
+import {
+  agencySignature,
+  EMPTY_AGENCY,
+  hasAgencyDetails,
+  type AgencyDetails,
+} from "@/lib/clipboard";
 
 export const Route = createFileRoute("/_authenticated/account")({
   head: () => ({
-    meta: [{ title: `Account — ${APP_NAME}` }, { name: "description", content: "Your Quill account, agency details and subscription." }, { property: "og:title", content: `Account — ${APP_NAME}` }, { property: "og:description", content: "Your Quill account, agency details and subscription." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex, nofollow" }],
+    meta: [
+      { title: `Account — ${APP_NAME}` },
+      { name: "description", content: "Your Quill account, agency details and subscription." },
+      { property: "og:title", content: `Account — ${APP_NAME}` },
+      {
+        property: "og:description",
+        content: "Your Quill account, agency details and subscription.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: AccountPage,
 });
@@ -67,7 +83,12 @@ function AccountPage() {
   const [activation, setActivation] = useState<null | "activating" | "active" | "pending">(null);
   const pollStarted = useRef(false);
 
-  const { data: sub, isLoading, isError, refetch } = useQuery({ queryKey: ["subscription"], queryFn: () => subFn() });
+  const {
+    data: sub,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({ queryKey: ["subscription"], queryFn: () => subFn() });
 
   // Post-checkout return: verify the session server-side and poll the DB until
   // the webhook activates the subscription. Access is driven by the DB, never
@@ -118,9 +139,10 @@ function AccountPage() {
   async function cancel() {
     setBusy(true);
     try {
-      await cancelFn();
+      const updated = await cancelFn();
       await qc.invalidateQueries({ queryKey: ["subscription"] });
-      toast.success("Subscription will end at the period close.");
+      if (updated.cancelAtPeriodEnd) toast.success("Subscription will end at the period close.");
+      else toast("Billing state refreshed. Check your latest subscription status.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not cancel.");
     } finally {
@@ -131,9 +153,10 @@ function AccountPage() {
   async function resume() {
     setBusy(true);
     try {
-      await resumeFn();
+      const updated = await resumeFn();
       await qc.invalidateQueries({ queryKey: ["subscription"] });
-      toast.success("Subscription resumed.");
+      if (!updated.cancelAtPeriodEnd) toast.success("Subscription resumed.");
+      else toast("Billing state refreshed. Check your latest subscription status.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not resume.");
     } finally {
@@ -162,37 +185,65 @@ function AccountPage() {
       )}
       {activation === "pending" && (
         <div className="mt-6 rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 text-sm text-amber-700">
-          We could not confirm checkout yet. Refresh in a moment or contact support before trying again.
+          We could not confirm checkout yet. Refresh in a moment or contact support before trying
+          again.
         </div>
       )}
 
       <Card className="mt-8 p-7">
         <div className="flex items-center justify-between">
           <h2 className="font-display text-xl font-semibold">Subscription</h2>
-          <Badge variant={hasAccess ? "default" : "secondary"}>{STATUS_LABELS[status] ?? status}</Badge>
+          <Badge variant={hasAccess ? "default" : "secondary"}>
+            {STATUS_LABELS[status] ?? status}
+          </Badge>
         </div>
 
         {isLoading ? (
           <p className="mt-6 text-sm text-muted-foreground">Loading…</p>
         ) : isError ? (
-          <div className="mt-6" role="alert"><p className="text-sm text-destructive">Could not load your subscription.</p><Button className="mt-3" variant="outline" onClick={() => refetch()}>Retry</Button></div>
+          <div className="mt-6" role="alert">
+            <p className="text-sm text-destructive">Could not load your subscription.</p>
+            <Button className="mt-3" variant="outline" onClick={() => refetch()}>
+              Retry
+            </Button>
+          </div>
         ) : inactive ? (
           <div className="mt-6">
             <p className="text-sm text-muted-foreground">
-              {sub?.canCancel ? "Generation is paused. Manage your existing subscription to update payment details or cancel; do not start another subscription." : `Start your ${TRIAL_DAYS}-day free trial to unlock listing generation. Card required; ${planPriceDisplay("starter")}/month after the Starter trial — cancel anytime.`}
+              {sub?.canCancel
+                ? "Generation is paused. Manage your existing subscription to update payment details or cancel; do not start another subscription."
+                : `Start your ${TRIAL_DAYS}-day free trial to unlock listing generation. Card required; ${planPriceDisplay("starter")}/month after the Starter trial — cancel anytime.`}
             </p>
             <Button asChild className="mt-5" size="lg">
               <a href="/subscription">
-                <CreditCard className="mr-2 h-4 w-4" /> {sub?.canCancel ? "View subscription" : "Choose a plan & start free trial"}
+                <CreditCard className="mr-2 h-4 w-4" />{" "}
+                {sub?.canCancel ? "View subscription" : "Choose a plan & start free trial"}
               </a>
             </Button>
-            {(sub?.canCancel || sub?.canManageBilling) && <Button asChild variant="outline" className="mt-3"><a href="/subscription">Manage billing or cancel subscription</a></Button>}
+            {(sub?.canCancel || sub?.canManageBilling) && (
+              <Button asChild variant="outline" className="mt-3">
+                <a href="/subscription">Manage billing or cancel subscription</a>
+              </Button>
+            )}
           </div>
         ) : (
           <div className="mt-6 space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Info label="Plan" value={`${plan.name} — ${planPriceDisplay(plan.id)} / month`} />
-              <Info label="Listings" value={`${plan.monthlyListings} per month`} />
+              <Info label="Plan" value={plan.name} />
+              <Info
+                label="Subscription price"
+                value={
+                  sub?.isComped
+                    ? "Complimentary"
+                    : sub?.billingPriceDisplay
+                      ? `${sub.billingPriceDisplay} / month`
+                      : "See Manage billing"
+                }
+              />
+              <Info
+                label="Listing packs"
+                value={sub?.isComped ? "Unlimited" : `${plan.monthlyListings} per calendar month`}
+              />
 
               {status === "trialing" ? (
                 <Info label="Trial ends" value={fmtDate(sub?.trialEnd ?? null)} />
@@ -207,7 +258,8 @@ function AccountPage() {
             {sub?.cancelAtPeriodEnd ? (
               <div className="rounded-lg border border-border/70 bg-muted/30 p-4">
                 <p className="text-sm text-muted-foreground">
-                  Your subscription is set to cancel. You'll keep access until {fmtDate(sub?.currentPeriodEnd ?? null)}.
+                  Your subscription is set to cancel. You'll keep access until{" "}
+                  {fmtDate(sub?.currentPeriodEnd ?? null)}.
                 </p>
                 <Button className="mt-3" variant="outline" onClick={resume} disabled={busy}>
                   Resume subscription
@@ -231,8 +283,8 @@ function AccountPage() {
                     <AlertDialogTitle>Cancel your subscription?</AlertDialogTitle>
                     <AlertDialogDescription>
                       You'll keep access until the end of your current billing period
-                      {sub?.currentPeriodEnd ? ` (${fmtDate(sub.currentPeriodEnd)})` : ""}. You can resume anytime
-                      before then.
+                      {sub?.currentPeriodEnd ? ` (${fmtDate(sub.currentPeriodEnd)})` : ""}. You can
+                      resume anytime before then.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -333,8 +385,8 @@ function AgencyDetailsCard() {
         <h2 className="font-display text-xl font-semibold">Agency details</h2>
       </div>
       <p className="mt-2 text-sm text-muted-foreground">
-        Save these once. Quill adds them as your sign-off when you copy an Email Blast, the full pack or a seller
-        approval email. They never go into portal copy.
+        Save these once. Quill adds them as your sign-off when you copy an Email Blast, the full
+        pack or a seller approval email. They never go into portal copy.
       </p>
 
       {isLoading ? (
@@ -373,8 +425,12 @@ function AgencyDetailsCard() {
 
           {hasAgencyDetails(form) && (
             <div className="rounded-lg border border-dashed border-border/70 bg-muted/30 p-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Sign-off preview</p>
-              <pre className="mt-1.5 whitespace-pre-wrap break-words font-sans text-sm">{agencySignature(form)}</pre>
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Sign-off preview
+              </p>
+              <pre className="mt-1.5 whitespace-pre-wrap break-words font-sans text-sm">
+                {agencySignature(form)}
+              </pre>
             </div>
           )}
 

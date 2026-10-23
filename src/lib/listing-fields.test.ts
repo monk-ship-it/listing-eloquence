@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { applyDictation, FIELD_DEFS, fieldRows } from "./listing-fields";
+import { applyDictation, councilTaxOptions, FIELD_DEFS, fieldRows } from "./listing-fields";
+import { EMPTY_INPUT } from "./listing-types";
 
 describe("applyDictation", () => {
   it("replaces single values", () => {
@@ -18,6 +19,22 @@ describe("applyDictation", () => {
 });
 
 describe("FIELD_DEFS", () => {
+  it("offers Band I only for Wales and keeps nation fields in form/extraction", () => {
+    expect(councilTaxOptions({ ...EMPTY_INPUT, propertyNation: "England" })).not.toContain("I");
+    expect(councilTaxOptions({ ...EMPTY_INPUT, propertyNation: "Wales" })).toContain("I");
+    expect(
+      FIELD_DEFS.find((d) => d.key === "domesticRates")?.showIf?.({
+        ...EMPTY_INPUT,
+        propertyNation: "Northern Ireland",
+      }),
+    ).toBe(true);
+    expect(
+      FIELD_DEFS.find((d) => d.key === "homeReportStatus")?.showIf?.({
+        ...EMPTY_INPUT,
+        propertyNation: "Scotland",
+      }),
+    ).toBe(true);
+  });
   it("has unique keys and groups rooms into one row", () => {
     const keys = FIELD_DEFS.map((d) => d.key);
     expect(new Set(keys).size).toBe(keys.length);

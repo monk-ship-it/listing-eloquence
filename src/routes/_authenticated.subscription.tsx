@@ -27,9 +27,25 @@ import {
   createCheckoutSession,
   type SubscriptionInfo,
 } from "@/lib/subscription.functions";
-import { APP_NAME, PLANS, getPlan, TRIAL_DAYS, CONTACT_EMAIL, planPriceDisplay, type PlanId } from "@/lib/config";
+import {
+  APP_NAME,
+  PLANS,
+  getPlan,
+  TRIAL_DAYS,
+  CONTACT_EMAIL,
+  planPriceDisplay,
+  type PlanId,
+} from "@/lib/config";
 import { useAuth } from "@/hooks/use-auth";
-import { CheckCircle2, XCircle, AlertTriangle, Crown, CreditCard, ArrowLeft, Clock } from "lucide-react";
+import {
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  Crown,
+  CreditCard,
+  ArrowLeft,
+  Clock,
+} from "lucide-react";
 
 const VALID_PLANS: PlanId[] = ["starter", "pro", "growth"];
 
@@ -42,7 +58,15 @@ export const Route = createFileRoute("/_authenticated/subscription")({
     return out;
   },
   head: () => ({
-    meta: [{ title: `Subscription — ${APP_NAME}` }, { name: "description", content: "Manage your Quill plan, cancellation and billing." }, { property: "og:title", content: `Subscription — ${APP_NAME}` }, { property: "og:description", content: "Manage your Quill plan, cancellation and billing." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex, nofollow" }],
+    meta: [
+      { title: `Subscription — ${APP_NAME}` },
+      { name: "description", content: "Manage your Quill plan, cancellation and billing." },
+      { property: "og:title", content: `Subscription — ${APP_NAME}` },
+      { property: "og:description", content: "Manage your Quill plan, cancellation and billing." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: SubscriptionPage,
 });
@@ -108,7 +132,12 @@ function SubscriptionPage() {
   const checkoutFn = useServerFn(createCheckoutSession);
   const subFn = useServerFn(getMySubscription);
   const usageFn = useServerFn(getMyUsage);
-  const { data: sub, isLoading, isError, refetch } = useQuery({
+  const {
+    data: sub,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["subscription"],
     queryFn: () => subFn(),
   });
@@ -123,8 +152,9 @@ function SubscriptionPage() {
   const [resumeBusy, setResumeBusy] = useState(false);
   const [checkoutBusy, setCheckoutBusy] = useState<string | null>(null);
 
-  function applySub(updated: SubscriptionInfo) {
+  async function applySub(updated: SubscriptionInfo) {
     // Reflect the change immediately in the UI, then revalidate from the server.
+    await queryClient.cancelQueries({ queryKey: ["subscription"] });
     queryClient.setQueryData(["subscription"], updated);
     queryClient.invalidateQueries({ queryKey: ["subscription"] });
     queryClient.invalidateQueries({ queryKey: ["usage"] });
@@ -134,8 +164,10 @@ function SubscriptionPage() {
     setCancelBusy(true);
     try {
       const updated = await cancelFn();
-      applySub(updated);
-      toast.success("Subscription set to cancel at the end of your billing period.");
+      await applySub(updated);
+      if (updated.cancelAtPeriodEnd)
+        toast.success("Subscription set to cancel at the end of your billing period.");
+      else toast("Billing state refreshed. Check your latest subscription status below.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not cancel subscription.");
     } finally {
@@ -147,8 +179,10 @@ function SubscriptionPage() {
     setResumeBusy(true);
     try {
       const updated = await resumeFn();
-      applySub(updated);
-      toast.success("Subscription resumed — it will renew automatically.");
+      await applySub(updated);
+      if (!updated.cancelAtPeriodEnd)
+        toast.success("Subscription resumed — it will renew automatically.");
+      else toast("Billing state refreshed. Check your latest subscription status below.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not resume subscription.");
     } finally {
@@ -210,7 +244,9 @@ function SubscriptionPage() {
       window.history.replaceState(window.history.state, "", "/subscription");
       window.location.href = url;
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not start checkout. Please try again.");
+      toast.error(
+        err instanceof Error ? err.message : "Could not start checkout. Please try again.",
+      );
       setCheckoutBusy(null);
     }
   }
@@ -244,8 +280,12 @@ function SubscriptionPage() {
         <p className="mt-8 text-sm text-muted-foreground">Loading…</p>
       ) : isError ? (
         <div className="mt-8" role="alert">
-          <p className="text-sm text-destructive">Could not load your subscription. Please try again before starting checkout.</p>
-          <Button className="mt-4" variant="outline" onClick={() => refetch()}>Retry</Button>
+          <p className="text-sm text-destructive">
+            Could not load your subscription. Please try again before starting checkout.
+          </p>
+          <Button className="mt-4" variant="outline" onClick={() => refetch()}>
+            Retry
+          </Button>
         </div>
       ) : (
         <div className="mt-8 space-y-6">
@@ -267,10 +307,12 @@ function SubscriptionPage() {
                   {sub?.isComped
                     ? "Complimentary access — no billing"
                     : hasAccess && status === "trialing"
-                        ? `Free trial — ends ${fmtDate(sub?.trialEnd ?? null)}`
-                        : hasAccess
-                          ? `Full access — ${status === "active" && sub?.cancelAtPeriodEnd ? "cancelling at period end" : "renewing automatically"}`
-                          : sub?.canCancel ? "Manage your existing subscription below" : "Subscribe to restore access"}
+                      ? `Free trial — ends ${fmtDate(sub?.trialEnd ?? null)}`
+                      : hasAccess
+                        ? `Full access — ${status === "active" && sub?.cancelAtPeriodEnd ? "cancelling at period end" : "renewing automatically"}`
+                        : sub?.canCancel
+                          ? "Manage your existing subscription below"
+                          : "Subscribe to restore access"}
                 </p>
               </div>
             </div>
@@ -301,7 +343,19 @@ function SubscriptionPage() {
                 />
               )}
               {!sub?.isComped && (
-                <Row label="Plan" value={`${currentPlan.name} — ${planPriceDisplay(currentPlan.id)} / month`} />
+                <>
+                  <Row label="Plan" value={currentPlan.name} />
+                  <Row
+                    label="Subscription price"
+                    value={
+                      isComped
+                        ? "Complimentary"
+                        : sub?.billingPriceDisplay
+                          ? `${sub.billingPriceDisplay} / month`
+                          : "See Manage billing"
+                    }
+                  />
+                </>
               )}
               {!sub?.isComped && usage && (
                 <Row
@@ -309,7 +363,9 @@ function SubscriptionPage() {
                   value={
                     <span className="text-sm">
                       {usage.used} of {usage.limit} used
-                      <span className="ml-2 text-xs text-muted-foreground">(renews {fmtDate(usage.resetsOn)})</span>
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        (renews {fmtDate(usage.resetsOn)})
+                      </span>
                     </span>
                   }
                 />
@@ -321,7 +377,9 @@ function SubscriptionPage() {
                     <span className="text-sm">
                       {fmtDate(sub?.trialEnd ?? null)}
                       {remaining !== null && (
-                        <span className="ml-2 text-xs text-muted-foreground">({remaining} days left)</span>
+                        <span className="ml-2 text-xs text-muted-foreground">
+                          ({remaining} days left)
+                        </span>
                       )}
                     </span>
                   }
@@ -329,19 +387,32 @@ function SubscriptionPage() {
               )}
               {status !== "trialing" && (
                 <Row
-                  label={status === "canceled" ? "Access ended" : status === "none" ? "Billing period" : sub?.cancelAtPeriodEnd ? "Access until" : "Next billing date"}
+                  label={
+                    status === "canceled"
+                      ? "Access ended"
+                      : status === "none"
+                        ? "Billing period"
+                        : sub?.cancelAtPeriodEnd
+                          ? "Access until"
+                          : "Next billing date"
+                  }
                   value={
                     <span className="text-sm">
                       {fmtDate(sub?.currentPeriodEnd ?? null)}
                       {remaining !== null && status !== "none" && status !== "canceled" && (
-                        <span className="ml-2 text-xs text-muted-foreground">({remaining} days left)</span>
+                        <span className="ml-2 text-xs text-muted-foreground">
+                          ({remaining} days left)
+                        </span>
                       )}
                     </span>
                   }
                 />
               )}
               {(rawStatus === "past_due" || rawStatus === "unpaid") && (
-                <Row label="Payment" value="Generation is paused. Update your payment method or cancel below." />
+                <Row
+                  label="Payment"
+                  value="Generation is paused. Update your payment method or cancel below."
+                />
               )}
               {sub?.cancelAtPeriodEnd && status !== "none" && (
                 <Row
@@ -359,10 +430,13 @@ function SubscriptionPage() {
           {/* Plans */}
           {!sub?.isComped && (
             <Card className="p-6">
-              <h2 className="font-display text-lg font-semibold">{hasAccess ? "Your plan" : "Choose a plan"}</h2>
+              <h2 className="font-display text-lg font-semibold">
+                {hasAccess ? "Your plan" : "Choose a plan"}
+              </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Listings renew at the start of each month. Eligible first-time customers receive a {TRIAL_DAYS}-day Starter trial.
-                Card required; checkout confirms any trial and renewal price. Cancel anytime before renewal.
+                Listings renew at the start of each month. Eligible first-time customers receive a{" "}
+                {TRIAL_DAYS}-day Starter trial. Card required; checkout confirms any trial and
+                renewal price. No VAT is charged. Cancel anytime before renewal.
               </p>
               {hasAccess && (
                 <p className="mt-2 text-sm text-muted-foreground">
@@ -395,7 +469,9 @@ function SubscriptionPage() {
 
                         <span className="text-xs font-normal text-muted-foreground">/mo</span>
                       </p>
-                      <p className="mt-1 text-xs text-primary">{plan.monthlyListings} listings / month</p>
+                      <p className="mt-1 text-xs text-primary">
+                        {plan.monthlyListings} listings / month
+                      </p>
                       {hasAccess || sub?.canCancel ? (
                         isCurrent ? (
                           <Button className="mt-4 w-full" size="sm" variant="outline" disabled>
@@ -404,7 +480,9 @@ function SubscriptionPage() {
                           </Button>
                         ) : (
                           <Button className="mt-4 w-full" size="sm" variant="outline" asChild>
-                            <a href={`mailto:${CONTACT_EMAIL}?subject=Change%20to%20${plan.name}%20plan`}>
+                            <a
+                              href={`mailto:${CONTACT_EMAIL}?subject=Change%20to%20${plan.name}%20plan`}
+                            >
                               Contact support
                             </a>
                           </Button>
@@ -436,43 +514,53 @@ function SubscriptionPage() {
                   ? `Your subscription is set to cancel — access ends ${fmtDate(sub?.currentPeriodEnd ?? null)}. You can resume any time before then.`
                   : hasAccess
                     ? `Cancel any time. Paid access continues until ${fmtDate(sub?.currentPeriodEnd ?? null)}; after that your subscription will not renew.`
-                    : sub?.canCancel ? "You can still cancel while generation is paused. Cancellation stops renewal; it does not settle outstanding invoices." : "Your subscription has ended. You can still manage invoices and payment details."}
+                    : sub?.canCancel
+                      ? "You can still cancel while generation is paused. Cancellation stops renewal; it does not settle outstanding invoices."
+                      : "Your subscription has ended. You can still manage invoices and payment details."}
               </p>
 
               <div className="mt-4 flex flex-wrap gap-3">
-                {sub?.canCancel && (sub?.cancelAtPeriodEnd ? (
-                  <Button onClick={resumeSubscription} disabled={resumeBusy}>
-                    <CheckCircle2 className="mr-2 h-4 w-4" />
-                    {resumeBusy ? "Resuming…" : "Resume subscription"}
-                  </Button>
-                ) : (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="destructive" disabled={cancelBusy}>
-                        <XCircle className="mr-2 h-4 w-4" />
-                        {cancelBusy ? "Cancelling…" : "Cancel subscription"}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Cancel your subscription?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          {hasAccess ? `Paid access continues until ${fmtDate(sub?.currentPeriodEnd ?? null)}. ` : "Generation is already paused. "}After that your
-                          subscription won't renew. You can resume any time before then.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Keep subscription</AlertDialogCancel>
-                        <AlertDialogAction onClick={cancelSubscription}>Cancel subscription</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                ))}
+                {sub?.canCancel &&
+                  (sub?.cancelAtPeriodEnd ? (
+                    <Button onClick={resumeSubscription} disabled={resumeBusy}>
+                      <CheckCircle2 className="mr-2 h-4 w-4" />
+                      {resumeBusy ? "Resuming…" : "Resume subscription"}
+                    </Button>
+                  ) : (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" disabled={cancelBusy}>
+                          <XCircle className="mr-2 h-4 w-4" />
+                          {cancelBusy ? "Cancelling…" : "Cancel subscription"}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Cancel your subscription?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {hasAccess
+                              ? `Paid access continues until ${fmtDate(sub?.currentPeriodEnd ?? null)}. `
+                              : "Generation is already paused. "}
+                            After that your subscription won't renew. You can resume any time before
+                            then.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Keep subscription</AlertDialogCancel>
+                          <AlertDialogAction onClick={cancelSubscription}>
+                            Cancel subscription
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  ))}
 
-                {sub?.canManageBilling && <Button variant="outline" disabled={portalLoading} onClick={openBillingPortal}>
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  {portalLoading ? "Opening…" : "Manage billing & invoices"}
-                </Button>}
+                {sub?.canManageBilling && (
+                  <Button variant="outline" disabled={portalLoading} onClick={openBillingPortal}>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    {portalLoading ? "Opening…" : "Manage billing & invoices"}
+                  </Button>
+                )}
               </div>
             </Card>
           )}

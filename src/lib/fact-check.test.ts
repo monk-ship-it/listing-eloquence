@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { checkText, factCheckPack, keyFeatureCaveatFlags, privateLeakFlags, publicInputsToText } from "./fact-check";
+import {
+  checkText,
+  factCheckPack,
+  keyFeatureCaveatFlags,
+  privateLeakFlags,
+  publicInputsToText,
+  publicVoiceNotes,
+} from "./fact-check";
 
 const inputs =
   "Four bed semi on Brenzett Close, Chatham. Guide price 350,000. Living room 5.20m x 4.10m. Victorian fireplace.";
@@ -85,24 +92,112 @@ describe("price abbreviations", () => {
 });
 
 describe("exported facts and privacy", () => {
+  it("does not let raw dictation authorise a duplicated private access code", () => {
+    const input = {
+      voiceNotes: "Two bedrooms. Lockbox code 4931 behind the shed.",
+      showingNotes: "Lockbox code 4931 behind the shed",
+      bedrooms: "2",
+    };
+    expect(
+      privateLeakFlags({ listing: "Use lockbox code 4931 behind the shed." }, input).some(
+        (f) => f.kind === "private-leak",
+      ),
+    ).toBe(true);
+    expect(publicInputsToText(input)).not.toContain("4931");
+    expect(publicVoiceNotes(input.voiceNotes)).toContain("Two bedrooms");
+  });
+  it("flags raw-only and misplaced public access instructions", () => {
+    for (const input of [
+      { voiceNotes: "Key safe code 4931." },
+      { keyFeatures: "Lockbox code 4931", showingNotes: "Lockbox code 4931" },
+      {},
+    ])
+      expect(
+        privateLeakFlags(
+          { social: [{ platform: "X", caption: "Lockbox code 4931", hashtags: [] }] },
+          input,
+        ).some((f) => f.kind === "private-leak"),
+      ).toBe(true);
+  });
+  it.each(["Key-safe code 4931.", "Access PIN is 4931.", "Code: 4931."])(
+    "withholds and flags access-code variants: %s",
+    (notes) => {
+      expect(publicVoiceNotes(notes)).toBe("");
+      expect(
+        privateLeakFlags({ listing: notes }, { voiceNotes: notes }).some(
+          (f) => f.kind === "private-leak",
+        ),
+      ).toBe(true);
+    },
+  );
+  it("keeps an ordinary feature that legitimately appears in public and private fields", () => {
+    expect(
+      privateLeakFlags(
+        { listing: "Single garage." },
+        {
+          parking: "Single garage",
+          showingNotes: "Garage keys in lockbox 4931",
+          voiceNotes: "Garage keys in lockbox 4931",
+        },
+      ),
+    ).toEqual([]);
+  });
   it("checks personal messages for private access instructions", () => {
-    expect(privateLeakFlags({ emailBlast: { personalMessage: "The keysafe code is 9876." } }, { showingNotes: "keysafe code 9876", bedrooms: "2" }).some(f => f.kind === "private-leak")).toBe(true);
+    expect(
+      privateLeakFlags(
+        { emailBlast: { personalMessage: "The keysafe code is 9876." } },
+        { showingNotes: "keysafe code 9876", bedrooms: "2" },
+      ).some((f) => f.kind === "private-leak"),
+    ).toBe(true);
   });
   it("checks every additional exported marketing field for private leaks", () => {
-    for (const pack of [{ emailBlast: { callToAction: "Use keysafe 9876" } }, { sellerEmail: { subject: "Use keysafe 9876" } }, { social: [{ platform: "X", caption: "View today", hashtags: ["keysafe 9876"] }] }]) {
-      expect(privateLeakFlags(pack, { showingNotes: "keysafe code 9876", bedrooms: "2" }).some(f => f.kind === "private-leak")).toBe(true);
+    for (const pack of [
+      { emailBlast: { callToAction: "Use keysafe 9876" } },
+      { sellerEmail: { subject: "Use keysafe 9876" } },
+      { social: [{ platform: "X", caption: "View today", hashtags: ["keysafe 9876"] }] },
+    ]) {
+      expect(
+        privateLeakFlags(pack, { showingNotes: "keysafe code 9876", bedrooms: "2" }).some(
+          (f) => f.kind === "private-leak",
+        ),
+      ).toBe(true);
     }
   });
   it("checks personal message, CTA and seller subject for unsupported facts", () => {
-    for (const pack of [{ emailBlast: { personalMessage: "Three bedrooms." } }, { emailBlast: { callToAction: "View three bedrooms" } }, { sellerEmail: { subject: "Three bedrooms" } }]) expect(factCheckPack(pack, "Two bedrooms, three bathrooms").some(f => f.rule === "room-count")).toBe(true);
+    for (const pack of [
+      { emailBlast: { personalMessage: "Three bedrooms." } },
+      { emailBlast: { callToAction: "View three bedrooms" } },
+      { sellerEmail: { subject: "Three bedrooms" } },
+    ])
+      expect(
+        factCheckPack(pack, "Two bedrooms, three bathrooms").some((f) => f.rule === "room-count"),
+      ).toBe(true);
   });
   it("does not pool bedroom and bathroom counts", () => {
     const facts = publicInputsToText({ bedrooms: "2", bathrooms: "3", price: "325000" });
-    expect(factCheckPack({ listing: "Three bedrooms and two bathrooms." }, facts).filter(f => f.rule === "room-count")).toHaveLength(2);
-    expect(factCheckPack({ listing: "Two bedrooms and three bathrooms." }, facts).filter(f => f.rule === "room-count")).toEqual([]);
+    expect(
+      factCheckPack({ listing: "Three bedrooms and two bathrooms." }, facts).filter(
+        (f) => f.rule === "room-count",
+      ),
+    ).toHaveLength(2);
+    expect(
+      factCheckPack({ listing: "Two bedrooms and three bathrooms." }, facts).filter(
+        (f) => f.rule === "room-count",
+      ),
+    ).toEqual([]);
   });
   it("rejects ground-floor room attribution for a first/second floor maisonette", () => {
-    expect(checkText("The kitchen is on the ground floor.", "description", "Maisonette on first and second floors. Kitchen 3.00m x 2.00m.").some(f => f.rule === "floor-position")).toBe(true);
-    expect(checkText("Ground-floor kitchen.", "description", "Ground-floor kitchen.").filter(f => f.rule === "floor-position")).toEqual([]);
+    expect(
+      checkText(
+        "The kitchen is on the ground floor.",
+        "description",
+        "Maisonette on first and second floors. Kitchen 3.00m x 2.00m.",
+      ).some((f) => f.rule === "floor-position"),
+    ).toBe(true);
+    expect(
+      checkText("Ground-floor kitchen.", "description", "Ground-floor kitchen.").filter(
+        (f) => f.rule === "floor-position",
+      ),
+    ).toEqual([]);
   });
 });

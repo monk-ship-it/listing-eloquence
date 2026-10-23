@@ -1,6 +1,10 @@
 {
   "type": "object",
   "properties": {
+    "propertyNation": {
+      "type": "string",
+      "description": "Property nation One of: England | Wales | Scotland | Northern Ireland. Only when explicitly stated; never infer the nation from the address or town."
+    },
     "address": {
       "type": "string",
       "description": "Address / location"
@@ -31,7 +35,7 @@
     },
     "tenure": {
       "type": "string",
-      "description": "Tenure One of: Freehold | Leasehold | Share of freehold | Commonhold."
+      "description": "Tenure / ownership One of: Freehold | Leasehold | Share of freehold | Commonhold."
     },
     "chainStatus": {
       "type": "string",
@@ -145,13 +149,33 @@
       "type": "string",
       "description": "Council Tax band One of: A | B | C | D | E | F | G | H | I | Exempt | Not yet banded."
     },
+    "domesticRates": {
+      "type": "string",
+      "description": "Domestic rates (£ per year)"
+    },
+    "domesticRatesYear": {
+      "type": "string",
+      "description": "Rates year"
+    },
+    "homeReportStatus": {
+      "type": "string",
+      "description": "Home Report status One of: Available | Awaiting | Exemption claimed | Exemption confirmed by agent."
+    },
+    "homeReportDetails": {
+      "type": "string",
+      "description": "Home Report date / reference or exemption reason"
+    },
     "localAuthority": {
       "type": "string",
       "description": "Local authority"
     },
     "epc": {
       "type": "string",
-      "description": "EPC rating One of: A | B | C | D | E | F | G | Exempt | Commissioned."
+      "description": "EPC rating or status One of: A | B | C | D | E | F | G | Exempt | Commissioned."
+    },
+    "epcExemptionReason": {
+      "type": "string",
+      "description": "Claimed EPC exemption — reason / evidence"
     },
     "epcPredicted": {
       "type": "string",
@@ -257,6 +281,10 @@
       "type": "object",
       "description": "Verbatim quote from the notes supporting each returned field",
       "properties": {
+        "propertyNation": {
+          "type": "string",
+          "maxLength": 80
+        },
         "address": {
           "type": "string",
           "maxLength": 80
@@ -401,11 +429,31 @@
           "type": "string",
           "maxLength": 80
         },
+        "domesticRates": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "domesticRatesYear": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "homeReportStatus": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "homeReportDetails": {
+          "type": "string",
+          "maxLength": 80
+        },
         "localAuthority": {
           "type": "string",
           "maxLength": 80
         },
         "epc": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "epcExemptionReason": {
           "type": "string",
           "maxLength": 80
         },

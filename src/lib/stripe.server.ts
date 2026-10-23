@@ -10,7 +10,7 @@ function getKey(): string {
 
 export const STRIPE_TIMEOUT_MS = 15_000;
 export const STRIPE_RETRYABLE_MESSAGE =
-  "Billing is temporarily unavailable. Nothing was changed on your side — please try again in a minute.";
+  "We could not confirm the billing request. Check your subscription or Manage billing before trying again; the change may already have been applied.";
 
 /** Network, timeout, rate-limit or 5xx failure: safe to retry, shown with a friendly message. */
 export class StripeRetryableError extends Error {
@@ -44,7 +44,9 @@ async function stripeRequest(
         signal: AbortSignal.timeout(STRIPE_TIMEOUT_MS),
       });
     } catch {
-      console.error(`[stripe] ${method} ${path.split("?")[0].split("/").slice(0, 2).join("/")} network/timeout failure`);
+      console.error(
+        `[stripe] ${method} ${path.split("?")[0].split("/").slice(0, 2).join("/")} network/timeout failure`,
+      );
       if (attempt < attempts) continue;
       throw new StripeRetryableError();
     }
@@ -113,6 +115,7 @@ export async function createSubscriptionCheckoutSession(params: CheckoutParams) 
     "subscription_data[metadata][currency]": "gbp",
     allow_promotion_codes: "true",
     payment_method_collection: "always",
+    "automatic_tax[enabled]": "false",
     ...(params.expiresAt ? { expires_at: String(params.expiresAt) } : {}),
   };
 
@@ -144,5 +147,8 @@ export function createBillingPortalSession(customerId: string, returnUrl: string
 }
 
 export function getCustomerSubscriptions(customerId: string) {
-  return stripeRequest(`/subscriptions?customer=${encodeURIComponent(customerId)}&status=all&limit=100`, "GET");
+  return stripeRequest(
+    `/subscriptions?customer=${encodeURIComponent(customerId)}&status=all&limit=100`,
+    "GET",
+  );
 }

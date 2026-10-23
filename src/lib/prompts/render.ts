@@ -9,6 +9,7 @@ import { VOICE_PROMPTS, VOICES, type VoiceId } from "../voices";
 import { FIELD_BY_KEY, FIELD_DEFS } from "../listing-fields";
 import { buildMaterialInfoBlock, checkMaterialInfo, summariseChecks } from "../material-info";
 import { addImperial } from "../measurements";
+import { publicVoiceNotes } from "../fact-check";
 
 /** Max characters accepted per free-text field to keep payloads sane. */
 const MAX_FIELD_LEN = 4000;
@@ -47,7 +48,7 @@ export function normaliseInput(input: ListingInput): ListingInput {
       FIELD_BY_KEY[k]?.label ?? k,
     );
   }
-  out.sellerApproved = input.sellerApproved === true;
+  out.sellerApproved = false;
   return out;
 }
 
@@ -97,7 +98,7 @@ export function renderMaterialInfo(input: ListingInput): string {
 export function renderPrivateNotes(input: ListingInput): string {
   const { privateNotes } = walkFields(input);
   return privateNotes
-    ? `\nPRIVATE NOTES (never quote or use in any output; the app adds any image label itself):\n${privateNotes}`
+    ? "\nPRIVATE NOTES: withheld from generation. The app adds any image labels separately.\n"
     : "";
 }
 
@@ -108,14 +109,15 @@ export function privateNotesLines(input: ListingInput): string {
 
 /** {{VOICE_NOTES}} — the dictated notes with their header, or "". */
 export function renderVoiceNotes(input: ListingInput): string {
-  return input.voiceNotes?.trim()
-    ? `\nAGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):\n${input.voiceNotes.trim()}\n`
+  const notes = publicVoiceNotes(input.voiceNotes ?? "").trim();
+  return notes
+    ? `\nAGENT VOICE NOTES (access instructions removed — supplementary context only):\n${notes}\n`
     : "";
 }
 
 /** {{SELLER_APPROVAL}} */
 export function renderSellerApproval(input: ListingInput): string {
-  return input.sellerApproved ? "confirmed" : "NOT confirmed";
+  return "NOT confirmed — approval must be recorded against the generated wording";
 }
 
 /**

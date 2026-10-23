@@ -6,11 +6,13 @@ STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 MATERIAL INFORMATION (verbatim facts — state these accurately; never contradict or soften):
 (none supplied)
 
-AGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):
-Three bed semi on Maple Drive, Gillingham, freehold, guide price two seventy five, new kitchen two years ago, south-facing garden about thirty metres, garage at the back. Vendor says the boiler was replaced in 2022. Council tax C I think.
+AGENT VOICE NOTES (access instructions removed — supplementary context only):
+Three bed semi on Maple Drive, Gillingham, freehold, guide price two seventy five, new kitchen two years ago, south-facing garden about thirty metres, garage at the back.
+Vendor says the boiler was replaced in 2022.
+Council tax C I think.
 
 Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never take a material-information figure from the voice notes.
-Seller approval of particulars: NOT confirmed (for the app only — never mention it in the copy).
+Seller approval of particulars: NOT confirmed — approval must be recorded against the generated wording (for the app only — never mention it in the copy).
 
 PRODUCE:
 - "headline": brochure / email headline, max 70 characters.

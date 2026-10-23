@@ -4,6 +4,13 @@ import type { MarketId } from "./config";
 export interface ListingInput {
   /** Always "uk". Optional; legacy rows may still carry "us". */
   market?: MarketId | "us";
+  /** Unconfirmed on legacy rows; never infer jurisdiction from the address. */
+  propertyNation?: string;
+  domesticRates?: string;
+  domesticRatesYear?: string;
+  homeReportStatus?: string;
+  homeReportDetails?: string;
+  epcExemptionReason?: string;
   voice: VoiceId;
   voiceNotes: string;
   address: string;
@@ -81,8 +88,15 @@ export interface ListingInput {
   showingNotes: string;
   /** Media / photo / floor-plan notes. */
   mediaNotes: string;
-  /** Seller has approved the particulars (TPO Code 7j). */
+  /** Legacy fact-level flag only. Never authorises approval of generated wording. */
   sellerApproved?: boolean;
+}
+
+export interface SellerApproval {
+  generationId: string;
+  approvedAt: string;
+  /** Exact canonical input/output revision approved by the seller. */
+  snapshot: string;
 }
 
 export interface SocialPost {
@@ -117,6 +131,9 @@ export interface SellerEmail {
 }
 
 export interface ListingOutput {
+  /** Server-issued content revision used for compact compare-and-set updates. */
+  revisionId?: string;
+  sellerApproval?: SellerApproval;
   headline: string;
   listing: string;
   summary: string;
@@ -539,8 +556,26 @@ export function coerceLegacyOutput(raw: unknown): ListingOutput {
     social,
     sellerEmail: coerceSellerEmail(r.sellerEmail),
     ...(r.marketingStatus === "failed" ? { marketingStatus: "failed" as const } : {}),
+    ...(typeof r.revisionId === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(r.revisionId)
+      ? { revisionId: r.revisionId }
+      : {}),
     ...(coerceMeta(r.meta) ? { meta: coerceMeta(r.meta)! } : {}),
+    ...(coerceSellerApproval(r.sellerApproval)
+      ? { sellerApproval: coerceSellerApproval(r.sellerApproval)! }
+      : {}),
   };
+}
+
+function coerceSellerApproval(raw: unknown): SellerApproval | null {
+  if (!raw || typeof raw !== "object") return null;
+  const a = raw as Record<string, unknown>;
+  return typeof a.generationId === "string" &&
+    typeof a.approvedAt === "string" &&
+    Number.isFinite(Date.parse(a.approvedAt)) &&
+    typeof a.snapshot === "string"
+    ? { generationId: a.generationId, approvedAt: a.approvedAt, snapshot: a.snapshot }
+    : null;
 }
 
 export interface AttemptMeta {
@@ -568,6 +603,12 @@ function coerceMeta(raw: unknown): GenerationMeta | null {
 
 export const EMPTY_INPUT: ListingInput = {
   market: "uk",
+  propertyNation: "",
+  domesticRates: "",
+  domesticRatesYear: "",
+  homeReportStatus: "",
+  homeReportDetails: "",
+  epcExemptionReason: "",
   voice: "professional",
   voiceNotes: "",
   address: "",
@@ -637,6 +678,7 @@ export const EMPTY_INPUT: ListingInput = {
 
 export const EXAMPLE_INPUT: ListingInput = {
   ...EMPTY_INPUT,
+  propertyNation: "England",
   voice: "heritage",
   voiceNotes:
     "This is the Old Rectory on Church Lane in Burford. Lovely characterful period rectory, Grade II listed, five bedrooms, three bathrooms, inglenook fireplace and flagstone floors. Walled garden about half an acre with an orchard. Guide price one point four five million, freehold.",
@@ -728,7 +770,7 @@ export function coerceLegacyInput(raw: unknown): ListingInput {
     if (typeof v === "string") out[k] = v;
   }
   if (typeof r.utilities === "string") out.utilities = r.utilities;
-  out.sellerApproved = r.sellerApproved === true;
+  out.sellerApproved = false;
   out.market = "uk";
   return out as unknown as ListingInput;
 }

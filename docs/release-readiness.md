@@ -171,3 +171,12 @@ Unresolved external checks: Stripe test-mode lifecycle (checkout, async payment,
 - Provider quota helper (`provider-quota.ts`) type-checks; new `provider-quota.test.ts` (6 tests) covers success, per-kind limit/byte/in-flight codes, fail-closed errors and non-throwing settle.
 - Results: `bun run test` 179/179 pass (17 files); `prompts:check` up to date (27 files); `tsgo --noEmit` clean.
 - Nothing published; no subscription or customer changes. Earlier blockers (legal identity/Privacy/Terms, Stripe test-mode lifecycle, hosted auth/email checks, final price IDs) remain open.
+
+## Source bundle sync (23 Oct 2026, ~18:40 UTC)
+- Bundle quill-source-sync-v1 (baseline 170f158): 74 files, all paths safe, all sha256 verified; 69 source/doc files written byte-exact. Migration SQL 0006/0007 applied through the managed migration tool and match the bundle byte-for-byte; journal/snapshot metadata and generated database types are tool-generated (timestamps/ids differ from bundle).
+- Database: 0005 confirmed live (provider_call_reservations, reserve/settle RPCs). 0006 replaced reserve_provider_call. 0007 installed update_subscriber_billing_version trigger and 8-argument apply_billing_event (new args default, so older callers still work). Subscriber rows: 7, unchanged.
+- Hosted compatibility fix: regenerated types reject explicit null for `_expected_updated_at`; billing-sync.server.ts now omits it instead (same SQL DEFAULT NULL).
+- Results: `bun run test` 254/254 (24 files); `prompts:export` updated docs/workbench/VERSION only; `prompts:check` up to date (27 files); `tsgo --noEmit` clean. Automatic preview build result and desktop/mobile smoke checks not yet confirmed this turn.
+- Operator facts (owner-confirmed): Domenico Monk, sole trader trading as CopyByMonk; domenico@copybymonk.com admin/support/privacy; not VAT registered; ICO registered (number not supplied); no business correspondence address. Privacy/Terms/refund drafts stay internal.
+- Not launch-ready. Blockers: correspondence address, ICO number, processor/retention decisions, public legal pages, Stripe test-mode lifecycle run, hosted auth/email delivery checks.
+- No publish, email, checkout or subscription change.

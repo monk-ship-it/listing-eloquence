@@ -450,8 +450,10 @@ export type Database = {
     Functions: {
       apply_billing_event: {
         Args: {
+          _check_version?: boolean
           _checkout: boolean
           _event_created: number
+          _expected_updated_at?: string
           _fields: Json
           _subscription_created: number
           _subscription_id: string

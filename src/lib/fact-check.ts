@@ -162,20 +162,36 @@ export function checkText(
     if (!hay.includes(phrase)) push(m[0], "not-in-notes", "storey");
   }
   // Counts are relational: a price, dimension or bathroom count never authorises bedrooms.
-  const countPattern = /\b(one|two|three|four|five|six|seven|eight|nine|ten|\d+)[- ]+(bed(?:room)?s?|bath(?:room)?s?)\b/gi;
-  const kind = (s: string) => /^bed/i.test(s) ? "bed" : "bath";
+  const countPattern =
+    /\b(one|two|three|four|five|six|seven|eight|nine|ten|\d+)[- ]+(bed(?:room)?s?|bath(?:room)?s?)\b/gi;
+  const kind = (s: string) => (/^bed/i.test(s) ? "bed" : "bath");
   const count = (s: string) => wordsToNumber(s.toLowerCase()) ?? Number(s);
   for (const m of text.matchAll(countPattern)) {
-    const matching = [...inputsText.matchAll(countPattern)].some(i => kind(i[2]) === kind(m[2]) && count(i[1]) === count(m[1]));
+    const matching = [...inputsText.matchAll(countPattern)].some(
+      (i) => kind(i[2]) === kind(m[2]) && count(i[1]) === count(m[1]),
+    );
     if (!matching) push(m[0], "not-in-notes", "room-count");
   }
   // A floor mention elsewhere does not justify attributing a room to that floor.
   for (const sentence of text.split(/[.!?\n]+/)) {
-    const floor = sentence.match(/\b(ground|first|second|third|fourth|basement|lower ground|upper ground)[- ]floor\b/i);
+    const floor = sentence.match(
+      /\b(ground|first|second|third|fourth|basement|lower ground|upper ground)[- ]floor\b/i,
+    );
     if (!floor) continue;
-    const rooms = sentence.match(/\b(?:kitchen|bedrooms?|bathrooms?|living room|dining room|reception room|lounge)\b/gi) ?? [];
+    const rooms =
+      sentence.match(
+        /\b(?:kitchen|bedrooms?|bathrooms?|living room|dining room|reception room|lounge)\b/gi,
+      ) ?? [];
     const suppliedClauses = inputsText.split(/[.!?\n]+/);
-    const supported = rooms.length ? rooms.every(room => suppliedClauses.some(clause => normaliseText(clause).includes(normaliseText(floor[0])) && normaliseText(clause).includes(normaliseText(room)))) : normaliseText(inputsText).includes(normaliseText(floor[0]));
+    const supported = rooms.length
+      ? rooms.every((room) =>
+          suppliedClauses.some(
+            (clause) =>
+              normaliseText(clause).includes(normaliseText(floor[0])) &&
+              normaliseText(clause).includes(normaliseText(room)),
+          ),
+        )
+      : normaliseText(inputsText).includes(normaliseText(floor[0]));
     if (!supported) push(sentence.trim(), "not-in-notes", "floor-position");
   }
   // era words
@@ -245,8 +261,10 @@ export function factCheckPack(pack: PackLike, inputsText: string): FactFlag[] {
     out.push(...checkText(e.personalMessage ?? "", "personal message", inputsText));
     out.push(...checkText(e.callToAction ?? "", "email CTA", inputsText));
   }
-  for (const p of pack.social ?? []) out.push(...checkText(`${p.caption} ${(p.hashtags ?? []).join(" ")}`, "social", inputsText));
-  if (pack.sellerEmail?.subject) out.push(...checkText(pack.sellerEmail.subject, "seller email subject", inputsText));
+  for (const p of pack.social ?? [])
+    out.push(...checkText(`${p.caption} ${(p.hashtags ?? []).join(" ")}`, "social", inputsText));
+  if (pack.sellerEmail?.subject)
+    out.push(...checkText(pack.sellerEmail.subject, "seller email subject", inputsText));
   if (pack.sellerEmail?.body) {
     // Placeholders like [Seller name] are fine; contact details aren't checked here.
     out.push(...checkText(pack.sellerEmail.body, "seller email", inputsText));
@@ -264,6 +282,26 @@ export function inputsToText(input: object): string {
 /** Keys that are private to the agent and must never appear in public copy. */
 export const PRIVATE_INPUT_KEYS = ["showingNotes", "mediaNotes"] as const;
 
+const PRIVATE_ACCESS =
+  /\b(?:lock[-\s]?box|key[-\s]?safe|alarm\s+(?:code|pin)|(?:access|door|entry|key)\s+(?:code|pin)|pin\s+code|(?:code|pin)\s*(?:(?:is|:)\s*)?\d{3,}|password|keys?\s+(?:(?:are|is)\s+)?(?:under|behind|inside)|seller\s+(?:will|would)\s+accept)\b/i;
+
+/** Raw dictation is not public evidence for access instructions, even before extraction. */
+function privateVoiceClauses(input: Record<string, unknown>): string {
+  return typeof input.voiceNotes === "string"
+    ? input.voiceNotes
+        .split(/(?<=[.!?])\s+|[\n;]/)
+        .filter((clause) => PRIVATE_ACCESS.test(clause))
+        .join("\n")
+    : "";
+}
+
+export function publicVoiceNotes(notes: string): string {
+  return notes
+    .split(/(?<=[.!?])\s+|[\n;]/)
+    .filter((clause) => !PRIVATE_ACCESS.test(clause))
+    .join("\n");
+}
+
 /**
  * Input text the copy may legitimately draw on — everything except the
  * private viewing / photo notes, so a private fact in the copy is flagged.
@@ -274,7 +312,15 @@ export function publicInputsToText(input: object): string {
     .filter(
       ([k, v]) => typeof v === "string" && !(PRIVATE_INPUT_KEYS as readonly string[]).includes(k),
     )
-    .map(([k, v]) => k === "bedrooms" ? `${v} bedrooms` : k === "bathrooms" ? `${v} bathrooms` : v as string)
+    .map(([k, v]) =>
+      k === "voiceNotes"
+        ? publicVoiceNotes(v as string)
+        : k === "bedrooms"
+          ? `${v} bedrooms`
+          : k === "bathrooms"
+            ? `${v} bathrooms`
+            : (v as string),
+    )
     .join(" \n ");
 }
 
@@ -307,11 +353,15 @@ export { IMAGE_LABELS };
 
 export function privateLeakFlags(pack: PackLike, input: object): FactFlag[] {
   const r = input as Record<string, unknown>;
-  const priv = PRIVATE_INPUT_KEYS.map((k) => (typeof r[k] === "string" ? (r[k] as string) : ""))
+  const priv = [
+    ...PRIVATE_INPUT_KEYS.map((k) => (typeof r[k] === "string" ? (r[k] as string) : "")),
+    privateVoiceClauses(r),
+  ]
     .join(" \n ")
     .trim();
-  if (!priv) return [];
-  const publicHay = ` ${leakTokens(publicInputsToText(input)).join(" ")} `;
+  // Raw notes often duplicate an extracted private field. Only structured
+  // public facts can authorise that overlap; raw dictation cannot waive it.
+  const publicHay = ` ${leakTokens(publicInputsToText({ ...r, voiceNotes: "" })).join(" ")} `;
   const toks = leakTokens(priv);
   const terms = new Set<string>();
   for (const t of toks) {
@@ -342,7 +392,11 @@ export function privateLeakFlags(pack: PackLike, input: object): FactFlag[] {
       ["email CTA", e.callToAction ?? ""],
     );
   }
-  if (pack.sellerEmail) sections.push(["seller email", `${pack.sellerEmail.subject ?? ""} ${pack.sellerEmail.body ?? ""}`]);
+  if (pack.sellerEmail)
+    sections.push([
+      "seller email",
+      `${pack.sellerEmail.subject ?? ""} ${pack.sellerEmail.body ?? ""}`,
+    ]);
   for (const p of pack.social ?? [])
     sections.push(["social", `${p.caption} ${(p.hashtags ?? []).join(" ")}`]);
   const out: FactFlag[] = [];
@@ -352,6 +406,12 @@ export function privateLeakFlags(pack: PackLike, input: object): FactFlag[] {
     const text = IMAGE_LABELS.reduce((acc, l) => acc.split(l).join(" "), text0 ?? "");
     if (!text.trim()) continue;
     const hay = ` ${leakTokens(text).join(" ")} `;
+    for (const clause of text.split(/(?<=[.!?])\s+|[\n;]/)) {
+      if (PRIVATE_ACCESS.test(clause) && !seen.has(clause)) {
+        seen.add(clause);
+        out.push({ term: clause.trim(), kind: "private-leak", section });
+      }
+    }
     for (const term of terms) {
       if (hay.includes(` ${term} `) && !seen.has(term)) {
         seen.add(term);
