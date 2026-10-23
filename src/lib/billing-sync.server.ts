@@ -85,7 +85,8 @@ export async function persistSubscriptionSnapshot(
     _event_created: options.eventCreated ?? before.stripe_event_created ?? 0,
     _fields: fields,
     _checkout: options.checkout ?? false,
-    _expected_updated_at: before.updated_at ?? null,
+    // Omitted = SQL DEFAULT NULL; hosted generated types reject an explicit null.
+    _expected_updated_at: before.updated_at ?? undefined,
     _check_version: true,
   });
   if (error) throw error;
