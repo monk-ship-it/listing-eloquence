@@ -24,21 +24,31 @@ import { generateListing } from "@/lib/listing.functions";
 import { getMySubscription, getMyUsage } from "@/lib/subscription.functions";
 import { APP_NAME } from "@/lib/config";
 import { VoiceNotes } from "@/components/VoiceNotes";
-import { DictationProvider, useDictationContext, type DictationSink } from "@/components/dictation/DictationProvider";
+import {
+  DictationProvider,
+  useDictationContext,
+  type DictationSink,
+} from "@/components/dictation/DictationProvider";
 import { FieldDictationStatus, FieldMic } from "@/components/dictation/FieldMic";
 import {
   FIELD_BY_KEY,
   FIELD_DEFS,
   SECTIONS,
   fieldRows,
+  councilTaxOptions,
   type FieldDef,
   type SectionId,
   type TextFieldKey,
 } from "@/lib/listing-fields";
 import { ListingPack } from "@/components/pack/ListingPack";
 import { WorkbenchExportMenu } from "@/components/admin/WorkbenchExportMenu";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { checkMaterialInfo, summariseChecks } from "@/lib/material-info";
 import { extractListingFields } from "@/lib/extract.functions";
 import {
@@ -66,7 +76,21 @@ export const Route = createFileRoute("/_authenticated/app")({
   validateSearch: (search: Record<string, unknown>): { g?: string } =>
     typeof search.g === "string" && /^[0-9a-f-]{36}$/i.test(search.g) ? { g: search.g } : {},
   head: () => ({
-    meta: [{ title: `Generator — ${APP_NAME}` }, { name: "description", content: "Create a draft UK property listing pack from your supplied facts." }, { property: "og:title", content: `Generator — ${APP_NAME}` }, { property: "og:description", content: "Create a draft UK property listing pack from your supplied facts." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex, nofollow" }],
+    meta: [
+      { title: `Generator — ${APP_NAME}` },
+      {
+        name: "description",
+        content: "Create a draft UK property listing pack from your supplied facts.",
+      },
+      { property: "og:title", content: `Generator — ${APP_NAME}` },
+      {
+        property: "og:description",
+        content: "Create a draft UK property listing pack from your supplied facts.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: GeneratorPage,
 });
@@ -113,7 +137,9 @@ function GeneratorInner() {
   const [fromNotes, setFromNotes] = useState<Record<string, string>>({});
   const [conflicts, setConflicts] = useState<Conflict[]>([]);
   const [filling, setFilling] = useState(false);
-  const [openSections, setOpenSections] = useState<Set<SectionId>>(() => new Set(SECTIONS.map((x) => x.id)));
+  const [openSections, setOpenSections] = useState<Set<SectionId>>(
+    () => new Set(SECTIONS.map((x) => x.id)),
+  );
   // On phones only the first two sections start open (after hydration).
   useEffect(() => {
     if (window.matchMedia("(max-width: 639px)").matches) {
@@ -189,7 +215,9 @@ function GeneratorInner() {
           return;
         }
         if (inFlight.current || JSON.stringify(inputRef.current) !== before) {
-          toast.info("Saved listing not loaded because you'd already started editing. Reopen it from Saved listings.");
+          toast.info(
+            "Saved listing not loaded because you'd already started editing. Reopen it from Saved listings.",
+          );
           return;
         }
         const loaded = coerceLegacyInput(rec.inputs);
@@ -201,7 +229,9 @@ function GeneratorInner() {
         setGenerationId(rec.id);
         setGeneratedFrom(JSON.stringify(loaded));
         setDraftOffer(null);
-        toast.success(`Opened “${rec.propertyTitle ?? "saved listing"}” — edit and regenerate, or copy again.`);
+        toast.success(
+          `Opened “${rec.propertyTitle ?? "saved listing"}” — edit and regenerate, or copy again.`,
+        );
       })
       .catch(() => {
         if (!cancelled) toast.error("Couldn't open that saved listing. Please try again.");
@@ -230,7 +260,8 @@ function GeneratorInner() {
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
         const el =
-          document.getElementById(`field-${field}`) ?? document.querySelector<HTMLElement>(`[data-field="${field}"]`);
+          document.getElementById(`field-${field}`) ??
+          document.querySelector<HTMLElement>(`[data-field="${field}"]`);
         el?.scrollIntoView({ behavior: "smooth", block: "center" });
         if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
           el.focus({ preventScroll: true });
@@ -300,11 +331,15 @@ function GeneratorInner() {
       if (n === 0 && found.length === 0) {
         toast.info("No new details found in your notes.");
       } else {
-        toast.success(`Filled ${n} field${n === 1 ? "" : "s"}${found.length ? ` · ${found.length} to review` : ""}`);
+        toast.success(
+          `Filled ${n} field${n === 1 ? "" : "s"}${found.length ? ` · ${found.length} to review` : ""}`,
+        );
       }
       if (firstKey && window.matchMedia("(max-width: 1023px)").matches && found.length === 0) {
         requestAnimationFrame(() =>
-          document.getElementById(`field-${firstKey}`)?.scrollIntoView({ behavior: "smooth", block: "center" }),
+          document
+            .getElementById(`field-${firstKey}`)
+            ?.scrollIntoView({ behavior: "smooth", block: "center" }),
         );
       }
     } catch (err) {
@@ -387,7 +422,9 @@ function GeneratorInner() {
       setGeneratedFrom(snapshot);
       if (draftKey) removeDraft(draftKey);
       if (result.output.marketingStatus === "failed") {
-        toast.warning("Listing ready. The email & social didn't generate — you can add them free below.");
+        toast.warning(
+          "Listing ready. The email & social didn't generate — you can add them free below.",
+        );
       }
       queryClient.invalidateQueries({ queryKey: ["generations"] });
       queryClient.invalidateQueries({ queryKey: ["usage"] });
@@ -408,10 +445,14 @@ function GeneratorInner() {
       if (msg.includes("SUBSCRIPTION_REQUIRED")) {
         toast.error("Your trial or subscription is required to generate.");
       } else if (msg.includes("LISTING_LIMIT_REACHED")) {
-        toast.error("You've used all your listings this month. Upgrade your plan or wait for next month's renewal.");
+        toast.error(
+          "You've used all your listings this month. Upgrade your plan or wait for next month's renewal.",
+        );
         queryClient.invalidateQueries({ queryKey: ["usage"] });
       } else if (msg.includes("MALFORMED_AI_OUTPUT") || msg.includes("AI_TRUNCATED")) {
-        toast.error("The writer returned an incomplete draft. Please try again — this didn't use a listing.");
+        toast.error(
+          "The writer returned an incomplete draft. Please try again — this didn't use a listing.",
+        );
       } else if (msg.includes("RATE_LIMIT")) {
         toast.error("Lots of requests right now — please wait a moment and try again.");
       } else if (msg.includes("AI_TIMEOUT")) {
@@ -464,7 +505,9 @@ function GeneratorInner() {
             <div className="rounded-lg border border-border/70 bg-card/50 px-4 py-2 text-right">
               <p className="text-xs text-muted-foreground">{usage.planName} plan</p>
               <p className="text-sm font-semibold">
-                {usage.unlimited ? "Unlimited listings" : `${usage.remaining} of ${usage.limit} listings left`}
+                {usage.unlimited
+                  ? "Unlimited listings"
+                  : `${usage.remaining} of ${usage.limit} listings left`}
               </p>
             </div>
           )}
@@ -482,10 +525,21 @@ function GeneratorInner() {
               {draftOffer.input.address ? ` (${draftOffer.input.address})` : ""}. Restore it?
             </p>
             <div className="flex flex-wrap gap-2">
-              <Button type="button" size="sm" className="min-h-11 sm:min-h-9" onClick={restoreDraft}>
+              <Button
+                type="button"
+                size="sm"
+                className="min-h-11 sm:min-h-9"
+                onClick={restoreDraft}
+              >
                 Restore draft
               </Button>
-              <Button type="button" size="sm" variant="outline" className="min-h-11 sm:min-h-9" onClick={discardDraft}>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="min-h-11 sm:min-h-9"
+                onClick={discardDraft}
+              >
                 Discard
               </Button>
             </div>
@@ -496,7 +550,9 @@ function GeneratorInner() {
       {subQuery.isError && (
         <Card className="mt-6 border-destructive/40 bg-destructive/5 p-5" role="alert">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm">We couldn't load your subscription. Check your connection and try again.</p>
+            <p className="text-sm">
+              We couldn't load your subscription. Check your connection and try again.
+            </p>
             <Button
               type="button"
               size="sm"
@@ -531,7 +587,8 @@ function GeneratorInner() {
             <div className="flex items-center gap-3">
               <Lock className="h-5 w-5 text-destructive" />
               <p className="text-sm">
-                You've used all {usage?.limit} listings on your {usage?.planName} plan this month. It renews on{" "}
+                You've used all {usage?.limit} listings on your {usage?.planName} plan this month.
+                It renews on{" "}
                 {usage
                   ? new Date(usage.resetsOn).toLocaleDateString("en-GB", {
                       day: "numeric",
@@ -567,8 +624,8 @@ function GeneratorInner() {
                 <WorkbenchExportMenu input={input} />
               </div>
               <p className="mt-1 text-sm text-muted-foreground">
-                Type or paste exact facts below. These are used alongside your voice notes, and take priority if
-                anything conflicts.
+                Type or paste exact facts below. These are used alongside your voice notes, and take
+                priority if anything conflicts.
               </p>
 
               <div className="mt-5">
@@ -589,11 +646,15 @@ function GeneratorInner() {
                         aria-pressed={selected}
                         onClick={() => set("voice", v.id as VoiceId)}
                         className={`rounded-lg border p-3 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary ${
-                          selected ? "border-primary bg-primary/10" : "border-border/70 hover:border-primary/50"
+                          selected
+                            ? "border-primary bg-primary/10"
+                            : "border-border/70 hover:border-primary/50"
                         }`}
                       >
                         <span className="block text-sm font-semibold">{v.name}</span>
-                        <span className="mt-0.5 block text-xs text-muted-foreground">{v.descriptor}</span>
+                        <span className="mt-0.5 block text-xs text-muted-foreground">
+                          {v.descriptor}
+                        </span>
                       </button>
                     );
                   })}
@@ -602,7 +663,9 @@ function GeneratorInner() {
 
               <div className="mt-5 space-y-3">
                 {SECTIONS.map((sec) => {
-                  const defs = FIELD_DEFS.filter((d) => d.section === sec.id && (!d.showIf || d.showIf(input)));
+                  const defs = FIELD_DEFS.filter(
+                    (d) => d.section === sec.id && (!d.showIf || d.showIf(input)),
+                  );
                   const filled = defs.filter((d) => String(input[d.key] ?? "").trim()).length;
                   const isOpen = openSections.has(sec.id);
                   return (
@@ -621,7 +684,9 @@ function GeneratorInner() {
                         <span className="font-display text-base font-semibold">{sec.title}</span>
                         <span className="flex items-center gap-2 text-xs text-muted-foreground">
                           {filled}/{defs.length}
-                          <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                          <ChevronDown
+                            className={`h-4 w-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                          />
                         </span>
                       </button>
                       {isOpen && (
@@ -638,7 +703,18 @@ function GeneratorInner() {
                               {row.map((def) => (
                                 <DetailField
                                   key={def.key}
-                                  def={def}
+                                  def={
+                                    def.key === "councilTaxBand"
+                                      ? { ...def, options: councilTaxOptions(input) }
+                                      : def.key === "tenure" && input.propertyNation === "Scotland"
+                                        ? {
+                                            ...def,
+                                            kind: "input",
+                                            placeholder:
+                                              "Ownership as confirmed in the title / by the solicitor",
+                                          }
+                                        : def
+                                  }
                                   value={String(input[def.key] ?? "")}
                                   onChange={(v) => userEdit(def.key, v)}
                                   sink={sinks[def.key]}
@@ -655,24 +731,11 @@ function GeneratorInner() {
                 })}
               </div>
 
-              <div
-                id="field-sellerApproved"
-                className="mt-5 flex items-start gap-3 rounded-xl border border-border/60 p-4"
-              >
-                <Switch
-                  id="seller-approved"
-                  checked={input.sellerApproved === true}
-                  onCheckedChange={(v) => set("sellerApproved", v)}
-                />
-                <div>
-                  <Label htmlFor="seller-approved" className="text-sm font-medium">
-                    Seller has approved these particulars
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Leave off until they confirm — Quill adds a seller approval email to the pack.
-                  </p>
-                </div>
-              </div>
+              <p className="mt-5 text-xs text-muted-foreground">
+                Quill assists with UK residential sales drafts and nation-specific checks. An agent
+                must review the details and obtain seller approval of the generated wording before
+                publishing.
+              </p>
 
               <Button
                 type="submit"
@@ -711,7 +774,10 @@ function GeneratorInner() {
           ) : (
             <>
               {isStale && (
-                <div role="status" className="rounded-lg border border-primary/30 bg-primary/5 px-4 py-2.5 text-sm">
+                <div
+                  role="status"
+                  className="rounded-lg border border-primary/30 bg-primary/5 px-4 py-2.5 text-sm"
+                >
                   You've changed the details since this pack was generated — Regenerate to update.
                 </div>
               )}
@@ -720,6 +786,7 @@ function GeneratorInner() {
                 input={packInput}
                 generationId={generationId}
                 onOutputChange={onMarketingGenerated}
+                approvalBlocked={isStale || busy}
                 onJumpToField={jumpToField}
               />
 
@@ -760,7 +827,8 @@ function GeneratorInner() {
           <DialogHeader>
             <DialogTitle>Check these details</DialogTitle>
             <DialogDescription>
-              Your notes say something different from what's already in the form. Nothing has been changed yet.
+              Your notes say something different from what's already in the form. Nothing has been
+              changed yet.
             </DialogDescription>
           </DialogHeader>
           <ul className="space-y-3">
@@ -768,8 +836,8 @@ function GeneratorInner() {
               <li key={c.key} className="rounded-lg border border-border/70 p-3">
                 <p className="text-sm font-semibold">{c.label}</p>
                 <p className="mt-1 break-words text-sm text-muted-foreground">
-                  You typed <span className="font-medium text-foreground">{c.mine}</span> · notes say{" "}
-                  <span className="font-medium text-foreground">{c.notes}</span>
+                  You typed <span className="font-medium text-foreground">{c.mine}</span> · notes
+                  say <span className="font-medium text-foreground">{c.notes}</span>
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <Button
@@ -794,7 +862,12 @@ function GeneratorInner() {
             ))}
           </ul>
           <DialogFooter className="gap-2">
-            <Button type="button" variant="outline" className="min-h-11 sm:min-h-10" onClick={() => setConflicts([])}>
+            <Button
+              type="button"
+              variant="outline"
+              className="min-h-11 sm:min-h-10"
+              onClick={() => setConflicts([])}
+            >
               Keep all mine
             </Button>
             <Button type="button" className="min-h-11 sm:min-h-10" onClick={useAllFromNotes}>
@@ -831,7 +904,9 @@ function ReadyMeter({ input, onJump }: { input: ListingInput; onJump: (field: st
         </span>
         <span className="text-xs text-muted-foreground">
           Material information {s.done}/{s.total}
-          {s.mustFix > 0 && <span className="font-semibold text-destructive"> · {s.mustFix} must-fix</span>}
+          {s.mustFix > 0 && (
+            <span className="font-semibold text-destructive"> · {s.mustFix} must-fix</span>
+          )}
         </span>
       </button>
       {open && s.open.length > 0 && (
@@ -865,13 +940,23 @@ function ReadyMeter({ input, onJump }: { input: ListingInput; onJump: (field: st
         </ul>
       )}
       {open && s.open.length === 0 && (
-        <p className="mt-2 border-t border-border/60 pt-2 text-sm text-muted-foreground">Everything's in. Nice work.</p>
+        <p className="mt-2 border-t border-border/60 pt-2 text-sm text-muted-foreground">
+          Everything's in. Nice work.
+        </p>
       )}
     </div>
   );
 }
 
-function SelectControl({ def, value, onChange }: { def: FieldDef; value: string; onChange: (v: string) => void }) {
+function SelectControl({
+  def,
+  value,
+  onChange,
+}: {
+  def: FieldDef;
+  value: string;
+  onChange: (v: string) => void;
+}) {
   const options = def.options ?? [];
   // Keep legacy free-text values selectable so old listings still show them.
   const all = value && !options.includes(value) ? [value, ...options] : options;
@@ -891,13 +976,23 @@ function SelectControl({ def, value, onChange }: { def: FieldDef; value: string;
   );
 }
 
-function TriControl({ def, value, onChange }: { def: FieldDef; value: string; onChange: (v: string) => void }) {
+function TriControl({
+  def,
+  value,
+  onChange,
+}: {
+  def: FieldDef;
+  value: string;
+  onChange: (v: string) => void;
+}) {
   const none = /^none known$/i.test(value);
   const yes = !!value && !none;
   const details = yes ? value.replace(/^yes\s*[–\-:]?\s*/i, "") : "";
   const btn = (active: boolean) =>
     `min-h-11 rounded-md border px-3 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary sm:min-h-9 ${
-      active ? "border-primary bg-primary/10 font-medium" : "border-border/70 hover:border-primary/50"
+      active
+        ? "border-primary bg-primary/10 font-medium"
+        : "border-border/70 hover:border-primary/50"
     }`;
   return (
     <div className="space-y-2" data-field={def.key}>
@@ -935,7 +1030,15 @@ function TriControl({ def, value, onChange }: { def: FieldDef; value: string; on
   );
 }
 
-function ChipsControl({ def, value, onChange }: { def: FieldDef; value: string; onChange: (v: string) => void }) {
+function ChipsControl({
+  def,
+  value,
+  onChange,
+}: {
+  def: FieldDef;
+  value: string;
+  onChange: (v: string) => void;
+}) {
   const parts = value
     .split(",")
     .map((p) => p.trim())
@@ -945,7 +1048,9 @@ function ChipsControl({ def, value, onChange }: { def: FieldDef; value: string; 
     const next = has ? parts.filter((p) => p.toLowerCase() !== o.toLowerCase()) : [...parts, o];
     onChange(next.join(", "));
   };
-  const extra = parts.filter((p) => !(def.options ?? []).some((o) => o.toLowerCase() === p.toLowerCase()));
+  const extra = parts.filter(
+    (p) => !(def.options ?? []).some((o) => o.toLowerCase() === p.toLowerCase()),
+  );
   return (
     <div data-field={def.key}>
       <div className="flex flex-wrap gap-2" role="group" aria-label={def.label}>
@@ -958,7 +1063,9 @@ function ChipsControl({ def, value, onChange }: { def: FieldDef; value: string; 
               aria-pressed={on}
               onClick={() => toggle(o)}
               className={`min-h-11 rounded-full border px-3 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary sm:min-h-8 ${
-                on ? "border-primary bg-primary/10 font-medium" : "border-border/70 hover:border-primary/50"
+                on
+                  ? "border-primary bg-primary/10 font-medium"
+                  : "border-border/70 hover:border-primary/50"
               }`}
             >
               {o}
@@ -966,7 +1073,9 @@ function ChipsControl({ def, value, onChange }: { def: FieldDef; value: string; 
           );
         })}
       </div>
-      {extra.length > 0 && <p className="mt-1.5 text-xs text-muted-foreground">Also noted: {extra.join(", ")}</p>}
+      {extra.length > 0 && (
+        <p className="mt-1.5 text-xs text-muted-foreground">Also noted: {extra.join(", ")}</p>
+      )}
       <p className="mt-1 text-xs text-muted-foreground">{def.placeholder}</p>
     </div>
   );
@@ -1061,7 +1170,9 @@ const DRAFT_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
 /** True when the agent has typed anything worth keeping (voice choice alone isn't). */
 function hasDraftContent(input: ListingInput | null | undefined): boolean {
   if (!input) return false;
-  return Object.entries(input).some(([k, v]) => k !== "voice" && typeof v === "string" && v.trim().length > 0);
+  return Object.entries(input).some(
+    ([k, v]) => k !== "voice" && typeof v === "string" && v.trim().length > 0,
+  );
 }
 
 function readDraft(key: string): SavedDraft | null {

@@ -54,45 +54,37 @@ export function resolveMarketId(_market?: string | null): MarketId {
  * Public identifiers — safe in the client bundle. The client never provides a
  * price id; it is resolved server-side from the plan.
  *
- * NOTE: The old payment links (£24.99/£29.99/£49.99) are intentionally
- * inactive in Stripe; authenticated checkouts use server-created sessions.
+ * All purchases use authenticated server-created Checkout Sessions.
+ * Quill is not VAT registered; no VAT is added to these prices.
  */
 export const PLAN_PRICING: Record<
   PlanId,
   {
     amount: number;
     priceId: string;
-    display: string;
-    paymentLinkId: string;
-    paymentLinkUrl: string;
   }
 > = {
   starter: {
-    amount: 3900,
-    priceId: "price_1TqWz1AAj6LfwOUatt9zzYA1",
-    display: "£39",
-    paymentLinkId: "plink_1TqWzwAAj6LfwOUacoHflGaU",
-    paymentLinkUrl: "https://buy.stripe.com/5kQ3cugxncRgbRIbN87AI0F",
+    amount: 1500,
+    priceId: "price_1UTNwcAAj6LfwOUaEERDFxWz",
   },
   pro: {
-    amount: 7900,
-    priceId: "price_1TqWz2AAj6LfwOUaQBZwZyJr",
-    display: "£79",
-    paymentLinkId: "plink_1TqWzxAAj6LfwOUabZDgo7y9",
-    paymentLinkUrl: "https://buy.stripe.com/bJe7sK0yp8B02h818u7AI0G",
+    amount: 2900,
+    priceId: "price_1UTNxlAAj6LfwOUayyPzL1Wn",
   },
   growth: {
-    amount: 14900,
-    priceId: "price_1TqWz3AAj6LfwOUat924mxdX",
-    display: "£149",
-    paymentLinkId: "plink_1TqWzyAAj6LfwOUaWFwYhXOc",
-    paymentLinkUrl: "https://buy.stripe.com/14A3cu5SJbNc9JAg3o7AI0H",
+    amount: 5900,
+    priceId: "price_1UTNzHAAj6LfwOUaZvoCC1oS",
   },
 };
 
-/** Display price string (e.g. "£39") for a plan. */
+/** Display price string for a new subscription. Existing prices are preserved. */
 export function planPriceDisplay(plan: PlanId): string {
-  return (PLAN_PRICING[plan] ?? PLAN_PRICING.starter).display;
+  return new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency: "GBP",
+    maximumFractionDigits: 0,
+  }).format((PLAN_PRICING[plan] ?? PLAN_PRICING.starter).amount / 100);
 }
 
 /** Authoritative Stripe price id for a plan (server-side resolution). */
@@ -108,8 +100,6 @@ export interface Plan {
   monthlyListings: number;
   tagline: string;
   features: string[];
-  /** Stripe payment link — to be filled in per plan. */
-  stripeLink: string;
   popular?: boolean;
 }
 
@@ -117,11 +107,11 @@ export const PLANS: Plan[] = [
   {
     id: "starter",
     name: "Starter",
-    price: "£39",
+    price: planPriceDisplay("starter"),
     monthlyListings: 15,
     tagline: "For solo agents getting started.",
     features: [
-      "15 listings per month",
+      "15 listing packs per calendar month",
       "All five brand voices",
       "Generated Key Features bullets",
       "Email Blast campaign copy",
@@ -129,16 +119,15 @@ export const PLANS: Plan[] = [
       "Saved listing history",
       "Dedicated voice notes field",
     ],
-    stripeLink: PLAN_PRICING.starter.paymentLinkUrl,
   },
   {
     id: "pro",
     name: "Pro",
-    price: "£79",
+    price: planPriceDisplay("pro"),
     monthlyListings: 50,
-    tagline: "For busy agents and small teams.",
+    tagline: "For busy agents writing regularly.",
     features: [
-      "50 listings per month",
+      "50 listing packs per calendar month",
       "All five brand voices",
       "Generated Key Features bullets",
       "Email Blast campaign copy",
@@ -146,17 +135,16 @@ export const PLANS: Plan[] = [
       "Saved listing history",
       "Dedicated voice notes field",
     ],
-    stripeLink: PLAN_PRICING.pro.paymentLinkUrl,
     popular: true,
   },
   {
     id: "growth",
     name: "Growth",
-    price: "£149",
+    price: planPriceDisplay("growth"),
     monthlyListings: 120,
-    tagline: "For high-volume agencies.",
+    tagline: "For high-volume agents.",
     features: [
-      "120 listings per month",
+      "120 listing packs per calendar month",
       "All five brand voices",
       "Generated Key Features bullets",
       "Email Blast campaign copy",
@@ -164,7 +152,6 @@ export const PLANS: Plan[] = [
       "Saved listing history",
       "Dedicated voice notes field",
     ],
-    stripeLink: PLAN_PRICING.growth.paymentLinkUrl,
   },
 ];
 
@@ -179,14 +166,3 @@ export function getPlan(plan: string | null | undefined): Plan {
 
 /** Default/headline price shown on marketing pages. */
 export const PRICE_MONTHLY = PLAN_MAP.starter.price;
-
-export const STRIPE_PAYMENT_LINK = PLAN_MAP.starter.stripeLink;
-
-/** Build a payment-link URL pre-filled with the user's email and reference. */
-export function buildCheckoutUrl(userId: string, email: string, plan: PlanId = "starter"): string {
-  const link = PLAN_MAP[plan]?.stripeLink || STRIPE_PAYMENT_LINK;
-  const url = new URL(link);
-  url.searchParams.set("client_reference_id", userId);
-  if (email) url.searchParams.set("prefilled_email", email);
-  return url.toString();
-}

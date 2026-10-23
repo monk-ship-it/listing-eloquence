@@ -7,7 +7,7 @@ STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 - Likely buyer (emphasis only — never exclude anyone): First-time buyer, Investor
 - Asking price (£): 235,000
 - Price qualifier: Offers in Excess of
-- Tenure: Leasehold
+- Tenure / ownership: Leasehold
 - Chain: Chain involved
 - Lease remaining (yrs): 112
 - Ground rent (£ per year): 250
@@ -20,7 +20,7 @@ STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 - Room dimensions: Kitchen/living room 6.10m x 4.20m (20'0" x 13'9"); Bedroom 1 3.90m x 3.20m (12'10" x 10'6")
 - Council Tax band: C
 - Local authority: Medway Council
-- EPC rating: C
+- EPC rating or status: C
 - Electricity: Mains
 - Water: Mains
 - Water metered?: Yes
@@ -42,7 +42,7 @@ Broadband: FTTP
 Parking: One allocated space
 
 Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never take a material-information figure from the voice notes.
-Seller approval of particulars: NOT confirmed (for the app only — never mention it in the copy).
+Seller approval of particulars: NOT confirmed — approval must be recorded against the generated wording (for the app only — never mention it in the copy).
 
 EMAIL BLAST (new-instruction email to the agent's registered applicants):
 - "subjectLines": exactly 3, max 60 characters. Each contains the area, the property type with bedrooms, and the price with its qualifier, e.g. "New instruction: 3-bed semi, Lordswood – Guide £285,000". Vary the lead ("New instruction:", "Just listed:", or the standout supplied fact). Never a price without its qualifier. Never "exclusive", "don't miss", "hurry" or emojis.
@@ -57,6 +57,7 @@ SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, written as their nego
 - Thank them and explain that the draft details are below for checking before anything goes live.
 - Then a numbered list with one supplied fact per line in the form "Tenure: Freehold – is this correct?": price and qualifier, tenure and lease figures, council tax, EPC, room counts, parking, supplies, chain status, every known issue (in its supplied wording) and each answered Part C item. Only facts supplied — nothing from the voice notes or private notes.
 - Then "To complete the particulars, could you let us know:" followed by every one of these questions, word for word:
+- Which UK nation is the property in? Please confirm rather than infer from the address.
 - Is the property of standard construction (e.g. brick or stone under a tiled or slate roof), or something else such as timber frame?
 - How is the mobile signal at the property, indoors and outdoors?
 - Are you aware of any building safety issues, such as cladding or unsafe materials?

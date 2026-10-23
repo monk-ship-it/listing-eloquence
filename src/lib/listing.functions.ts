@@ -124,6 +124,7 @@ export const generateListing = createServerFn({ method: "POST" })
           ? { ...coreRes.value, ...mktRes.value }
           : { ...coreRes.value, emailBlast: null, social: [], marketingStatus: "failed" };
       parsed.meta = { promptVersion: PROMPT_VERSION, model, attempts };
+      parsed.revisionId = crypto.randomUUID();
 
       const voice = (data.voice ?? "professional") as VoiceId;
       const { data: savedGen, error: insertError } = await supabase
@@ -247,6 +248,9 @@ export const generateMarketingForGeneration = createServerFn({ method: "POST" })
     const current = coerceLegacyOutput(row.output);
     const rawOut = { ...((row.output ?? {}) as Record<string, unknown>) };
     delete rawOut.marketingStatus;
+    // Regenerated public copy must be reviewed again before seller approval.
+    delete rawOut.sellerApproval;
+    rawOut.revisionId = crypto.randomUUID();
     rawOut.emailBlast = mkt.emailBlast;
     if (current.social.length === 0) rawOut.social = mkt.social;
     if (!current.sellerEmail && mkt.sellerEmail) rawOut.sellerEmail = mkt.sellerEmail;

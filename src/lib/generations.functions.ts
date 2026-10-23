@@ -2,7 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Json } from "@/integrations/supabase/types";
 import type { ListingInput, ListingOutput } from "./listing-types";
-import { coerceLegacyOutput } from "./listing-types";
+import { coerceLegacyInput, coerceLegacyOutput } from "./listing-types";
+import { approvalSnapshot } from "./pack-safety";
 import { AGENCY_KEYS, EMPTY_AGENCY, type AgencyDetails } from "./clipboard";
 
 export interface GenerationRecord {
@@ -41,6 +42,62 @@ export const listMyGenerations = createServerFn({ method: "GET" })
   });
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Record the agent's confirmation of seller approval for this exact saved revision. */
+export const setGenerationSellerApproval = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { id: string; snapshot: string; approved: boolean }) => {
+    if (
+      !UUID_RE.test(input?.id ?? "") ||
+      typeof input.snapshot !== "string" ||
+      input.snapshot.length > 1_000_000 ||
+      typeof input.approved !== "boolean"
+    )
+      throw new Error("Invalid approval request.");
+    return input;
+  })
+  .handler(async ({ data, context }): Promise<ListingOutput> => {
+    const { supabase, userId } = context;
+    const { data: row, error } = await supabase
+      .from("generations")
+      .select("id, inputs, output")
+      .eq("id", data.id)
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (error) throw new Error("Couldn't load the listing for approval.");
+    if (!row) throw new Error("That listing couldn't be found.");
+    const output = coerceLegacyOutput(row.output);
+    const snapshot = approvalSnapshot(coerceLegacyInput(row.inputs), output);
+    if (snapshot !== data.snapshot)
+      throw new Error(
+        "This pack changed. Reopen the saved listing and review the current wording before approving it.",
+      );
+    const next = { ...((row.output ?? {}) as Record<string, unknown>) };
+    delete next.sellerApproval;
+    next.revisionId = output.revisionId ?? crypto.randomUUID();
+    if (data.approved)
+      next.sellerApproval = {
+        generationId: row.id,
+        approvedAt: new Date().toISOString(),
+        snapshot: approvalSnapshot(coerceLegacyInput(row.inputs), coerceLegacyOutput(next)),
+      };
+    // Compare-and-set: a concurrent marketing update must never be overwritten
+    // by an approval based on the previous revision.
+    let update = supabase
+      .from("generations")
+      .update({ output: JSON.parse(JSON.stringify(next)) })
+      .eq("id", row.id)
+      .eq("user_id", userId);
+    update = output.revisionId
+      ? update.eq("output->>revisionId", output.revisionId)
+      : update.is("output->>revisionId", null);
+    const { data: saved, error: updateError } = await update.select("output").maybeSingle();
+    if (updateError || !saved)
+      throw new Error(
+        "The pack changed or approval couldn't be saved. Refresh and review it again.",
+      );
+    return coerceLegacyOutput(saved.output);
+  });
 
 export const deleteGeneration = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -105,6 +162,8 @@ export function cleanAgencyDetails(raw: unknown): AgencyDetails {
     out[k] =
       typeof v === "string"
         ? v
+            // Remove control characters from a single-line contact field.
+            // eslint-disable-next-line no-control-regex
             .replace(/[\u0000-\u001f\u007f]+/g, " ")
             .trim()
             .slice(0, AGENCY_MAX)
@@ -117,7 +176,11 @@ export const getMyAgency = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<AgencyDetails> => {
     const { supabase, userId } = context;
-    const { data, error } = await supabase.from("profiles").select("agency").eq("id", userId).maybeSingle();
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("agency")
+      .eq("id", userId)
+      .maybeSingle();
     if (error) throw new Error(error.message);
     return cleanAgencyDetails(data?.agency);
   });
@@ -128,7 +191,11 @@ export const saveMyAgency = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<AgencyDetails> => {
     const { supabase, userId } = context;
     const agency = data as unknown as Json;
-    const { data: rows, error } = await supabase.from("profiles").update({ agency }).eq("id", userId).select("id");
+    const { data: rows, error } = await supabase
+      .from("profiles")
+      .update({ agency })
+      .eq("id", userId)
+      .select("id");
     if (error) throw new Error(error.message);
     if (!rows?.length) {
       const { error: insErr } = await supabase.from("profiles").insert({ id: userId, agency });

@@ -10,13 +10,7 @@ export type TextFieldKey = Exclude<
 >;
 
 export type SectionId =
-  | "voice"
-  | "basics"
-  | "price"
-  | "rooms"
-  | "material"
-  | "location"
-  | "internal";
+  "voice" | "basics" | "price" | "rooms" | "material" | "location" | "internal";
 
 export const SECTIONS: { id: Exclude<SectionId, "voice">; title: string; mobileOpen: boolean }[] = [
   { id: "basics", title: "The basics", mobileOpen: true },
@@ -59,6 +53,11 @@ export const PRICE_QUALIFIERS = [
   "Shared Ownership",
 ];
 export const TENURES = ["Freehold", "Leasehold", "Share of freehold", "Commonhold"];
+export const PROPERTY_NATIONS = ["England", "Wales", "Scotland", "Northern Ireland"];
+export const isNorthernIreland = (i: ListingInput) => i.propertyNation === "Northern Ireland";
+export const isScotland = (i: ListingInput) => i.propertyNation === "Scotland";
+export const councilTaxOptions = (i: ListingInput) =>
+  COUNCIL_TAX_BANDS.filter((b) => b !== "I" || i.propertyNation === "Wales");
 export const COUNCIL_TAX_BANDS = [
   "A",
   "B",
@@ -133,6 +132,17 @@ export const FIELD_DEFS: FieldDef[] = [
   },
   // The basics
   {
+    key: "propertyNation",
+    label: "Property nation",
+    placeholder: "Choose the property's UK nation…",
+    kind: "select",
+    options: PROPERTY_NATIONS,
+    section: "basics",
+    dictateMode: "replace",
+    extractable: true,
+    hint: "Only when explicitly stated; never infer the nation from the address or town.",
+  },
+  {
     key: "address",
     label: "Address / location",
     placeholder: "12 Park Avenue, Harrogate, HG1",
@@ -206,7 +216,7 @@ export const FIELD_DEFS: FieldDef[] = [
   },
   {
     key: "tenure",
-    label: "Tenure",
+    label: "Tenure / ownership",
     placeholder: "Choose…",
     kind: "select",
     options: TENURES,
@@ -508,6 +518,51 @@ export const FIELD_DEFS: FieldDef[] = [
     dictateMode: "replace",
     extractable: true,
     group: "ctax",
+    showIf: (i) => !isNorthernIreland(i),
+  },
+  {
+    key: "domesticRates",
+    label: "Domestic rates (£ per year)",
+    placeholder: "1,240",
+    kind: "input",
+    section: "material",
+    dictateMode: "replace",
+    extractable: true,
+    group: "rates",
+    showIf: isNorthernIreland,
+  },
+  {
+    key: "domesticRatesYear",
+    label: "Rates year",
+    placeholder: "2026/27",
+    kind: "input",
+    section: "material",
+    dictateMode: "replace",
+    extractable: true,
+    group: "rates",
+    showIf: isNorthernIreland,
+  },
+  {
+    key: "homeReportStatus",
+    label: "Home Report status",
+    placeholder: "Choose…",
+    kind: "select",
+    options: ["Available", "Awaiting", "Exemption claimed", "Exemption confirmed by agent"],
+    section: "material",
+    dictateMode: "replace",
+    extractable: true,
+    showIf: isScotland,
+  },
+  {
+    key: "homeReportDetails",
+    label: "Home Report date / reference or exemption reason",
+    placeholder: "Report date and reference; or the claimed exemption and evidence",
+    kind: "textarea",
+    rows: 2,
+    section: "material",
+    dictateMode: "replace",
+    extractable: true,
+    showIf: isScotland,
   },
   {
     key: "localAuthority",
@@ -521,7 +576,7 @@ export const FIELD_DEFS: FieldDef[] = [
   },
   {
     key: "epc",
-    label: "EPC rating",
+    label: "EPC rating or status",
     placeholder: "Choose…",
     kind: "select",
     options: EPC_OPTIONS,
@@ -529,6 +584,17 @@ export const FIELD_DEFS: FieldDef[] = [
     dictateMode: "replace",
     extractable: true,
     group: "epc",
+  },
+  {
+    key: "epcExemptionReason",
+    label: "Claimed EPC exemption — reason / evidence",
+    placeholder: "State the claimed exemption and evidence checked",
+    kind: "textarea",
+    rows: 2,
+    section: "material",
+    dictateMode: "replace",
+    extractable: true,
+    showIf: (i) => i.epc === "Exempt",
   },
   {
     key: "epcPredicted",

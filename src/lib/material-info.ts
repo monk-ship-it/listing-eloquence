@@ -11,6 +11,9 @@ import {
   isLeasehold,
   isSharedOwnership,
   isYes,
+  isNorthernIreland,
+  isScotland,
+  PROPERTY_NATIONS,
   type TextFieldKey,
 } from "./listing-fields";
 
@@ -38,6 +41,12 @@ export function money(v: string): string {
 
 /** Known-issues topics that contradict a Part C "None known" answer. */
 export const PART_C_CONFLICTS: Partial<Record<TextFieldKey, { topic: string; re: RegExp }>> = {
+  buildingSafety: {
+    topic: "building safety",
+    re: /cladding|unsafe materials?|fire safety|remediation|EWS1/i,
+  },
+  coastalErosion: { topic: "coastal erosion", re: /coastal erosion|coastline retreat/i },
+  coalfieldMining: { topic: "mining", re: /coalfield|mining|mine shaft/i },
   planning: {
     topic: "planning",
     re: /planning|building reg|without (consent|approval)|unapproved|unaware .*approv/i,
@@ -84,6 +93,8 @@ export const PART_C_KEYS: TextFieldKey[] = [
 /** Compact block, one line per supplied item. Never prints placeholders. */
 export function buildMaterialInfoBlock(input: ListingInput): string {
   const lines: string[] = [];
+  if (PROPERTY_NATIONS.includes(val(input, "propertyNation")))
+    lines.push(`Property nation: ${val(input, "propertyNation")}`);
   const price = val(input, "price");
   const qualifier = val(input, "priceQualifier");
   if (price) lines.push(`Price: ${[qualifier, money(price)].filter(Boolean).join(" ")}`);
@@ -128,7 +139,10 @@ export function buildMaterialInfoBlock(input: ListingInput): string {
       );
     const sc = val(input, "serviceCharge");
     const period = val(input, "serviceChargePeriod");
-    if (sc) lines.push(`Service charge: ${money(sc)} per year${period ? ` (${period})` : ""}`);
+    if (sc)
+      lines.push(
+        `Service charge: ${money(sc)}${/^£?\d[\d,]*(\.\d+)?$/.test(sc) ? " per year" : ""}${period ? ` (${period})` : ""}`,
+      );
     const reserve = val(input, "reserveFund");
     if (reserve) lines.push(`Reserve fund / event fees: ${reserve}`);
   }
@@ -141,7 +155,12 @@ export function buildMaterialInfoBlock(input: ListingInput): string {
 
   const band = val(input, "councilTaxBand");
   const la = val(input, "localAuthority");
-  if (band) {
+  if (isNorthernIreland(input)) {
+    if (val(input, "domesticRates"))
+      lines.push(
+        `Domestic rates: ${money(val(input, "domesticRates"))} per year${val(input, "domesticRatesYear") ? ` (${val(input, "domesticRatesYear")})` : ""}`,
+      );
+  } else if (band) {
     const label = /^[A-I]$/.test(band)
       ? `Band ${band}`
       : /^not yet banded$/i.test(band)
@@ -151,8 +170,18 @@ export function buildMaterialInfoBlock(input: ListingInput): string {
           : band;
     lines.push(`Council Tax: ${label}${la ? ` (${la})` : ""}`);
   }
+  if (isScotland(input) && val(input, "homeReportStatus")) {
+    lines.push(
+      `Home Report: ${val(input, "homeReportStatus")}${val(input, "homeReportDetails") ? ` – ${val(input, "homeReportDetails")}` : ""}`,
+    );
+  }
   const epc = val(input, "epc");
-  if (epc)
+  if (/^commissioned$/i.test(epc)) lines.push("EPC status: Commissioned — rating awaited");
+  else if (/^exempt$/i.test(epc))
+    lines.push(
+      `EPC status: Exemption claimed${val(input, "epcExemptionReason") ? ` – ${val(input, "epcExemptionReason")}` : ""}`,
+    );
+  else if (epc)
     lines.push(
       `EPC rating: ${epc}${isYes(val(input, "epcPredicted")) && /^[A-G]$/.test(epc) ? " (predicted)" : ""}`,
     );
@@ -211,6 +240,15 @@ export interface CheckItem {
 }
 
 export const SELLER_QUESTIONS: Partial<Record<TextFieldKey, string>> = {
+  propertyNation:
+    "Which UK nation is the property in? Please confirm rather than infer from the address.",
+  domesticRates: "What is the annual domestic rates charge for the property?",
+  domesticRatesYear: "Which rating year does the annual domestic rates charge cover?",
+  homeReportStatus:
+    "Is the Home Report available, awaiting completion, or is an exemption being claimed?",
+  homeReportDetails:
+    "What is the Home Report date and reference, or the exemption reason and supporting evidence?",
+  epcExemptionReason: "What is the reason and evidence for the claimed EPC exemption?",
   tenure: "Is the property freehold, leasehold or share of freehold?",
   leaseYears: "How many years are left on the lease?",
   groundRent:
@@ -268,6 +306,13 @@ export function checkMaterialInfo(input: ListingInput): CheckItem[] {
     });
 
   add(
+    "propertyNation",
+    "block",
+    PROPERTY_NATIONS.includes(val(input, "propertyNation")),
+    "Confirm the property's UK nation so the appropriate checks can be shown.",
+  );
+
+  add(
     "price",
     "block",
     !!val(input, "price") && !!val(input, "priceQualifier"),
@@ -290,14 +335,81 @@ export function checkMaterialInfo(input: ListingInput): CheckItem[] {
       "Add the auction terms (reservation period, reserve, fees).",
     );
   add("tenure", "block", !!val(input, "tenure"), "Add the tenure.");
-  add("councilTaxBand", "block", !!val(input, "councilTaxBand"), "Add the Council Tax band.");
-  add("epc", "block", !!val(input, "epc"), "Add the EPC rating (or Exempt / Commissioned).");
+  if (isNorthernIreland(input)) {
+    add(
+      "domesticRates",
+      "block",
+      /^£?\d[\d,]*(?:\.\d{1,2})?$/.test(val(input, "domesticRates")),
+      "Add the annual domestic rates amount; Northern Ireland does not use Council Tax bands.",
+    );
+    const year = val(input, "domesticRatesYear").match(/^(\d{4})\/(\d{2}|\d{4})$/);
+    const validYear =
+      !!year &&
+      Number(year[2]) ===
+        (year[2].length === 2 ? (Number(year[1]) + 1) % 100 : Number(year[1]) + 1);
+    add("domesticRatesYear", "block", validYear, "Add the rating year, for example 2026/27.");
+  } else {
+    const band = val(input, "councilTaxBand");
+    add(
+      "councilTaxBand",
+      "block",
+      /^(?:[A-H]|Exempt|Not yet banded)$/.test(band) ||
+        (input.propertyNation === "Wales" && band === "I"),
+      "Add a valid Council Tax band (A–H; Wales also has I), or the applicable status.",
+    );
+  }
+  if (isScotland(input)) {
+    add(
+      "homeReportStatus",
+      "block",
+      ["Available", "Exemption confirmed by agent"].includes(val(input, "homeReportStatus")),
+      "Confirm that the Home Report is available or that the agent has checked an applicable exemption. Quill does not assess exemptions.",
+    );
+    add(
+      "homeReportDetails",
+      "block",
+      !!val(input, "homeReportDetails"),
+      "Add the report date/reference or exemption reason and evidence checked.",
+    );
+  }
+  const epc = val(input, "epc");
+  add(
+    "epc",
+    "block",
+    /^(?:[A-G]|Exempt|Commissioned)$/.test(epc),
+    "Add an EPC rating or its actual status.",
+  );
+  if (epc === "Commissioned")
+    add(
+      "epc",
+      "confirm",
+      false,
+      "EPC commissioned: obtain the certificate and add its rating when available. Check the applicable national marketing requirements.",
+    );
+  if (epc === "Exempt")
+    add(
+      "epcExemptionReason",
+      "block",
+      !!val(input, "epcExemptionReason"),
+      "Record the claimed exemption and supporting evidence; Quill cannot determine whether an exemption applies.",
+    );
   if (isLeasehold(input)) {
     add("leaseYears", "block", !!val(input, "leaseYears"), "Add the years remaining on the lease.");
     add("groundRent", "block", !!val(input, "groundRent"), "Add the ground rent (£ per year).");
-    add("groundRentReview", "block", !!val(input, "groundRentReview"), "Confirm the ground-rent review terms and next review, or explicitly state no review.");
+    add(
+      "groundRentReview",
+      "block",
+      !!val(input, "groundRentReview"),
+      "Confirm the ground-rent review terms and next review, or explicitly state no review.",
+    );
     for (const field of ["groundRent", "groundRentReview"] as const) {
-      if (/\bcapped\b/i.test(val(input, field))) add(field, "conflict", false, "Supplied cap wording is retained for verification. Check the lease; do not present an unverified ground-rent cap as established fact.");
+      if (/\bcapped\b/i.test(val(input, field)))
+        add(
+          field,
+          "conflict",
+          false,
+          "Supplied cap wording is retained for verification. Check the lease; do not present an unverified ground-rent cap as established fact.",
+        );
     }
     add(
       "serviceCharge",
@@ -309,14 +421,14 @@ export function checkMaterialInfo(input: ListingInput): CheckItem[] {
   if (isSharedOwnership(input)) {
     add("sharePercent", "block", !!val(input, "sharePercent"), "Add the share percentage offered.");
     add("rent", "block", !!val(input, "rent"), "Add the rent on the unsold share.");
-    add("fullMarketValue", "block", !!val(input, "fullMarketValue"), "Add the full market value, not just the share price.");
+    add(
+      "fullMarketValue",
+      "block",
+      !!val(input, "fullMarketValue"),
+      "Add the full market value, not just the share price.",
+    );
   }
-  add(
-    "sellerApproved",
-    "block",
-    input.sellerApproved === true,
-    "Particulars must be agreed with the seller or marked draft — TPO Code 7j.",
-  );
+  // Seller approval belongs to the exact generated pack, not these input facts.
 
   for (const k of partCConflicts(input)) {
     items.push({
@@ -356,7 +468,8 @@ export function checkMaterialInfo(input: ListingInput): CheckItem[] {
 
   for (const k of PART_C_KEYS) {
     add(k, "confirm", !!val(input, k), 'Unanswered — choose "None known" or add details.');
-    if (/^yes\s*[–\-:]?\s*$/i.test(val(input, k))) add(k, "block", false, "Yes is incomplete — add the supplied details before marketing.");
+    if (/^yes\s*[–\-:]?\s*$/i.test(val(input, k)))
+      add(k, "block", false, "Yes is incomplete — add the supplied details before marketing.");
   }
   return items;
 }

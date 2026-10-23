@@ -1087,7 +1087,7 @@ function Pricing({ authed }: { authed: boolean }) {
               >
                 {plan.popular && (
                   <span className="absolute -top-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-gradient-to-r from-primary to-primary/80 px-3.5 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground shadow-lg shadow-primary/30">
-                    <Sparkles className="h-3 w-3" /> Best value
+                    <Sparkles className="h-3 w-3" /> Recommended
                   </span>
                 )}
                 <h3 className="font-display text-2xl font-semibold">{plan.name}</h3>
@@ -1098,13 +1098,14 @@ function Pricing({ authed }: { authed: boolean }) {
                   <span className="text-base font-normal text-muted-foreground">/month</span>
                 </p>
                 <p className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                  {plan.monthlyListings} listings per month
+                  {plan.monthlyListings} listings per calendar month
                 </p>
                 <p className="mt-2 text-xs text-muted-foreground">
                   {plan.id === "starter"
-                    ? `${TRIAL_DAYS}-day Starter trial at secure checkout · card required · then £39/month unless cancelled`
+                    ? `${TRIAL_DAYS}-day Starter trial at secure checkout · card required · then ${planPriceDisplay(plan.id)}/month unless cancelled`
                     : "Cancel anytime"}
                 </p>
+                <p className="mt-2 text-xs text-muted-foreground">VAT is not charged.</p>
 
                 <div className="rule my-6" />
                 <ul className="flex-1 space-y-3 text-sm">

@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getPlan, TRIAL_DAYS, type PlanId } from "./config";
-import { planForPriceId } from "./plan-identity";
-import { canCancelSubscription, subscriptionPeriodEnd, safeBillingReturnUrl } from "./billing-state";
+import { planForPriceId, priceForPriceId, subscriberPriceDisplay } from "./plan-identity";
+import { canCancelSubscription, safeBillingReturnUrl } from "./billing-state";
+import { SUBSCRIBER_COLUMNS, type SubscriberRow } from "./billing-sync.server";
 
 async function comped(userId: string | null | undefined): Promise<boolean> {
   const { isCompedUserId } = await import("./comped.server");
@@ -21,6 +22,9 @@ export interface SubscriptionInfo {
   hasAccess: boolean;
   isComped: boolean;
   email: string | null;
+  billingPriceDisplay: string | null;
+  billingCurrency: string | null;
+  billingAmount: number | null;
 }
 
 export interface UsageInfo {
@@ -33,34 +37,25 @@ export interface UsageInfo {
   resetsOn: string;
 }
 
-async function toInfo(
-  row: {
-    user_id?: string;
-    status: string;
-    plan?: string | null;
-    cancel_at_period_end: boolean;
-    trial_end: string | null;
-    current_period_end: string | null;
-    email: string | null;
-    stripe_price_id?: string | null;
-    stripe_subscription_id?: string | null;
-    stripe_customer_id?: string | null;
-  } | null,
-): Promise<SubscriptionInfo> {
+async function toInfo(row: SubscriberRow | null): Promise<SubscriptionInfo> {
   const rawStatus = row?.status ?? "none";
   const isComped = await comped(row?.user_id);
   return {
     status: isComped ? "active" : rawStatus,
     rawStatus,
-    plan: getPlan(row?.plan).id,
+    plan: planForPriceId(row?.stripe_price_id) ?? getPlan(row?.plan).id,
     cancelAtPeriodEnd: row?.cancel_at_period_end ?? false,
     canCancel: !isComped && canCancelSubscription(rawStatus, row?.stripe_subscription_id),
     canManageBilling: !isComped && !!row?.stripe_customer_id,
     trialEnd: row?.trial_end ?? null,
     currentPeriodEnd: row?.current_period_end ?? null,
-    hasAccess: isComped || hasActiveAccess(rawStatus, row?.current_period_end ?? null, row?.stripe_price_id),
+    hasAccess:
+      isComped || hasActiveAccess(rawStatus, row?.current_period_end ?? null, row?.stripe_price_id),
     isComped,
     email: row?.email ?? null,
+    billingPriceDisplay: isComped ? null : subscriberPriceDisplay(row?.stripe_price_id),
+    billingCurrency: isComped ? null : (priceForPriceId(row?.stripe_price_id)?.currency ?? null),
+    billingAmount: isComped ? null : (priceForPriceId(row?.stripe_price_id)?.amount ?? null),
   };
 }
 
@@ -86,7 +81,11 @@ function startOfNextMonthIso(): string {
  * temporarily unreachable. Access is always driven by the database record,
  * never by the post-checkout redirect URL.
  */
-export function hasActiveAccess(status: string, currentPeriodEnd: string | null, priceId: string | null | undefined): boolean {
+export function hasActiveAccess(
+  status: string,
+  currentPeriodEnd: string | null,
+  priceId: string | null | undefined,
+): boolean {
   if (status !== "active" && status !== "trialing") return false;
   // Exact Quill price allowlist: unknown/unrelated Stripe prices never grant access.
   if (!planForPriceId(priceId)) return false;
@@ -95,9 +94,6 @@ export function hasActiveAccess(status: string, currentPeriodEnd: string | null,
   if (Number.isNaN(end)) return false;
   return end > Date.now();
 }
-
-const SUBSCRIBER_COLUMNS =
-  "user_id, status, plan, cancel_at_period_end, trial_end, current_period_end, email, stripe_customer_id, stripe_subscription_id, stripe_price_id";
 
 /**
  * Reads the caller's subscriber row and reconciles it against Stripe before
@@ -131,7 +127,18 @@ export const getMySubscription = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<SubscriptionInfo> => {
     const { supabase, userId } = context;
     const row = await readReconciledSubscriber(supabase, userId);
-    return toInfo(row ? { ...row, user_id: userId } : { user_id: userId, status: "none", cancel_at_period_end: false, trial_end: null, current_period_end: null, email: null });
+    return toInfo(
+      row
+        ? { ...row, user_id: userId }
+        : {
+            user_id: userId,
+            status: "none",
+            cancel_at_period_end: false,
+            trial_end: null,
+            current_period_end: null,
+            email: null,
+          },
+    );
   });
 
 /**
@@ -166,7 +173,12 @@ export async function computeUsage(
   ]);
 
   // Fail closed: a failed or empty count read must never report unused allowance.
-  if (completed.error || reserved.error || typeof completed.count !== "number" || typeof reserved.count !== "number") {
+  if (
+    completed.error ||
+    reserved.error ||
+    typeof completed.count !== "number" ||
+    typeof reserved.count !== "number"
+  ) {
     throw new Error("Could not load your listing usage. Please try again.");
   }
   const used = completed.count + reserved.count;
@@ -216,26 +228,10 @@ export const cancelMySubscription = createServerFn({ method: "POST" })
 
     const updated = await setSubscriptionCancelAtPeriodEnd(row.stripe_subscription_id, true);
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: saved, error: saveError } = await supabaseAdmin
-      .from("subscribers")
-      .update({
-        cancel_at_period_end: true,
-        status: updated.status,
-        current_period_end: subscriptionPeriodEnd(updated) ?? row.current_period_end,
-      })
-      .eq("user_id", userId)
-      .eq("stripe_subscription_id", row.stripe_subscription_id)
-      .select(
-        SUBSCRIBER_COLUMNS,
-      )
-      .maybeSingle();
-
-    if (saveError || !saved) {
-      console.error("Subscription state sync failed after Stripe update", saveError);
-    }
-    // Stripe has already accepted the change: never report it as undone if the local save fails.
-    return toInfo({ ...row, status: updated.status, cancel_at_period_end: updated.cancel_at_period_end === true, current_period_end: subscriptionPeriodEnd(updated) ?? row.current_period_end });
+    const { persistSubscriptionMutation } = await import("./billing-sync.server");
+    // A delayed action response cannot overwrite a newer webhook or action.
+    const saved = await persistSubscriptionMutation(row, updated);
+    return toInfo(saved);
   });
 
 export const resumeMySubscription = createServerFn({ method: "POST" })
@@ -267,26 +263,10 @@ export const resumeMySubscription = createServerFn({ method: "POST" })
 
     const updated = await setSubscriptionCancelAtPeriodEnd(row.stripe_subscription_id, false);
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: saved, error: saveError } = await supabaseAdmin
-      .from("subscribers")
-      .update({
-        cancel_at_period_end: false,
-        status: updated.status,
-        current_period_end: subscriptionPeriodEnd(updated) ?? row.current_period_end,
-      })
-      .eq("user_id", userId)
-      .eq("stripe_subscription_id", row.stripe_subscription_id)
-      .select(
-        SUBSCRIBER_COLUMNS,
-      )
-      .maybeSingle();
-
-    if (saveError || !saved) {
-      console.error("Subscription state sync failed after Stripe update", saveError);
-    }
-    // Stripe has already accepted the change: never report it as undone if the local save fails.
-    return toInfo({ ...row, status: updated.status, cancel_at_period_end: updated.cancel_at_period_end === true, current_period_end: subscriptionPeriodEnd(updated) ?? row.current_period_end });
+    const { persistSubscriptionMutation } = await import("./billing-sync.server");
+    // A delayed action response cannot overwrite a newer webhook or action.
+    const saved = await persistSubscriptionMutation(row, updated);
+    return toInfo(saved);
   });
 
 /**
@@ -312,7 +292,10 @@ export const createBillingPortalUrl = createServerFn({ method: "POST" })
 
     const { createBillingPortalSession } = await import("./stripe.server");
     const { getAppUrl } = await import("./config.server");
-    const session = await createBillingPortalSession(row.stripe_customer_id, safeBillingReturnUrl(data.returnUrl, getAppUrl()));
+    const session = await createBillingPortalSession(
+      row.stripe_customer_id,
+      safeBillingReturnUrl(data.returnUrl, getAppUrl()),
+    );
     return { url: session.url as string };
   });
 
@@ -345,7 +328,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       );
     }
 
-    const { resolvePriceId, createSubscriptionCheckoutSession, getCustomerSubscriptions } = await import("./stripe.server");
+    const { resolvePriceId, createSubscriptionCheckoutSession, getCustomerSubscriptions } =
+      await import("./stripe.server");
     const { getAppUrl } = await import("./config.server");
     const priceId = await resolvePriceId(plan);
 
@@ -364,18 +348,33 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     let priorSubscription = !!row?.stripe_subscription_id || !!row?.trial_end;
     if (row?.stripe_customer_id) {
       const existing = await getCustomerSubscriptions(row.stripe_customer_id);
-      if (!Array.isArray(existing.data) || existing.has_more) throw new Error("Could not confirm billing history. Open Manage billing or contact support before subscribing.");
+      if (!Array.isArray(existing.data) || existing.has_more)
+        throw new Error(
+          "Could not confirm billing history. Open Manage billing or contact support before subscribing.",
+        );
       priorSubscription = priorSubscription || existing.data.length > 0;
-      if (existing.data?.some((s: { status: string }) => canCancelSubscription(s.status, "existing"))) {
-        throw new Error("You already have a subscription. Open Manage billing to update payment details or cancel.");
+      if (
+        existing.data?.some((s: { status: string }) => canCancelSubscription(s.status, "existing"))
+      ) {
+        throw new Error(
+          "You already have a subscription. Open Manage billing to update payment details or cancel.",
+        );
       }
     }
     const { data: attempt, error: claimError } = await supabaseAdmin.rpc("claim_billing_checkout", {
-      _user_id: userId, _plan: plan, _origin: origin,
+      _user_id: userId,
+      _plan: plan,
+      _origin: origin,
       _prior_trial: priorSubscription,
     });
-    if (claimError || !attempt) throw new Error("Could not prepare checkout. Retry the same plan or manage billing.");
-    const reserved = attempt as { attemptId: string; trialDays: number; url?: string; expiresAt: number };
+    if (claimError || !attempt)
+      throw new Error("Could not prepare checkout. Retry the same plan or manage billing.");
+    const reserved = attempt as {
+      attemptId: string;
+      trialDays: number;
+      url?: string;
+      expiresAt: number;
+    };
     if (reserved.url) return { url: reserved.url };
     const session = await createSubscriptionCheckoutSession({
       plan,
@@ -391,10 +390,22 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     });
 
     if (!session?.url) throw new Error("Could not start checkout. Please try again.");
-    const { data: savedAttempt, error: saveError } = await supabaseAdmin.from("billing_checkout_state").update({
-      checkout_url: session.url, ...(reserved.trialDays > 0 || !!row?.stripe_subscription_id || !!row?.trial_end ? { trial_used: true } : {}),
-    }).eq("user_id", userId).eq("attempt_id", reserved.attemptId).select("attempt_id").maybeSingle();
-    if (saveError || !savedAttempt) throw new Error("Checkout was prepared but could not be recorded. Retry the same plan; do not open another checkout.");
+    const { data: savedAttempt, error: saveError } = await supabaseAdmin
+      .from("billing_checkout_state")
+      .update({
+        checkout_url: session.url,
+        ...(reserved.trialDays > 0 || !!row?.stripe_subscription_id || !!row?.trial_end
+          ? { trial_used: true }
+          : {}),
+      })
+      .eq("user_id", userId)
+      .eq("attempt_id", reserved.attemptId)
+      .select("attempt_id")
+      .maybeSingle();
+    if (saveError || !savedAttempt)
+      throw new Error(
+        "Checkout was prepared but could not be recorded. Retry the same plan; do not open another checkout.",
+      );
     return { url: session.url as string };
   });
 
@@ -426,9 +437,7 @@ export const verifyCheckoutSession = createServerFn({ method: "POST" })
 
       const { data: dbRow } = await supabase
         .from("subscribers")
-        .select(
-          SUBSCRIBER_COLUMNS,
-        )
+        .select(SUBSCRIBER_COLUMNS)
         .eq("user_id", userId)
         .maybeSingle();
 

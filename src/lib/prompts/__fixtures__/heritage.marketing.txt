@@ -7,7 +7,7 @@ STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 - Likely buyer (emphasis only — never exclude anyone): Growing family, Downsizer
 - Asking price (£): 1,450,000
 - Price qualifier: Guide Price
-- Tenure: Freehold
+- Tenure / ownership: Freehold
 - Chain: No onward chain
 - Bedrooms: 5
 - Bathrooms: 3
@@ -17,7 +17,7 @@ STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 - Outside space / garden: Walled garden of around half an acre, mature herbaceous borders, orchard and a stone terrace
 - Council Tax band: G
 - Local authority: West Oxfordshire District Council
-- EPC rating: E
+- EPC rating or status: E
 - Construction: Standard
 - Construction details: Cotswold stone under a stone slate roof
 - Electricity: Mains
@@ -58,11 +58,14 @@ Planning: None known
 Accessibility: None known
 Coalfield / mining: None known
 
-AGENT VOICE NOTES (raw, dictated or pasted — supplementary context only):
-This is the Old Rectory on Church Lane in Burford. Lovely characterful period rectory, Grade II listed, five bedrooms, three bathrooms, inglenook fireplace and flagstone floors. Walled garden about half an acre with an orchard. Guide price one point four five million, freehold.
+AGENT VOICE NOTES (access instructions removed — supplementary context only):
+This is the Old Rectory on Church Lane in Burford.
+Lovely characterful period rectory, Grade II listed, five bedrooms, three bathrooms, inglenook fireplace and flagstone floors.
+Walled garden about half an acre with an orchard.
+Guide price one point four five million, freehold.
 
 Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never take a material-information figure from the voice notes.
-Seller approval of particulars: NOT confirmed (for the app only — never mention it in the copy).
+Seller approval of particulars: NOT confirmed — approval must be recorded against the generated wording (for the app only — never mention it in the copy).
 
 EMAIL BLAST (new-instruction email to the agent's registered applicants):
 - "subjectLines": exactly 3, max 60 characters. Each contains the area, the property type with bedrooms, and the price with its qualifier, e.g. "New instruction: 3-bed semi, Lordswood – Guide £285,000". Vary the lead ("New instruction:", "Just listed:", or the standout supplied fact). Never a price without its qualifier. Never "exclusive", "don't miss", "hurry" or emojis.
@@ -77,7 +80,7 @@ SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, written as their nego
 - Thank them and explain that the draft details are below for checking before anything goes live.
 - Then a numbered list with one supplied fact per line in the form "Tenure: Freehold – is this correct?": price and qualifier, tenure and lease figures, council tax, EPC, room counts, parking, supplies, chain status, every known issue (in its supplied wording) and each answered Part C item. Only facts supplied — nothing from the voice notes or private notes.
 - Then "To complete the particulars, could you let us know:" followed by every one of these questions, word for word:
-- (none — all supplies and Part C items are answered)
+- Which UK nation is the property in? Please confirm rather than infer from the address.
 - Close: "Please reply "Approved" or send any corrections — nothing will be published until you confirm." then "[Your name, branch, phone]". Never mention law, Trading Standards or penalties.
 
 SOCIAL: exactly three posts — platform "Instagram", "Facebook" and "X". Every caption states the price exactly as in the facts, the tenure and the EPC rating (shared ownership adds "<n>% share"; auction or MMoA adds the sale method and "reservation fee applies"), then "Full material information on the listing."

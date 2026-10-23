@@ -14,6 +14,12 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
-    plugins: [mcpPlugin()],
+    // The installed MCP generator compares POSIX Vite roots with native Windows
+    // paths. Local verification can use the already-generated routes until that
+    // upstream path check is fixed. Hosted builds always keep the generator.
+    plugins:
+      process.platform === "win32" && process.env.QUILL_LOCAL_BUILD === "1"
+        ? []
+        : [mcpPlugin()],
   },
 });

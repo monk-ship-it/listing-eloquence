@@ -2,13 +2,27 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 vi.mock("@/assets/quill-logo-72.webp", () => ({ default: "logo72" }));
 vi.mock("@/assets/quill-logo-144.webp", () => ({ default: "logo144" }));
 vi.mock("@/integrations/supabase/auth-middleware", () => ({ requireSupabaseAuth: {} }));
-import { identifyPlan, planForPriceId, LEGACY_PRICE_PLAN } from "./plan-identity";
-import { PLAN_PRICING } from "./config";
+import {
+  identifyPlan,
+  planForPriceId,
+  LEGACY_PRICE_PLAN,
+  LEGACY_PRICES,
+  subscriberPriceDisplay,
+} from "./plan-identity";
+import { PLAN_PRICING, PLANS } from "./config";
+import { getStripePlanConfig } from "./config.server";
 import { processBillingEvent } from "./billing-webhook.server";
 import { hasActiveAccess, computeUsage } from "./subscription.functions";
-import { getStripeSubscription, StripeRetryableError, createSubscriptionCheckoutSession } from "./stripe.server";
+import {
+  getStripeSubscription,
+  StripeRetryableError,
+  createSubscriptionCheckoutSession,
+} from "./stripe.server";
 
-afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
+});
 const future = new Date(Date.now() + 86_400_000).toISOString();
 
 describe("Quill plan identity allowlist", () => {
@@ -23,14 +37,45 @@ describe("Quill plan identity allowlist", () => {
       price_1Tst7TAAj6LfwOUaTOG299iy: "pro",
       price_1Tst7dAAj6LfwOUaD8AqhUVE: "growth",
       price_1Tj5eDAAj6LfwOUapbQ7yPiy: "starter",
+      price_1TjkobAAj6LfwOUa7B5uOLuA: "pro",
+      price_1TjkxPAAj6LfwOUapOSk4qbW: "growth",
+      price_1TqWz1AAj6LfwOUatt9zzYA1: "starter",
+      price_1TqWz2AAj6LfwOUaQBZwZyJr: "pro",
+      price_1TqWz3AAj6LfwOUat924mxdX: "growth",
     });
-    for (const [id, plan] of Object.entries(LEGACY_PRICE_PLAN)) expect(identifyPlan({ priceId: id, currency: "gbp" })).toBe(plan);
+    for (const [id, price] of Object.entries(LEGACY_PRICES)) {
+      expect(identifyPlan({ priceId: id, currency: price.currency })).toBe(price.plan);
+      expect(
+        identifyPlan({ priceId: id, currency: price.currency === "gbp" ? "usd" : "gbp" }),
+      ).toBeNull();
+    }
+  });
+  it("shows the actual grandfathered currency and amount, never today's rate", () => {
+    expect(subscriberPriceDisplay("price_1Tj5eDAAj6LfwOUapbQ7yPiy")).toBe("£24.99");
+    expect(subscriberPriceDisplay("price_1Tst7KAAj6LfwOUap6nwwkT1")).toBe("US$49");
+    expect(subscriberPriceDisplay("price_unknown")).toBeNull();
+  });
+  it("uses the new GBP catalogue consistently and ignores stale environment overrides", () => {
+    vi.stubEnv("STRIPE_PRO_PRICE_ID", "price_1TqWz2AAj6LfwOUaQBZwZyJr");
+    expect(PLANS.map((p) => [p.price, p.monthlyListings])).toEqual([
+      ["£15", 15],
+      ["£29", 50],
+      ["£59", 120],
+    ]);
+    expect(getStripePlanConfig().pro).toEqual({
+      priceId: "price_1UTNxlAAj6LfwOUayyPzL1Wn",
+      amount: 2900,
+    });
   });
   it("gives no plan to an unrelated high-priced GBP product", () => {
-    expect(identifyPlan({ priceId: "price_unrelated_gbp", currency: "gbp", amount: 99900 })).toBeNull();
+    expect(
+      identifyPlan({ priceId: "price_unrelated_gbp", currency: "gbp", amount: 99900 }),
+    ).toBeNull();
   });
   it("gives no plan to a USD product, even at a Quill amount", () => {
-    expect(identifyPlan({ priceId: "price_unrelated_usd", currency: "usd", amount: 14900 })).toBeNull();
+    expect(
+      identifyPlan({ priceId: "price_unrelated_usd", currency: "usd", amount: 14900 }),
+    ).toBeNull();
     expect(identifyPlan({ priceId: PLAN_PRICING.growth.priceId, currency: "usd" })).toBeNull();
   });
   it("ignores stale env price ids", () => {
@@ -50,21 +95,56 @@ describe("Quill plan identity allowlist", () => {
 
 function webhookDeps(price: Record<string, unknown>, row: unknown = null) {
   const rpc = vi.fn().mockResolvedValue({ data: true, error: null });
-  const db = { from: vi.fn(() => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: row, error: null }) }) }) })), rpc };
-  const sub = { id: "sub_x", created: 1, status: "active", customer: "cus_x", items: { data: [{ price, current_period_end: 1792281600 }] } };
+  const db = {
+    from: vi.fn(() => ({
+      select: () => ({
+        eq: (key: string) => ({
+          maybeSingle: async () => ({
+            data: row ?? (key === "user_id" ? { user_id: "user_x", updated_at: null } : null),
+            error: null,
+          }),
+        }),
+      }),
+    })),
+    rpc,
+  };
+  const sub = {
+    id: "sub_x",
+    created: 1,
+    status: "active",
+    customer: "cus_x",
+    items: { data: [{ price, current_period_end: 1792281600 }] },
+  };
   return { db, getSubscription: vi.fn().mockResolvedValue(sub) };
 }
 const checkoutObj = { mode: "subscription", subscription: "sub_x", client_reference_id: "user_x" };
 
 describe("webhook entitlement rules", () => {
+  it("ignores unrelated one-off invoices before calling Stripe or the database", async () => {
+    const d = webhookDeps({ id: PLAN_PRICING.pro.priceId, currency: "gbp" });
+    await processBillingEvent({ type: "invoice.paid", data: { object: { id: "in_oneoff" } } }, d);
+    expect(d.getSubscription).not.toHaveBeenCalled();
+    expect(d.db.from).not.toHaveBeenCalled();
+    expect(d.db.rpc).not.toHaveBeenCalled();
+  });
   it("does not attach checkout for an unrelated product", async () => {
     const d = webhookDeps({ id: "price_other", currency: "gbp", unit_amount: 50000 });
-    await processBillingEvent({ type: "checkout.session.completed", created: 2, data: { object: checkoutObj } }, d);
+    await processBillingEvent(
+      { type: "checkout.session.completed", created: 2, data: { object: checkoutObj } },
+      d,
+    );
     expect(d.db.rpc).not.toHaveBeenCalled();
   });
   it("attaches on checkout.session.async_payment_succeeded for a Quill price", async () => {
     const d = webhookDeps({ id: PLAN_PRICING.pro.priceId, currency: "gbp" });
-    await processBillingEvent({ type: "checkout.session.async_payment_succeeded", created: 2, data: { object: checkoutObj } }, d);
+    await processBillingEvent(
+      {
+        type: "checkout.session.async_payment_succeeded",
+        created: 2,
+        data: { object: checkoutObj },
+      },
+      d,
+    );
     const args = d.db.rpc.mock.calls[0][1];
     expect(args._user_id).toBe("user_x");
     expect(args._fields.plan).toBe("pro");
@@ -72,7 +152,10 @@ describe("webhook entitlement rules", () => {
   });
   it("records an unknown price on an owned row without granting a plan from it", async () => {
     const d = webhookDeps({ id: "price_other", currency: "usd" }, { user_id: "user_x" });
-    await processBillingEvent({ type: "customer.subscription.updated", created: 3, data: { object: { id: "sub_x" } } }, d);
+    await processBillingEvent(
+      { type: "customer.subscription.updated", created: 3, data: { object: { id: "sub_x" } } },
+      d,
+    );
     const f = d.db.rpc.mock.calls[0][1]._fields;
     expect(f.stripe_price_id).toBe("price_other");
     expect(hasActiveAccess(f.status, future, f.stripe_price_id)).toBe(false);
@@ -80,14 +163,19 @@ describe("webhook entitlement rules", () => {
 });
 
 describe("usage reads fail closed", () => {
-  const db = (err: unknown) => ({ from: () => {
-    const q: Record<string, unknown> = {};
-    for (const m of ["select", "eq", "gte"]) q[m] = () => q;
-    (q as { then: unknown }).then = (r: (v: unknown) => void) => r({ count: err ? null : 0, error: err });
-    return q;
-  } });
+  const db = (err: unknown) => ({
+    from: () => {
+      const q: Record<string, unknown> = {};
+      for (const m of ["select", "eq", "gte"]) q[m] = () => q;
+      (q as { then: unknown }).then = (r: (v: unknown) => void) =>
+        r({ count: err ? null : 0, error: err });
+      return q;
+    },
+  });
   it("throws instead of reporting unused allowance when the read fails", async () => {
-    await expect(computeUsage(db(new Error("x")), "u", "starter", false)).rejects.toThrow("Could not load your listing usage");
+    await expect(computeUsage(db(new Error("x")), "u", "starter", false)).rejects.toThrow(
+      "Could not load your listing usage",
+    );
   });
   it("reports real usage when reads succeed", async () => {
     expect((await computeUsage(db(null), "u", "starter", false)).remaining).toBe(15);
@@ -103,20 +191,65 @@ describe("bounded Stripe requests", () => {
     expect(f).toHaveBeenCalledTimes(2);
     expect(f.mock.calls[0][1].signal).toBeInstanceOf(AbortSignal);
   });
+  it("never claims nothing changed after a POST response is lost", async () => {
+    vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_synthetic");
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new DOMException("timeout", "TimeoutError")));
+    await expect(
+      createSubscriptionCheckoutSession({
+        plan: "starter",
+        priceId: "price_x",
+        userId: "u",
+        email: "",
+        customerId: null,
+        successUrl: "s",
+        cancelUrl: "c",
+        idempotencyKey: "quill-checkout-lost",
+      }),
+    ).rejects.toThrow("may already have been applied");
+  });
   it("reuses the same idempotency key when retrying checkout creation", async () => {
     vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_synthetic");
-    const f = vi.fn()
+    const f = vi
+      .fn()
       .mockResolvedValueOnce(new Response("{}", { status: 503 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ url: "https://checkout.stripe.com/x" }), { status: 200 }));
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ url: "https://checkout.stripe.com/x" }), { status: 200 }),
+      );
     vi.stubGlobal("fetch", f);
-    await createSubscriptionCheckoutSession({ plan: "starter", priceId: "price_x", userId: "u", email: "", customerId: null, successUrl: "s", cancelUrl: "c", idempotencyKey: "quill-checkout-a1" });
-    expect(f.mock.calls.map((c) => c[1].headers["Idempotency-Key"])).toEqual(["quill-checkout-a1", "quill-checkout-a1"]);
+    await createSubscriptionCheckoutSession({
+      plan: "starter",
+      priceId: "price_x",
+      userId: "u",
+      email: "",
+      customerId: null,
+      successUrl: "s",
+      cancelUrl: "c",
+      idempotencyKey: "quill-checkout-a1",
+    });
+    expect(f.mock.calls.map((c) => c[1].headers["Idempotency-Key"])).toEqual([
+      "quill-checkout-a1",
+      "quill-checkout-a1",
+    ]);
   });
   it("never offers payment_method_types allowlists at checkout", async () => {
     vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_synthetic");
-    const f = vi.fn().mockResolvedValue(new Response(JSON.stringify({ url: "u" }), { status: 200 }));
+    const f = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ url: "u" }), { status: 200 }));
     vi.stubGlobal("fetch", f);
-    await createSubscriptionCheckoutSession({ plan: "starter", priceId: "price_x", userId: "u", email: "", customerId: null, successUrl: "s", cancelUrl: "c", idempotencyKey: "k" });
+    await createSubscriptionCheckoutSession({
+      plan: "starter",
+      priceId: "price_x",
+      userId: "u",
+      email: "",
+      customerId: null,
+      successUrl: "s",
+      cancelUrl: "c",
+      idempotencyKey: "k",
+    });
     expect(String(f.mock.calls[0][1].body)).not.toContain("payment_method_types");
+    expect(new URLSearchParams(String(f.mock.calls[0][1].body)).get("automatic_tax[enabled]")).toBe(
+      "false",
+    );
   });
 });

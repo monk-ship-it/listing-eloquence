@@ -7,7 +7,7 @@ STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 - Likely buyer (emphasis only — never exclude anyone): First-time buyer
 - Asking price (£): 130,000
 - Price qualifier: Shared Ownership
-- Tenure: Leasehold
+- Tenure / ownership: Leasehold
 - Lease remaining (yrs): 990
 - Ground rent (£ per year): Peppercorn
 - Service charge (£ per year): 312
@@ -20,7 +20,7 @@ STRUCTURED PROPERTY DETAILS (authoritative — these always take priority):
 - Receptions: 1
 - Council Tax band: C
 - Local authority: Dartford Borough Council
-- EPC rating: B
+- EPC rating or status: B
 - Construction: Standard
 - Electricity: Mains
 - Water: Mains
@@ -63,7 +63,7 @@ Coalfield / mining: None known
 Known issues: Shared ownership eligibility criteria apply; the housing association has an 8-week nomination period on resale
 
 Where the voice notes conflict with a structured field, ALWAYS use the structured field. Never take a material-information figure from the voice notes.
-Seller approval of particulars: confirmed (for the app only — never mention it in the copy).
+Seller approval of particulars: NOT confirmed — approval must be recorded against the generated wording (for the app only — never mention it in the copy).
 
 EMAIL BLAST (new-instruction email to the agent's registered applicants):
 - "subjectLines": exactly 3, max 60 characters. Each contains the area, the property type with bedrooms, and the price with its qualifier, e.g. "New instruction: 3-bed semi, Lordswood – Guide £285,000". Vary the lead ("New instruction:", "Just listed:", or the standout supplied fact). Never a price without its qualifier. Never "exclusive", "don't miss", "hurry" or emojis.
@@ -78,7 +78,7 @@ SELLER APPROVAL EMAIL ("sellerEmail.body"): to the SELLER, written as their nego
 - Thank them and explain that the draft details are below for checking before anything goes live.
 - Then a numbered list with one supplied fact per line in the form "Tenure: Freehold – is this correct?": price and qualifier, tenure and lease figures, council tax, EPC, room counts, parking, supplies, chain status, every known issue (in its supplied wording) and each answered Part C item. Only facts supplied — nothing from the voice notes or private notes.
 - Then "To complete the particulars, could you let us know:" followed by every one of these questions, word for word:
-- (none — all supplies and Part C items are answered)
+- Which UK nation is the property in? Please confirm rather than infer from the address.
 - Close: "Please reply "Approved" or send any corrections — nothing will be published until you confirm." then "[Your name, branch, phone]". Never mention law, Trading Standards or penalties.
 
 SOCIAL: exactly three posts — platform "Instagram", "Facebook" and "X". Every caption states the price exactly as in the facts, the tenure and the EPC rating (shared ownership adds "<n>% share"; auction or MMoA adds the sale method and "reservation fee applies"), then "Full material information on the listing."

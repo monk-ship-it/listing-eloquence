@@ -1,4 +1,6 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AlertTriangle, CheckCircle2, ClipboardCheck, Copy, ShieldCheck } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -7,7 +9,11 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { EmailBlastCard, GenerateMarketingButton, useAgencyDetails } from "@/components/EmailBlastCard";
+import {
+  EmailBlastCard,
+  GenerateMarketingButton,
+  useAgencyDetails,
+} from "@/components/EmailBlastCard";
 import type { ListingInput, ListingOutput } from "@/lib/listing-types";
 import {
   buildCopyAllText,
@@ -29,7 +35,8 @@ import {
   type FactFlag,
 } from "@/lib/fact-check";
 import { cn } from "@/lib/utils";
-import { needsSafetyDraft } from "@/lib/pack-safety";
+import { approvalSnapshot, hasSellerApproval, needsSafetyDraft } from "@/lib/pack-safety";
+import { setGenerationSellerApproval } from "@/lib/generations.functions";
 
 async function copyToast(text: string, label: string) {
   const ok = await copyText(text);
@@ -81,7 +88,11 @@ function Counter({ n, warn, max }: { n: number; warn?: number; max: number }) {
     <span
       className={cn(
         "text-xs tabular-nums",
-        n > max ? "font-semibold text-destructive" : warn && n > warn ? "text-warning" : "text-muted-foreground",
+        n > max
+          ? "font-semibold text-destructive"
+          : warn && n > warn
+            ? "text-warning"
+            : "text-muted-foreground",
       )}
     >
       {n}/{max}
@@ -114,12 +125,14 @@ export function ListingPack({
   generationId,
   onOutputChange,
   onJumpToField,
+  approvalBlocked = false,
 }: {
   output: ListingOutput;
   input: ListingInput;
   generationId: string | null;
   onOutputChange: (o: ListingOutput) => void;
   onJumpToField?: (field: string) => void;
+  approvalBlocked?: boolean;
 }) {
   const [appendMi, setAppendMi] = useState(true);
   const miBlock = useMemo(() => buildMaterialInfoBlock(input), [input]);
@@ -137,12 +150,63 @@ export function ListingPack({
 
   const fixCount = checks.open.length;
   const agency = useAgencyDetails();
-  const draft = needsSafetyDraft(input.sellerApproved, checks.open, flags);
+  const sellerApproved = !approvalBlocked && hasSellerApproval(input, output, generationId);
+  const draft = needsSafetyDraft(sellerApproved, checks.open, flags);
+  const approve = useServerFn(setGenerationSellerApproval);
+  const queryClient = useQueryClient();
+  const [approvalBusy, setApprovalBusy] = useState(false);
+  const snapshot = approvalSnapshot(input, output);
+  const revision = `${generationId}:${snapshot}:${approvalBlocked}`;
+  const currentRevision = useRef(revision);
+  currentRevision.current = revision;
+  async function changeApproval(approved: boolean) {
+    if (!generationId || approvalBusy || approvalBlocked) return;
+    const requestedRevision = revision;
+    setApprovalBusy(true);
+    try {
+      const saved = await approve({ data: { id: generationId, snapshot, approved } });
+      if (currentRevision.current === requestedRevision) onOutputChange(saved);
+      queryClient.invalidateQueries({ queryKey: ["generations"] });
+      toast.success(
+        approved ? "Seller approval recorded for this exact pack." : "Seller approval removed.",
+      );
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Couldn't save seller approval.");
+    } finally {
+      setApprovalBusy(false);
+    }
+  }
   const copy = (text: string, label: string) => copyToast(withDraft(text, draft), label);
   const strapLen = output.summary?.length ?? 0;
 
   return (
     <div className="space-y-6">
+      <Card className="p-5" id="pack-seller-approval">
+        <div className="flex items-start gap-3">
+          <Switch
+            id={`pack-approved-${generationId ?? "new"}`}
+            checked={sellerApproved}
+            disabled={!generationId || approvalBusy || approvalBlocked}
+            onCheckedChange={(checked) => void changeApproval(checked)}
+          />
+          <div>
+            <Label htmlFor={`pack-approved-${generationId ?? "new"}`}>
+              Seller has approved this exact pack
+            </Label>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Record this only after the seller has checked the wording below. New or changed copy
+              needs fresh approval. Outstanding information and fact checks still keep exports
+              marked draft.
+            </p>
+            {approvalBlocked && (
+              <p className="mt-1 text-xs text-warning">
+                The input details have changed. Regenerate and review the new pack before recording
+                approval.
+              </p>
+            )}
+          </div>
+        </div>
+      </Card>
       {(fixCount > 0 || flags.length > 0) && (
         <Card className="border-warning/50 bg-warning/5 p-5">
           <div className="flex items-start gap-2">
@@ -198,7 +262,8 @@ export function ListingPack({
               )}
               {flags.some((f) => f.kind === "private-leak") && (
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Includes wording from your private viewing or photo notes — remove it before publishing.
+                  Includes wording from your private viewing or photo notes — remove it before
+                  publishing.
                 </p>
               )}
             </div>
@@ -224,12 +289,17 @@ export function ListingPack({
                 </Badge>
               )}
             </div>
-            <h2 className="mt-1 break-words font-display text-xl font-semibold">{hl(output.headline)}</h2>
+            <h2 className="mt-1 break-words font-display text-xl font-semibold">
+              {hl(output.headline)}
+            </h2>
           </div>
           <CopyIcon
             label="Copy full listing pack"
             onClick={() =>
-              copyToast(withAgency(buildCopyAllText(output, { materialInfo: mi, draft }), agency), "Full pack copied.")
+              copyToast(
+                withAgency(buildCopyAllText(output, { materialInfo: mi, draft }), agency),
+                "Full pack copied.",
+              )
             }
           />
         </div>
@@ -241,7 +311,9 @@ export function ListingPack({
             <h3 className="font-display text-lg font-semibold">Key features</h3>
             <CopyIcon
               label="Copy key features"
-              onClick={() => copy(formatKeyFeaturesBlock(output.keyFeatures), "Key features copied.")}
+              onClick={() =>
+                copy(formatKeyFeaturesBlock(output.keyFeatures), "Key features copied.")
+              }
             />
           </div>
           <ul className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
@@ -251,7 +323,9 @@ export function ListingPack({
                 <span className="min-w-0 break-words">
                   {hl(f)}
                   {f.length > 80 && (
-                    <span className="ml-1.5 text-xs font-semibold text-destructive">{f.length}/80</span>
+                    <span className="ml-1.5 text-xs font-semibold text-destructive">
+                      {f.length}/80
+                    </span>
                   )}
                 </span>
               </li>
@@ -265,7 +339,7 @@ export function ListingPack({
           <div>
             <h3 className="font-display text-lg font-semibold">Description</h3>
             <p className="text-xs text-muted-foreground">
-              Plain text — safe to paste into Rightmove, Zoopla and OnTheMarket
+              Plain text for your property portal — review before publishing
             </p>
           </div>
           <CopyIcon
@@ -288,11 +362,16 @@ export function ListingPack({
             <h3 className="font-display text-lg font-semibold">Strapline (portal summary)</h3>
             <Counter n={strapLen} warn={160} max={250} />
           </div>
-          <CopyIcon label="Copy strapline" onClick={() => copy(output.summary, "Strapline copied.")} />
+          <CopyIcon
+            label="Copy strapline"
+            onClick={() => copy(output.summary, "Strapline copied.")}
+          />
         </div>
         <p className="mt-2 break-words text-sm text-muted-foreground">{hl(output.summary)}</p>
         {strapLen > 160 && strapLen <= 250 && (
-          <p className="mt-1 text-xs text-warning">Over 160 characters — portals may cut it off in search results.</p>
+          <p className="mt-1 text-xs text-warning">
+            Over 160 characters — portals may cut it off in search results.
+          </p>
         )}
       </Card>
 
@@ -303,7 +382,10 @@ export function ListingPack({
             <h3 className="font-display text-lg font-semibold">Material Information</h3>
           </div>
           {miBlock && (
-            <CopyIcon label="Copy Material Information" onClick={() => copy(miBlock, "Material Information copied.")} />
+            <CopyIcon
+              label="Copy Material Information"
+              onClick={() => copy(miBlock, "Material Information copied.")}
+            />
           )}
         </div>
         {miBlock ? (
@@ -314,7 +396,11 @@ export function ListingPack({
           <p className="mt-2 text-sm text-muted-foreground">No material information entered yet.</p>
         )}
         <div className="mt-4 flex items-center gap-3">
-          <Switch id={`mi-append-${generationId ?? "new"}`} checked={appendMi} onCheckedChange={setAppendMi} />
+          <Switch
+            id={`mi-append-${generationId ?? "new"}`}
+            checked={appendMi}
+            onCheckedChange={setAppendMi}
+          />
           <Label htmlFor={`mi-append-${generationId ?? "new"}`} className="text-sm">
             Add to description when copying
           </Label>
@@ -334,7 +420,7 @@ export function ListingPack({
       <SellerEmailCard
         output={output}
         materialInfo={miBlock}
-        sellerApproved={!draft}
+        sellerApproved={sellerApproved}
         generationId={generationId}
         onGenerated={onOutputChange}
       />
@@ -343,7 +429,9 @@ export function ListingPack({
         <h3 className="font-display text-lg font-semibold">Social pack</h3>
         {output.social.length === 0 && (
           <>
-            <p className="mt-2 text-sm text-muted-foreground">The social posts didn't generate this time.</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              The social posts didn't generate this time.
+            </p>
             <GenerateMarketingButton
               generationId={generationId}
               label="Generate social posts — free, doesn't use a listing"
@@ -439,10 +527,15 @@ function SellerEmailCard({
         </div>
       ) : (
         <>
-          <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Subject</p>
+          <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Subject
+          </p>
           <p className="mt-1 break-words text-sm font-medium">{e.subject}</p>
           <div className="mt-4 max-w-sm space-y-1.5">
-            <Label htmlFor={`seller-name-${generationId ?? "new"}`} className="text-xs text-muted-foreground">
+            <Label
+              htmlFor={`seller-name-${generationId ?? "new"}`}
+              className="text-xs text-muted-foreground"
+            >
               Seller name (replaces [Seller name] when you copy)
             </Label>
             <Input

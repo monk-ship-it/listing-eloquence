@@ -1,14 +1,10 @@
 /**
- * Server-only billing reconciliation.
- *
- * Reads the authoritative subscription state from Stripe using the
- * server-held `stripe_subscription_id` on the subscriber row and persists it
- * with the admin Supabase client. Client-supplied ids are never used.
- *
- * Failures are logged without secrets or customer PII and NEVER overwrite a
- * good database record with guessed values.
+ * Reconcile Stripe state without letting a delayed response overwrite a newer
+ * webhook or user action. Every write compares the version read before the GET.
  */
 import { identifyPlan } from "./config.server";
+import { subscriptionPeriodEnd } from "./billing-state";
+import type { Database } from "@/integrations/supabase/types";
 
 export interface SubscriberRow {
   user_id?: string | null;
@@ -21,125 +17,138 @@ export interface SubscriberRow {
   stripe_customer_id?: string | null;
   stripe_subscription_id?: string | null;
   stripe_price_id?: string | null;
+  stripe_subscription_created?: number | null;
+  stripe_event_created?: number | null;
+  updated_at?: string | null;
 }
 
-function asRecord(value: unknown): Record<string, unknown> | null {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : null;
-}
+export const SUBSCRIBER_COLUMNS =
+  "user_id,status,plan,cancel_at_period_end,trial_end,current_period_end,email,stripe_customer_id,stripe_subscription_id,stripe_price_id,stripe_subscription_created,stripe_event_created,updated_at";
 
-function str(value: unknown): string | null {
-  return typeof value === "string" && value.length > 0 ? value : null;
+// The Supabase user/admin clients share this fluent API.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface BillingDatabase {
+  from: (table: string) => any;
+  rpc: (
+    name: "apply_billing_event",
+    args: Database["public"]["Functions"]["apply_billing_event"]["Args"],
+  ) => PromiseLike<any>;
 }
-
-function num(value: unknown): number | null {
-  return typeof value === "number" && Number.isFinite(value) ? value : null;
+export interface BillingDeps {
+  db: BillingDatabase;
+  getSubscription: (id: string) => Promise<Record<string, any>>;
 }
-
-function toIso(seconds: number | null): string | null {
-  return seconds == null ? null : new Date(seconds * 1000).toISOString();
-}
-
-function firstItem(sub: Record<string, unknown>): Record<string, unknown> | null {
-  const items = asRecord(sub.items);
-  const data = Array.isArray(items?.data) ? items.data : [];
-  return asRecord(data[0]);
-}
-
-/** Stripe moved `current_period_end` onto subscription items; support both. */
-function periodEnd(sub: Record<string, unknown>): number | null {
-  return num(sub.current_period_end) ?? num(firstItem(sub)?.current_period_end);
-}
-
-function priceOf(sub: Record<string, unknown>): Record<string, unknown> | null {
-  return asRecord(firstItem(sub)?.price);
-}
-
-/** Safe log: subscription id prefix only, no keys, emails or customer PII. */
-function logFailure(subscriptionId: string | null, err: unknown): void {
-  const message = err instanceof Error ? err.message : "unknown error";
-  console.error(
-    `[billing-sync] reconciliation failed for subscription ${
-      subscriptionId ? `${subscriptionId.slice(0, 12)}…` : "(none)"
-    }: ${message.slice(0, 200)}`,
-  );
-}
-
 export interface ReconcileResult {
-  /** Row values to trust for access decisions (Stripe values when available). */
   row: SubscriberRow;
-  /** True when Stripe was successfully consulted. */
   synced: boolean;
 }
 
+export async function readBillingRow(
+  db: BillingDatabase,
+  userId: string,
+): Promise<SubscriberRow | null> {
+  const { data, error } = await db
+    .from("subscribers")
+    .select(SUBSCRIBER_COLUMNS)
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+/** Returns the persisted version, including on conflict; never returns an unsaved snapshot. */
+export async function persistSubscriptionSnapshot(
+  db: BillingDatabase,
+  before: SubscriberRow,
+  sub: Record<string, any>,
+  options: { checkout?: boolean; eventCreated?: number } = {},
+): Promise<{ row: SubscriberRow; applied: boolean }> {
+  if (!before.user_id || typeof sub.id !== "string")
+    throw new Error("Missing subscription identity");
+  const price = sub.items?.data?.[0]?.price;
+  const fields = {
+    stripe_customer_id:
+      typeof sub.customer === "string" ? sub.customer : (sub.customer?.id ?? null),
+    stripe_price_id: price?.id ?? null,
+    status: sub.status ?? "canceled",
+    plan:
+      identifyPlan({ priceId: price?.id, currency: price?.currency ?? sub.currency }) ?? "starter",
+    trial_end:
+      typeof sub.trial_end === "number" ? new Date(sub.trial_end * 1000).toISOString() : null,
+    current_period_end: subscriptionPeriodEnd(sub),
+    cancel_at_period_end: sub.cancel_at_period_end === true,
+  };
+  const { data: applied, error } = await db.rpc("apply_billing_event", {
+    _user_id: before.user_id,
+    _subscription_id: sub.id,
+    _subscription_created: sub.created ?? before.stripe_subscription_created ?? 0,
+    _event_created: options.eventCreated ?? before.stripe_event_created ?? 0,
+    _fields: fields,
+    _checkout: options.checkout ?? false,
+    _expected_updated_at: before.updated_at ?? null,
+    _check_version: true,
+  });
+  if (error) throw error;
+  const row = await readBillingRow(db, before.user_id);
+  if (!row) throw new Error("Could not reload subscription state");
+  return { row, applied: applied === true };
+}
+
+async function dependencies(): Promise<BillingDeps> {
+  const [{ supabaseAdmin }, { getStripeSubscription }] = await Promise.all([
+    import("@/integrations/supabase/client.server"),
+    import("./stripe.server"),
+  ]);
+  return { db: supabaseAdmin, getSubscription: getStripeSubscription };
+}
+
 /**
- * Reconciles one subscriber row against Stripe.
- *
- * - No `stripe_subscription_id` → nothing to reconcile, row returned as-is.
- * - Stripe unavailable/erroring → row returned unchanged (no guessed writes).
- * - Success → authoritative values persisted via the admin client and returned.
+ * A conflict causes a new database read AND a fresh Stripe GET. Reusing the
+ * rejected Stripe response would merely move the delayed overwrite into a retry.
  */
-export async function reconcileSubscriberRow(row: SubscriberRow | null): Promise<ReconcileResult> {
-  const current: SubscriberRow = row ?? {};
-  const subscriptionId = str(current.stripe_subscription_id);
-  const userId = str(current.user_id);
-  if (!subscriptionId || !userId) return { row: current, synced: false };
-
+export async function reconcileSubscriberRow(
+  row: SubscriberRow | null,
+  supplied?: BillingDeps,
+): Promise<ReconcileResult> {
+  let current: SubscriberRow = row ?? {};
+  const subscriptionId = current.stripe_subscription_id;
+  if (!subscriptionId || !current.user_id) return { row: current, synced: false };
   try {
-    const { getStripeSubscription } = await import("./stripe.server");
-    const raw = await getStripeSubscription(subscriptionId);
-    const sub = asRecord(raw);
-    if (!sub) return { row: current, synced: false };
-
-    const price = priceOf(sub);
-    const authoritative: SubscriberRow = {
-      status: str(sub.status) ?? "canceled",
-      cancel_at_period_end: sub.cancel_at_period_end === true,
-      trial_end: toIso(num(sub.trial_end)),
-      current_period_end: toIso(periodEnd(sub)),
-      stripe_customer_id: str(sub.customer) ?? current.stripe_customer_id ?? null,
-      stripe_price_id: str(price?.id) ?? current.stripe_price_id ?? null,
-      // Unknown/non-Quill prices keep plan "starter" but carry their price id,
-      // which hasActiveAccess rejects — no entitlement from unrecognised prices.
-      plan:
-        identifyPlan({ priceId: str(price?.id), currency: str(price?.currency) }) ?? "starter",
-    };
-
-    const changed =
-      authoritative.status !== (current.status ?? null) ||
-      authoritative.cancel_at_period_end !== (current.cancel_at_period_end ?? false) ||
-      authoritative.trial_end !== (current.trial_end ?? null) ||
-      authoritative.current_period_end !== (current.current_period_end ?? null) ||
-      authoritative.stripe_customer_id !== (current.stripe_customer_id ?? null) ||
-      authoritative.stripe_price_id !== (current.stripe_price_id ?? null) ||
-      authoritative.plan !== (current.plan ?? null);
-
-    if (changed) {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const { error } = await supabaseAdmin
-        .from("subscribers")
-        .update({
-          status: authoritative.status ?? "canceled",
-          cancel_at_period_end: authoritative.cancel_at_period_end ?? false,
-          trial_end: authoritative.trial_end,
-          current_period_end: authoritative.current_period_end,
-          stripe_customer_id: authoritative.stripe_customer_id,
-          stripe_price_id: authoritative.stripe_price_id,
-          plan: authoritative.plan ?? "starter",
-          updated_at: new Date().toISOString(),
-          ...(typeof sub.created === "number" ? { stripe_subscription_created: sub.created } : {}),
-        })
-        .eq("user_id", userId)
-        .eq("stripe_subscription_id", subscriptionId);
-      if (error) {
-        logFailure(subscriptionId, new Error(`db update failed: ${error.message}`));
-      }
+    const deps = supplied ?? (await dependencies());
+    for (let attempt = 0; attempt < 2; attempt++) {
+      // A newer checkout may already have replaced the original subscription.
+      if (current.stripe_subscription_id !== subscriptionId) return { row: current, synced: false };
+      const sub = await deps.getSubscription(subscriptionId);
+      if (sub?.id !== subscriptionId) throw new Error("Subscription identity mismatch");
+      const result = await persistSubscriptionSnapshot(deps.db, current, sub);
+      current = result.row;
+      if (result.applied) return { row: current, synced: true };
     }
-
-    return { row: { ...current, ...authoritative }, synced: true };
-  } catch (err) {
-    logFailure(subscriptionId, err);
-    return { row: current, synced: false };
+  } catch {
+    // Do not log Stripe responses, keys, email addresses or customer data.
+    console.error("[billing-sync] Could not refresh subscription state");
   }
+  return { row: current, synced: false };
+}
+
+/** Persist a confirmed cancel/resume response under the same version guard. */
+export async function persistSubscriptionMutation(
+  before: SubscriberRow,
+  sub: Record<string, any>,
+  supplied?: BillingDeps,
+): Promise<SubscriberRow> {
+  try {
+    const deps = supplied ?? (await dependencies());
+    const result = await persistSubscriptionSnapshot(deps.db, before, sub);
+    if (result.applied) return result.row;
+    // Re-read Stripe after a competing webhook/action. Never show an old success
+    // snapshot over a newer account state, even if our own POST succeeded.
+    const latest = await reconcileSubscriberRow(result.row, deps);
+    if (latest.synced) return latest.row;
+  } catch {
+    console.error("[billing-sync] Could not confirm accepted billing change");
+  }
+  throw new Error(
+    "Your billing request was accepted, but its latest state could not be confirmed. Check Manage billing before trying again.",
+  );
 }
