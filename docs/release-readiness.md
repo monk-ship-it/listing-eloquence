@@ -165,3 +165,9 @@ Changes:
 Results: `bun run test` 17 files / 179 tests passed (15 new in `billing-hardening.test.ts`: current + grandfathered mappings, unrelated high-priced GBP, USD, stale env id, amount-only, unknown-price access denial, unrelated checkout not attached, async-payment attach, usage fail-closed, timeout retry, stable idempotency key, no payment_method_types). `bun run prompts:check` up to date (no prompt files touched). Preview build OK (15:30:08 UTC). No manual production build/typecheck (sandbox restriction).
 
 Unresolved external checks: Stripe test-mode lifecycle (checkout, async payment, past_due, cancel, portal) against a test webhook endpoint; confirm the Stripe dashboard sends `checkout.session.async_payment_succeeded` to the endpoint; owner-supplied final price IDs; hosted auth redirect/email delivery; legal identity, address, Privacy/Terms decisions.
+
+## Security repair resumed (23 Oct 2026, 18:22 UTC)
+- Public transactional email sender (`/lovable/email/transactional/send`) disabled: returns 404 for GET/POST; no app code used it. No email sent.
+- Provider quota helper (`provider-quota.ts`) type-checks; new `provider-quota.test.ts` (6 tests) covers success, per-kind limit/byte/in-flight codes, fail-closed errors and non-throwing settle.
+- Results: `bun run test` 179/179 pass (17 files); `prompts:check` up to date (27 files); `tsgo --noEmit` clean.
+- Nothing published; no subscription or customer changes. Earlier blockers (legal identity/Privacy/Terms, Stripe test-mode lifecycle, hosted auth/email checks, final price IDs) remain open.
