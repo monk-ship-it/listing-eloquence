@@ -1,3 +1,39 @@
+# Release readiness
+
+## CURRENT STATUS — 1 Nov 2026 (supersedes any conflicting history below)
+
+Commit 06b31a541e024143507e9d8097406bb0c1c381ab. **Not published. Not launch-ready.**
+
+**Operator (owner-confirmed):** Domenico Monk, sole trader trading as CopyByMonk. domenico@copybymonk.com for support, admin and privacy. Not VAT registered. ICO registered — the number is not yet recorded here, and that alone is not a launch blocker. No business correspondence address supplied.
+
+**Billing:** current Stripe prices are GBP £15 / £29 / £59 (Starter / Pro / Growth); historical subscriber price mappings preserved. New price objects verified live; no new price creation needed. Webhook endpoint with 17 events including `checkout.session.async_payment_succeeded` saved 23 Oct (owner-confirmed). Starter: eligible first-time 14-day trial, card required; Pro/Growth paid at checkout.
+
+**Legal pages:** Terms, Privacy and refund policy remain internal (docs/legal-page-preparation.md) pending a real address and verified processor, retention and legal details. No public placeholders.
+
+**Support:** manual only — see docs/support-checklist.md. Quill sends no automated cancellation or refund emails.
+
+### Checks run this round (1 Nov, against the current preview)
+- Automatic build log: no build log file present in this session (no new edits to code were made; only docs changed).
+- Playwright smoke, desktop 1280×1800 and mobile 390×844 (real mobile context: `is_mobile`, touch, DPR 2; measured innerWidth 390):
+  - Homepage: no horizontal overflow (desktop scrollWidth 1265 ≤ 1280; mobile 390 = 390); £15, £29, £59 present; no `$`/USD.
+  - `/auth?plan=starter|pro|growth`: signup shown on both viewports; Starter shows the eligible 14-day card trial; Pro/Growth show no trial copy.
+  - `/auth?mode=login`: "Welcome back" on both.
+  - `/auth?plan=pro&mode=login` → click "Create account" tab → URL `?plan=pro&mode=signup`, survives reload, both viewports.
+  - Signed out `/app`, `/history`, `/account`, `/subscription` → `/auth?mode=login` on both viewports.
+  - Zero page errors. No forms submitted.
+- Tests/prompt checks not re-run: no code or prompt files changed (last round 254/254, 24 files; prompts 27 files up to date).
+
+### Not verified
+- **Hosted auth config** (email confirmation, redirect URLs, password rules): no read-only tool available; not inspected, nothing changed.
+- **Generation → save → history → copy smoke:** not run. The preview has no signed-in session, and signing in as an account or granting access was out of scope.
+- Stripe test-environment lifecycle: checkout, async payment success/failure, past_due, cancel, portal.
+- Confirmation and password-reset email delivery.
+
+### Remaining blockers
+Correspondence address; processor/retention/legal decisions and public Terms/Privacy/refund pages; Stripe test-mode lifecycle run; hosted auth/email checks; signed-in generation smoke.
+
+---
+
 # Release readiness — 17 Oct 2026 (release audit)
 
 Status: **not published**. Brand, prices, Stripe price ids, accounts and data unchanged. No live charges, emails or deletions of existing data.
