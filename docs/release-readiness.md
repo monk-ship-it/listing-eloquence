@@ -2,11 +2,11 @@
 
 ## CURRENT STATUS — 1 Nov 2026 (supersedes any conflicting history below)
 
-Commit 06b31a541e024143507e9d8097406bb0c1c381ab. **Not published. Not launch-ready.**
+The current source includes the 23 October production bundle, signup-copy correction and 1 November analytics change. **Release changes remain unpublished. Not launch-ready.**
 
 **Operator (owner-confirmed):** Domenico Monk, sole trader trading as CopyByMonk. domenico@copybymonk.com for support, admin and privacy. Not VAT registered. ICO registered — the number is not yet recorded here, and that alone is not a launch blocker. No business correspondence address supplied.
 
-**Billing:** current Stripe prices are GBP £15 / £29 / £59 (Starter / Pro / Growth); historical subscriber price mappings preserved. New price objects verified live; no new price creation needed. Webhook endpoint with 17 events including `checkout.session.async_payment_succeeded` saved 23 Oct (owner-confirmed). Starter: eligible first-time 14-day trial, card required; Pro/Growth paid at checkout.
+**Billing:** current Stripe prices are GBP £15 / £29 / £59 (Starter / Pro / Growth); historical subscriber price mappings preserved. New price objects verified live; no new price creation needed. Webhook endpoint with 17 events including `checkout.session.async_payment_succeeded` saved and independently verified in the Stripe Dashboard on 23 Oct. Starter: eligible first-time 14-day trial, card required; Pro/Growth paid at checkout.
 
 **Legal pages:** Terms, Privacy and refund policy remain internal (docs/legal-page-preparation.md) pending a real address and verified processor, retention and legal details. No public placeholders.
 
@@ -15,7 +15,8 @@ Commit 06b31a541e024143507e9d8097406bb0c1c381ab. **Not published. Not launch-rea
 **Optional analytics disabled (1 Nov):** the unconditional root-head `static.opinly.ai/p.js` script was removed (applied byte-exact from the reviewed bundle). Fresh preview loads of `/`, `/auth` and `/app` made no request to it. The Opinly blog/RSS/sitemap content integrations are unchanged. This is not a claim that the site uses no tracking or cookies.
 
 ### Checks run this round (1 Nov, against the current preview)
-- Automatic build log: no build log file present in this session (no new edits to code were made; only docs changed).
+
+- Automatic preview build passed at 17:30 UTC after the reviewed root-head analytics removal. This is distinct from the historical guarded local Windows production-build result.
 - Playwright smoke, desktop 1280×1800 and mobile 390×844 (real mobile context: `is_mobile`, touch, DPR 2; measured innerWidth 390):
   - Homepage: no horizontal overflow (desktop scrollWidth 1265 ≤ 1280; mobile 390 = 390); £15, £29, £59 present; no `$`/USD.
   - `/auth?plan=starter|pro|growth`: signup shown on both viewports; Starter shows the eligible 14-day card trial; Pro/Growth show no trial copy.
@@ -23,16 +24,18 @@ Commit 06b31a541e024143507e9d8097406bb0c1c381ab. **Not published. Not launch-rea
   - `/auth?plan=pro&mode=login` → click "Create account" tab → URL `?plan=pro&mode=signup`, survives reload, both viewports.
   - Signed out `/app`, `/history`, `/account`, `/subscription` → `/auth?mode=login` on both viewports.
   - Zero page errors. No forms submitted.
-- Tests/prompt checks not re-run: no code or prompt files changed (last round 254/254, 24 files; prompts 27 files up to date).
+- Full suite last passed 254/254 across 24 files on 23 October; prompt exports were current (27 files). The 1 November root-head edit only removes an optional script; browser checks and the automatic preview build verify this edit. No prompt text changed.
 
 ### Not verified
-- **Hosted auth config** (email confirmation, redirect URLs, password rules): no read-only tool available; not inspected, nothing changed.
+
+- **Hosted authentication settings inspected in Lovable UI (1 Nov):** email sign-in enabled; public signup enabled; anonymous users disabled; secure email change and breached-password checking enabled. Auto-confirm email was enabled, conflicting with the intended verification flow; it was switched off, saved and reopened to verify persistence. Site URL is https://copybymonk.com, and both https://copybymonk.com/** and https://www.copybymonk.com/** are listed allowed redirects. Other system-managed preview URLs are present. Minimum password length and complete password-policy suitability were not verified; recent-login/current-password change requirements were observed off and not changed. No signup, recovery email or password change was submitted. Screenshot: production-review/quill-email-verification-2026-11-01.png. These configuration checks do not establish delivery or a completed recovery flow.
 - **Generation → save → history → copy smoke:** not run. The preview has no signed-in session, and signing in as an account or granting access was out of scope.
 - Stripe test-environment lifecycle: checkout, async payment success/failure, past_due, cancel, portal.
 - Confirmation and password-reset email delivery.
 
 ### Remaining blockers
-Correspondence address; processor/retention/legal decisions and public Terms/Privacy/refund pages; Stripe test-mode lifecycle run; hosted auth/email checks; signed-in generation smoke.
+
+Correspondence address; processor/retention/legal decisions and public Terms/Privacy/refund pages; Stripe test-mode lifecycle run; confirmation/reset delivery and completed recovery checks; remaining password-policy review; signed-in generation smoke.
 
 ---
 
@@ -41,17 +44,19 @@ Correspondence address; processor/retention/legal decisions and public Terms/Pri
 Status: **not published**. Brand, prices, Stripe price ids, accounts and data unchanged. No live charges, emails or deletions of existing data.
 
 ## Changes this round
+
 - **Homepage example (index.tsx):** removed "New instruction" / "new to market" everywhere in DEMO_UK. The spoken note now says "exposed beams", matching the facts. The voices section shows all five voices (Plain & factual added), and each sample is labelled "Illustrative tone only". "Four voices" changed to five here and on /uk-property-listing-generator. "So nothing drifts between channels" replaced with "every channel starts from the same facts. Check each one before it goes live." The homepage now has a `<main>` landmark.
 - **Credit reconciliation (src/lib/quota-slot.ts, listing.functions.ts):** after any finalize failure, the row is re-read before deciding.
   - `completed`: the commit happened but the response was lost. The listing is kept and the credit counts.
   - `missing`: released. The listing row is removed and the agent is told it didn't use a listing.
   - Read or release fails: `unresolved`. The credit state is **unknown**: finalize may have committed. The saved listing is **kept**. If the row is still `reserved`, it expires and is cleared by the next reservation. If it was in fact `completed`, that usage stays counted. Quill does not claim either way.
   - Comped accounts no longer lose a saved listing if the audit-row insert fails.
-- **Stale saved-listing loads (_authenticated.app.tsx):** the effect cleanup cancels the request when you leave the page or open another listing (and allows a fresh load of the same id later). Late responses never overwrite edits or a generation in progress.
+- **Stale saved-listing loads (\_authenticated.app.tsx):** the effect cleanup cancels the request when you leave the page or open another listing (and allows a fresh load of the same id later). Late responses never overwrite edits or a generation in progress.
 - **Security:** removed two unused, unauthenticated Opinly endpoints (`trackOpinlyPurchase`, `trackOpinlyEvent`) that let anyone post fake conversions. The admin check now calls `has_role` as the caller, not with the service role. All other server functions use `requireSupabaseAuth`. Generation, marketing, extraction and transcription all check subscription status on the server, and every query on saved listings is limited to the signed-in owner's own rows.
 - **Eval harness:** `--revalidate` now runs the app's own post-processing (`finishCore` / `finishMarketing`, shared with generation.server.ts). An LLM-grader FAIL now fails the case. Grader rules were not loosened.
 
 ## Exact checks and results
+
 - `bun run build` (production): exit 0.
 - `bun run test`: 11 files, **115/115 passed**. This includes 12 credit tests: committed-but-response-lost, error/false/throw/partial without a commit, release fails, release throws, status read fails, and the confirming read fails.
 - `bunx tsgo --noEmit`: clean. `bun run prompts:check`: up to date (27 files). No prompt text changed; PROMPT_VERSION is unchanged.
@@ -63,6 +68,7 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 - **Browser QA, signed in as the non-admin test account** at 390px and 1280px, on /, /auth, /app, /history, /account, /subscription and /uk-property-listing-generator: no sideways scrolling, no page or console errors, no unlabelled controls, one `<main>` and one `<h1>` per page. The saved-listings empty state renders. Signed-in /auth redirects to checkout because this account has no subscription.
 
 ## Round 3 — A7 lean-to caveat (fixed)
+
 - New deterministic step `src/lib/feature-caveats.ts`, run in `labelCore` (app and eval revalidation).
   - **What triggers it:** a planning or disclosures sentence that says a structure (lean-to/lean to/leanto, conservatory/orangery/sunroom, extension, loft or garage conversion, outbuilding/annexe/garden room, porch, dormer) has no known or unknown approval.
   - **What it does:** every key feature naming that structure gets a caveat worded from that sentence only: "no known planning approval", "no known building regulations approval", or "no known planning or building regulations approval".
@@ -78,6 +84,7 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 - Final gates: `bunx tsgo --noEmit` clean; `bun run test` **12 files, 123/123 passed**; `bun run prompts:check` up to date (27 files); `bun run build` exit 0.
 
 ## Round 4 — feature-caveats correctness fix (independent review)
+
 - **Bugs fixed in `src/lib/feature-caveats.ts`:**
   - A negative word anywhere in the sentence triggered a caveat. Now a negative must sit in the same clause as the approval it governs (clauses split on commas, semicolons, "but/however/whereas", and "and" unless it joins planning/building regs). "Extension has planning approval and no known issues" adds nothing.
   - Generic "no approval" was turned into building regulations. It now stays generic: "no known approval".
@@ -91,6 +98,7 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 ## Round 5 — account and distribution safeguards (17 Oct)
 
 ### Exact changes
+
 - `src/lib/auth-state.ts`, `src/routes/auth.tsx`: reject unsafe redirect paths; trim email input; confirmation returns to the public sign-in page with the selected plan preserved. Confirmation is still required. Email/password provider was read/enabled idempotently: already enabled; no confirmation settings changed.
 - `src/routes/reset-password.tsx`: ordinary signed-in sessions no longer enable password reset. A recovery link/event and authenticated user are required; invalid-link submit is disabled.
 - `src/routes/_authenticated.tsx`, `src/routes/__root.tsx`: client-only pre-render identity check; sign-out cancels/clears private query caches and replaces navigation history. Root sign-out also clears private cached data.
@@ -103,6 +111,7 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 - `AGENTS.md`: records auth/cache, shared billing-state and social-image conventions. `roadmap.md`: release audit checklist. No prompt text or golden fixtures changed.
 
 ### Checks actually executed
+
 - `bun run test`: **13 files, 137/137 passed** (final run 17 Oct 11:55 UTC). Earlier new-suite import failure was corrected; final suite is green.
 - `bun run prompts:check`: **27 files up to date**. No prompt export/golden refresh needed: none of the prompt-bearing files changed.
 - Automatic preview build: **build OK**, newest observed entry 17 Oct 11:54:30 UTC. A separate production `bun run build` was **not executed in this round**; sandbox instructions prohibit manual builds/typechecks. Prior round production results above are historical, not a new production verification.
@@ -113,6 +122,7 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 - Read-only Stripe checks: all three configured prices active, GBP monthly **£39/£79/£149**; default active customer portal permits cancellation **at period end**, no proration; subscription/checkout webhook endpoint enabled. No checkout session, charge, cancellation, resumption or other live subscription change was made.
 
 ### Current verification limits
+
 - The tested account has no active access and no saved packs. **New listing → persisted pack → history → copy was not end-to-end verified**; no entitlement bypass or live-account change was made. Existing unit tests and prior synthetic AI evaluations are not a substitute for this flow.
 - Actual signup/confirmation/reset delivery and successful recovery-link password update remain untested; no live emails or passwords were changed. Hosted redirect allowlist, password rules and public-signup settings were not read successfully, so remain unverified.
 - Live checkout completion, renewal/webhook delivery and cancellation/resumption were intentionally not exercised. Read-only Stripe configuration and mocked requests establish configuration/request semantics only.
@@ -120,6 +130,7 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 - No deletion, live billing mutation, AI generation or publishing occurred this round. Brand, pricing, billing IDs, existing subscribers and saved records were preserved.
 
 ## Historical round 4 limits (still relevant where noted above)
+
 - Opening a saved listing in the browser (the test account has none; generating one would use AI and a credit on an account without access).
 - Stripe checkout, renewal and webhooks live; transactional emails; deletion.
 - A real finalize network failure against the database (covered by the in-memory model tests only).
@@ -128,6 +139,7 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 ## Round 6 — urgent independent security/correctness findings (17 Oct)
 
 ### Changes
+
 - Complimentary entitlement now uses the verified existing owner's immutable account ID from authenticated context, never subscriber/billing email. The owner ID was verified against the confirmed identity before changing the rule; checkout billing email cannot grant access or overwrite the identity email.
 - Verified Stripe webhooks delegate to a tested processor. Returned database read/write errors propagate to HTTP 500 for retry. Events read current Stripe subscription state, not stale invoice snapshots. Only checkout can attach a new subscription; subscription/customer/email fallback cannot attach old subscriptions. The atomic PostgreSQL function locks the subscriber, rejects older same-subscription events and rejects superseded subscription identities. Existing records are preserved.
 - Checkout rejects open subscriptions (including past_due/unpaid), checks customer subscription history and fails closed on an incomplete history read. Durable per-user checkout attempts keep an identical idempotency key, trial parameter and explicit expiry across retries. Eligibility is consumed conservatively when an eligible attempt is reserved; a lost response or expired abandoned attempt cannot grant a second trial. Historical subscriptions/trials preclude another trial. Competing plans cannot open concurrent attempts. Failed recording of a prepared session gives a retry-same-plan message, not a claim that nothing happened.
@@ -136,6 +148,7 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 - Supplied "capped at £500" ground-rent wording is retained with a verification conflict flag, not silently deleted. Ground-rent review information and shared-ownership full market value are checked; Part C "Yes" without details is incomplete. Material Information remains visible.
 
 ### Exact changed-file inventory
+
 - Billing/security: `src/lib/comped.server.ts`, `subscription.functions.ts`, `stripe.server.ts`, `billing-sync.server.ts`, new `billing-webhook.server.ts`, `listing.functions.ts`, `extract.functions.ts`, `transcribe.functions.ts`, `src/routes/api/public/stripe-webhook.ts`, `src/routes/_authenticated.subscription.tsx`.
 - Output safeguards: `src/lib/fact-check.ts`, `material-info.ts`, new `pack-safety.ts`, `src/components/pack/ListingPack.tsx`.
 - Regression tests: new `src/lib/billing-security.test.ts`, `billing-database.test.ts`, `pack-safety.test.ts`; updated `fact-check.test.ts`, `material-info.test.ts`.
@@ -144,6 +157,7 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 - Architecture/evidence: `AGENTS.md`, `roadmap.md`, this document.
 
 ### Checks actually executed
+
 - Final `bun run prompts:export` → **0 files changed, 27 total**; `bun run test` → **16 files, 159/159 PASS** (17 Oct, 12:03 UTC); `bun run prompts:check` → **27 up to date**. No prompt text changed; no golden refresh or prompt-version bump.
 - Billing processor/request regressions: 8 tests, including billing email attack, returned read/write errors, old subscription metadata ignored, current Stripe state, provider failure, idempotency and no repeated trial parameter.
 - Actual migration PostgreSQL regressions: 5 tests, including identical trial reservation after response loss, expired-attempt repeat eligibility, older event rejection, superseded checkout rejection, newer checkout only after ending, and denial of privileged functions to authenticated customers. Synthetic database only.
@@ -153,11 +167,13 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 - Initial browser assertions wrongly assumed this account had no subscription/empty history; inspection established an ended subscription and saved history, and the final script was corrected and passed. No private listing content was logged.
 
 ### Verification limits and remaining blockers
+
 - No actual charge, checkout completion, live cancellation/resumption, webhook mutation, email, new generation, deletion or publish. Payment-problem UI behavior is source/regression verified, not a live past_due customer journey. Cancellation after Stripe-success/local-save-failure is implemented truthfully but not fault-injected in a live account.
 - Current identity has no generation access: new listing → save → history → copy remains unverified end-to-end. Existing history loads; records were not changed.
 - External test-environment billing lifecycle, hosted confirmation/reset delivery/redirect/password settings and verified owner Privacy/Terms/legal identity decisions below remain required. No legal identity/address or guaranteed-compliance claim was invented.
 
 ## Narrow follow-up — sole trader and login intent (17 Oct, 12:05 UTC)
+
 - Confirmed **CopyByMonk is a sole trader, not a limited company**. Support remains domenico@copybymonk.com. Domenico Monk is the known owner name, but legal identity/address for policies remain unverified.
 - Prepared `docs/legal-page-preparation.md`: Privacy/Terms section structure, code-backed processing/storage/AI/speech/billing/analytics facts, and explicit owner/legal decisions. This is internal preparation, not a finished policy. No public placeholder pages or links were added.
 - Fixed homepage desktop/mobile **Log in** links to request login explicitly. Plain `/auth` now selects login; all valid plan links retain signup. URL-driven tab changes preserve plan and safe onward destination and survive reload.
@@ -167,6 +183,7 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 - Browser: homepage Log in → Welcome back → reload, trial → signup, login/signup tab switching, and all three plan defaults passed at **1280×1800 and 390×844**; zero page errors, no horizontal overflow on auth. Mobile screenshots inspected. Initial mobile tab check clicked before hydration; rerun after interactivity passed. No authentication forms, billing changes or emails submitted; nothing published.
 
 ## Remaining launch blockers
+
 1. **Privacy Policy and Terms pages do not exist.** The owner must supply, verified:
    - verified sole-trader legal identity and service/legal correspondence address (no limited-company number or registered office assumed);
    - whether domenico@copybymonk.com is also the data-request contact, and ICO registration number/fee status;
@@ -175,6 +192,7 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
    - lawful basis, cookie/analytics consent position, governing law, liability and refund terms.
 
    Operator **CopyByMonk**, **sole-trader status**, and support **domenico@copybymonk.com** are confirmed. The known owner name is **Domenico Monk**; legal identity/address for policies still require verification. None of the missing legal terms was invented. Internal structure is prepared in `docs/legal-page-preparation.md`; no placeholder policy is public.
+
 2. Footer and checkout legal identity must match item 1.
 
 3. **External verification before distribution:** confirm hosted auth redirect URLs for both custom domains, confirmation/reset delivery and password rules; safely validate successful checkout/webhook and cancellation in a test environment, then the complete listing/save/history/copy journey with permitted access. Read-only checks above found no current Stripe-price/portal configuration defect.
@@ -182,6 +200,7 @@ Status: **not published**. Brand, prices, Stripe price ids, accounts and data un
 Not blockers: in-app editing (promises corrected); the pre-existing ESLint formatting debt. Not published.
 
 ## Final auth review fixes (17 Oct, 12:07 UTC)
+
 - Post-sign-in `next` rejects backslashes/control chars/`//` and is re-resolved against window.location.origin before navigation (resolveSameOriginNext); regression tests added.
 - Complimentary access confirmed bound solely to the authorised immutable owner user ID; no email or email-verification state is consulted (test added).
 - Fixed missing auth `mode` on generator-page plan links and reset-password back link.
@@ -193,6 +212,7 @@ Not blockers: in-app editing (promises corrected); the pre-existing ESLint forma
 Status: **not production-ready.** Public Privacy/Terms are absent (internal prep stays private pending owner details), and hosted auth/email settings plus a test-mode billing lifecycle remain unverified. Prices unchanged pending owner-supplied final Stripe IDs. Nothing published; no live customer/subscription mutated (one read-only query of subscriber price/status counts: 4 `none` without price, 3 `canceled` on grandfathered `price_1Tj5eD…` → starter, still mapped).
 
 Changes:
+
 - `src/lib/plan-identity.ts` (new): exact allowlist = current PLAN_PRICING prices + all four grandfathered Quill prices. Unknown prices, unknown payment links, non-GBP currency and amount-only input return no plan. Amount/threshold fallbacks and env price-id trust removed from identification (`config.server.ts` re-exports).
 - `hasActiveAccess` now requires an allowlisted `stripe_price_id`; all callers (subscription info, generation, extraction, transcription, checkout guard) pass it. Unknown prices are stored as-is so the owner can still cancel/manage billing but get no entitlement.
 - Webhook: attaches new subscriptions only from signed checkout metadata **and** a Quill price; adds `checkout.session.async_payment_succeeded`; checkout events without a subscription are ignored. Raw-body signature verification, current-state Stripe reads, DB error → 500 retry and `apply_billing_event` ordering unchanged. No `payment_method_types` allowlist (tested).
@@ -205,12 +225,14 @@ Results: `bun run test` 17 files / 179 tests passed (15 new in `billing-hardenin
 Unresolved external checks: Stripe test-mode lifecycle (checkout, async payment, past_due, cancel, portal) against a test webhook endpoint; confirm the Stripe dashboard sends `checkout.session.async_payment_succeeded` to the endpoint; owner-supplied final price IDs; hosted auth redirect/email delivery; legal identity, address, Privacy/Terms decisions.
 
 ## Security repair resumed (23 Oct 2026, 18:22 UTC)
+
 - Public transactional email sender (`/lovable/email/transactional/send`) disabled: returns 404 for GET/POST; no app code used it. No email sent.
 - Provider quota helper (`provider-quota.ts`) type-checks; new `provider-quota.test.ts` (6 tests) covers success, per-kind limit/byte/in-flight codes, fail-closed errors and non-throwing settle.
 - Results: `bun run test` 179/179 pass (17 files); `prompts:check` up to date (27 files); `tsgo --noEmit` clean.
 - Nothing published; no subscription or customer changes. Earlier blockers (legal identity/Privacy/Terms, Stripe test-mode lifecycle, hosted auth/email checks, final price IDs) remain open.
 
 ## Source bundle sync (23 Oct 2026, ~18:40 UTC)
+
 - Bundle quill-source-sync-v1 (baseline 170f158): 74 files, all paths safe, all sha256 verified; 69 source/doc files written byte-exact. Migration SQL 0006/0007 applied through the managed migration tool and match the bundle byte-for-byte; journal/snapshot metadata and generated database types are tool-generated (timestamps/ids differ from bundle).
 - Database: 0005 confirmed live (provider_call_reservations, reserve/settle RPCs). 0006 replaced reserve_provider_call. 0007 installed update_subscriber_billing_version trigger and 8-argument apply_billing_event (new args default, so older callers still work). Subscriber rows: 7, unchanged.
 - Hosted compatibility fix: regenerated types reject explicit null for `_expected_updated_at`; billing-sync.server.ts now omits it instead (same SQL DEFAULT NULL).
