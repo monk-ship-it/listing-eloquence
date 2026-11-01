@@ -1,13 +1,27 @@
 # Legal page preparation — not public policies
 
+## Current status — 1 November 2026 (supersedes conflicting historical questions below)
+
+The operator is **Domenico Monk, sole trader trading as CopyByMonk**. **domenico@copybymonk.com** handles support, administration and privacy requests. The owner confirms **not VAT registered** and **ICO registered**. Do not invent an ICO reference or treat the missing number alone as a launch blocker. No business correspondence/service address has been supplied; this remains unresolved and no address is fabricated.
+
+The current internal refund proposal is in `docs/refund-policy-draft.md`: cancel anytime; a once-per-customer 14-calendar-day first-payment refund after reasonable evaluation; a seven-calendar-day unused-renewal offer; billing-error correction; and fair full/proportionate material-service-failure remedies, preserving mandatory rights. These are proposed commercial terms, not published statutory-rights claims. `docs/support-checklist.md` records the manual process, identity/payment checks, billing-period successful-core-pack evidence, duplicate safeguards and owner decision. No automatic Quill cancellation/refund email or automated refund entitlement is implemented; manual support delivery remains an operating requirement.
+
+The unconditional optional Opinly analytics pixel was removed from the root head on 1 November. Fresh preview loads of /, /auth and /app made no request for that script. Separate blog/content integrations remain. This does not establish that the product has no tracking/cookies or resolve other provider data flows.
+
+Public Privacy/Terms/refund pages remain absent and this document remains internal. Verify actual processing providers, regions, contracts/transfers, lawful bases, retention/deletion, agency data-processing terms, and remaining liability/jurisdiction decisions before publishing. Application source does not establish provider contracts or retention. Historical pending identity/contact/VAT/ICO questions below are superseded by the confirmed facts above; the missing correspondence address and unverified processing/legal details remain open.
+
+---
+
 Internal drafting structure only. No public Privacy/Terms routes, navigation links or placeholder policies are introduced. Do not publish this as a finished policy. Source inspection establishes application behaviour, not provider contracts, legal compliance or hosted configuration.
 
 ## Confirmed operator facts
+
 - Trading name: CopyByMonk; business form: **sole trader**, not a limited company.
 - Support: domenico@copybymonk.com.
 - Known owner name: Domenico Monk. The legal identity for the policy and service/legal correspondence address still require owner verification. No company number or registered office is assumed or requested for a limited company.
 
 ## Privacy Policy structure for owner/legal approval
+
 1. **Who controls the data and contact details.** Use the confirmed trading form above; insert only the owner-verified legal identity/address once provided. Confirm whether support is also the privacy/data-rights contact. Confirm ICO registration/fee or applicable exemption; no status is asserted.
 2. **Data collected and purposes.** Account email/password authentication; profile name and agency details; supplied property fields, voice-note text, private access/photo notes, generated packs; billing identifiers/status; usage, rate-limit and error records. Describe service delivery, authentication, billing and support purposes separately. Owner/legal review must select lawful bases and clarify agent/customer responsibilities for third-party personal data.
 3. **AI and speech processing.** Listing/extraction text goes to Anthropic through the server (`ai-gateway.server.ts`). Private viewing/photo fields are excluded from public-copy prompt facts (`prompts/render.ts`), but may remain in saved inputs/browser drafts. Optional microphone recordings are sent through Lovable's audio gateway using `openai/gpt-transcribe` (`transcribe.functions.ts`); this application does not persist audio files, but transcript text becomes form data. This is not a promise about gateway/provider retention or training. Verify actual processor names, agreements, subprocessors, locations, transfer safeguards and training/retention terms.
@@ -17,6 +31,7 @@ Internal drafting structure only. No public Privacy/Terms routes, navigation lin
 7. **Rights, security, transfers and complaints.** Describe verified access/ownership safeguards without an absolute security guarantee. Owner/legal review to approve rights process, response handling, international-transfer basis, ICO complaint information and update/effective-date wording.
 
 ## Terms structure for owner/legal approval
+
 1. **Supplier and scope:** verified sole-trader identity/address; Quill for UK residential estate agents; confirm business-customer eligibility and contracting capacity.
 2. **Service:** AI-generated listing/marketing/seller-approval drafts from supplied facts; copy/paste workflow, no CRM/portal delivery integration or listing-email sending. Agent verification and seller approval required; no accuracy, legal/compliance or speed guarantee.
 3. **Accounts and acceptable use:** credentials, authorised use and rights to submitted facts/personal data. Owner/legal approval for prohibited use, suspension, remedies and content/output rights/licences; do not invent them.
@@ -26,6 +41,7 @@ Internal drafting structure only. No public Privacy/Terms routes, navigation lin
 7. **Governing law, disputes and contacts:** owner/legal review required for jurisdiction, complaint process and legal contact. Use support address only for support until its wider role is confirmed.
 
 ## Release checklist
+
 - Verify legal identity and correspondence/service address; do not substitute trading name plus known person name for verification.
 - Confirm privacy contact, ICO position, processor/transfer/retention terms, analytics consent, deletion process, VAT, refunds/credits, liability, jurisdiction and effective dates.
 - Review current conservative trial-reservation behaviour and its customer disclosure/remedy.
