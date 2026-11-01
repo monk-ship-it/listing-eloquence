@@ -104,13 +104,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
       { rel: "manifest", href: "/site.webmanifest" },
     ],
-    scripts: [
-      {
-        src: "https://static.opinly.ai/p.js",
-        async: true,
-        "data-key": "pk-RaJs7Pe2-NjveVs4VVkQnKnaMjLWD6P2jrCIWij",
-      },
-    ],
   }),
 
   shellComponent: RootShell,

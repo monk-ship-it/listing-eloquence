@@ -10,7 +10,9 @@ Commit 06b31a541e024143507e9d8097406bb0c1c381ab. **Not published. Not launch-rea
 
 **Legal pages:** Terms, Privacy and refund policy remain internal (docs/legal-page-preparation.md) pending a real address and verified processor, retention and legal details. No public placeholders.
 
-**Support:** manual only — see docs/support-checklist.md. Quill sends no automated cancellation or refund emails.
+**Support:** manual only — docs/support-checklist.md is now the expert-reviewed manual billing support guide (applied byte-exact, sha256-verified, 1 Nov), matching docs/refund-policy-draft.md (proposed: 14 days from first payment; 7 days for an unused renewal). Legacy GBP/USD subscribers stay supported. Quill sends no automated cancellation or refund emails.
+
+**Optional analytics disabled (1 Nov):** the unconditional root-head `static.opinly.ai/p.js` script was removed (applied byte-exact from the reviewed bundle). Fresh preview loads of `/`, `/auth` and `/app` made no request to it. The Opinly blog/RSS/sitemap content integrations are unchanged. This is not a claim that the site uses no tracking or cookies.
 
 ### Checks run this round (1 Nov, against the current preview)
 - Automatic build log: no build log file present in this session (no new edits to code were made; only docs changed).
